@@ -11,16 +11,10 @@ export const questionTemplate = (host: OddkinQuestion) => {
   const locked = host._locked;
   const unavailable = host._unavailable;
   const open = q.status === 'requested' || q.status === 'failed';
-  const pending = q.status === 'submitting' || (locked && open && unavailable === undefined);
-  const status = pending
-    ? t.submitting
-    : open && unavailable
-      ? unavailable
-      : q.status === 'failed'
-        ? format(t.failed, { message: q.error?.message ?? '' })
-        : q.status === 'requested'
-          ? ''
-          : t[q.status];
+  // In flight: asked from this view, or a restored record already submitting.
+  const asked = locked && open && unavailable === undefined;
+  const chosen = asked ? host._decisions.choice(`${q.questionId}:${q.revision}`) : undefined;
+  const inFlight = asked || q.status === 'submitting';
   const choice = q.kind === 'choice' || q.kind === 'multi-choice';
   const inputType = q.kind === 'choice' ? 'radio' : 'checkbox';
   const expires = host._expires();
@@ -92,33 +86,29 @@ export const questionTemplate = (host: OddkinQuestion) => {
       }
       <p class="error" role="alert" ?hidden=${!host._invalid.value}>${host._invalid.value}</p>
     </fieldset>
-    <p class="state" data-status=${q.status} ?hidden=${!status}>${status}</p>
-    <div
-      part="actions"
-      class="actions"
-      ?hidden=${q.status !== 'requested' && q.status !== 'failed'}
-    >
-      ${decisionRow(
-        'sm',
-        [
-          {
-            action: 'answer',
-            label: t.submit,
-            appearance: 'primary',
-            type: 'submit',
-            disabled: locked,
-            onClick: host._submit,
-          },
-          {
-            action: 'skip',
-            label: t.skip,
-            appearance: 'ghost',
-            disabled: locked,
-            onClick: host._skip,
-          },
-        ],
-        pending ? 'answer' : undefined,
-      )}
-    </div>
+    ${decisionRow(
+      [
+        {
+          action: 'answer',
+          label: t.submit,
+          appearance: 'primary',
+          type: 'submit',
+          disabled: locked,
+          onClick: host._submit,
+        },
+        { action: 'skip', label: t.skip, disabled: locked, onClick: host._skip },
+      ],
+      open || inFlight
+        ? {
+            loading: inFlight ? chosen : undefined,
+            pending: inFlight ? (chosen === 'answer' ? t.submitting : t.responding) : undefined,
+            error:
+              q.status === 'failed' && !inFlight
+                ? format(t.failed, { message: q.error?.message ?? '' })
+                : undefined,
+            unavailable: open ? unavailable : undefined,
+          }
+        : { outcome: { text: t[q.status as Exclude<typeof q.status, 'requested'>] } },
+    )}
   </form>`;
 };

@@ -54,15 +54,6 @@ export const actionApprovalStyles = css`
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
-  .state[data-tone='success'] {
-    color: ${token('color.success.foreground')};
-  }
-  .state[data-tone='danger'] {
-    color: ${token('color.danger.foreground')};
-  }
-  .reason {
-    flex: 1 1 100%;
-  }
   .scopes {
     margin: 0;
     padding: 0;

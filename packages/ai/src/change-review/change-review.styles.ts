@@ -52,14 +52,4 @@ export const changeReviewStyles = css`
     font-weight: ${token('font.weight.semibold')};
   }
   ${diffViewStyles}
-  .state {
-    font-size: ${token('font.size.sm')};
-    color: ${token('color.text.secondary')};
-  }
-  .state:is([data-status='stale'], [data-status='failed']) {
-    color: ${token('color.danger.foreground')};
-  }
-  .state[data-status='applied'] {
-    color: ${token('color.success.foreground')};
-  }
 `;

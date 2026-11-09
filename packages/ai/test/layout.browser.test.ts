@@ -474,9 +474,11 @@ describe('odd-action-approval', () => {
     expectColumn($(el, '.changes'), space('xs'));
     expectColumn($(el, '.change'), space('xs'));
     expectColumn($(el, '.reason'), space('2xs'));
-    // The shared action row wraps: the reason takes a line of its own above the buttons.
-    const [reason, ...buttons] = items($(el, '.actions'));
-    expect(buttons.every((box) => box.top >= reason!.bottom)).toBe(true);
+    // The reason sits above the decision row (Figma page 08), whose buttons share a line.
+    const reason = $(el, '.reason')!.getBoundingClientRect();
+    const buttons = items($(el, '.actions'));
+    expect(buttons.every((box) => box.top >= reason.bottom)).toBe(true);
+    expect(new Set(buttons.map((box) => box.top)).size).toBe(1);
   });
 });
 

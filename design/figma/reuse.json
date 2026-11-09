@@ -13,12 +13,12 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 116,
+    "style": 119,
     "slot": 54,
-    "deferred": 35,
+    "deferred": 23,
     "controller": 18,
     "native": 7,
-    "element": 14
+    "element": 23
   },
   "references": [
     {
@@ -90,8 +90,8 @@
       "source": "Oddkin/Icon/checkCircle",
       "sourceId": "159:339",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The checkCircle glyph marks a tone; BadgePresentation is the Figma-only adapter of odd-badge, whose marker takes tone glyphs from the shared tone module with the tone colours."
     },
     {
       "consumer": "Oddkin/AI/Internal/BadgePresentation",
@@ -99,8 +99,8 @@
       "source": "Oddkin/Icon/info",
       "sourceId": "159:333",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The info glyph marks a tone; BadgePresentation is the Figma-only adapter of odd-badge, whose marker takes tone glyphs from the shared tone module with the tone colours."
     },
     {
       "consumer": "Oddkin/AI/Internal/BadgePresentation",
@@ -108,8 +108,8 @@
       "source": "Oddkin/Icon/warning",
       "sourceId": "159:336",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The warning glyph marks a tone; BadgePresentation is the Figma-only adapter of odd-badge, whose marker takes tone glyphs from the shared tone module with the tone colours."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/Approval",
@@ -117,8 +117,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 30,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/ChangeReview",
@@ -126,8 +126,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 20,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/Checkpoint",
@@ -135,8 +135,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 8,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/CheckpointConfirmation",
@@ -144,8 +144,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 16,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/Question",
@@ -153,8 +153,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 20,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/ReviewDismiss",
@@ -162,8 +162,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 8,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DecisionRow/ReviewUndo",
@@ -171,8 +171,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 8,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The decision row (packages/ai/src/internal/decision-row.ts) renders each action as a complete odd-button, keyed by its action."
     },
     {
       "consumer": "Oddkin/AI/Internal/DiffView",
@@ -225,8 +225,8 @@
       "source": "Oddkin/AI/Internal/BadgePresentation",
       "sourceId": "837:2455",
       "count": 11,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The status part (packages/ai/src/internal/status.ts) renders a complete odd-badge; BadgePresentation is its Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/AI/Internal/Waiting",
@@ -234,8 +234,8 @@
       "source": "Oddkin/AI/Internal/BadgePresentation",
       "sourceId": "837:2455",
       "count": 4,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "odd-activity's wait renders the status part's complete odd-badge above its counts; BadgePresentation is its Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/Common/CheckboxOption",

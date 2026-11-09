@@ -13,6 +13,7 @@ export const QUESTION_STRINGS = {
   submit: 'Answer',
   skip: 'Skip',
   submitting: 'Sending your answer…',
+  responding: 'Sending your response…',
   answered: 'Answered.',
   skipped: 'Skipped.',
   expired: 'This question expired; answers are no longer accepted.',
@@ -64,7 +65,7 @@ export class OddkinQuestion extends OddkinElement.with({
 
   /** @internal The answer requested from this view for a question revision; focus recovery. */
   readonly _decisions = new DecisionController(this, () =>
-    this.shadowRoot?.querySelector<HTMLElement>('.state'),
+    this.shadowRoot?.querySelector<HTMLElement>('.outcome'),
   );
   /** @internal Validation message for choice questions. */
   readonly _invalid = signal('');
@@ -110,7 +111,7 @@ export class OddkinQuestion extends OddkinElement.with({
       return;
     }
     this._invalid.value = '';
-    this._decisions.request(`${q.questionId}:${q.revision}`);
+    this._decisions.request(`${q.questionId}:${q.revision}`, 'answer');
     this.emit(questionAnswerEvent, { questionId: q.questionId, revision: q.revision, answer });
   };
 
@@ -118,7 +119,7 @@ export class OddkinQuestion extends OddkinElement.with({
   readonly _skip = (): void => {
     const q = this.question;
     if (!q || this._locked) return;
-    this._decisions.request(`${q.questionId}:${q.revision}`);
+    this._decisions.request(`${q.questionId}:${q.revision}`, 'skip');
     this.emit(questionSkipEvent, { questionId: q.questionId, revision: q.revision });
   };
 

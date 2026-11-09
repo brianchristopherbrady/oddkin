@@ -5,10 +5,12 @@ import {
   deliberate,
   expectNone,
   figma,
+  layersOf,
   mount,
   settle,
   transitions,
   useParity,
+  variantIndex,
   type Target,
 } from '../../components/test/parity.js';
 
@@ -1160,4 +1162,261 @@ describe('Figma parity: odd-action-approval', () => {
       const gap = ins.getBoundingClientRect().top - del.getBoundingClientRect().bottom;
       expect(Math.round(gap)).toBe(space(el, 'xs'));
     });
+});
+
+// The decision row of page 08 (805:3, `Oddkin/AI/Internal/DecisionRow/*`): a family per operation,
+// a variant per state. Each state's frame and lines bind tokens; its buttons are named with their
+// state (`native button · Approve · Loading`), and the row shows those and no others, nor any line
+// the state does not draw. Full density only: the compact one comes with the elements' container
+// layouts (row 21). Not compared: the change review's Failed and Unavailable, and the dismissal's
+// and undo's Unavailable (the review has no capabilities, and a failed proposal is final in its
+// records: propose it again), and the confirmation's Failed and Unavailable (a restore request has
+// no failure of its own before the record says `restore-failed`, and Restore… does not open the
+// confirmation while restoring is unavailable).
+describe('Figma parity: the decision row (page 08)', () => {
+  const LINES: [RegExp, string][] = [
+    [/error/, '.decision-error'],
+    [/pending/, '.pending'],
+    [/capability reason/, '.decision-reason'],
+    [/^state · /, '.outcome'],
+  ];
+  const STATE = /^native button · (.+) · (Default|Disabled|Loading)$/;
+  /** Compares one state of `family`: the row in `root` (the row itself, or what holds it). */
+  const expectState = async (family: string, state: string, root: ParentNode) => {
+    const values = { State: state, Density: 'Full' };
+    const layers = layersOf(figma.get(family)!, variantIndex(figma.get(family)!, values));
+    const row =
+      root instanceof Element && root.matches('.decision')
+        ? root
+        : root.querySelector<HTMLElement>('.decision');
+    const targets: Target[] = row ? [{ layer: [], el: row, kind: 'frame', gap: 'row-gap' }] : [];
+    const drawn: string[] = [];
+    const lines: string[] = [];
+    for (const l of layers) {
+      const name = l.path.at(-1)!;
+      const button = STATE.exec(name);
+      if (button) drawn.push(`${button[1]} ${button[2]}`);
+      else if (l.types.includes('FRAME'))
+        targets.push({
+          layer: l.path,
+          el: root.querySelector('[part="actions"]')!,
+          kind: 'frame',
+          gap: 'column-gap',
+          fields: [['counterAxisSpacing', 'row-gap']],
+        });
+      else if (l.types.includes('TEXT')) {
+        const selector = LINES.find(([pattern]) => pattern.test(name))![1];
+        lines.push(selector);
+        targets.push({ layer: l.path, el: root.querySelector(selector)!, kind: 'text' });
+      }
+    }
+    const shown = [...root.querySelectorAll('[part="actions"] odd-button')].map(
+      (b) =>
+        `${b.textContent!.trim()} ${b.hasAttribute('loading') ? 'Loading' : b.hasAttribute('disabled') ? 'Disabled' : 'Default'}`,
+    );
+    const visible = LINES.map(([, selector]) => selector).filter((selector) => {
+      const line = root.querySelector<HTMLElement>(selector);
+      return !!line && !line.hidden;
+    });
+    await transitions(targets);
+    expectNone(compare(family, values, targets));
+    expect(shown.sort(), `${family} ${state}: buttons`).toEqual(drawn.sort());
+    expect(visible, `${family} ${state}: lines`).toEqual(
+      LINES.map(([, s]) => s).filter((s) => lines.includes(s)),
+    );
+  };
+  const click = async (el: HTMLElement, action: string) => {
+    shadow(el, `[data-action="${action}"]`).click();
+    await settle(el);
+  };
+
+  for (const mode of MODES) {
+    it(`Approval (${mode})`, async () => {
+      await import('../src/action-approval/action-approval.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-action-approval></odd-action-approval>',
+      ) as HTMLElementTagNameMap['odd-action-approval'];
+      type Approval = NonNullable<typeof el.approval>;
+      let revision = 0;
+      const show = async (
+        status: Approval['status'],
+        extra: Partial<Approval> = {},
+        capabilities: typeof el.capabilities = {
+          respondToApproval: { available: true },
+          editApproval: { available: true },
+        },
+      ) => {
+        el.capabilities = capabilities;
+        el.approval = {
+          approvalId: 'ap1',
+          revision: ++revision,
+          title: 'Deploy',
+          status,
+          ...extra,
+        };
+        await settle(el);
+      };
+      const family = 'Oddkin/AI/Internal/DecisionRow/Approval';
+      await show('requested');
+      await expectState(family, 'Ready', el.shadowRoot!);
+      await click(el, 'approve');
+      await expectState(family, 'SubmittingPrimary', el.shadowRoot!);
+      await show('requested');
+      await click(el, 'reject');
+      await expectState(family, 'SubmittingSecondary', el.shadowRoot!);
+      await show('failed', { error: { code: 'x', message: 'The service did not answer.' } });
+      await expectState(family, 'Failed', el.shadowRoot!);
+      await show('approved');
+      await expectState(family, 'Resolved', el.shadowRoot!);
+      await show('rejected');
+      await expectState(family, 'ResolvedSecondary', el.shadowRoot!);
+      await show('requested', {}, { editApproval: { available: true } });
+      await expectState(family, 'Unavailable', el.shadowRoot!);
+    });
+
+    it(`Question (${mode})`, async () => {
+      await import('../src/question/question.define.js');
+      inMode(mode);
+      const el = mount('<odd-question></odd-question>') as HTMLElementTagNameMap['odd-question'];
+      type Question = NonNullable<typeof el.question>;
+      let revision = 0;
+      const show = async (
+        status: Question['status'],
+        extra: Partial<Question> = {},
+        capabilities?: typeof el.capabilities,
+      ) => {
+        el.capabilities = capabilities;
+        el.question = {
+          questionId: 'q1',
+          revision: ++revision,
+          prompt: 'Which format?',
+          kind: 'choice',
+          options: [
+            { id: 'short', label: 'Short' },
+            { id: 'long', label: 'Detailed' },
+          ],
+          status,
+          ...extra,
+        };
+        await settle(el);
+      };
+      const family = 'Oddkin/AI/Internal/DecisionRow/Question';
+      await show('requested');
+      await expectState(family, 'Ready', el.shadowRoot!);
+      shadow(el, 'input[name="choice"]').click();
+      await click(el, 'answer');
+      await expectState(family, 'SubmittingPrimary', el.shadowRoot!);
+      await show('requested');
+      await click(el, 'skip');
+      await expectState(family, 'SubmittingSecondary', el.shadowRoot!);
+      await show('failed', { error: { code: 'x', message: 'The service did not answer.' } });
+      await expectState(family, 'Failed', el.shadowRoot!);
+      await show('answered');
+      await expectState(family, 'Resolved', el.shadowRoot!);
+      await show('skipped');
+      await expectState(family, 'ResolvedSecondary', el.shadowRoot!);
+      await show('requested', {}, {});
+      await expectState(family, 'Unavailable', el.shadowRoot!);
+    });
+
+    it(`Change review: accept, dismiss, undo (${mode})`, async () => {
+      await import('../src/change-review/change-review.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-change-review></odd-change-review>',
+      ) as HTMLElementTagNameMap['odd-change-review'];
+      type Proposal = (typeof el.proposals)[number];
+      let id = 0;
+      const show = async (status: Proposal['status'], extra: Partial<Proposal> = {}) => {
+        el.proposals = [
+          {
+            proposalId: `p${++id}`,
+            baseRevision: 'v1',
+            range: { start: 0, end: 13 },
+            original: 'Original text',
+            replacement: 'Revised text',
+            status,
+            ...extra,
+          },
+        ];
+        await settle(el);
+      };
+      /** The proposal, or only its decision row (without the line above it). */
+      const item = () => shadow(el, '.proposal');
+      const row = () => shadow(el, '.proposal .decision');
+      const review = 'Oddkin/AI/Internal/DecisionRow/ChangeReview';
+      await show('requested');
+      await expectState(review, 'Ready', item());
+      await click(el, 'accept');
+      await expectState(review, 'SubmittingPrimary', item());
+      await show('requested');
+      await click(el, 'reject');
+      await expectState(review, 'SubmittingSecondary', item());
+      await show('applied', { undoable: false });
+      await expectState(review, 'Resolved', item());
+      await show('rejected');
+      await expectState(review, 'ResolvedSecondary', item());
+      const dismiss = 'Oddkin/AI/Internal/DecisionRow/ReviewDismiss';
+      await show('stale');
+      await expectState(dismiss, 'Ready', row());
+      await click(el, 'dismiss');
+      await expectState(dismiss, 'Submitting', row());
+      el.proposals = [{ ...el.proposals[0]!, status: 'rejected' }];
+      await settle(el);
+      await expectState(dismiss, 'Resolved', item());
+      const undo = 'Oddkin/AI/Internal/DecisionRow/ReviewUndo';
+      await show('applied', { undoable: true });
+      await expectState(undo, 'Ready', row());
+      await click(el, 'undo');
+      await expectState(undo, 'Submitting', row());
+      el.proposals = [{ ...el.proposals[0]!, status: 'undone' }];
+      await settle(el);
+      await expectState(undo, 'Resolved', item());
+    });
+
+    it(`Checkpoint and its confirmation (${mode})`, async () => {
+      await import('../src/checkpoint/checkpoint.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-checkpoint></odd-checkpoint>',
+      ) as HTMLElementTagNameMap['odd-checkpoint'];
+      type Checkpoint = NonNullable<typeof el.checkpoint>;
+      const show = async (
+        status: Checkpoint['status'],
+        extra: Partial<Checkpoint> = {},
+        available = true,
+      ) => {
+        el.capabilities = { restoreCheckpoint: { available } };
+        el.checkpoint = {
+          checkpointId: 'c1',
+          label: 'Before revision',
+          description: 'Saved document state.',
+          restores: ['Document content'],
+          status,
+          ...extra,
+        };
+        await settle(el);
+      };
+      const family = 'Oddkin/AI/Internal/DecisionRow/Checkpoint';
+      await show('available');
+      await expectState(family, 'Ready', el.shadowRoot!);
+      await show('restore-pending');
+      await expectState(family, 'SubmittingPrimary', el.shadowRoot!);
+      await show('restore-failed', { error: { code: 'x', message: 'The file is locked.' } });
+      await expectState(family, 'Failed', el.shadowRoot!);
+      await show('restored', { outcome: 'Restored the document to 09:30.' });
+      await expectState(family, 'Resolved', el.shadowRoot!);
+      await show('available', {}, false);
+      await expectState(family, 'Unavailable', el.shadowRoot!);
+      const confirmation = 'Oddkin/AI/Internal/DecisionRow/CheckpointConfirmation';
+      await show('available');
+      await click(el, 'restore');
+      await expectState(confirmation, 'Ready', shadow(el, '.confirm'));
+      await click(el, 'confirm');
+      await expectState(confirmation, 'Submitting', shadow(el, '.confirm'));
+      await show('restored', { outcome: 'Restored the document to 09:30.' });
+      await expectState(confirmation, 'Resolved', el.shadowRoot!);
+    });
+  }
 });

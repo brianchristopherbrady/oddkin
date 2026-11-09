@@ -3,7 +3,7 @@ import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import { mountExample } from '@oddkin/workbench/testing';
 import { createScriptedVoiceAdapter } from '../src/controllers/voice.js';
-import { DocumentSession } from '../src/controllers/document.js';
+import { DocumentSession, type EditProposal } from '../src/controllers/document.js';
 import { highlight } from '../src/highlight/index.js';
 import type {
   ApprovalRecord,
@@ -324,8 +324,9 @@ describe('odd-tool-call and odd-action-approval', () => {
         e.capabilities = { respondToApproval: { available: true } };
       },
     );
-    expect(text($(el, '.state'))).toBe('This request was withdrawn; there is nothing to decide.');
-    expect(($(el, '[part="actions"]') as HTMLElement).hidden).toBe(true);
+    expect(text($(el, '.outcome'))).toBe('This request was withdrawn; there is nothing to decide.');
+    expect($(el, '[part="actions"]')).toBeNull();
+    expect(($(el, '.reason') as HTMLElement).hidden).toBe(true);
   });
 
   describe('scopes (ADR 0049 §6 item 3)', () => {
@@ -353,7 +354,7 @@ describe('odd-tool-call and odd-action-approval', () => {
       );
     const approve = (el: Element) => $(el, 'odd-button[appearance="primary"]') as HTMLButtonElement;
     const reject = (el: Element) => $$(el, '[part="actions"] odd-button')[1] as HTMLButtonElement;
-    const note = (el: Element) => text($(el, '.actions + .muted'));
+    const note = (el: Element) => text($(el, '.decision + .muted'));
     const radios = (el: Element) => $$(el, 'input[name="scope"]') as HTMLInputElement[];
 
     it('two or more: the person chooses, and Approve sends the choice; a new revision resets it', async () => {
@@ -503,7 +504,7 @@ describe('odd-tool-call and odd-action-approval', () => {
     approve().click();
     await settle(el);
     expect(decisions).toHaveLength(1);
-    expect(text($(el, '.state'))).toBe('Submitting your decision…');
+    expect(text($(el, '.pending'))).toBe('Submitting your decision…');
     expect(approve().hasAttribute('loading')).toBe(true);
     expect(text($(el, '[part="changes"]'))).toContain('Before: Draft');
     el.approval = approval('requested', 2);
@@ -521,15 +522,13 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(decisions).toHaveLength(3);
     el.approval = approval('approved', 2);
     await settle(el);
-    expect($(el, '[part="actions"]')!.hidden).toBe(true);
-    expect(text($(el, '.state'))).toContain('runs separately');
+    expect($(el, '[part="actions"]')).toBeNull();
+    expect(text($(el, '.outcome'))).toContain('runs separately');
     el.capabilities = {};
     el.approval = approval('requested', 3);
     await settle(el);
     expect(approve().hasAttribute('disabled')).toBe(true);
-    expect(text(el.shadowRoot!.querySelector('[part="actions"] + .muted'))).toBe(
-      'Decisions are not available here.',
-    );
+    expect(text($(el, '.decision-reason'))).toBe('Decisions are not available here.');
   });
 
   it('their examples play the host: Retry runs the call again; each decision is recorded', async () => {
@@ -564,10 +563,10 @@ describe('odd-tool-call and odd-action-approval', () => {
         decision: 'approve',
         reason: 'Ship before noon.',
       });
-      expect(text($(el, '.state'))).toBe(
+      expect(text($(el, '.outcome'))).toBe(
         'Approved. The action runs separately; its result appears with the action.',
       );
-      expect($(el, '[part="actions"]')!.hidden).toBe(true);
+      expect($(el, '[part="actions"]')).toBeNull();
     } finally {
       approved.dispose();
     }
@@ -584,7 +583,7 @@ describe('odd-tool-call and odd-action-approval', () => {
         decision: 'reject',
         reason: 'Not before Friday.',
       });
-      expect(text($(el, '.state'))).toBe('Rejected. The action will not run.');
+      expect(text($(el, '.outcome'))).toBe('Rejected. The action will not run.');
     } finally {
       rejected.dispose();
     }
@@ -692,7 +691,41 @@ describe('the shared decision row (ADR 0049 §4)', () => {
     ]);
   });
 
-  it("keeps the question's small buttons: Answer loads for an answer or a skip, Skip never", async () => {
+  it("keeps focus on the approval's chosen button while it waits and after a failure, which keeps the reason; then on the outcome (Figma page 08)", async () => {
+    const record = (
+      status: ApprovalRecord['status'],
+      extra: Partial<ApprovalRecord> = {},
+    ): ApprovalRecord => ({ approvalId: 'ap', revision: 1, title: 'Deploy', status, ...extra });
+    const el = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = record('requested');
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+    const reason = $(el, '.reason textarea') as HTMLTextAreaElement;
+    reason.value = 'Not this week.';
+    reason.dispatchEvent(new Event('input', { bubbles: true }));
+    const reject = $(el, '[data-action="reject"]') as HTMLElement;
+    reject.focus();
+    reject.click();
+    await settle(el);
+    expect(reject.hasAttribute('loading')).toBe(true);
+    expect(el.shadowRoot!.activeElement).toBe(reject);
+    el.approval = record('failed', { error: { code: 'x', message: 'Timed out.' } });
+    await settle(el);
+    expect(text($(el, '.decision-error'))).toBe('Your decision was not recorded: Timed out.');
+    expect(reason.value).toBe('Not this week.');
+    expect(reject.hasAttribute('disabled')).toBe(false);
+    expect(el.shadowRoot!.activeElement).toBe(reject);
+    el.approval = record('rejected');
+    await settle(el);
+    await frames(2);
+    expect(el.shadowRoot!.activeElement).toBe($(el, '.outcome'));
+  });
+
+  it("keeps the question's buttons: the chosen one loads, Answer for an answer, Skip for a skip", async () => {
     const el = await mount(
       'odd-question',
       () => import('../src/question/question.define.js'),
@@ -707,15 +740,16 @@ describe('the shared decision row (ADR 0049 §4)', () => {
       },
     );
     expect(look(el)).toEqual([
-      ['answer', 'sm', 'primary', 'submit'],
-      ['skip', 'sm', 'ghost', null],
+      ['answer', 'md', 'primary', 'submit'],
+      ['skip', 'md', 'secondary', null],
     ]);
     row(el)[1]!.click();
     await settle(el);
     expect(state(el)).toEqual([
-      [true, false],
       [false, true],
+      [true, false],
     ]);
+    expect(text($(el, '.pending'))).toBe('Sending your response…');
   });
 
   it("keeps the checkpoint's Restore… disabled, with the host's reason, while restoring is unavailable", async () => {
@@ -733,17 +767,18 @@ describe('the shared decision row (ADR 0049 §4)', () => {
         e.capabilities = { restoreCheckpoint: { available: false, reason: 'Read-only.' } };
       },
     );
-    expect(look(el)).toEqual([['restore', 'sm', 'secondary', null]]);
+    expect(look(el)).toEqual([['restore', 'md', 'primary', null]]);
     expect(state(el)).toEqual([[false, true]]);
-    expect(text($(el, '[part="actions"] .muted'))).toBe('Read-only.');
+    expect(text($(el, '.decision-reason'))).toBe('Read-only.');
     el.capabilities = { restoreCheckpoint: { available: true } };
     await settle(el);
     expect(state(el)).toEqual([[false, false]]);
+    expect(($(el, '.decision-reason') as HTMLElement).hidden).toBe(true);
   });
 });
 
 describe('odd-checkpoint', () => {
-  it('approval and checkpoint statuses take their tones from one map (ADR 0049 §4)', async () => {
+  it('approval and checkpoint lines follow their records: an outcome in its tone, a failure, or a pending line (Figma page 08)', async () => {
     const approval = await mount(
       'odd-action-approval',
       () => import('../src/action-approval/action-approval.define.js'),
@@ -754,35 +789,40 @@ describe('odd-checkpoint', () => {
       () => import('../src/checkpoint/checkpoint.define.js'),
       () => {},
     );
-    const tones = async <S extends string>(
+    const lines = async <S extends string>(
       el: HTMLElement & { updateComplete: Promise<void> },
       statuses: readonly S[],
       set: (status: S) => void,
     ) => {
-      const out: Record<string, string | undefined> = {};
+      const out: Record<string, string> = {};
       for (const status of statuses) {
         set(status);
         await settle(el);
-        out[status] = $(el, '.state')!.dataset['tone'];
+        const outcome = $(el, '.outcome');
+        out[status] = outcome
+          ? `outcome:${outcome.dataset['tone']}`
+          : (['decision-error', 'pending'].find(
+              (line) => !($(el, `.${line}`) as HTMLElement).hidden,
+            ) ?? 'none');
       }
       return out;
     };
     expect(
-      await tones(
+      await lines(
         approval,
         ['approved', 'rejected', 'failed', 'submitting', 'requested', 'expired'] as const,
         (status) => (approval.approval = { approvalId: 'ap', revision: 1, title: 'Send', status }),
       ),
     ).toEqual({
-      approved: 'success',
-      rejected: 'danger',
-      failed: 'danger',
-      submitting: 'active',
-      requested: '',
-      expired: '',
+      approved: 'outcome:success',
+      rejected: 'outcome:danger',
+      failed: 'decision-error',
+      submitting: 'pending',
+      requested: 'none',
+      expired: 'outcome:',
     });
     expect(
-      await tones(
+      await lines(
         checkpoint,
         ['restored', 'restore-failed', 'restore-pending', 'available'] as const,
         (status) =>
@@ -795,10 +835,10 @@ describe('odd-checkpoint', () => {
           }),
       ),
     ).toEqual({
-      restored: 'success',
-      'restore-failed': 'danger',
-      'restore-pending': 'active',
-      available: '',
+      restored: 'outcome:success',
+      'restore-failed': 'decision-error',
+      'restore-pending': 'pending',
+      available: 'none',
     });
   });
 
@@ -824,34 +864,96 @@ describe('odd-checkpoint', () => {
     );
     const requests: unknown[] = [];
     el.addEventListener('odd-checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
-    // No status while it can be restored. Restore… hands focus to the confirmation, and Keep
-    // current state hands it back to Restore….
-    expect($(el, '.state')!.hidden).toBe(true);
-    ($(el, '[part="actions"] odd-button') as HTMLElement).focus();
-    $(el, '[part="actions"] odd-button')!.click();
+    // No outcome while it can be restored. Restore… opens the confirmation at Keep current
+    // state (Figma page 08), which hands focus back to Restore….
+    const restore = () => $(el, '[data-action="restore"]') as HTMLElement;
+    expect($(el, '.outcome')).toBeNull();
+    restore().focus();
+    restore().click();
     await settle(el);
     await frames(2);
-    expect(el.shadowRoot!.activeElement).toBe($(el, '[data-action="confirm"]'));
-    ($(el, '.confirm odd-button[appearance="ghost"]') as HTMLElement).focus();
-    $(el, '.confirm odd-button[appearance="ghost"]')!.click();
+    expect(el.shadowRoot!.activeElement).toBe($(el, '[data-action="cancel"]'));
+    $(el, '[data-action="cancel"]')!.click();
     await settle(el);
     await frames(2);
-    expect(el.shadowRoot!.activeElement).toBe($(el, '[part="actions"] odd-button'));
-    $(el, '[part="actions"] odd-button')!.click();
+    expect(el.shadowRoot!.activeElement).toBe(restore());
+    restore().click();
     await settle(el);
     expect(text($(el, '.confirm'))).toContain('Restore to “Before refactor”?');
-    $(el, '[data-action="confirm"]')!.click();
+    // The confirmation stays while the request is in flight, its button loading and focused.
+    const confirm = $(el, '[data-action="confirm"]') as HTMLElement;
+    confirm.focus();
+    confirm.click();
+    confirm.click();
     await settle(el);
     expect(requests).toEqual([{ checkpointId: 'cp' }]);
-    expect(text($(el, '.state'))).toBe('Restoring… Not restored yet.');
+    expect(text($(el, '.pending'))).toBe('Restoring… Not restored yet.');
+    expect(confirm.hasAttribute('loading')).toBe(true);
+    expect($(el, '[data-action="cancel"]')!.hasAttribute('disabled')).toBe(true);
+    expect(el.shadowRoot!.activeElement).toBe(confirm);
+    // A failure closes it and keeps Restore… for a retry; focus goes there.
     el.checkpoint = record('restore-failed', {
       error: { code: 'x', message: 'Conflict in src/a.ts' },
     });
     await settle(el);
-    expect(text($(el, '.state'))).toBe('Restore failed: Conflict in src/a.ts');
+    await frames(2);
+    expect(text($(el, '.decision-error'))).toBe('Restore failed: Conflict in src/a.ts');
+    expect(el.shadowRoot!.activeElement).toBe(restore());
     el.checkpoint = record('restored', { outcome: 'Workspace matches step 3.' });
     await settle(el);
-    expect(text($(el, '.state'))).toBe('Restored. Workspace matches step 3.');
+    await frames(2);
+    expect(text($(el, '.outcome'))).toBe('Restored. Workspace matches step 3.');
+    expect(el.shadowRoot!.activeElement).toBe($(el, '.outcome'));
+  });
+
+  it('closes the confirmation once the record settles, even when the host re-appends the element on each update', async () => {
+    const record = (
+      status: CheckpointRecord['status'],
+      extra: Partial<CheckpointRecord> = {},
+    ): CheckpointRecord => ({
+      checkpointId: 'cp',
+      label: 'Before refactor',
+      description: 'Files as of step 3.',
+      restores: ['src/'],
+      status,
+      ...extra,
+    });
+    const el = await mount(
+      'odd-checkpoint',
+      () => import('../src/checkpoint/checkpoint.define.js'),
+      (e) => {
+        e.checkpoint = record('available');
+        e.capabilities = { restoreCheckpoint: { available: true } };
+      },
+    );
+    // A keyed list that re-appends its children on every update (the ai-agent example's).
+    const update = async (next: CheckpointRecord) => {
+      const parent = el.parentElement!;
+      el.remove();
+      el.checkpoint = next;
+      parent.append(el);
+      await settle(el);
+    };
+    el.addEventListener('odd-checkpoint-restore', () => void update(record('restore-pending')));
+    $(el, '[data-action="restore"]')!.click();
+    await settle(el);
+    $(el, '[data-action="confirm"]')!.click();
+    await settle(el);
+    expect(text($(el, '.confirm .pending'))).toBe('Restoring… Not restored yet.');
+    await update(record('restore-failed', { error: { code: 'x', message: 'Conflict.' } }));
+    expect($(el, '.confirm')).toBeNull();
+    expect(text($(el, '.decision-error'))).toBe('Restore failed: Conflict.');
+    // A retry that fails the same way ends in the same place, not in the confirmation again.
+    $(el, '[data-action="restore"]')!.click();
+    await settle(el);
+    $(el, '[data-action="confirm"]')!.click();
+    await settle(el);
+    await update(record('restore-failed', { error: { code: 'x', message: 'Conflict.' } }));
+    expect($(el, '.confirm')).toBeNull();
+    expect(text($(el, '.decision-error'))).toBe('Restore failed: Conflict.');
+    await update(record('restored', { outcome: 'Back to step 3.' }));
+    expect($(el, '.confirm')).toBeNull();
+    expect(text($(el, '.outcome'))).toBe('Restored. Back to step 3.');
   });
 
   it('its default example plays the host: a confirmed restore comes back restored', async () => {
@@ -860,12 +962,12 @@ describe('odd-checkpoint', () => {
     const mounted = await mountExample(set, 'default', container);
     try {
       const el = mounted.element;
-      $(el, '[part="actions"] odd-button')!.click();
+      $(el, '[data-action="restore"]')!.click();
       await settle(el);
       $(el, '[data-action="confirm"]')!.click();
       await settle(el);
       expect(el.checkpoint?.status).toBe('restored');
-      expect(text($(el, '.state'))).toBe('Restored. Restored the document to 09:30.');
+      expect(text($(el, '.outcome'))).toBe('Restored. Restored the document to 09:30.');
     } finally {
       mounted.dispose();
     }
@@ -1076,9 +1178,9 @@ describe('selection, review, and controls', () => {
     // The other proposal was made for the earlier text: out of date, so Dismiss.
     expect(text(item(1).querySelector('[part="status"]'))).toContain('Out of date');
     expect(actions(item(1))).toEqual(['Dismiss']);
-    (item(1).querySelector('[data-action="reject"]') as HTMLElement).click();
+    (item(1).querySelector('[data-action="dismiss"]') as HTMLElement).click();
     await sync();
-    expect(text(item(1).querySelector('[part="status"]'))).toBe('Rejected');
+    expect(text(item(1).querySelector('[part="status"]'))).toBe('Dismissed');
     expect(item(1).querySelector('[part="actions"]')).toBeNull();
     // After a user edit the session can no longer undo the change, so no Undo.
     doc.setText(`${doc.getSnapshot().text} Soon.`);
@@ -1087,6 +1189,82 @@ describe('selection, review, and controls', () => {
     expect(text(item(0).querySelector('[part="status"]'))).toBe('Applied');
     expect(item(0).querySelector('[part="actions"]')).toBeNull();
     expect(requests).toEqual(['accept rewrite', 'reject who']);
+  });
+
+  it('odd-change-review asks once, keeps focus on the chosen button while it waits, then on the status, never on Undo (Figma page 08)', async () => {
+    const proposal = (status: EditProposal['status'], undoable?: boolean): EditProposal => ({
+      proposalId: 'p',
+      baseRevision: 'v1',
+      range: { start: 0, end: 5 },
+      original: 'Hello',
+      replacement: 'Hi',
+      status,
+      ...(undoable === undefined ? {} : { undoable }),
+    });
+    const el = await mount(
+      'odd-change-review',
+      () => import('../src/change-review/change-review.define.js'),
+      (e) => {
+        e.proposals = [proposal('requested')];
+      },
+    );
+    const requests: string[] = [];
+    el.addEventListener('odd-change-accept', () => requests.push('accept'));
+    const accept = $(el, '[data-action="accept"]') as HTMLElement;
+    accept.focus();
+    accept.click();
+    accept.click();
+    await settle(el);
+    expect(requests).toEqual(['accept']);
+    expect(accept.hasAttribute('loading')).toBe(true);
+    expect(text($(el, '.pending'))).toBe('Applying…');
+    expect(el.shadowRoot!.activeElement).toBe(accept);
+    // A host that re-appends the element on an unrelated update leaves the request in flight.
+    const parent = el.parentElement!;
+    el.remove();
+    el.proposals = [proposal('requested')];
+    parent.append(el);
+    await settle(el);
+    ($(el, '[data-action="accept"]') as HTMLElement).click();
+    expect(requests).toEqual(['accept']);
+    expect($(el, '[data-action="accept"]')!.hasAttribute('loading')).toBe(true);
+    ($(el, '[data-action="accept"]') as HTMLElement).focus();
+    el.proposals = [proposal('applied', true)];
+    await settle(el);
+    await frames(2);
+    expect(text($(el, '[part="status"]'))).toBe('Applied');
+    expect($(el, '[data-action="undo"]')).not.toBeNull();
+    expect(el.shadowRoot!.activeElement).toBe($(el, '[part="status"]'));
+  });
+
+  it('odd-change-review takes a new request once the record moved on, even back to where it was asked', async () => {
+    const proposal = (status: EditProposal['status']): EditProposal => ({
+      proposalId: 'p',
+      baseRevision: 'v1',
+      range: { start: 0, end: 5 },
+      original: 'Hello',
+      replacement: 'Hi',
+      status,
+    });
+    const el = await mount(
+      'odd-change-review',
+      () => import('../src/change-review/change-review.define.js'),
+      (e) => {
+        e.proposals = [proposal('requested')];
+      },
+    );
+    const requests: string[] = [];
+    el.addEventListener('odd-change-accept', () => requests.push('accept'));
+    const accept = () => $(el, '[data-action="accept"]') as HTMLElement;
+    accept().click();
+    await settle(el);
+    el.proposals = [proposal('failed')];
+    await settle(el);
+    el.proposals = [proposal('requested')];
+    await settle(el);
+    expect(accept().hasAttribute('loading')).toBe(false);
+    accept().click();
+    expect(requests).toEqual(['accept', 'accept']);
   });
 
   it("odd-change-review: its default example plays the host, so the reader sees each request's outcome", async () => {
@@ -1112,7 +1290,7 @@ describe('selection, review, and controls', () => {
     } finally {
       mounted.dispose();
     }
-    // An edit to the text puts a pending proposal out of date, and Reject removes it.
+    // An edit to the text puts a pending proposal out of date, and Dismiss removes it.
     const again = await mountExample(set, 'default', container);
     try {
       const el = again.element;
@@ -1121,9 +1299,9 @@ describe('selection, review, and controls', () => {
       field.dispatchEvent(new Event('input', { bubbles: true }));
       await settle(el);
       expect($$(el, '.state').map(text)).toEqual([expect.stringContaining('Out of date')]);
-      $(el, 'odd-button[data-action="reject"]')!.click();
+      $(el, 'odd-button[data-action="dismiss"]')!.click();
       await settle(el);
-      expect($$(el, '.state').map(text)).toEqual(['Rejected']);
+      expect($$(el, '.state').map(text)).toEqual(['Dismissed']);
     } finally {
       again.dispose();
     }
@@ -2094,18 +2272,18 @@ describe('odd-question and odd-task-plan examples', () => {
       },
     );
     const submit = () => $(el, 'odd-button[type="submit"]') as HTMLButtonElement;
-    expect(text($(el, '.state'))).toBe('This service asks nothing.');
+    expect(text($(el, '.decision-reason'))).toBe('This service asks nothing.');
     expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
     expect(submit().disabled).toBe(true);
     el.capabilities = {};
     await settle(el);
-    expect(text($(el, '.state'))).toBe('Answers are not available here.');
+    expect(text($(el, '.decision-reason'))).toBe('Answers are not available here.');
     // Without capabilities the question stays usable on its own.
     el.capabilities = undefined;
     await settle(el);
     expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(false);
     expect(submit().disabled).toBe(false);
-    expect($(el, '.state')!.hidden).toBe(true);
+    expect(($(el, '.decision-reason') as HTMLElement).hidden).toBe(true);
   });
 
   it("odd-question's default example plays the host: an answer or a skip comes back recorded", async () => {
@@ -2118,17 +2296,17 @@ describe('odd-question and odd-task-plan examples', () => {
       $(el, 'odd-button[type="submit"]')!.click();
       await settle(el);
       expect(el.question).toMatchObject({ status: 'answered', answer: { choice: 'eng' } });
-      expect(text($(el, '.state'))).toBe('Answered.');
+      expect(text($(el, '.outcome'))).toBe('Answered.');
     } finally {
       answered.dispose();
     }
     const skipped = await mountExample(set, 'default', container);
     try {
       const el = skipped.element;
-      $(el, '[part="actions"] odd-button[appearance="ghost"]')!.click();
+      $(el, 'odd-button[data-action="skip"]')!.click();
       await settle(el);
       expect(el.question?.status).toBe('skipped');
-      expect(text($(el, '.state'))).toBe('Skipped.');
+      expect(text($(el, '.outcome'))).toBe('Skipped.');
     } finally {
       skipped.dispose();
     }
@@ -2155,12 +2333,12 @@ describe('odd-question and odd-task-plan examples', () => {
       const el = replaced.element;
       el.question = { ...el.question!, status: 'superseded' };
       await settle(el);
-      expect(text($(el, '.state'))).toBe('This question changed. Answer the new version.');
+      expect(text($(el, '.outcome'))).toBe('This question changed. Answer the new version.');
       expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
       // Withdrawn when its run ended: nothing to answer.
       el.question = { ...el.question!, status: 'cancelled' };
       await settle(el);
-      expect(text($(el, '.state'))).toBe('This question was withdrawn; no answer is needed.');
+      expect(text($(el, '.outcome'))).toBe('This question was withdrawn; no answer is needed.');
       expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
     } finally {
       replaced.dispose();
@@ -2188,7 +2366,7 @@ describe('odd-question and odd-task-plan examples', () => {
       $(question, 'odd-button[type="submit"]')!.click();
       await settle(question);
       await settle(el);
-      expect(text($(question, '.state'))).toBe('Answered.');
+      expect(text($(question, '.outcome'))).toBe('Answered.');
       expect(el.plan?.steps.map((step) => step.status)).toEqual([
         'done',
         'active',

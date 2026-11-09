@@ -41,11 +41,4 @@ export const questionStyles = css`
     color: inherit;
     font: inherit;
   }
-  .state {
-    font-size: ${token('font.size.sm')};
-    color: ${token('color.text.secondary')};
-  }
-  .state[data-status='failed'] {
-    color: ${token('color.danger.foreground')};
-  }
 `;

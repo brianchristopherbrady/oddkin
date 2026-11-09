@@ -22,15 +22,6 @@ export const checkpointStyles = css`
     padding: 0;
     list-style-position: inside;
   }
-  .state {
-    font-size: ${token('font.size.sm')};
-  }
-  .state[data-tone='success'] {
-    color: ${token('color.success.foreground')};
-  }
-  .state[data-tone='danger'] {
-    color: ${token('color.danger.foreground')};
-  }
   .confirm {
     padding: ${token('space.xs')};
     border-radius: ${token('radius.sm')};

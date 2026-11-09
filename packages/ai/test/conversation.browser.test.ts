@@ -343,7 +343,7 @@ describe('odd-conversation', () => {
     expect((approval as unknown as { approval: { status: string } }).approval.status).toBe(
       'approved',
     );
-    expect(approval.shadowRoot!.querySelector('.state')?.textContent).toContain(
+    expect(approval.shadowRoot!.querySelector('.outcome')?.textContent).toContain(
       'The action runs separately',
     );
     expect(activity()).toBe('Responding…');
@@ -421,9 +421,9 @@ describe('odd-conversation', () => {
       status: 'answered',
       answer: { choice: 'all' },
     });
-    expect(inner.querySelector('.state')?.textContent?.trim()).toBe('Answered.');
-    // The answer's controls went: focus moved to the question's status, not the page.
-    expect(inner.activeElement).toBe(inner.querySelector('.state'));
+    expect(inner.querySelector('.outcome')?.textContent?.trim()).toBe('Answered.');
+    // The answer's controls went: focus moved to the question's outcome, not the page.
+    expect(inner.activeElement).toBe(inner.querySelector('.outcome'));
     release();
   });
 

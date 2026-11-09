@@ -1,12 +1,14 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
-import { decisionRow } from '../internal/decision-row.js';
-import { toneOf } from '../internal/status.js';
+import { decisionRow, type DecisionState } from '../internal/decision-row.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
-/** Anatomy: a labelled `base` group with summary, target, `changes`, `scope`, status, and `actions`. */
+/**
+ * Anatomy: a labelled `base` group with summary, target, `changes`, `scope`, the reason, and the
+ * decision row (Figma page 08): Approve, Reject and Edit, or the outcome in their place.
+ */
 export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const t = host._strings;
   const approval = host.approval;
@@ -15,17 +17,26 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const approveBlocked = host._approveBlocked;
   const scopes = approval.scopes ?? [];
   const scope = host._scopeOf(approval);
-  const pending =
-    approval.status === 'submitting' || (blocked === '' && approval.status === 'requested');
+  const status = approval.status;
   const decided = host._decisions.choice(host._key(approval));
-  const actionable = approval.status === 'requested' || approval.status === 'failed';
-  const statusText =
-    approval.status === 'failed'
-      ? format(t.failed, { message: approval.error?.message ?? '' })
-      : pending
-        ? t.submitting
-        : t[approval.status];
-  const tone = toneOf(pending ? 'submitting' : approval.status);
+  const actionable = status === 'requested' || status === 'failed';
+  const pending = status === 'submitting' || (actionable && decided !== undefined);
+  const state: DecisionState = pending
+    ? { loading: decided, pending: t.submitting }
+    : actionable
+      ? {
+          error:
+            status === 'failed'
+              ? format(t.failed, { message: approval.error?.message ?? '' })
+              : undefined,
+          unavailable: blocked || undefined,
+        }
+      : {
+          outcome: {
+            text: t[status as Exclude<typeof status, 'requested' | 'submitting' | 'failed'>],
+            tone: status === 'approved' ? 'success' : status === 'rejected' ? 'danger' : undefined,
+          },
+        };
   const expires = host._expires();
   return html`<div
     part="base"
@@ -95,44 +106,43 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
             </fieldset>`
           : null
     }
-    <p class="state" data-tone=${tone}>${statusText}</p>
-    <div part="actions" class="actions" ?hidden=${!actionable}>
-      <label class="reason">
-        <span class="muted">${t.reason}</span>
-        <textarea
-          rows="1"
-          .value=${host._reason.value}
-          @input=${host._onReason}
-          ?disabled=${blocked !== undefined}
-        ></textarea>
-      </label>
-      ${decisionRow(
-        undefined,
-        [
-          {
-            action: 'approve',
-            label: t.approve,
-            appearance: 'primary',
-            disabled: approveBlocked !== undefined,
-            onClick: host._approve,
-          },
-          {
-            action: 'reject',
-            label: t.reject,
-            disabled: blocked !== undefined,
-            onClick: host._reject,
-          },
-          can(host.capabilities, 'editApproval') && {
-            action: 'edit',
-            label: t.edit,
-            appearance: 'ghost',
-            disabled: blocked !== undefined,
-            onClick: host._edit,
-          },
-        ],
-        pending ? decided : undefined,
-      )}
-    </div>
-    <p class="muted" ?hidden=${!actionable || !approveBlocked}>${approveBlocked ?? ''}</p>
+    <p class="state" ?hidden=${status !== 'requested' || pending}>${t.requested}</p>
+    <label class="reason" ?hidden=${!actionable && !pending}>
+      <span class="muted">${t.reason}</span>
+      <textarea
+        rows="1"
+        .value=${host._reason.value}
+        @input=${host._onReason}
+        ?disabled=${blocked !== undefined}
+      ></textarea>
+    </label>
+    ${decisionRow(
+      [
+        {
+          action: 'approve',
+          label: t.approve,
+          appearance: 'primary',
+          disabled: approveBlocked !== undefined,
+          onClick: host._approve,
+        },
+        {
+          action: 'reject',
+          label: t.reject,
+          disabled: blocked !== undefined,
+          onClick: host._reject,
+        },
+        can(host.capabilities, 'editApproval') && {
+          action: 'edit',
+          label: t.edit,
+          appearance: 'ghost',
+          disabled: blocked !== undefined,
+          onClick: host._edit,
+        },
+      ],
+      state,
+    )}
+    <p class="muted" ?hidden=${!actionable || pending || !approveBlocked || !!blocked}>
+      ${approveBlocked ?? ''}
+    </p>
   </div>`;
 };

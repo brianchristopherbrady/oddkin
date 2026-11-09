@@ -31,7 +31,7 @@ export const CHECKPOINT_STRINGS = {
  * @csspart restores - The list of state the restore replaces.
  * @csspart actions - Restore and confirmation controls.
  * @a11y A labelled group; restore needs an explicit confirmation step; status is text.
- * @keyboard Tab and Enter or Space; when controls disappear, focus moves to the confirmation, or back to the status (to Restore… when no status shows).
+ * @keyboard Tab and Enter or Space; Restore… opens the confirmation with focus on Keep current state; when a focused control disappears, focus moves to the outcome, or to Restore….
  * @useFor Restoring agent or editor state to an earlier point.
  * @notFor Undoing a single text edit; use the change review's undo.
  * @customization 1 2
@@ -57,21 +57,24 @@ export class OddkinCheckpoint extends OddkinElement.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinCheckpoint>;
 
-  /** @internal Confirmation step (presentation state). */
-  readonly _confirming = signal(false);
   /**
-   * @internal Restore requested from this view for a checkpoint id; focus recovery. While
-   * confirming, a vanished control hands focus to the confirmation, else to the status, or to
-   * Restore… when there is no status.
+   * @internal The confirmation step (presentation state): the checkpoint and status it was opened
+   * at. It shows while the record keeps that status, then while this view's request is in flight.
+   */
+  readonly _confirming = signal<
+    { readonly id: string; readonly status: CheckpointRecord['status'] } | undefined
+  >(undefined);
+  /**
+   * @internal Restore requested from this view for a checkpoint id; focus recovery. A vanished
+   * control hands focus to the open confirmation's Keep current state, else to the outcome, or to
+   * Restore….
    */
   readonly _decisions = new DecisionController(
     this,
     () =>
-      (this._confirming.peek()
-        ? this.shadowRoot?.querySelector<HTMLElement>('[data-action="confirm"]')
-        : undefined) ??
-      this.shadowRoot?.querySelector<HTMLElement>('.state:not([hidden])') ??
-      this.shadowRoot?.querySelector<HTMLElement>('[part="actions"] odd-button'),
+      this.shadowRoot?.querySelector<HTMLElement>('[data-action="cancel"]') ??
+      this.shadowRoot?.querySelector<HTMLElement>('.outcome') ??
+      this.shadowRoot?.querySelector<HTMLElement>('[data-action="restore"]'),
   );
 
   /** @internal */
@@ -96,18 +99,26 @@ export class OddkinCheckpoint extends OddkinElement.with({
 
   /** @internal */
   readonly _ask = (): void => {
-    if (this._unavailable === undefined) this._confirming.value = true;
+    const c = this.checkpoint;
+    if (
+      !c ||
+      this._unavailable !== undefined ||
+      c.status === 'restore-pending' ||
+      this._decisions.asked(c.checkpointId)
+    )
+      return;
+    this._confirming.value = { id: c.checkpointId, status: c.status };
   };
   /** @internal */
   readonly _cancel = (): void => {
-    this._confirming.value = false;
+    this._confirming.value = undefined;
   };
-  /** @internal */
+  /** @internal The confirmation stays, its button loading, while the request is in flight. */
   readonly _restore = (): void => {
     const c = this.checkpoint;
     if (!c || this._unavailable !== undefined || this._decisions.asked(c.checkpointId)) return;
     if (c.status === 'restore-pending') return;
-    this._confirming.value = false;
+    this._confirming.value = undefined;
     this._decisions.request(c.checkpointId);
     this.emit(checkpointRestoreEvent, { checkpointId: c.checkpointId });
   };

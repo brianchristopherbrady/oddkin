@@ -1,29 +1,35 @@
 import { html } from '@oddkin/core/template';
-import { decisionRow } from '../internal/decision-row.js';
-import { toneOf } from '../internal/status.js';
+import { decisionRow, type DecisionState } from '../internal/decision-row.js';
 import { format } from '../internal/strings.js';
 import type { OddkinCheckpoint } from './checkpoint.js';
 
-/** Anatomy: labelled `base` with description, `restores` list, status, and `actions`. */
+/**
+ * Anatomy: labelled `base` with description and `restores` list, then the decision row (Figma page
+ * 08): Restore… with its pending line, failure, reason or outcome, or in its place the
+ * confirmation, whose Restore this checkpoint loads while the request is in flight.
+ */
 export const checkpointTemplate = (host: OddkinCheckpoint) => {
   const t = host._strings;
   const c = host.checkpoint;
   if (!c) return html``;
-  const requested = host._decisions.asked(c.checkpointId);
-  const pending = c.status === 'restore-pending' || (requested && c.status === 'available');
-  const confirming = host._confirming.value && !pending;
-  const status = pending
-    ? t['restore-pending']
-    : c.status === 'restored'
-      ? format(t.restored, { outcome: c.outcome ?? '' })
-      : c.status === 'restore-failed'
-        ? format(t['restore-failed'], { message: c.error?.message ?? '' })
-        : c.status === 'unavailable'
-          ? t.unavailable
-          : '';
-  const tone = toneOf(pending ? 'restore-pending' : c.status);
-  const unavailable = host._unavailable;
+  const asked = host._decisions.asked(c.checkpointId);
+  const pending = c.status === 'restore-pending' || asked;
+  // Open while the record keeps the status it was opened at; confirmed, while its request is out.
+  const open = host._confirming.value;
+  const confirming = asked || (open?.id === c.checkpointId && open.status === c.status);
   const created = host._created();
+  const state: DecisionState =
+    c.status === 'restored'
+      ? { outcome: { text: format(t.restored, { outcome: c.outcome ?? '' }), tone: 'success' } }
+      : pending
+        ? { loading: 'restore', pending: t['restore-pending'] }
+        : {
+            error:
+              c.status === 'restore-failed'
+                ? format(t['restore-failed'], { message: c.error?.message ?? '' })
+                : undefined,
+            unavailable: host._unavailable,
+          };
   return html`<div
     part="base"
     class="base"
@@ -38,28 +44,27 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
     <ul part="restores" class="restores" ?hidden=${!c.restores.length}>
       ${c.restores.map((item) => html`<li>${item}</li>`)}
     </ul>
-    <p class="state" data-tone=${tone} ?hidden=${!status}>${status}</p>
-    <div part="actions" class="actions" ?hidden=${confirming || pending}>
-      ${decisionRow('sm', [
-        {
-          action: 'restore',
-          label: t.restore,
-          disabled: unavailable !== undefined || c.status === 'unavailable',
-          onClick: host._ask,
-        },
-      ])}
-      <span class="muted" ?hidden=${!unavailable || c.status === 'unavailable'}
-        >${unavailable ?? ''}</span
-      >
-    </div>
-    <div class="confirm" role="group" aria-labelledby="confirm-text" ?hidden=${!confirming}>
-      <p id="confirm-text">${format(t.confirmText, { label: c.label })}</p>
-      <div class="actions">
-        ${decisionRow('sm', [
-          { action: 'confirm', label: t.confirm, appearance: 'primary', onClick: host._restore },
-          { action: 'cancel', label: t.cancel, appearance: 'ghost', onClick: host._cancel },
-        ])}
-      </div>
-    </div>
+    ${
+      confirming
+        ? html`<div class="confirm" role="group" aria-labelledby="confirm-text">
+            <p id="confirm-text">${format(t.confirmText, { label: c.label })}</p>
+            ${decisionRow(
+              [
+                {
+                  action: 'confirm',
+                  label: t.confirm,
+                  appearance: 'primary',
+                  onClick: host._restore,
+                },
+                { action: 'cancel', label: t.cancel, onClick: host._cancel },
+              ],
+              asked ? { loading: 'confirm', pending: t['restore-pending'] } : {},
+            )}
+          </div>`
+        : decisionRow(
+            [{ action: 'restore', label: t.restore, appearance: 'primary', onClick: host._ask }],
+            state,
+          )
+    }
   </div>`;
 };

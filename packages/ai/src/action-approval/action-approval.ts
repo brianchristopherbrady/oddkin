@@ -85,7 +85,7 @@ export class OddkinActionApproval extends OddkinElement.with({
 
   /** @internal The decision requested from this view, until the record changes; focus recovery. */
   readonly _decisions = new DecisionController(this, () =>
-    this.shadowRoot?.querySelector<HTMLElement>('.state'),
+    this.shadowRoot?.querySelector<HTMLElement>('.outcome'),
   );
   /** @internal Local draft of the rejection reason. */
   readonly _reason = signal('');

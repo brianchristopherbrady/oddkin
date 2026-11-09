@@ -3,5 +3,5 @@
 import { unsafeCSS } from '@oddkin/core/styles';
 
 export const aiElementRecipeStyles = unsafeCSS(
-  '@layer odd.layout.base {\n  .actions {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    gap: var(--odd-space-xs);\n    flex-wrap: wrap;\n    min-inline-size: 0;\n  }\n}\n',
+  '@layer odd.layout.base {\n  .actions {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    gap: var(--odd-space-xs);\n    flex-wrap: wrap;\n    min-inline-size: 0;\n  }\n  .decision {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-sm);\n    min-inline-size: 0;\n  }\n}\n',
 );
