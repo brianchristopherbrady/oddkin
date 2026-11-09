@@ -1,10 +1,62 @@
 # 0049. Agent workflow elements: one owner per fact, composed around the records
 
-- **Status:** Proposed (2026-11-08). The record and state changes that need no further owner decision (§6 items 1, 2, and 5, item 3's diff view, and the renames of §5) can start now; permission scopes (§6 item 3) and questions in the conversation (§6 item 4) wait for the owner's confirmation. The visual redesign of `odd-action-approval` and its neighbours waits for the owner's Figma designs (owner, 2026-11-08, to Agent 2: "hold off on any new redesigns until those Figmas are drawn").
-- **Date:** 2026-11-08
+- **Status:** Accepted by the owner on 2026-11-09, with the decisions and corrections of [The owner's decisions](#the-owners-decisions-2026-11-09), which settle every question this record left open (proposed on 2026-11-08). The visual redesign of `odd-action-approval` and its neighbours, and the scope choice's visual composition, wait for the owner's Figma designs (owner, 2026-11-08: "hold off on any new redesigns until those Figmas are drawn"; 2026-11-09).
+- **Date:** 2026-11-08; accepted 2026-11-09
 - **Area:** `@oddkin/ai`: `odd-action-approval`, `odd-tool-call`, `odd-change-review`, `odd-activity`, `odd-question`, their records, the conversation controller, and the adapters
 - **Builds on:** [ai-interaction.md](../ai-interaction.md) §1 (records are host-owned; elements own presentation only), §4.4 to §4.6 (lifecycles); [the component architecture audit](../../research/component-architecture-audit.md) (approved 2026-11-06)
-- **Checked against:** `main` at `2a46230` (2026-11-08)
+- **Checked against:** `main` at `2a46230` (2026-11-08); the inventory below against `e0e2e97` (2026-11-09)
+
+## The owner's decisions (2026-11-09)
+
+The owner accepted this record with the decisions below. They settle its open questions and the audit's last ones ([the audit](../../research/component-architecture-audit.md) §10), and they supersede the audit's one-beta deprecation (§9 step 7). Agents do not ask for them again.
+
+1. **The five elements stay public and separate** (§3). `odd-action-approval` authorizes a revision of an action; `odd-tool-call` shows invocation, execution, result, failure, and retry; `odd-change-review` shows edits the host applies, with staleness and undo; `odd-activity` shows an attempt's progress and recovery; `odd-question` asks a person for revision-bound information. The host or the conversation controller owns the records and their transitions; the elements render records and send intents, and a click never establishes an outcome. Approval never means the execution succeeded.
+2. **Shared inside `@oddkin/ai`, never public** (§4): the read-only diff view, the decision row's presentation, status wording and tone, and the request guard and focus recovery. The approval shows its changes through the read-only view and never embeds an actionable `odd-change-review`. Each element keeps its own actions and lifecycle rules: the decision row is one mechanism configured per element, not one configuration surface for every decision.
+3. **The catalog stays stable,** closing the audit's §10:
+   - `odd-citation` keeps its inline preview, with its reading order and keyboard and touch access;
+   - `odd-container` stays: its constrained or fluid measure and its container-query boundary are a contract `.odd-center` does not have;
+   - `odd-transcript` stays public, usable without microphone capture;
+   - `odd-ai-label` (composing `odd-disclosure`) and `odd-model-select` (composing `odd-select`) stay public;
+   - `odd-message-branch` becomes internal to `odd-message`, keeping the host-owned branch record and the branch-switch intent;
+   - `odd-suggestions` is replaced by its tested pattern, Suggested prompts.
+4. **Breaking changes land without compatibility layers.** The legacy renderer aliases and the obsolete public registrations go now, each with every affected consumer, example, generated contract, and document. The typed `renderers` convention stays: renderer hooks for record-driven customization, slots for static additions; replacing or disconnecting a renderer runs its cleanup exactly once.
+5. **Permission scopes are accepted,** with the rules of §6 item 3.
+6. **Questions become conversation records,** as §6 item 4 says.
+7. **Ownership, waiting, and withdrawal are corrected** (§5; §6 items 1 and 2): approvals and questions gain a terminal `cancelled`; a generic tool refusal never becomes a person's rejection; the attempt carries a typed wait descriptor; a stream's end is not by itself the attempt's end.
+8. **Foundation reuse, and the Figma hold.** Oddkin's primitives are used wherever their semantics fit: the native button sheet for light native actions, `odd-copy-button` for copying, `odd-disclosure` for expandable details, `odd-select`, `odd-input`, `odd-textarea`, `odd-radio-group`, and `odd-checkbox-group` for their controls, and `odd-toolbar`, `odd-badge`, the status marker, `odd-alert`, and the other feedback primitives where they fit; an existing shared module comes before a new one. Context-picker work builds on the existing collection rows, the chips' overflow and review, and the overlay machinery where their contracts fit: reuse guidance, not a new public component or a resource-management application. Visual redesigns of the approval and its neighbouring workflow elements, and the scope choice's visual composition, wait for the owner's Figma. Contracts, controllers, adapters, internal extraction, tests, and documentation go ahead with today's presentation, and question parts compose today's `odd-question`.
+9. **Delivery.** The slices of [Where the work stands](#where-the-work-stands-main-e0e2e97-2026-11-09), in that order, in the lanes' ownership with the usual component and `BUDGET` reviews; size measured before and after each slice; the evidence of [§9](#9-verification) recorded per slice. Only the existing adapters change (the AI SDK UI message stream, SSE, and the simulation): a reference to another protocol does not mean a new adapter or an agent runtime. The docs-site pause stays: patterns ship as working examples, composition documents, tests, and agent-kit references, and new site pages wait.
+
+## Where the work stands (main `e0e2e97`, 2026-11-09)
+
+Checked by reading the code on `main`; each commit's own checks are in [verification.md](../../verification.md).
+
+| Work | State | Commits |
+| --- | --- | --- |
+| `nativeButtonStyles` exported and adopted by the AI elements | Done | `db31f94`, `3188d69` |
+| One internal controller for the decision guard and focus recovery (`DecisionController`) | Done | `f7f7e02` |
+| Reasoning and `odd-ai-label` composing `odd-disclosure`; `odd-copy-button` in response, message, and artifact | Done | `417c9eb`, `b34a452` |
+| `odd-disclosure`'s `summary` slot | Done | `a8c4d33` |
+| One typed `renderers` property by extension point, with deprecated aliases | Done; the aliases go in slice 6 | `91dbd42` |
+| Eight composition patterns, listed in the agent kits | Done | `e1701fb` |
+| `odd-suggestions` and `odd-message-branch` deprecated; `examples/ai-research` on Suggested prompts | Done; their removal is slice 6 | `ab5e05a` |
+| `odd-activity` reads only the attempt | Done; the wait descriptor is slice 2 | `7980090` |
+| `odd-tool-call` without `awaiting-approval`, its gate worded from its approval | Done; `cancelled` and the refusal correction are slice 2 | `fb7bc38` |
+| One decision vocabulary (§5) | Done; `cancelled` is slice 2 | `042413e` |
+| The shared diff view and status map, drawn as today | Done | `dadb0ac` |
+
+Still to do: slices 2 to 4, 6, and 7 in this order in Agent 2's lane, and slice 5 beside them in Agent 3's (the rows of the order of work in [IMPLEMENTATION_PLAN.md](../../../IMPLEMENTATION_PLAN.md)).
+
+| Slice | What | Row |
+| --- | --- | --- |
+| 1 | These decisions and this inventory | Agent 1, 2026-11-09 |
+| 2 | `cancelled`; the `tool-denied` correction; the attempt's wait descriptor and the aggregate waiting; the adapters' completion handling (§5; §6 items 1 and 2) | Agent 2, item 15 |
+| 3 | Permission scopes and questions in the conversation: contracts, controller, and transports (§6 items 3 and 4) | Agent 2, item 16 |
+| 4 | The shared decision row, configured per element, with today's presentation (§4); the refinements of `odd-tool-call` and `odd-question` that keep it | Agent 2, item 17 |
+| 5 | The audit's other refinements (`odd-task-plan`, `odd-inline-assist`, `odd-artifact`, `odd-response-feedback`, `odd-model-select`), tests for the kept contracts (`odd-citation`, `odd-transcript`), and `odd-context-picker` | Agent 3, items 9 and 10 |
+| 6 | The renderer aliases, the public registrations of `odd-message-branch` and `odd-suggestions`, and the unused deprecated strings removed, with every consumer | Agent 2, item 18 |
+| 7 | Patterns, examples, generated contracts, and agent kits brought in line | Agent 2, item 19 |
+
+Waiting for the owner's Figma: the visual redesign of `odd-action-approval` and its neighbouring workflow elements (§8), the decision row's new look with it, and the scope choice's visual composition. Done by no slice, and recorded as limitations: user testing, testing with real assistive technology, and the docs site's Patterns pages (docs pause).
 
 ## Context
 
@@ -129,8 +181,8 @@ These interactions repeat across the five. Each becomes one internal module of `
 
 | Shared interaction | Module (internal) | Used by |
 | --- | --- | --- |
-| Diff view: word or line diffs, merged runs, context, inline or split, `<del>`/`<ins>` with visually hidden labels | `internal/diff-view.ts`, moved out of `odd-change-review` (`mergeRuns`, the diff template and styles), on `controllers/diff.ts` | `odd-change-review`, `odd-action-approval` (`changes`) |
-| Decision row: native buttons drawn by `nativeButtonStyles`, the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController` | `internal/decision-row.ts`, beside `internal/decision.ts`; lands with the redesign (§8), because one row changes the four elements' buttons | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
+| Read-only diff view: word or line diffs, merged runs, context, inline or split, `<del>`/`<ins>` with visually hidden labels; it renders change data and decides nothing | `internal/diff-view.ts`, moved out of `odd-change-review` (`mergeRuns`, the diff template and styles), on `controllers/diff.ts` | `odd-change-review`, `odd-action-approval` (`changes`) |
+| Decision row: native buttons drawn by `nativeButtonStyles`, the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController`. Each element configures its own actions, button size, and which buttons show loading, so today's presentation stays until the redesign (owner, 2026-11-09) | `internal/decision-row.ts`, beside `internal/decision.ts` | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
 | Status: one vocabulary (§5) and one map from status to tone; `odd-badge` for compact status, a toned line for an outcome | `internal/status.ts` | All five, and `odd-checkpoint` |
 | Expandable details | `odd-disclosure` (public, in `@oddkin/components`; its `summary` slot since row 12) | `odd-tool-call`; `odd-action-approval` for long changes |
 | Expiry and times | `formatTime` (exists) | `odd-action-approval`, `odd-question` |
@@ -144,35 +196,49 @@ These interactions repeat across the five. Each becomes one internal module of `
 | The request failed; the person may decide again | `failed` (was `decision-failed`) | `failed` | `failed` |
 | Resolved | `approved`, `rejected` | `answered` (was `submitted`), `skipped` | `applied`, `rejected`, `undone` |
 | No longer decidable | `expired`, `superseded` | `expired`, `superseded` (new: a newer revision replaced it) | `stale` |
+| Withdrawn by the host or backend, or the action or attempt can no longer run (terminal) | `cancelled` (new, owner, 2026-11-09) | `cancelled` (new, owner, 2026-11-09) | — |
+
+`rejected` is a person's explicit decision, `expired` an expiry, `superseded` a replacement by a newer revision, and `cancelled` a withdrawal; they stay distinct.
 
 Every intent event names its record and revision: `{ approvalId, revision, … }`, `{ questionId, revision, … }`, `{ proposalId, … }`. `odd-approval-decide` drops `toolCallId`: the host reads it from the record, so the event no longer carries a second copy.
 
 ### 6. Required changes
 
-1. **`ToolCallRecord.status` loses `awaiting-approval`.** `odd-tool-call` words its gate from its approval:
+1. **`ToolCallRecord.status` loses `awaiting-approval`** (done, `fb7bc38`). Before the tool runs, `odd-tool-call` words its gate from its approval:
    - unresolved (`requested`, `submitting`, `failed`): "Waiting for approval";
-   - `rejected`, `expired`, or `superseded`, before the tool ran: "Not run".
+   - `rejected`, `expired`, `superseded`, or `cancelled`, before the tool ran: "Not run".
    
-   The controller links the approval (`approvalId`) without moving the tool. `denied` stays: it is the backend refusing to run the call, with or without an approval. When an adapter reports `tool-denied` for a tool whose approval is still unresolved, the controller marks that approval `rejected`, so the two never disagree.
-2. **`odd-activity` reads only the attempt.** "Waiting for you" comes from `awaiting-input`. The controller sets `awaiting-input` while an approval or a question of the attempt waits for the person. The `tools` property stays only to name the running tools.
+   Execution progress and results still come from the tool record. The controller links the approval (`approvalId`) without moving the tool. `denied` stays: the backend refusing to run the call. **Correction (owner, 2026-11-09):** a generic `tool-denied` never manufactures a person's rejection. When the action can no longer run, the controller withdraws a linked approval that is still unresolved (`cancelled`) and leaves a terminal decision as it is; an adapter whose protocol carries an explicit, authoritative authorization rejection reports that approval outcome separately. An approval followed by a failed execution stays `approved`.
+2. **The attempt owns waiting** (`odd-activity` reads only the attempt since `7980090`). Tool records may name the running tools, but `odd-activity` never scans them for human input. The controller keeps the aggregate across every live approval and question of the attempt in a small typed wait descriptor on the attempt, which tells input that needs the person's action from responses being submitted. It recomputes the descriptor after every request, submission, failure, retry, resolution, replacement, and withdrawal, so one resolution never clears another open request. When the last request resolves, the attempt takes the latest authoritative run phase: approval does not mean executing or completed. A stop request, a disconnected transport, or an ended message is not a terminal attempt: where the protocol represents a paused workflow, an approval or a question followed by the stream's completion stays answerable. Only a terminal attempt withdraws its open requests (`cancelled`).
 3. **`ApprovalRecord`:**
-   - `changes` render through the shared diff view, with `granularity` (`words` or `lines`, as `odd-change-review` names it);
-   - `scopes` (optional): `[{ id, label, description? }]`, offered by the host, for example "This time", "For this conversation", "Always for this tool". The element shows them as a choice only when there are two or more, the first chosen by default; `odd-approval-decide` and the transport's `ApprovalDecision` carry `scope`. The host defines and enforces each scope; the element only collects intent (the `@limitation` stays);
-   - the status renames of §5.
-4. **Questions join the conversation:**
-   - a `question` message part and `questions` in `ConversationState`;
-   - adapter events `question-request` and `question-resolved`;
+   - `changes` render through the shared read-only diff view, with `granularity` (`words` or `lines`, as `odd-change-review` names it);
+   - **permission scopes** (owner, 2026-11-09): optional `scopes`, `[{ id, label, description? }]` with opaque ids, and `defaultScopeId`, offered by the host, whose backend defines, validates, enforces, and persists what each scope means. The element collects intent only: no permission storage, authentication, or policy engine.
+     - No scopes, or an empty list: the approval covers this action at this revision only.
+     - One scope: no selector, and the scope stays visibly explained.
+     - Two or more: the person chooses, unless the host gives an explicit, valid `defaultScopeId`; nothing is chosen because it comes first.
+     - Duplicate ids and an unknown default are invalid configuration.
+     - The chosen scope goes only with `approve` (a rejection never sets a broader denial), in `odd-approval-decide` and the transport's `ApprovalDecision`, validated against the current revision.
+     - A material change to the action, its target, or the scopes offered makes a new revision, which resets the local choice.
+     - A transport that cannot carry a scope reports a capability limitation or fails explicitly; it never drops the choice.
+   - the status renames of §5, and `cancelled`.
+4. **Questions are conversation records** (owner, 2026-11-09):
+   - `questions` in `ConversationState` and ordered `question` message parts, with stable record and part identity, in snapshots and restores;
+   - normalized adapter events for a question's request and resolution;
    - `ConversationController.answer()` and `skip()`, bound to `odd-question-answer` and `odd-question-skip` like `odd-approval-decide`;
-   - the transport's optional `answer?()`.
+   - the transport's optional answer operation, typed to tell an answer from a skip: skipping is never an empty answer;
+   - each request and outcome bound to its attempt and revision; message order kept; replayed events deduplicated; a late result never touches a newer attempt or question revision;
+   - a transport without human input says so rather than report an answer;
+   - `odd-question` stays usable on its own with host-owned records; the conversation is one more composition.
    
-   An adapter maps its protocol's way of asking (an AI SDK client tool, an AG-UI interrupt) to these events. The renames of §5 apply.
-5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5): the diff view and the status map first, drawn as today; the decision row with the redesign (§8), since one row changes the four elements' buttons (Agent 1, 2026-11-08).
+   The existing adapters map their protocol's way of asking to these events. The renames of §5 apply.
+5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5): the diff view and the status map (done, `dadb0ac`), then the decision row, configured per element, with today's presentation (owner, 2026-11-09, replacing the note of 2026-11-08 that moved it to the redesign).
 6. **Documentation and generated contracts:**
    - ai-interaction.md §3, §4.4 to §4.6, and §6.1;
    - the element references, the agent kits, the composition catalog, and `docs/diagnostics.md`;
    - the patterns "Approval outside a tool call" and a new "Agent asks, then acts" (below).
    
-   No deprecated aliases (owner, 2026-11-08): each rename lands with its consumers, examples, and tests.
+   No compatibility layers (owner, 2026-11-08 and 2026-11-09): each rename and removal lands with its consumers, examples, generated contracts, and tests.
+7. **Public API reductions** (owner, 2026-11-09): the renderer aliases of `odd-conversation`, `odd-message`, and `odd-tool-call`, the public registrations of `odd-message-branch` and `odd-suggestions`, and the unused deprecated strings of `odd-change-review` and `odd-checkpoint` go, each with its consumers.
 
 ### 7. Compositions for applications
 
@@ -186,6 +252,8 @@ Each is a pattern page with a working example, in the format of the audit's §7.
 | A question that shapes the next action | Question, then a later approval | `question` part, then an `approval` or `tool-call` part, in order | Answer → host → backend; the backend proposes the action |
 | A rejected action returned for revision | The approval: `rejected` with the reason, then the same `approvalId` at revision + 1, `requested` | The same `odd-action-approval`, which resets for the new revision | The reason goes to the agent with the rejection; the old decision cannot apply to the new revision |
 | An approved action whose execution fails | Approval `approved` (it stays so); tool `output-error` | The approval's "Approved", the tool's error and Retry (when `retryable`) | `odd-tool-retry` → host; a retry does not ask again unless the host issues a new revision |
+| A request withdrawn before anyone decided | The approval or question: `cancelled` by the host or backend, or because its action or attempt can no longer run | Its status line; no decision is offered | Nothing to send; the attempt's wait descriptor drops it |
+| A workflow that pauses for input | The attempt waits (its descriptor names the open approvals and questions); the stream may end | `odd-activity` reading the attempt; each request in the message flow | Each answer or decision → host → backend, which resumes the run |
 
 ### 8. What this means for `odd-action-approval`
 
@@ -195,26 +263,45 @@ Each is a pattern page with a working example, in the format of the audit's §7.
   2. the summary;
   3. the target;
   4. the changes (the shared diff view, collapsible with `odd-disclosure` when long);
-  5. the scope choice, when offered;
+  5. the scope choice when two or more scopes are offered, or the one scope's explanation (its visual composition waits for the owner's Figma);
   6. the reason;
   7. the shared decision row (Approve, Reject, Edit when allowed);
   8. one status line.
 - **Its API after the change:**
   - properties: `approval`, `capabilities`, `announce`, `strings`;
-  - events: `odd-approval-decide` (`approvalId`, `revision`, `decision`, `reason?`, `scope?`), `odd-approval-edit`, `odd-announce`;
+  - events: `odd-approval-decide` (`approvalId`, `revision`, `decision`, `reason?`, and `scope?` with `approve` only), `odd-approval-edit`, `odd-announce`;
   - parts: `base`, `changes`, `actions`, and `scope`.
 - **What it does not do:**
   - It does not draw its own diff, decision row, or status styles: those come from §4.
   - It does not nest `odd-change-review`.
   - It does not read tool or attempt records.
 
+### 9. Verification
+
+Each slice records its observed results in [verification.md](../../verification.md) and covers what it touches of this list (owner, 2026-11-09), with the controller tests, the affected browser tests in Chromium, Firefox, and WebKit, the Figma parity checks for unchanged presentation, and the repository's gates:
+
+- duplicate decisions and stale revisions; a remote resolution arriving before the local acknowledgment; revision replacement, reset and disposal, and a promise that completes late;
+- two approvals and a question, resolved in different orders;
+- an approval accepted before execution; an approved execution that fails; a backend refusal; an explicit rejection;
+- cancellation, expiry, and supersession;
+- invalid or unsupported scopes, an absent default, and the scopes changing during a submission;
+- a question's answer and skip failing, retry, ordering, replay, and snapshot restoration;
+- a protocol stream ending while human input is still pending;
+- the shared diff view's modes and its accessible insertion and deletion labels;
+- focus recovery, announcements made once, and form validation through shadow roots;
+- renderer cleanup on replacement and disconnection;
+- the removed public entry points and registrations gone.
+
+Schemas, manifests, enriched metadata, the composition catalog, registrations, and agent kits are regenerated by their generators. Size is measured before and after each slice, and a justified increase follows the `BUDGET` procedure. Implementation evidence is kept apart from what is deferred: user testing, testing with real assistive technology, and the Figma-dependent work.
+
 ## Consequences
 
 - One fact, one record: `odd-tool-call`, `odd-activity`, and `odd-action-approval` can no longer contradict each other about whether an action may run.
 - Breaking:
-  - the tool, approval, question, and proposal statuses of §5 and §6;
-  - `odd-approval-decide`'s detail;
-  - the conversation state shape (`questions`).
+  - the tool, approval, question, and proposal statuses of §5 and §6, `cancelled` included;
+  - `odd-approval-decide`'s detail (`toolCallId` gone; `scope` with `approve`);
+  - the conversation state shape (`questions`) and the attempt's wait descriptor;
+  - the renderer aliases and the public `odd-message-branch` and `odd-suggestions` (§6 item 7).
   
   The AI demos, examples, patterns, tests, and the AI SDK adapter change with them. Oddkin has no production users, and these land without aliases.
 - Size: the shared modules replace private copies; the scope choice and the question part add code. Each landing measures `ai-chat` and posts `BUDGET` (owner, 2026-11-06).
@@ -225,8 +312,8 @@ Each is a pattern page with a working example, in the format of the audit's §7.
   
   The application keeps its state and its agent's execution.
 
-## Open for the owner
+## Settled by the owner (2026-11-09)
 
-- **Permission scopes (§6 item 3):** the contract supports them, and the host defines and enforces each one. Confirm, or leave them out.
-- **Questions in the conversation (§6 item 4):** this makes them first-class like approvals. Confirm before the adapter work.
-- **The visual redesign** of `odd-action-approval` (§8) follows the owner's Figma.
+- **Permission scopes (§6 item 3):** accepted, with the rules there.
+- **Questions in the conversation (§6 item 4):** accepted.
+- **The visual redesign** of `odd-action-approval` (§8), the decision row's new look, and the scope choice's visual composition follow the owner's Figma.

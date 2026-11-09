@@ -6080,3 +6080,19 @@ The owner asked to publish to npm by hand with two-factor approval in Chrome (tr
 | Probes | `mutate.mjs`, 7 mutants: a waiting gate loses its tone; an approved approval is neutral; a failed restore is neutral; a deletion loses its spoken label; word changes are not merged into runs; the context is left out; the diff collapses whitespace | 7 killed; the last survived the first run, so the change review test now reads the diff’s `white-space` (`pre-wrap`), which kills it |
 | The stack in a browser | `e2e/ai-demos.spec.ts` and `e2e/presentation.spec.ts` (`e2e-when-free.mjs`, 2 workers), on landings 2 and 3, then again on 2 to 4 | 168 passed each time (three engines, the workspace build and the packed packages) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run lint`, `node scripts/list-diagnostics.mjs --write` | Each exit 0; `ai-chat` 56,613 B gzip (+34: the one map also holds the approval’s and checkpoint’s statuses), `ai-headless` 13,956 (0), `ai-response` 24,623 (0); `docs/diagnostics.md` regenerated, 510 messages, none flagged: 15 rows’ line numbers had moved with landings 1 to 3 |
+
+## 2026-11-09 — ADR 0049's completion inventory (round 11, Agent 1)
+
+A records-only slice: the owner's decisions recorded in [ADR 0049](./architecture/decisions/0049-agent-workflow-components.md), and its inventory checked by reading `main` at `e0e2e97`. No tests ran.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Record statuses | `git show main:packages/ai/src/contracts/models.ts` | Tool status without `awaiting-approval`; approval `requested`, `submitting`, `approved`, `rejected`, `expired`, `superseded`, `failed`; question `requested`, `submitting`, `answered`, `skipped`, `expired`, `superseded`, `failed`; neither has `cancelled` |
+| Proposal statuses | `packages/ai/src/controllers/document.ts` | `requested`, `applying`, `applied`, `rejected`, `stale`, `undoing`, `undone`, `failed` |
+| A tool refusal | `packages/ai/src/controllers/conversation.ts`, `tool-denied` | Marks a linked approval `rejected`; item 15 makes it a withdrawal |
+| Waiting | `packages/ai/src/controllers/conversation.ts` | Computed from approvals only; `ConversationState` has no questions; a stream that finishes `awaiting-input` keeps its attempt waiting |
+| Deprecated surface | `git grep @deprecated main -- packages/ai/src` | Renderer aliases in `odd-conversation` (2), `odd-message` (2), and `odd-tool-call` (1); `odd-message-branch` and `odd-suggestions`; unused strings in `odd-change-review` and `odd-checkpoint` |
+| Patterns | `git ls-tree main packages/ai/patterns/` | Eight patterns and `index.json` |
+| Approval and change review | `git grep odd-change-review main -- packages/ai/src/action-approval` | No match: the approval does not embed it |
+| Adapters | `git ls-tree main packages/ai/src/stream` | The AI SDK UI message stream, SSE, and the simulation |
+| Edited records | `prettier --check`; `.tmp/check-links.mjs` on the plan, the ADR, and the audit | Exit 0; 286 relative links, 0 broken |

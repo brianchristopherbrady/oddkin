@@ -842,7 +842,7 @@ Accessibility never moves backwards: each step keeps an element's existing behav
    - The docs site's Patterns section, in the page format of §7, waits for the docs pause to end (Agent 3).
 7. **Public API reductions (P3),** after the owner's decisions and once the patterns exist.
    - Deprecate `odd-message-branch` and `odd-suggestions` in the next beta. They are marked `@deprecated` with the replacement and a migration note, and `examples/ai-research` moves to the pattern.
-   - Remove their public registrations one beta later.
+   - Remove their public registrations one beta later. *Superseded on 2026-11-09 (owner): they go now, with the renderer aliases, without compatibility layers ([ADR 0049](../architecture/decisions/0049-agent-workflow-components.md)).*
 
 ## 10. The owner's decisions, and open questions
 
@@ -856,13 +856,15 @@ Accessibility never moves backwards: each step keeps an element's existing behav
 | Raise `ai-chat` for foundation reuse? | Yes, per change, with measurements | Medium | Yes, per change, each raise measured |
 | Who implements the components steps while Agent 1 is on light duty? | The owner assigns | — | Agent 2 |
 
-Still open, with no change before they are decided:
+Decided by the owner on 2026-11-09 ([ADR 0049](../architecture/decisions/0049-agent-workflow-components.md), "The owner's decisions"):
 
-| Question | Recommendation | Confidence |
-| --- | --- | --- |
-| `odd-citation`: move the preview into an `odd-popover`, so the paragraph does not reflow when it opens? | No. The inline panel is a deliberate accessibility choice, and a popover would bring the positioning controller (its own 3,840-byte budget) into `ai-chat`. Revisit only with user research. | Medium |
-| `odd-container`: keep, or document `.odd-center` instead? | Count its uses first | Low |
-| `odd-transcript`: public, or internal to `odd-voice-input`? | Public for now | Medium |
+| Question | Recommendation | Confidence | Owner, 2026-11-09 |
+| --- | --- | --- | --- |
+| `odd-citation`: move the preview into an `odd-popover`, so the paragraph does not reflow when it opens? | No. The inline panel is a deliberate accessibility choice, and a popover would bring the positioning controller (its own 3,840-byte budget) into `ai-chat`. Revisit only with user research. | Medium | Keep the inline preview, with its reading order and keyboard and touch access |
+| `odd-container`: keep, or document `.odd-center` instead? | Count its uses first | Low | Keep: its constrained or fluid measure and container-query boundary are a contract `.odd-center` does not have |
+| `odd-transcript`: public, or internal to `odd-voice-input`? | Public for now | Medium | Public, usable without microphone capture |
+
+The owner also ended the one-beta deprecation (§9 step 7): the renderer aliases and the public registrations of `odd-message-branch` and `odd-suggestions` go now, without compatibility layers, with every consumer migrated in the same change.
 
 ## 11. What this pass changed
 
