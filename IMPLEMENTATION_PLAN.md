@@ -779,6 +779,8 @@ An optional browser package, parallel to the milestone track (it needs only M3 c
 | C19 | Voice/transcription | `odd-voice-input`, `odd-transcript` | [x] | `controllers.test.ts`, `elements.browser.test.ts` (A19); writing demo e2e |
 | C20 | Checkpoints | `odd-checkpoint` | [x] | `elements.browser.test.ts` (A20); agent demo e2e (restored, failed) |
 
+**C07 design proposal (2026-11-07, owner request).** The editable [context-picker redesign](https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=769-2) defines anchored resource discovery, an expanded browser, host-owned selected context, immediate/confirm modes, responsive flows, accessibility behavior and a proposed semantic API. Its design record is `design/figma/context-picker-redesign.json`; observed checks are in `docs/verification.md`. This is a Figma specification for a future implementation. C07's existing implementation and acceptance evidence above describe the current attached-item component; they do not verify the proposed contract.
+
 ### 5j.3 Acceptance scenarios
 
 | ID | Status | Evidence (`packages/ai/test/`, `e2e/`) |

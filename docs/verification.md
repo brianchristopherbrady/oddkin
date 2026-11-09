@@ -5972,3 +5972,18 @@ Found while measuring row 11 step d: `odd-copy-button` renders two glyphs, but i
 | Components and AI elements | `browser-set.mjs` on every `packages/components/test/*.browser.test.ts` and `packages/ai/test/*.browser.test.ts` | Chromium: 2,506 passed, 55 skipped (93 files). Firefox: 2,448 passed, 111 skipped, and 2 timed out under load (date picker, split button), which passed alone (18 of 18). WebKit: 2,457 passed, 103 skipped, and 1 failed (a combobox row colour read while the pointer rested on it), which passed alone (19 passed, 1 skipped) |
 | Probes | `mutate.mjs`, 2 mutants: the check glyph not marked pure; the star made by an unmarked call | 2 killed |
 | Repository | `npm run typecheck`, `npx vitest run --project node`, `npm run lint` | Each exit 0; node 1,702 passed, 2 skipped (before the new test) |
+
+## 2026-11-07 — Context-picker Figma redesign (C07 design proposal)
+
+| Check | Observed result |
+| --- | --- |
+| Source inspection | Checkout `e44c4fe4`, `packages/ai/src/context-picker/`, and existing Figma components `124:86` / `124:99`. The live Oddkin page was inaccessible through the research tool. Current-behavior findings therefore come from source and the editable specimen. |
+| Figma deliverable | Existing file `E7LfRysny8V3qU24tv082i`, new page `767:2`, start guide `769:2`, revised component `778:2101`. Native anatomy, state matrix, desktop/mobile flows, presentation explorations, external chips/attachment rows, four application examples, keyboard and responsive annotations, proposed API mapping, before/after and research decisions. |
+| Reuse and editability | Final page read: 4,753 native nodes, including 14 component sets and 78 component definitions. 4,171 nodes have variable bindings. Roboto and Roboto Mono are the only text font families. Zero image-filled nodes and zero in-progress placeholders. Existing button, search, popover, checkbox, radio, chip and icon instances are retained. Two inline variants were added to the existing shared search set; no new variables or text/effect styles. |
+| Structure and prototypes | Six prototype starting points; 43 connections, all targeting existing frame nodes. No top-level overlap. Component-set inspection found no overlapping or out-of-bounds variants. Single-select label overrides read back as Launch brief and Release checklist after the binding repair. |
+| Visual review | Reviewed the compact surface, desktop selected state, mobile dialog, mobile attachment rows, expanded browser, light/dark specimens and complete state matrix. Repaired auto-layout sizing, inline search positioning, variant-grid spacing, single-select text bindings and matrix clipping. The latest reviewed matrix is `771:355`. |
+| Sampled contrast | Fourteen semantic role pairs, resolved against light/dark consumers, all pass the stated thresholds. Minimum sampled text ratio: 4.57:1 (4.5:1 required); strong-border minimum: 3.48:1 (3:1 required). This is a token-pair check, not an accessibility conformance audit. Exact measurements are in the design record. |
+| Evidence | `design/figma/context-picker-redesign.json` records IDs, mappings, sources, decisions, observations, hypotheses and final audit data. Figma session: `bd52f9e1-e8cc-4c33-86e3-1bf88c6d83ea`. |
+| Repository checks | Prettier on `design/figma/context-picker-redesign.json`, JSON parsing with recorded error-array checks, and `git diff --check`: exit 0. |
+
+**Not verified here:** user task testing; browser keyboard, screen-reader, forced-colors or search/provider behavior of the proposed implementation. Prototype transitions use authored fixtures. Runtime source and generated metadata were not changed; the shipped C07 tests do not validate this redesign. No Figma library publication performed.

@@ -1,0 +1,499 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "sessionId": "bd52f9e1-e8cc-4c33-86e3-1bf88c6d83ea",
+  "reviewedAt": "2026-11-07",
+  "sourceCommit": "e44c4fe4",
+  "scope": "Editable Figma redesign and proposed interaction contract for odd-context-picker; no runtime implementation or library publication.",
+  "pageId": "767:2",
+  "pageName": "06 · Context picker · Interaction spec",
+  "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=769-2",
+  "revisedComponentId": "778:2101",
+  "beforeComponentIds": ["124:86", "124:99"],
+  "sharedPrimitiveAdditions": {
+    "searchSetId": "159:1144",
+    "inlineVariantId": "775:3405",
+    "inlineFocusVariantId": "775:3422",
+    "newVariables": 0,
+    "newStyles": 0
+  },
+  "deliverables": [
+    {
+      "name": "Revised component definition",
+      "nodeId": "778:2101",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=778-2101"
+    },
+    {
+      "name": "Anatomy and responsibilities",
+      "nodeId": "781:3631",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=781-3631"
+    },
+    {
+      "name": "Variant and state matrix",
+      "nodeId": "771:355",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=771-355"
+    },
+    {
+      "name": "Desktop interaction flow",
+      "nodeId": "778:2259",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=778-2259"
+    },
+    {
+      "name": "Mobile interaction flow",
+      "nodeId": "779:2798",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=779-2798"
+    },
+    {
+      "name": "Presentation explorations",
+      "nodeId": "782:3731",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=782-3731"
+    },
+    {
+      "name": "Selected-context compositions",
+      "nodeId": "779:2910",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=779-2910"
+    },
+    {
+      "name": "Keyboard and focus specification",
+      "nodeId": "781:3757",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=781-3757"
+    },
+    {
+      "name": "API-to-design mapping",
+      "nodeId": "781:3810",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=781-3810"
+    },
+    {
+      "name": "Before-and-after comparison",
+      "nodeId": "769:2",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=769-2"
+    },
+    {
+      "name": "Research and design decisions",
+      "nodeId": "781:3862",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=781-3862"
+    },
+    {
+      "name": "Layout and responsive behavior",
+      "nodeId": "781:3785",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=781-3785"
+    },
+    {
+      "name": "Light and dark specimens",
+      "nodeId": "782:4064",
+      "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin-Design-Framework?node-id=782-4064"
+    }
+  ],
+  "applicationExamples": [
+    {
+      "name": "AI chat composer",
+      "selectionId": "778:2643",
+      "appliedId": "778:2789"
+    },
+    {
+      "name": "Developer assistant",
+      "selectionId": "779:3263",
+      "appliedId": "779:3382"
+    },
+    {
+      "name": "Enterprise knowledge assistant",
+      "selectionId": "779:3423",
+      "appliedId": "779:3545"
+    },
+    {
+      "name": "Resource-heavy workspace",
+      "selectionId": "779:3595",
+      "nestedBrowseId": "784:4525",
+      "appliedId": "779:3741"
+    }
+  ],
+  "classifications": {
+    "publicComponent": "Oddkin/AI/ContextPicker",
+    "componentInternals": [
+      "Trigger",
+      "Search",
+      "ResourceRow",
+      "ResourceType",
+      "Navigation",
+      "Breadcrumb",
+      "Feedback",
+      "Footer",
+      "Surface",
+      "ExpandedBrowser",
+      "MobileSurface"
+    ],
+    "hostCompositions": ["SelectedChip", "SelectedOverflow", "SelectedAttachment"],
+    "existingGeneralPrimitives": [
+      "Oddkin/Common/button",
+      "Oddkin/Common/search",
+      "Oddkin/Common/popover",
+      "Oddkin/Common/checkbox",
+      "Oddkin/Common/radio",
+      "Oddkin/Common/chip"
+    ],
+    "designOnly": ["Examples", "DomainExamples", "CommandExploration", "ResearchBrowserExample"]
+  },
+  "decisions": {
+    "defaultPresentation": "Anchored non-modal dialog, 416 × 480 reference size, containing a search textbox and separate result listbox.",
+    "expandedPresentation": "Explicit modal browser for deep hierarchies; mobile full-screen dialog at <480px of usable viewport width or insufficient overlay space.",
+    "selection": "Single or multiple; multiple requires no modifier keys; sourceId + id is the stable identity.",
+    "ownership": "Host owns committed value, resources, providers, asynchronous search and external selected-context display.",
+    "dismissal": "Immediate retains accepted changes. Confirm discards draft on Cancel/Escape/Close/outside dismissal. Expansion preserves mode, scope, location, query and draft.",
+    "hierarchy": "Container navigation and selectable folder references are distinct; references do not silently include descendants.",
+    "searchSemantics": "Only supplied connected sources are searched; per-source failures remain distinct from successful zero-result searches.",
+    "rejected": [
+      "Modal by default",
+      "An oversized all-purpose popover",
+      "Required mention syntax",
+      "Interactive navigation or remove buttons inside listbox options",
+      "Automatic recursive folder selection"
+    ]
+  },
+  "proposedApiMapping": [
+    {
+      "input": "value: readonly Resource[]",
+      "category": "Controlled committed selection",
+      "design": "Row checks, count, Selected view and external host chips. Identity is sourceId + id. Keep selected snapshots when pages or search change."
+    },
+    {
+      "input": "selectionMode: single | multiple",
+      "category": "Configuration",
+      "design": "Single replaces the previous value and closes on accepted immediate selection. Multiple toggles independently, stays open, and never requires Ctrl/Command."
+    },
+    {
+      "input": "commitMode: immediate | confirm",
+      "category": "Configuration",
+      "design": "Immediate emits each proposed change. Confirm creates a draft and shows Cancel / Add N. Expansion retains the same mode and draft."
+    },
+    {
+      "input": "providers: Source[]",
+      "category": "Host capabilities",
+      "design": "Source labels and IDs; search, browse, recent, favorites and selectable-container capabilities. Hide affordances that the host does not provide."
+    },
+    {
+      "input": "results: ResourcePage",
+      "category": "Host search response",
+      "design": "Request ID, loaded records, per-source status and optional cursor/total. A response is applied only to its matching request. Loading/error are outcomes, not independent API flags."
+    },
+    {
+      "input": "maxSelections?: number",
+      "category": "Configuration",
+      "design": "At the limit, prevent adding unselected records and explain why. Keep selected records removable. A host reducing the limit never silently drops existing values."
+    },
+    {
+      "input": "disabled; strings",
+      "category": "Configuration and localization",
+      "design": "Disable the trigger and editing; continue showing existing host context. Localize all labels, errors, counts and announcements. Read-only is an external display composition."
+    },
+    {
+      "input": "query, location, active row, draft, open",
+      "category": "Internal interaction state",
+      "design": "Query changes never clear selection. Active focus is independent of selection. Dismissal rules are determined by commitMode; no public hover/focus/empty/error booleans."
+    },
+    {
+      "input": "trigger; resource-icon; metadata; host-action",
+      "category": "Optional composition points",
+      "design": "Keep default semantics intact. Host actions may request upload or reconnection; they do not implement transport or authentication. External chips/rows are owned by the consumer."
+    }
+  ],
+  "research": [
+    {
+      "name": "VS Code / Copilot",
+      "url": "https://code.visualstudio.com/docs/chat/copilot-chat-context",
+      "application": "Observed pattern: an explicit Add Context entry and typed references for files, folders, symbols and other resources. Transfer: multiple discovery paths and visible attachments. Do not transfer coding-only names into the default picker."
+    },
+    {
+      "name": "Cursor",
+      "url": "https://cursor.com/docs/agent/prompting",
+      "application": "Observed pattern: typed @ references with matching suggestions across files, folders, chats and browser context. Transfer: low-friction search and explicit scope. Reject required mention syntax and automatic whole-folder assumptions for this domain-agnostic component."
+    },
+    {
+      "name": "Cloudscape",
+      "url": "https://cloudscape.design/gen-ai/patterns/in-chat-context/",
+      "application": "Observed guidance: match the entry method to the source and confirm provided context. Transfer: source identity and acknowledged selection. Keep multi-step authentication or upload in host integrations, outside core selection responsibilities."
+    },
+    {
+      "name": "ARIA listbox and combobox",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/",
+      "application": "Listbox options do not support nested interactive controls. This design uses a search textbox plus a separate listbox in a dialog; it does not force multiple selected resources into a single-value combobox."
+    },
+    {
+      "name": "ARIA dialog, menu and tree",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+      "application": "Modal dialog focus containment is used only for the expanded/mobile browser. A resource value picker is not an action menu. Native drill-down navigation is simpler here than introducing tree semantics and independent child actions."
+    },
+    {
+      "name": "Current implementation and Figma",
+      "url": "https://www.oddkin.dev/components/odd-context-picker",
+      "application": "Inspected checkout e44c4fe4: packages/ai/src/context-picker/*.ts and Figma 124:86 / 124:99. The live URL could not be read by the research tool. Claims about current behavior are based on the inspected source and editable library specimen, not live usability testing."
+    }
+  ],
+  "directlyObserved": [
+    "Inspected source renders an attached-item list, status/inspect/remove actions, Add files and optional Add link.",
+    "Inspected source has no query, provider navigation, transient selection surface or confirm-mode draft.",
+    "Existing editable Figma Ready context specimen is 636 × 120.",
+    "The live Oddkin page was inaccessible through the web research tool; current-behavior observations come from the checkout and Figma."
+  ],
+  "hypothesesNotUserTested": [
+    "An anchored default may reduce task interruption.",
+    "Explicit provenance and searched scope may reduce selection mistakes.",
+    "Persistent cross-query selection may improve predictability."
+  ],
+  "verification": {
+    "pageId": "767:2",
+    "counts": {
+      "FRAME": 1628,
+      "TEXT": 1147,
+      "INSTANCE": 1052,
+      "COMPONENT_SET": 14,
+      "COMPONENT": 78,
+      "GROUP": 282,
+      "VECTOR": 509,
+      "ELLIPSE": 3,
+      "RECTANGLE": 6,
+      "SLOT": 34
+    },
+    "totalNodes": 4753,
+    "fonts": ["Roboto", "Roboto Mono"],
+    "boundNodes": 4171,
+    "imageNodes": [],
+    "placeholders": [],
+    "prototypeConnections": 43,
+    "flowStartingPoints": [
+      {
+        "nodeId": "778:2259",
+        "name": "01 · Desktop · Discover, select, remove"
+      },
+      {
+        "nodeId": "779:2798",
+        "name": "02 · Mobile · Confirm or cancel"
+      },
+      {
+        "nodeId": "779:3263",
+        "name": "03 · Developer assistant"
+      },
+      {
+        "nodeId": "779:3423",
+        "name": "04 · Enterprise knowledge"
+      },
+      {
+        "nodeId": "779:3595",
+        "name": "05 · Expanded workspace"
+      },
+      {
+        "nodeId": "779:3791",
+        "name": "06 · Selected-context overflow"
+      }
+    ],
+    "invalidPrototypeTargets": [],
+    "rootOverlaps": [],
+    "singleSelectLabels": ["Launch brief", "Release checklist"],
+    "variants": [
+      {
+        "id": "770:161",
+        "name": "Oddkin/AI/ContextPicker/ResourceRow",
+        "count": 11
+      },
+      {
+        "id": "770:162",
+        "name": "Oddkin/AI/ContextPicker/Trigger",
+        "count": 10
+      },
+      {
+        "id": "771:348",
+        "name": "Oddkin/AI/ContextPicker/Search",
+        "count": 4
+      },
+      {
+        "id": "771:349",
+        "name": "Oddkin/AI/ContextPicker/Navigation",
+        "count": 3
+      },
+      {
+        "id": "771:350",
+        "name": "Oddkin/AI/ContextPicker/Breadcrumb",
+        "count": 2
+      },
+      {
+        "id": "771:351",
+        "name": "Oddkin/AI/ContextPicker/SelectedChip",
+        "count": 3
+      },
+      {
+        "id": "771:352",
+        "name": "Oddkin/AI/ContextPicker/SelectedOverflow",
+        "count": 2
+      },
+      {
+        "id": "771:353",
+        "name": "Oddkin/AI/ContextPicker/Feedback",
+        "count": 7
+      },
+      {
+        "id": "771:354",
+        "name": "Oddkin/AI/ContextPicker/Footer",
+        "count": 3
+      },
+      {
+        "id": "778:2101",
+        "name": "Oddkin/AI/ContextPicker",
+        "count": 6
+      },
+      {
+        "id": "778:2258",
+        "name": "Oddkin/AI/ContextPicker/Examples",
+        "count": 4
+      },
+      {
+        "id": "781:3630",
+        "name": "Oddkin/AI/ContextPicker/DomainExamples",
+        "count": 2
+      },
+      {
+        "id": "776:1338",
+        "name": "Oddkin/AI/ContextPicker/Surface",
+        "count": 14
+      },
+      {
+        "id": "777:1837",
+        "name": "Oddkin/AI/ContextPicker/ExpandedBrowser",
+        "count": 2
+      }
+    ],
+    "editability": "Native Figma text, vectors, components, instances, slots and auto-layout frames; no image-filled nodes.",
+    "sampledContrast": {
+      "measurements": [
+        {
+          "mode": "Light",
+          "fg": "color/text/primary",
+          "bg": "color/surface/raised",
+          "ratio": 15.32,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/text/secondary",
+          "bg": "color/surface/raised",
+          "ratio": 6.06,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/text/primary",
+          "bg": "color/selection/surface",
+          "ratio": 12.76,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/text/secondary",
+          "bg": "color/selection/surface",
+          "ratio": 5.05,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/link",
+          "bg": "color/selection/surface",
+          "ratio": 4.57,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/focus/ring",
+          "bg": "color/surface/raised",
+          "ratio": 5.48,
+          "required": 3,
+          "pass": true
+        },
+        {
+          "mode": "Light",
+          "fg": "color/border/strong",
+          "bg": "color/surface/raised",
+          "ratio": 3.48,
+          "required": 3,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/text/primary",
+          "bg": "color/surface/raised",
+          "ratio": 12.09,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/text/secondary",
+          "bg": "color/surface/raised",
+          "ratio": 7.05,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/text/primary",
+          "bg": "color/selection/surface",
+          "ratio": 12.98,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/text/secondary",
+          "bg": "color/selection/surface",
+          "ratio": 7.57,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/link",
+          "bg": "color/selection/surface",
+          "ratio": 6.78,
+          "required": 4.5,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/focus/ring",
+          "bg": "color/surface/raised",
+          "ratio": 6.31,
+          "required": 3,
+          "pass": true
+        },
+        {
+          "mode": "Dark",
+          "fg": "color/border/strong",
+          "bg": "color/surface/raised",
+          "ratio": 3.59,
+          "required": 3,
+          "pass": true
+        }
+      ],
+      "scope": "Sampled semantic role pairs only; not a rendered UI or accessibility conformance audit."
+    },
+    "visualReviewNodeIds": [
+      "771:360",
+      "778:2643",
+      "779:2820",
+      "782:4064",
+      "779:3595",
+      "779:2910",
+      "771:355"
+    ],
+    "componentSetOverlapAudit": "No overlapping or out-of-bounds variants in the inspected component sets.",
+    "notVerified": [
+      "User task testing",
+      "Real browser keyboard or screen-reader behavior of the proposed implementation",
+      "Forced-colors implementation",
+      "Live search, provider integration or transport"
+    ],
+    "publication": "Not published",
+    "runtimeChanges": false
+  }
+}
