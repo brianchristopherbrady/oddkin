@@ -1,45 +1,12 @@
 import { html, repeat } from '@oddkin/core/template';
-import type { DiffSegment } from '../controllers/diff.js';
 import { isBoundary, type EditProposal } from '../controllers/document.js';
+import { diffView } from '../internal/diff-view.js';
 import type { OddkinChangeReview } from './change-review.js';
 
 /** A proposal's name without a label: its first 60 characters, never half a surrogate pair. */
 const groupName = (p: EditProposal) => {
   const text = p.replacement || p.original;
   return text.slice(0, text.length <= 60 || isBoundary(text, 60) ? 60 : 59);
-};
-
-/** The change between its muted context; `show` leaves out the deletions or the insertions. */
-const segments = (
-  host: OddkinChangeReview,
-  p: EditProposal,
-  diff: readonly DiffSegment[],
-  show: 'both' | 'before' | 'after',
-) => {
-  const t = host._strings;
-  return html`<span class="segments"
-    ><span class="context">${p.context?.before ?? ''}</span>${diff.map((s) =>
-      s.kind === 'equal'
-        ? s.text
-        : s.kind === 'delete'
-          ? show === 'after'
-            ? null
-            : html`<del
-                ><span class="visually-hidden">[${t.deleted}: </span>${s.text}<span
-                  class="visually-hidden"
-                  >]</span
-                ></del
-              >`
-          : show === 'before'
-            ? null
-            : html`<ins
-                ><span class="visually-hidden">[${t.inserted}: </span>${s.text}<span
-                  class="visually-hidden"
-                  >]</span
-                ></ins
-              >`,
-    )}<span class="context">${p.context?.after ?? ''}</span></span
-  >`;
 };
 
 /**
@@ -69,18 +36,18 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
                       <div class="side">
                         <p class="muted">${t.before}</p>
                         <div class=${code ? 'text code' : 'text'}>
-                          ${segments(host, p, diff, 'before')}
+                          ${diffView(diff, t, p.context, 'before')}
                         </div>
                       </div>
                       <div class="side">
                         <p class="muted">${t.after}</p>
                         <div class=${code ? 'text code' : 'text'}>
-                          ${segments(host, p, diff, 'after')}
+                          ${diffView(diff, t, p.context, 'after')}
                         </div>
                       </div>
                     </div>`
                   : html`<div part="diff" class=${code ? 'text code' : 'text'}>
-                      ${segments(host, p, diff, 'both')}
+                      ${diffView(diff, t, p.context)}
                     </div>`
               }
               <p part="status" class="state" data-status=${p.status} ?hidden=${!status}>

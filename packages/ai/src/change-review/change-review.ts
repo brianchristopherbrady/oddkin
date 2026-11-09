@@ -1,9 +1,10 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { Scope } from '@oddkin/core/scope';
-import { diffLines, diffWords, type DiffSegment } from '../controllers/diff.js';
+import type { DiffSegment } from '../controllers/diff.js';
 import type { EditProposal, ProposalStatus } from '../controllers/document.js';
 import { announceEvent, changeAcceptEvent, changeRejectEvent, changeUndoEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
+import { diffText } from '../internal/diff-view.js';
 import { format, strings } from '../internal/strings.js';
 
 export const CHANGE_REVIEW_STRINGS = {
@@ -30,41 +31,6 @@ export const CHANGE_REVIEW_STRINGS = {
   announceStale: 'A suggestion is out of date and was not applied.',
   announceUndone: 'Change undone.',
 };
-
-/**
- * A run of word changes that only whitespace separates, as one deletion followed by one insertion,
- * so the old phrase reads whole, then the new one.
- */
-function mergeRuns(diff: readonly DiffSegment[]): DiffSegment[] {
-  const out: DiffSegment[] = [];
-  for (let i = 0; i < diff.length;) {
-    const first = diff[i]!;
-    if (first.kind === 'equal') {
-      out.push(first);
-      i++;
-      continue;
-    }
-    // The run: changes, and the whitespace between two of them.
-    let end = i;
-    while (
-      end < diff.length &&
-      (diff[end]!.kind !== 'equal' ||
-        (/^\s+$/u.test(diff[end]!.text) &&
-          end + 1 < diff.length &&
-          diff[end + 1]!.kind !== 'equal'))
-    )
-      end++;
-    const run = diff.slice(i, end);
-    const removed = run.filter((s) => s.kind !== 'insert');
-    const added = run.filter((s) => s.kind !== 'delete');
-    if (removed.length < run.length && added.length < run.length) {
-      out.push({ kind: 'delete', text: removed.map((s) => s.text).join('') });
-      out.push({ kind: 'insert', text: added.map((s) => s.text).join('') });
-    } else out.push(...run);
-    i = end;
-  }
-  return out;
-}
 
 /**
  * Review proposed edits as before/after or inline word or line diffs; accept, reject, or undo
@@ -132,10 +98,7 @@ export class OddkinChangeReview extends OddkinElement.with({
   _diff(proposal: EditProposal): readonly DiffSegment[] {
     const cached = this.#diffs.get(proposal);
     if (cached?.granularity === this.granularity) return cached.diff;
-    const diff =
-      this.granularity === 'lines'
-        ? diffLines(proposal.original, proposal.replacement)
-        : mergeRuns(diffWords(proposal.original, proposal.replacement));
+    const diff = diffText(proposal.original, proposal.replacement, this.granularity);
     this.#diffs.set(proposal, { granularity: this.granularity, diff });
     return diff;
   }

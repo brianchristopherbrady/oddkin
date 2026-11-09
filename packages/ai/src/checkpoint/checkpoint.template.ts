@@ -1,4 +1,5 @@
 import { html } from '@oddkin/core/template';
+import { toneOf } from '../internal/status.js';
 import { format } from '../internal/strings.js';
 import type { OddkinCheckpoint } from './checkpoint.js';
 
@@ -19,14 +20,7 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
         : c.status === 'unavailable'
           ? t.unavailable
           : '';
-  const tone =
-    c.status === 'restored'
-      ? 'success'
-      : c.status === 'restore-failed'
-        ? 'danger'
-        : pending
-          ? 'active'
-          : '';
+  const tone = toneOf(pending ? 'restore-pending' : c.status);
   const unavailable = host._unavailable;
   const created = host._created();
   return html`<div

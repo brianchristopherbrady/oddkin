@@ -1,5 +1,6 @@
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
+import { toneOf } from '../internal/status.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
@@ -19,12 +20,7 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
       : pending
         ? t.submitting
         : t[approval.status];
-  const tone =
-    approval.status === 'approved'
-      ? 'success'
-      : approval.status === 'failed' || approval.status === 'rejected'
-        ? 'danger'
-        : 'active';
+  const tone = toneOf(pending ? 'submitting' : approval.status);
   const expires = host._expires();
   return html`<div
     part="base"

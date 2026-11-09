@@ -531,6 +531,65 @@ describe('odd-tool-call and odd-action-approval', () => {
 });
 
 describe('odd-checkpoint', () => {
+  it('approval and checkpoint statuses take their tones from one map (ADR 0049 §4)', async () => {
+    const approval = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      () => {},
+    );
+    const checkpoint = await mount(
+      'odd-checkpoint',
+      () => import('../src/checkpoint/checkpoint.define.js'),
+      () => {},
+    );
+    const tones = async <S extends string>(
+      el: HTMLElement & { updateComplete: Promise<void> },
+      statuses: readonly S[],
+      set: (status: S) => void,
+    ) => {
+      const out: Record<string, string | undefined> = {};
+      for (const status of statuses) {
+        set(status);
+        await settle(el);
+        out[status] = $(el, '.state')!.dataset['tone'];
+      }
+      return out;
+    };
+    expect(
+      await tones(
+        approval,
+        ['approved', 'rejected', 'failed', 'submitting', 'requested', 'expired'] as const,
+        (status) => (approval.approval = { approvalId: 'ap', revision: 1, title: 'Send', status }),
+      ),
+    ).toEqual({
+      approved: 'success',
+      rejected: 'danger',
+      failed: 'danger',
+      submitting: 'active',
+      requested: '',
+      expired: '',
+    });
+    expect(
+      await tones(
+        checkpoint,
+        ['restored', 'restore-failed', 'restore-pending', 'available'] as const,
+        (status) =>
+          (checkpoint.checkpoint = {
+            checkpointId: 'cp',
+            label: 'Before',
+            description: 'Files as of step 3.',
+            restores: ['src/'],
+            status,
+          }),
+      ),
+    ).toEqual({
+      restored: 'success',
+      'restore-failed': 'danger',
+      'restore-pending': 'active',
+      available: '',
+    });
+  });
+
   it('A20: shows restoration success only after the record says restored', async () => {
     const record = (
       status: CheckpointRecord['status'],
@@ -798,6 +857,8 @@ describe('selection, review, and controls', () => {
     expect(text(item(0).querySelector('[part="diff"]'))).toBe(
       '[deleted: The build is very slow.][inserted: Builds take 40% less time.] Contact the team.',
     );
+    // The diff keeps the proposal's own spaces and line breaks.
+    expect(getComputedStyle(item(0).querySelector('.segments')!).whiteSpace).toBe('pre-wrap');
     expect([...item(1).querySelectorAll('.context')].map(text)).toEqual([
       'The build is very slow.',
       '',

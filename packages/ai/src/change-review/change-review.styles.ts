@@ -1,12 +1,13 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { diffViewStyles } from '../internal/diff-view.js';
 import { changeReviewRecipeStyles } from './change-review.recipe.styles.js';
 
 /**
  * The arrangement is the layout recipe in `change-review.recipe.ts`. Side by side, the two sides
- * are the cards, and proposals sit further apart than their parts. Only the diff segments
- * preserve whitespace (template whitespace around them collapses); the unchanged text around a
- * change (`.context`) shows the reader where it applies.
+ * are the cards, and proposals sit further apart than their parts. The diff draws with the shared
+ * diff view (`internal/diff-view.ts`); the unchanged text around a change (`.context`) shows the
+ * reader where it applies.
  */
 export const changeReviewStyles = css`
   ${changeReviewRecipeStyles}
@@ -50,29 +51,7 @@ export const changeReviewStyles = css`
   .label {
     font-weight: ${token('font.weight.semibold')};
   }
-  .segments {
-    white-space: pre-wrap;
-  }
-  .context {
-    color: ${token('color.text.secondary')};
-  }
-  .code {
-    padding: ${token('space.xs')};
-    border-radius: ${token('radius.sm')};
-    background: ${token('color.surface.sunken')};
-    font-family: ${token('font.family.mono')};
-    font-size: ${token('font.size.sm')};
-    overflow-x: auto;
-  }
-  del {
-    background: ${token('color.danger.surface')};
-    color: ${token('color.danger.foreground')};
-  }
-  ins {
-    background: ${token('color.success.surface')};
-    color: ${token('color.success.foreground')};
-    text-decoration: underline;
-  }
+  ${diffViewStyles}
   .state {
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
@@ -82,10 +61,5 @@ export const changeReviewStyles = css`
   }
   .state[data-status='applied'] {
     color: ${token('color.success.foreground')};
-  }
-  @media (forced-colors: active) {
-    del {
-      text-decoration: line-through;
-    }
   }
 `;

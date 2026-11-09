@@ -1,14 +1,6 @@
 import { html } from '@oddkin/core/template';
+import { toneOf } from '../internal/status.js';
 import type { OddkinToolCall } from './tool-call.js';
-
-const TONE: Record<string, string> = {
-  'output-available': 'success',
-  'output-error': 'danger',
-  denied: 'danger',
-  executing: 'active',
-  'input-streaming': 'active',
-  waiting: 'active',
-};
 
 /** Anatomy: `base` with a native disclosure (`summary`, `arguments`, `result`), then any approval. */
 export const toolCallTemplate = (host: OddkinToolCall) => {
@@ -22,7 +14,7 @@ export const toolCallTemplate = (host: OddkinToolCall) => {
       <details class="details">
         <summary part="summary" class="summary">
           <span class="name">${tool.title || tool.toolName}</span>
-          <span class="status" data-tone=${TONE[status] ?? ''}>${t[status]}</span>
+          <span class="status" data-tone=${toneOf(status)}>${t[status]}</span>
           <span class="purpose muted" ?hidden=${!tool.purpose}>${tool.purpose ?? ''}</span>
         </summary>
         <div class="body">

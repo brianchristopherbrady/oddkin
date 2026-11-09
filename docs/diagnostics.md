@@ -14,21 +14,21 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `ai.attachment.type` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:138` |
 | `ai.attachment.size` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:146` |
 | `ai.attachment.count` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:154` |
-| `ai.send.failed` | — | The message could not be sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:83` |
-| `ai.approval.failed` | — | The decision could not be submitted. Try again. | yes | `packages/ai/src/controllers/conversation.ts:88` |
-| `ai.stream.failed` | — | The response failed. Try again. | yes | `packages/ai/src/controllers/conversation.ts:93` |
-| `ai.stop.stale` | — | Ignored a stop response for an older request; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:434` |
-| `ai.feedback.failed` | — | Feedback was not sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:647` |
-| `ai.event.stale` | — | Dropped a late "{event?.type}" event of an attempt that is no longer current; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:702` |
-| `ai.event.invalid` | — | Dropped a malformed event; check that the transport sends AI events with a type. | yes | `packages/ai/src/controllers/conversation.ts:711` |
-| `ai.event.duplicate` | — | Dropped a replayed "{event.type}" event; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:720` |
-| `ai.event.afterTerminal` | — | Dropped "{event.type}" after the attempt ended; check that the transport sends nothing after finish, abort, or error. | yes | `packages/ai/src/controllers/conversation.ts:731` |
-| `ai.snapshot.scope` | — | Ignored a snapshot for another message; check the snapshot names the attempt's message. | yes | `packages/ai/src/controllers/conversation.ts:895` |
-| `ai.event.metadata` | — | Provider metadata is not rendered; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:922` |
-| `ai.event.unknown` | — | Ignored unknown event "{(event as { type: string }).type}"; check the transport's mapping to AI events. | yes | `packages/ai/src/controllers/conversation.ts:930` |
-| `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1008` |
-| `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1072` |
-| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:230` |
+| `ai.send.failed` | — | The message could not be sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:84` |
+| `ai.approval.failed` | — | The decision could not be submitted. Try again. | yes | `packages/ai/src/controllers/conversation.ts:89` |
+| `ai.stream.failed` | — | The response failed. Try again. | yes | `packages/ai/src/controllers/conversation.ts:94` |
+| `ai.stop.stale` | — | Ignored a stop response for an older request; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:437` |
+| `ai.feedback.failed` | — | Feedback was not sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:650` |
+| `ai.event.stale` | — | Dropped a late "{event?.type}" event of an attempt that is no longer current; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:706` |
+| `ai.event.invalid` | — | Dropped a malformed event; check that the transport sends AI events with a type. | yes | `packages/ai/src/controllers/conversation.ts:715` |
+| `ai.event.duplicate` | — | Dropped a replayed "{event.type}" event; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:724` |
+| `ai.event.afterTerminal` | — | Dropped "{event.type}" after the attempt ended; check that the transport sends nothing after finish, abort, or error. | yes | `packages/ai/src/controllers/conversation.ts:735` |
+| `ai.snapshot.scope` | — | Ignored a snapshot for another message; check the snapshot names the attempt's message. | yes | `packages/ai/src/controllers/conversation.ts:904` |
+| `ai.event.metadata` | — | Provider metadata is not rendered; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:932` |
+| `ai.event.unknown` | — | Ignored unknown event "{(event as { type: string }).type}"; check the transport's mapping to AI events. | yes | `packages/ai/src/controllers/conversation.ts:940` |
+| `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1037` |
+| `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1102` |
+| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:223` |
 | `ai.renderers.legacy` | warning | Pass { {legacy}: … } to renderers; the old map works until the next beta. | yes | `packages/ai/src/internal/renderers.ts:39` |
 | `ai.attachment.type` | — | {name} is not an accepted file type. Choose another file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:35` |
 | `ai.attachment.size` | — | {name} is larger than {limit}. Choose a smaller file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:36` |
