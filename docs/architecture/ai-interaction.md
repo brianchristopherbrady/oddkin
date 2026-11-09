@@ -90,6 +90,8 @@ Transport connection, attempt, tool, approval, and stop are **separate state mac
 
 `interrupted` = the stream ended without a terminal event: the client lost track of the work; it is never shown as completion (A06). `relation` (`new`, `retry`, `regenerate`, `edit`) and `parentAttemptId` link attempts. A request that is never accepted removes its optimistic messages (A02).
 
+`awaiting-input` = the work waits for the person. The controller moves a streaming attempt there while one of its approvals waits (`requested`, or `decision-failed` after a decision that did not reach the backend), and back to `streaming` once none does; `odd-activity` reads only this status, never the tools or approvals (ADR 0049). A stream that finishes with `awaiting-input` keeps the attempt waiting without a stream; one that closes while an approval waits, without a terminal event, is `interrupted`.
+
 ### 4.2 Connection
 
 `idle → connecting/open/closed`; `connecting → open/closed/disconnected`; `open → closed/disconnected`; `disconnected/closed → reconnecting`; `reconnecting → open/closed/disconnected`. **Disconnect** closes the client stream only; the work continues per the backend's policy, and the attempt status is unchanged. **Resume** reattaches to the same attempt and never starts new work (A06).

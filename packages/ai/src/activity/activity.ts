@@ -11,7 +11,6 @@ export const ACTIVITY_STRINGS = {
   streaming: 'Responding…',
   tools: 'Running {count} tools: {names}',
   tool: 'Running {names}',
-  approval: 'Waiting for approval',
   'awaiting-input': 'Waiting for your input',
   completed: 'Done',
   cancelled: 'Stopped',
@@ -28,9 +27,9 @@ export const ACTIVITY_STRINGS = {
 };
 
 /**
- * Status of the current attempt, separating the work's state from the connection: active tools,
- * approvals, stopping, disconnection, and interruption, with the recovery actions the adapter
- * actually supports (stop, resume, retry).
+ * Status of the current attempt, separating the work's state from the connection: running tools,
+ * waiting for the person, stopping, disconnection, and interruption, with the recovery actions the
+ * adapter actually supports (stop, resume, retry).
  *
  * @csspart base - The status bar.
  * @csspart actions - Stop, resume, and retry.
@@ -43,7 +42,9 @@ export const ACTIVITY_STRINGS = {
  */
 export class OddkinActivity extends OddkinElement.with({
   attempt: prop.object<AttemptRecord>({ description: 'The attempt to describe.' }),
-  tools: prop.array<ToolCallRecord>({ description: "The attempt's tool calls." }),
+  tools: prop.array<ToolCallRecord>({
+    description: "The attempt's tool calls, to name the running ones.",
+  }),
   capabilities: prop.object<Capabilities>({ description: 'Which recovery actions to offer.' }),
   strings: prop.object<Partial<typeof ACTIVITY_STRINGS>>({
     description: 'Localized string overrides.',
@@ -77,7 +78,6 @@ export class OddkinActivity extends OddkinElement.with({
       const running = this.tools.filter(
         (tool) => tool.status === 'executing' || tool.status === 'input-streaming',
       );
-      if (this.tools.some((tool) => tool.status === 'awaiting-approval')) return t.approval;
       if (running.length)
         return format(running.length > 1 ? t.tools : t.tool, {
           count: running.length,

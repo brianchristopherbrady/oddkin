@@ -65,6 +65,10 @@ export const APPROVAL_TRANSITIONS: Table<ApprovalStatus> = {
   superseded: [],
 };
 
+/** The approval waits for the person: not decided yet, or the decision did not reach the backend. */
+export const awaitsPerson = (status: ApprovalStatus): boolean =>
+  status === 'requested' || status === 'decision-failed';
+
 export const CONNECTION_TRANSITIONS: Table<ConnectionState> = {
   idle: ['connecting', 'open', 'closed'],
   connecting: ['open', 'closed', 'disconnected'],

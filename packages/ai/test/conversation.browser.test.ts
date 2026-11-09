@@ -276,6 +276,10 @@ describe('odd-conversation', () => {
       },
     );
     await settle(el);
+    const activity = () =>
+      el.shadowRoot!.querySelector('odd-activity')!.shadowRoot!.querySelector('.text')?.textContent;
+    // The attempt waits for the person while its approval does.
+    expect(activity()).toBe('Waiting for your input');
     const seen: unknown[] = [];
     document.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail), {
       once: true,
@@ -300,6 +304,7 @@ describe('odd-conversation', () => {
     expect(approval.shadowRoot!.querySelector('.state')?.textContent).toContain(
       'The action runs separately',
     );
+    expect(activity()).toBe('Responding…');
     expect(controller.getSnapshot().tools['t']?.status).toBe('awaiting-approval');
     release();
   });

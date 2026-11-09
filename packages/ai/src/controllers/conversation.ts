@@ -47,6 +47,7 @@ import {
   ATTEMPT_TRANSITIONS,
   TOOL_TRANSITIONS,
   applyStopOutcome,
+  awaitsPerson,
   canTransition,
   isActive,
   isTerminal,
@@ -151,6 +152,8 @@ export class ConversationController implements ExternalSource<ConversationState>
   #sinks = new Map<string, Sink>();
   #replay = new Map<string, ReplayState>();
   #stepStart = new Map<string, number>();
+  /** Attempts whose stream finished awaiting input: they wait without a stream. */
+  #finishedWaiting = new Set<string>();
   #pendingDecisions = new Set<string>();
   #pendingStops = new Map<string, number>();
   #disposed = false;
@@ -691,7 +694,8 @@ export class ConversationController implements ExternalSource<ConversationState>
       ...a,
       connection: 'closed',
       // A closed connection is not completion: without a terminal event the outcome is unknown.
-      status: a.status === 'awaiting-input' || isTerminal(a.status) ? a.status : 'interrupted',
+      status:
+        isTerminal(a.status) || this.#finishedWaiting.has(attemptId) ? a.status : 'interrupted',
     }));
   }
 
@@ -910,6 +914,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         return;
       }
       case 'finish':
+        if (event.status === 'awaiting-input') this.#finishedWaiting.add(id);
         this.#terminate(id, event.status ?? 'completed');
         return;
       case 'abort':
@@ -937,6 +942,7 @@ export class ConversationController implements ExternalSource<ConversationState>
   }
 
   #markStreaming(attemptId: string): void {
+    let started = false;
     this.#updateAttempt(attemptId, (a) => {
       const connection =
         a.connection === 'connecting' || a.connection === 'reconnecting' ? 'open' : a.connection;
@@ -944,8 +950,26 @@ export class ConversationController implements ExternalSource<ConversationState>
         a.status === 'submitted' || a.status === 'accepted' || a.status === 'interrupted'
           ? 'streaming'
           : a.status;
+      started = status !== a.status;
       return connection === a.connection && status === a.status ? a : { ...a, connection, status };
     });
+    // A resumed stream may find an approval still waiting.
+    if (started) this.#syncWaiting(attemptId);
+  }
+
+  /** While one of its approvals waits for the person, a streaming attempt awaits input. */
+  #syncWaiting(attemptId: string): void {
+    const now = this.#state.peek();
+    const waiting = Object.values(now.approvals).some(
+      (approval) => approval.attemptId === attemptId && awaitsPerson(approval.status),
+    );
+    this.#updateAttempt(attemptId, (a) =>
+      waiting && a.status === 'streaming'
+        ? { ...a, status: 'awaiting-input' }
+        : !waiting && a.status === 'awaiting-input' && !this.#finishedWaiting.has(attemptId)
+          ? { ...a, status: 'streaming' }
+          : a,
+    );
   }
 
   #terminate(attemptId: string, status: AttemptStatus, error?: PublicError): void {
@@ -1029,6 +1053,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         approvalId: record.approvalId,
       }));
     }
+    this.#syncWaiting(record.attemptId ?? attempt.attemptId);
   }
 
   // ---- Record helpers ----
@@ -1085,6 +1110,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     const approval = now.approvals[approvalId];
     if (!approval) return;
     this.#commit({ ...now, approvals: { ...now.approvals, [approvalId]: update(approval) } });
+    if (approval.attemptId) this.#syncWaiting(approval.attemptId);
   }
 
   #setApproval(approvalId: string, revision: number, status: ApprovalStatus): void {
@@ -1237,6 +1263,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     this.#sinks.clear();
     this.#replay.clear();
     this.#stepStart.clear();
+    this.#finishedWaiting.clear();
     this.#pendingDecisions.clear();
     this.#pendingStops.clear();
     this.#preferred.clear();

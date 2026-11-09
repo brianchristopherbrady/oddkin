@@ -6035,3 +6035,12 @@ The owner asked to publish to npm by hand with two-factor approval in Chrome (tr
 | Probes | `mutate.mjs`, 4 mutants: a tokens message and a components warning lose their instruction; the scanner reads no named suggestion; it skips shorthand properties | 4 killed |
 | Repository | `npm run build`, `node scripts/check-size.mjs`, `npm run typecheck`, `npm run verify:metadata`, `npm run lint` | Each exit 0; `side-nav` 16,082 B gzip (+14), `components:side-nav` and `components:shared` unchanged |
 | Found while checking | `node scripts/list-diagnostics.mjs` on main (`2a46230`) | `docs/diagnostics.md` was out of date there: two tokens rows' line numbers moved with the token register. Regenerated here |
+
+## 2026-11-08 — The activity reads only the attempt (round 11, Agent 2; row 14, ADR 0049 §6 item 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Controller | `npx vitest run --project node`; new in `packages/ai/test/conversation.test.ts`: an attempt awaits input while one of its approvals waits, through a failed decision and one on its way; a finished wait keeps waiting without a stream; a stream that closes while an approval waits is interrupted | 1,718 passed, 2 skipped (140 files) |
+| Elements | `browser-set.mjs` on the AI contract, conversation (new: the activity line reads "Waiting for your input" while the approval waits, then "Responding…"), elements, layout, and Figma parity files | 288 passed, 4 skipped in each of Chromium, Firefox, and WebKit |
+| Probes | `mutate.mjs`, 5 mutants: an approval request leaves the attempt streaming; a decision on its way still waits; a closed stream keeps the wait; a finished wait streams again after the decision; the activity scans the tools for approvals again | 5 killed |
+| Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run lint` | Each exit 0; `ai-headless` 13,948 B gzip (+105), `ai-chat` 56,543 (−17), `ai-response` 24,623 (0): no budget changes |

@@ -372,6 +372,62 @@ describe('ConversationController: tools and approvals', () => {
     expect(s.approvals['ap']?.status).toBe('approved');
   });
 
+  const request = (approvalId: string): AiEvent => ({
+    type: 'approval-request',
+    approval: { approvalId, revision: 1, title: approvalId, status: 'requested' },
+  });
+
+  it('an attempt awaits input while one of its approvals waits for the person', async () => {
+    let fail = true;
+    const { transport, sink } = manual({
+      decide: async () => {
+        if (!fail) return 'accepted';
+        fail = false;
+        throw new Error('offline');
+      },
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), { type: 'text-delta', partId: 'p', delta: 'x' }, request('a'), request('b'));
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    // More output while the person decides does not end the wait.
+    push(sink(), { type: 'text-delta', partId: 'p', delta: 'y' });
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    // A decision that did not reach the backend leaves the person to decide again.
+    expect(await c.decide('a', 1, 'approve')).toMatchObject({ ok: false, reason: 'rejected' });
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    expect(await c.decide('a', 1, 'approve')).toEqual({ ok: true });
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    const deciding = c.decide('b', 1, 'reject');
+    // The last decision is on its way: nothing waits for the person.
+    expect(attempt(c)?.status).toBe('streaming');
+    await deciding;
+    expect(attempt(c)?.status).toBe('streaming');
+    push(sink(), { type: 'finish' });
+    expect(attempt(c)?.status).toBe('completed');
+  });
+
+  it('an attempt that finished awaiting input keeps waiting without a stream', async () => {
+    const { transport, sink } = manual({ decide: async () => 'accepted' });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), request('a'), { type: 'finish', status: 'awaiting-input' });
+    sink().close();
+    expect(attempt(c)).toMatchObject({ status: 'awaiting-input', connection: 'closed' });
+    expect(await c.decide('a', 1, 'approve')).toEqual({ ok: true });
+    expect(attempt(c)?.status).toBe('awaiting-input');
+  });
+
+  it('a stream that ends while an approval waits is interrupted', async () => {
+    const { transport, sink } = manual();
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), request('a'));
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    sink().close();
+    expect(attempt(c)).toMatchObject({ status: 'interrupted', connection: 'closed' });
+  });
+
   it('A10: a changed proposal supersedes the old revision; stale and expired decisions are refused', async () => {
     const decided: number[] = [];
     const { transport, sink } = manual({
