@@ -105,7 +105,7 @@ export default defineExamples('odd-action-approval', {
       },
     },
     guidance:
-      'The host offers the scopes and enforces each; the element collects the choice and sends it with Approve only. Nothing is chosen for the person, not even `defaultScopeId`: two to four scopes are radios, more a select, and a new revision asks again.',
+      'The host offers the scopes and enforces each; the element collects the choice and sends it with Approve only. Nothing is chosen because it comes first: give `defaultScopeId` to choose one.',
     fixture: recordDecisions,
   },
   failed: {

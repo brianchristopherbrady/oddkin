@@ -11,6 +11,7 @@ export interface ScopeStrings {
   readonly scope: string;
   readonly scopeNone: string;
   readonly scopeRequired: string;
+  readonly scopeDefaulted: string;
   readonly scopeReset: string;
   readonly scopeSelect: string;
   readonly scopeSelectHelp: string;
@@ -19,9 +20,11 @@ export interface ScopeStrings {
 /** What the scope choice shows. */
 export interface ScopeSetup {
   readonly scopes: readonly ApprovalScope[];
-  /** The person's choice for this revision, or the only scope; never a default (owner). */
+  /** The person's choice for this revision, the only scope, or the host's valid default. */
   readonly chosen: string | undefined;
-  /** A new revision dropped the person's choice: they choose again. */
+  /** The host's default is the one chosen, not the person. */
+  readonly defaulted: boolean;
+  /** A new revision dropped the person's choice, and no default stands: they choose again. */
   readonly reset: boolean;
   readonly disabled: boolean;
   readonly onChange: (event: Event) => void;
@@ -33,11 +36,11 @@ const RADIOS = 4;
 /**
  * Figma page 08's ScopeChoice and ScopeOption (`Oddkin/AI/Internal/ScopeChoice`): what an approval
  * covers. No scopes: this action only. One: explained, nothing to choose. Two to four: described
- * radio rows. More: a select, the chosen scope's description below it. Nothing is chosen for the
- * person.
+ * radio rows. More: a select, the chosen scope's description below it. Nothing is chosen because it
+ * comes first; the host's valid default is, and says so (Defaulted).
  */
 export const scopeChoice = (setup: ScopeSetup, t: ScopeStrings) => {
-  const { scopes, chosen, reset, disabled, onChange } = setup;
+  const { scopes, chosen, defaulted, reset, disabled, onChange } = setup;
   if (scopes.length < 2) {
     const only = scopes[0];
     return html`<div part="scope" class="scope-choice">
@@ -47,7 +50,7 @@ export const scopeChoice = (setup: ScopeSetup, t: ScopeStrings) => {
     </div>`;
   }
   const hint = html`<p id="scope-hint" class="scope-hint">
-    ${reset ? t.scopeReset : t.scopeRequired}
+    ${reset ? t.scopeReset : defaulted ? t.scopeDefaulted : t.scopeRequired}
   </p>`;
   if (scopes.length > RADIOS) {
     const selected = scopes.find((scope) => scope.id === chosen);

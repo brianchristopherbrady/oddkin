@@ -24,6 +24,7 @@ export const APPROVAL_STRINGS = {
   scope: 'Approval covers',
   scopeNone: 'Applies to this action only.',
   scopeRequired: 'Choose what your approval covers.',
+  scopeDefaulted: 'Selected by the app. You can change this.',
   scopeReset: 'This proposal changed. Choose the scope again.',
   scopeSelect: 'Choose scope',
   scopeSelectHelp: 'Select a scope to enable Approve.',
@@ -56,7 +57,7 @@ export const APPROVAL_STRINGS = {
  * @csspart changes - Before/after list.
  * @csspart scope - What an approval covers: the one scope explained, or a choice among several.
  * @csspart actions - Decision controls.
- * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Before/after values carry visually hidden "Before"/"After" labels. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen in advance, and Approve stays disabled until one is.
+ * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Before/after values carry visually hidden "Before"/"After" labels. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so.
  * @keyboard Tab to the controls; Enter or Space decides.
  * @useFor Human approval of agent actions (tool calls, writes, purchases).
  * @notFor Confirming the user's own direct actions; use a dialog.
@@ -118,9 +119,9 @@ export class OddkinActionApproval extends OddkinElement.with({
   }
 
   /**
-   * @internal The scope Approve sends: the person's choice for this revision, or the only scope.
-   * Never a default (owner, 2026-11-09): with two or more, the person chooses, and a new revision
-   * drops the choice.
+   * @internal The scope Approve sends: the person's choice for this revision, else the only scope,
+   * else the host's valid default. Nothing is chosen because it comes first, and a new revision
+   * drops the person's choice.
    */
   _scopeOf(approval: ApprovalRecord): string | undefined {
     const own = this._scope.value;
@@ -129,13 +130,24 @@ export class OddkinActionApproval extends OddkinElement.with({
       ? own.id
       : scopes.length === 1
         ? scopes[0]?.id
-        : undefined;
+        : approval.defaultScopeId;
   }
 
-  /** @internal Whether a new revision of this approval dropped the person's choice. */
+  /** @internal Whether the host's valid default is the scope chosen, not the person. */
+  _scopeDefaulted(approval: ApprovalRecord): boolean {
+    return (
+      (approval.scopes?.length ?? 0) > 1 &&
+      approval.defaultScopeId !== undefined &&
+      scopesValid(approval) &&
+      this._scope.value?.key !== this._key(approval)
+    );
+  }
+
+  /** @internal Whether a new revision of this approval dropped the person's choice, no default standing. */
   _scopeReset(approval: ApprovalRecord): boolean {
     const own = this._scope.value;
     return (
+      approval.defaultScopeId === undefined &&
       own !== undefined &&
       own.key !== this._key(approval) &&
       own.key.startsWith(`${approval.approvalId}:`)

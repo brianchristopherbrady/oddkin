@@ -358,10 +358,10 @@ describe('odd-tool-call and odd-action-approval', () => {
     const hint = (el: Element) => text($(el, '.scope-hint'));
     const radios = (el: Element) => $$(el, 'input[name="scope"]') as HTMLInputElement[];
 
-    it('two to four: the person chooses, and Approve sends the choice; a new revision asks again, default or not', async () => {
+    it('two to four: the person chooses, and Approve sends the choice; a new revision asks again unless a valid default stands', async () => {
       const el = await scoped(approval());
       expect(text($(el, 'legend'))).toBe('Approval covers');
-      // Nothing is chosen for the person.
+      // Nothing is chosen because it comes first.
       expect(radios(el).map((r) => r.checked)).toEqual([false, false]);
       expect(approve(el).disabled).toBe(true);
       expect(hint(el)).toBe('Choose what your approval covers.');
@@ -378,8 +378,8 @@ describe('odd-tool-call and odd-action-approval', () => {
       expect(seen).toEqual([
         { approvalId: 'ap', revision: 1, decision: 'approve', reason: undefined, scope: 'session' },
       ]);
-      // A new revision drops the choice and asks again; a default chooses nothing (owner).
-      el.approval = approval({ revision: 2, defaultScopeId: 'once' });
+      // A new revision drops the choice and asks again.
+      el.approval = approval({ revision: 2 });
       await settle(el);
       expect(radios(el).map((r) => r.checked)).toEqual([false, false]);
       expect(approve(el).disabled).toBe(true);
@@ -387,11 +387,20 @@ describe('odd-tool-call and odd-action-approval', () => {
       radios(el)[0]!.click();
       await settle(el);
       expect(hint(el)).toBe('Choose what your approval covers.');
+      // The host's valid default stands, and says so, until the person picks another.
+      el.approval = approval({ revision: 3, defaultScopeId: 'once' });
+      await settle(el);
+      expect(radios(el).map((r) => r.checked)).toEqual([true, false]);
+      expect(approve(el).disabled).toBe(false);
+      expect(hint(el)).toBe('Selected by the app. You can change this.');
+      radios(el)[1]!.click();
+      await settle(el);
+      expect(hint(el)).toBe('Choose what your approval covers.');
       // A rejection never carries a scope.
       reject(el).click();
       expect(seen.at(-1)).toEqual({
         approvalId: 'ap',
-        revision: 2,
+        revision: 3,
         decision: 'reject',
         reason: undefined,
         scope: undefined,
@@ -449,6 +458,8 @@ describe('odd-tool-call and odd-action-approval', () => {
       await refused('Its choices are not valid; it cannot be approved.');
       el.approval = approval({ revision: 2, defaultScopeId: 'forever' });
       await refused('Its choices are not valid; it cannot be approved.');
+      // A default that is not one of the scopes is not presented as chosen by the app.
+      expect(hint(el)).toBe('Choose what your approval covers.');
       el.approval = approval({ revision: 3, defaultScopeId: 'once' });
       el.capabilities = {
         respondToApproval: { available: true },

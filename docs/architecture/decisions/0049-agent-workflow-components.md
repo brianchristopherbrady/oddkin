@@ -254,7 +254,7 @@ Every intent event names its record and revision: `{ approvalId, revision, … }
    - **permission scopes** (owner, 2026-11-09): optional `scopes`, `[{ id, label, description? }]` with opaque ids, and `defaultScopeId`, offered by the host, whose backend defines, validates, enforces, and persists what each scope means. The element collects intent only: no permission storage, authentication, or policy engine.
      - No scopes, or an empty list: the approval covers this action at this revision only.
      - One scope: no selector, and the scope stays visibly explained.
-     - Two or more: the person chooses, unless the host gives an explicit, valid `defaultScopeId`; nothing is chosen because it comes first. *Owner, 2026-11-09 (Figma page 08): the element never chooses one, not even the default, which applies only to a `decide()` without a scope; two to four scopes are radio rows, more a select.*
+     - Two or more: the person chooses, unless the host gives an explicit, valid `defaultScopeId`; nothing is chosen because it comes first.
      - Duplicate ids and an unknown default are invalid configuration.
      - The chosen scope goes only with `approve` (a rejection never sets a broader denial), in `odd-approval-decide` and the transport's `ApprovalDecision`, validated against the current revision.
      - A material change to the action, its target, or the scopes offered makes a new revision, which resets the local choice.

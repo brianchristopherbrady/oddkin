@@ -75,6 +75,7 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
       {
         scopes,
         chosen: scope,
+        defaulted: host._scopeDefaulted(approval),
         reset: host._scopeReset(approval),
         disabled: blocked !== undefined,
         onChange: host._onScope,
