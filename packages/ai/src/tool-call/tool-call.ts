@@ -51,13 +51,6 @@ export class OddkinToolCall extends OddkinElement.with({
   renderers: prop.object<Renderers>({
     description: 'Host renderers by extension point; uses `toolOutput`.',
   }),
-  /**
-   * @deprecated Pass `renderers.toolOutput`; read until the next beta.
-   * @replacement renderers
-   */
-  renderOutput: prop.object<{ render: ToolOutputRenderer }>({
-    description: 'Deprecated: `renderers.toolOutput`.',
-  }),
   strings: prop.object<Partial<typeof TOOL_CALL_STRINGS>>({
     description: 'Localized string overrides.',
   }),
@@ -99,7 +92,7 @@ export class OddkinToolCall extends OddkinElement.with({
   _output(): Node | string | undefined {
     const tool = this.tool;
     if (!tool || tool.output === undefined) return undefined;
-    const render = this.renderers?.toolOutput ?? this.renderOutput?.render.bind(this.renderOutput);
+    const render = this.renderers?.toolOutput;
     return render?.(tool) ?? JSON.stringify(tool.output, null, 2);
   }
 }

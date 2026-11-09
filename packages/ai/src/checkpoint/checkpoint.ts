@@ -14,8 +14,6 @@ export const CHECKPOINT_STRINGS = {
   cancel: 'Keep current state',
   confirmText:
     'Restore to “{label}”? The items listed above are replaced. Work after this point is not kept unless the application saves it.',
-  /** @deprecated Unused: a checkpoint that can be restored shows no status. Removed at the next major release. */
-  available: 'Available',
   'restore-pending': 'Restoring… Not restored yet.',
   restored: 'Restored. {outcome}',
   'restore-failed': 'Restore failed: {message}',
@@ -50,7 +48,7 @@ export class OddkinCheckpoint extends OddkinElement.with({
     description: 'Announce outcomes (when no surrounding surface does).',
   }),
   strings: prop.object<Partial<typeof CHECKPOINT_STRINGS>>({
-    description: 'Localized string overrides; `available` is unused (deprecated).',
+    description: 'Localized string overrides.',
   }),
 }) {
   static override events = {

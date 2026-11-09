@@ -115,6 +115,37 @@ const topOf = (el: HTMLElement, scroller: HTMLElement) =>
   el.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
 
 describe('odd-conversation', () => {
+  it('hands its renderers to every message, one object by extension point', async () => {
+    const { controller } = harness();
+    controller.load({
+      conversationId: 'c',
+      messages: [
+        {
+          id: 'm1',
+          role: 'assistant',
+          parts: [{ type: 'data', id: 'd', name: 'chart', data: [1] }],
+        },
+      ],
+    });
+    const { el, articles } = await mount(controller);
+    const renderers = {
+      data: {
+        chart: {
+          validate: (data: unknown) => Array.isArray(data),
+          render: () => Object.assign(document.createElement('p'), { textContent: 'data:chart' }),
+        },
+      },
+    };
+    el.renderers = renderers;
+    await settle(el);
+    const message = articles()[0] as HTMLElementTagNameMap['odd-message'];
+    await settle(message);
+    expect(message.renderers).toBe(renderers);
+    expect(message.shadowRoot!.querySelector('[part="content"]')!.textContent!.trim()).toBe(
+      'data:chart',
+    );
+  });
+
   it('renders an ARIA feed of labelled articles with a roving tab stop', async () => {
     const { controller } = harness();
     controller.load({ conversationId: 'c', messages: messages(0, 4) });

@@ -18,8 +18,6 @@ export const CHANGE_REVIEW_STRINGS = {
   reject: 'Reject',
   dismiss: 'Dismiss',
   undo: 'Undo',
-  /** @deprecated Unused: a proposal awaiting review shows no status. Removed at the next major release. */
-  proposed: 'Proposed',
   applying: 'Applying…',
   applied: 'Applied',
   rejected: 'Rejected',
@@ -73,7 +71,7 @@ export class OddkinChangeReview extends OddkinElement.with({
     description: 'Announce outcomes (when no surrounding surface does).',
   }),
   strings: prop.object<Partial<typeof CHANGE_REVIEW_STRINGS>>({
-    description: 'Localized string overrides; `proposed` is unused (deprecated).',
+    description: 'Localized string overrides.',
   }),
 }) {
   static override events = {

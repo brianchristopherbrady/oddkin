@@ -15,13 +15,11 @@ import type {
   QuestionRecord,
   ToolCallRecord,
 } from '../contracts/types.js';
-import type { ArtifactRenderer } from '../artifact/artifact.js';
 import type { ResponseStatus } from '../response/response.js';
-import type { ToolOutputRenderer } from '../tool-call/tool-call.js';
 import { announceEvent, messageEditEvent, messageRegenerateEvent } from '../events.js';
 import { revealSourceEvent } from '../citation/citation.js';
 import { format, strings } from '../internal/strings.js';
-import { rendererCache, type Renderers } from '../internal/renderers.js';
+import type { Renderers } from '../internal/renderers.js';
 import type { MarkdownOptions } from '../markdown/render.js';
 import type { Scope } from '@oddkin/core/scope';
 
@@ -95,20 +93,6 @@ export class OddkinMessage extends OddkinElement.with({
   renderers: prop.object<Renderers>({
     description: 'Host renderers by extension point: `data`, `artifact`, `toolOutput`.',
   }),
-  /**
-   * @deprecated Pass `renderers.artifact`; read until the next beta.
-   * @replacement renderers
-   */
-  artifactRenderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
-    description: 'Deprecated: `renderers.artifact`.',
-  }),
-  /**
-   * @deprecated Pass `renderers.toolOutput`; read until the next beta.
-   * @replacement renderers
-   */
-  renderTool: prop.object<{ render: ToolOutputRenderer }>({
-    description: 'Deprecated: `renderers.toolOutput`.',
-  }),
   feedbackReasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
   strings: prop.object<Partial<typeof MESSAGE_STRINGS>>({
     description: 'Localized string overrides.',
@@ -123,12 +107,6 @@ export class OddkinMessage extends OddkinElement.with({
 
   /** @internal Inline edit draft (presentation state); undefined when not editing. */
   readonly _editing = signal<string | undefined>(undefined);
-  readonly #renderers = rendererCache('data');
-
-  /** @internal The renderers in use, handed to the tool calls and artifacts. */
-  get _renderers(): Renderers {
-    return this.#renderers(this.renderers, this.artifactRenderers, this.renderTool);
-  }
 
   /** @internal */
   get _strings(): typeof MESSAGE_STRINGS {
@@ -162,7 +140,7 @@ export class OddkinMessage extends OddkinElement.with({
 
   /** @internal */
   _data(part: PartOf<'data'>): Node | undefined {
-    const renderer = this._renderers.data?.[part.name];
+    const renderer = this.renderers?.data?.[part.name];
     if (!renderer) return undefined;
     try {
       return renderer.validate(part.data) ? renderer.render(part.data, part) : undefined;

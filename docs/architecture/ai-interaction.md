@@ -229,12 +229,12 @@ Content a host draws itself goes through one property, `renderers`, on `odd-conv
 | Point | For | Renderer |
 | --- | --- | --- |
 | `data` | `data` parts, by `name` | `{ validate(data), render(data, part) }`: validates the untrusted data, then returns a node; data that fails shows the fallback |
-| `artifact` | Artifact previews, by `kind` | `(revision, artifact, container)`: renders into the preview and may return a cleanup, run when the preview is replaced |
+| `artifact` | Artifact previews, by `kind` | `(revision, artifact, container)`: renders into the preview and may return a cleanup, run once when the preview is replaced (another revision, view, or renderer) and once when the element disconnects |
 | `toolOutput` | Tool results | `(tool)`: returns a node, or undefined for the formatted JSON |
 
 One object serves every element: a conversation hands its `renderers` to each message, and a message to its tool calls and artifacts, each taking its own point. The renderers keep the signatures they had, since changing them would break every host renderer for no gain to users.
 
-Read until the next beta, deprecated: `artifactRenderers` and `renderTool` (`{ render }`) on conversation and message, and `renderOutput` (`{ render }`) on tool call; a point given in `renderers` wins over them. `renderers` in its earlier shape, a map of `data` renderers on conversation and message or of artifact renderers by kind on artifact, is still read, with one warning (`ai.renderers.legacy`).
+The earlier per-point properties (`artifactRenderers` and `renderTool` on conversation and message, `renderOutput` on tool call) and the earlier shape of `renderers` (a map of `data` renderers, or of artifact renderers by kind) are gone, without aliases (ADR 0049 slice 6; owner, 2026-11-09).
 
 ## 7. Composer, selection, scrolling, resources
 

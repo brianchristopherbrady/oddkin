@@ -1723,6 +1723,52 @@ describe('selection, review, and controls', () => {
     ]);
   });
 
+  it("odd-artifact: runs each renderer's cleanup exactly once, when replaced and when disconnected", async () => {
+    const log: string[] = [];
+    const renderer =
+      (name: string): ArtifactRenderer =>
+      (revision, _artifact, target) => {
+        target.textContent = `${name}:${revision.content}`;
+        log.push(`render ${name}`);
+        return () => log.push(`cleanup ${name}`);
+      };
+    const el = await mount(
+      'odd-artifact',
+      () => import('../src/artifact/artifact.define.js'),
+      (e) => {
+        e.artifact = {
+          artifactId: 'a1',
+          title: 'Chart',
+          kind: 'chart',
+          currentRevisionId: 'r1',
+          revisions: [{ revisionId: 'r1', number: 1, content: 'v1' }],
+        };
+        e.renderers = { artifact: { chart: renderer('first') } };
+      },
+    );
+    expect(log).toEqual(['render first']);
+    // A kind the host renders is previewable: the view switch shows.
+    expect(($(el, '.view') as HTMLElement).hidden).toBe(false);
+    el.renderers = { artifact: { chart: renderer('second') } };
+    await settle(el);
+    expect(text($(el, '[part="preview"]'))).toBe('second:v1');
+    expect(log).toEqual(['render first', 'cleanup first', 'render second']);
+    el.remove();
+    flush();
+    container.append(el);
+    await settle(el);
+    el.remove();
+    flush();
+    expect(log).toEqual([
+      'render first',
+      'cleanup first',
+      'render second',
+      'cleanup second',
+      'render second',
+      'cleanup second',
+    ]);
+  });
+
   it('odd-artifact: keeps identity across revisions, renders previews, and cleans up renderers', async () => {
     let live = 0;
     const el = await mount(
@@ -1885,7 +1931,7 @@ describe('odd-message fallbacks and provenance', () => {
     }
   });
 
-  it('takes one renderers object by extension point; the old names and shape work for one beta', async () => {
+  it('takes one renderers object by extension point; the old names and shape are gone', async () => {
     const node = (content: string) =>
       Object.assign(document.createElement('p'), { textContent: content });
     const chart = { validate: (d: unknown) => Array.isArray(d), render: () => node('data:chart') };
@@ -1939,44 +1985,43 @@ describe('odd-message fallbacks and provenance', () => {
         records(e);
         e.renderers = { data: { chart }, artifact: { chart: preview }, toolOutput: output };
       });
-      const expected = ['data:chart', 'Result tool:search', 'artifact:v1'];
-      expect(await shown(current)).toEqual(expected);
-      expect(warn).not.toHaveBeenCalled();
-      // Until the next beta: renderers as a map of data renderers, artifactRenderers, renderTool.
-      const legacy = await mount('odd-message', define, (e) => {
+      expect(await shown(current)).toEqual(['data:chart', 'Result tool:search', 'artifact:v1']);
+      // The old names and the old shape are gone (ADR 0049 slice 6): nothing reads them, and
+      // nothing warns.
+      const old = await mount('odd-message', define, (e) => {
         records(e);
-        e.renderers = { chart } as never;
-        e.artifactRenderers = { chart: preview };
-        e.renderTool = { render: output };
+        Object.assign(e, {
+          renderers: { chart },
+          artifactRenderers: { chart: preview },
+          renderTool: { render: output },
+        });
       });
-      expect(await shown(legacy)).toEqual(expected);
-      expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
-        expect.stringMatching(/^\[ai\.renderers\.legacy\] /),
+      expect(await shown(old)).toEqual([
+        'Structured content “chart” was not shown because it did not pass validation.',
+        'Result { "hits": 1 }',
+        '',
       ]);
-      // A point given in renderers wins over its old property.
-      legacy.renderers = { toolOutput: () => node('tool:new') };
-      await settle(legacy);
-      expect((await shown(legacy))[1]).toBe('Result tool:new');
-      // A tool call on its own still reads renderOutput.
       const tool = await mount(
         'odd-tool-call',
         () => import('../src/tool-call/tool-call.define.js'),
         (e) => {
-          e.tool = legacy.tools!['t1']!;
-          e.renderOutput = { render: output };
+          e.tool = old.tools!['t1']!;
+          Object.assign(e, { renderOutput: { render: output } });
         },
       );
-      expect(text($(tool, '[part="result"]'))).toBe('Result tool:search');
-      // An artifact on its own still reads renderers as a map by kind.
+      expect(text($(tool, '[part="result"]'))).toBe('Result { "hits": 1 }');
       const artifact = await mount(
         'odd-artifact',
         () => import('../src/artifact/artifact.define.js'),
         (e) => {
-          e.artifact = legacy.artifacts!['a1']!;
-          e.renderers = { chart: preview } as never;
+          e.artifact = old.artifacts!['a1']!;
+          Object.assign(e, { renderers: { chart: preview } });
         },
       );
-      expect(text($(artifact, '[part="preview"]'))).toBe('artifact:v1');
+      expect(text($(artifact, '[part="preview"]'))).toBe('');
+      // Without a renderer for its kind, the artifact shows its source only.
+      expect(($(artifact, '.view') as HTMLElement).hidden).toBe(true);
+      expect(warn).not.toHaveBeenCalled();
     } finally {
       warn.mockRestore();
     }

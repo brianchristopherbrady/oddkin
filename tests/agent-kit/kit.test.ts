@@ -248,3 +248,33 @@ describe('a consuming library’s kit', () => {
     expect(message).toContain(`→ npx oddkin-kit --package @acme/ui --out ${out}`);
   });
 });
+
+describe('a library’s deprecations in its kit', () => {
+  // The analyzer fixture with authored deprecations: a component, a property, and an event.
+  const root = acmeWorkspace('analyzer-lifecycle');
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+  const { files } = generateKit(
+    resolveProjectContext(root, { themeConfig: 'theme.json' }),
+    '@acme/ui',
+  );
+  const file = (path: string) => files.get(path) ?? '';
+
+  it('say which components and members are deprecated, and where to go instead', () => {
+    expect(file('GUIDE.md')).toContain('`<acme-notice>` (deprecated)');
+    expect(file('GUIDE.md')).not.toContain('`<acme-banner>` (deprecated)');
+    expect(file('references/components/acme-notice.md')).toContain(
+      '**Deprecated.** Use `<acme-banner>`. Replacement: `component:acme-banner`. Migration: `migrations/2.0.md#notice`.',
+    );
+    expect(file('references/choosing-components.md')).toContain(
+      '- `<acme-notice>`\n  - Deprecated: Use `<acme-banner>`.',
+    );
+    const banner = file('references/components/acme-banner.md');
+    expect(banner).toMatch(
+      /\| `kind` \|[^\n]*\| Deprecated: Use `tone`; `kind` maps to the same values\./,
+    );
+    expect(banner).toMatch(
+      /\| `acme-close` \|[^\n]*\| Deprecated: Listen for `acme-dismiss` instead/,
+    );
+    expect(banner).not.toMatch(/\| `tone` \|[^\n]*Deprecated/);
+  });
+});

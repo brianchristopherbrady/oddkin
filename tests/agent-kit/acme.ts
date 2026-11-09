@@ -7,6 +7,8 @@ import { emitInspectJson, generate } from '@oddkin/tokens/generate';
 
 // A consuming workspace unlike Oddkin's own: prefix acme-, colocated components (the analyzer
 // fixture library), the harbor theme with a product, and @oddkin packages installed, not linked.
+// `fixture` names another analyzer fixture to analyze instead, such as `analyzer-lifecycle` with
+// its authored deprecations.
 
 export const repo = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -15,7 +17,7 @@ const write = (file: string, content: string | object) => {
   writeFileSync(file, typeof content === 'string' ? content : stableJson(content));
 };
 
-export function acmeWorkspace(): string {
+export function acmeWorkspace(fixture = 'analyzer-library'): string {
   const root = mkdtempSync(join(tmpdir(), 'oddkin-agent-kit-'));
   const theme = JSON.parse(readFileSync(join(repo, 'examples/tokens-css-only/theme.json'), 'utf8'));
   delete theme.$schema;
@@ -23,20 +25,19 @@ export function acmeWorkspace(): string {
   if (!generated.ok || !generated.theme) throw new Error(JSON.stringify(generated.diagnostics));
   const inspection = JSON.parse(emitInspectJson(generated.theme, generated.diagnostics));
   const result = analyze({
-    project: join(repo, 'tests/fixtures/analyzer-library/tsconfig.json'),
+    project: join(repo, `tests/fixtures/${fixture}/tsconfig.json`),
     library: { name: '@acme/ui', version: '2.3.0', prefix: 'acme-' },
     tokens: { inspection, source: { package: '@acme/tokens', export: './inspect.json' } },
   });
-  const metadata = {
-    ...result.metadata,
-    examples: {
-      'example:acme-panel/basic': {
-        component: 'component:acme-panel',
-        name: 'basic',
-        file: 'src/panel.examples.ts',
-      },
+  const examples = {
+    'example:acme-panel/basic': {
+      component: 'component:acme-panel',
+      name: 'basic',
+      file: 'src/panel.examples.ts',
     },
   };
+  const metadata =
+    fixture === 'analyzer-library' ? { ...result.metadata, examples } : result.metadata;
   write(join(root, 'package.json'), {
     name: 'acme-app',
     private: true,

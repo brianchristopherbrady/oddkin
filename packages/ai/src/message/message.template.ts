@@ -13,7 +13,7 @@ interface PartContext {
   readonly artifacts: OddkinMessage['artifacts'];
   readonly capabilities: OddkinMessage['capabilities'];
   readonly markdown: OddkinMessage['markdown'];
-  readonly renderers: OddkinMessage['_renderers'];
+  readonly renderers: OddkinMessage['renderers'];
   readonly sources: OddkinMessage['_sources'];
   readonly error: NonNullable<OddkinMessage['attempt']>['error'];
 }
@@ -118,7 +118,7 @@ export const messageTemplate = (host: OddkinMessage) => {
     artifacts: host.artifacts,
     capabilities: host.capabilities,
     markdown: host.markdown,
-    renderers: host._renderers,
+    renderers: host.renderers,
     sources,
     error: host.attempt?.error,
   };

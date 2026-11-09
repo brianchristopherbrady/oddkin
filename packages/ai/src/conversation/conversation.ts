@@ -3,7 +3,6 @@ import { ResizeController } from '@oddkin/core/controllers/observe';
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
-import type { ArtifactRenderer } from '../artifact/artifact.js';
 import { can } from '../contracts/normalize.js';
 import type { ConversationState, ExternalSource, ToolCallRecord } from '../contracts/types.js';
 import {
@@ -14,9 +13,8 @@ import {
 import { isActive } from '../controllers/transitions.js';
 import { historyRequestEvent } from '../events.js';
 import { format, strings } from '../internal/strings.js';
-import { rendererCache, type Renderers } from '../internal/renderers.js';
+import type { Renderers } from '../internal/renderers.js';
 import type { MarkdownOptions } from '../markdown/render.js';
-import type { ToolOutputRenderer } from '../tool-call/tool-call.js';
 
 export const CONVERSATION_STRINGS = {
   label: 'Conversation',
@@ -84,20 +82,6 @@ export class OddkinConversation extends OddkinElement.with({
   renderers: prop.object<Renderers>({
     description: 'Host renderers by extension point: `data`, `artifact`, `toolOutput`.',
   }),
-  /**
-   * @deprecated Pass `renderers.artifact`; read until the next beta.
-   * @replacement renderers
-   */
-  artifactRenderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
-    description: 'Deprecated: `renderers.artifact`.',
-  }),
-  /**
-   * @deprecated Pass `renderers.toolOutput`; read until the next beta.
-   * @replacement renderers
-   */
-  renderTool: prop.object<{ render: ToolOutputRenderer }>({
-    description: 'Deprecated: `renderers.toolOutput`.',
-  }),
   feedbackReasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
   strings: prop.object<Partial<typeof CONVERSATION_STRINGS & AnnouncementStrings>>({
     description: 'Localized string overrides (including announcements).',
@@ -118,12 +102,6 @@ export class OddkinConversation extends OddkinElement.with({
   #anchor: { id: string; offset: number } | undefined;
   #programmatic = false;
   #positions = new Map<string, ScrollPosition>();
-  readonly #renderers = rendererCache('data');
-
-  /** @internal The renderers in use, handed to every message. */
-  get _renderers(): Renderers {
-    return this.#renderers(this.renderers, this.artifactRenderers, this.renderTool);
-  }
 
   /** @internal */
   get _strings(): typeof CONVERSATION_STRINGS {
