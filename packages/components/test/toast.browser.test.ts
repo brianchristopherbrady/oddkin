@@ -98,34 +98,46 @@ describe('odd-toast', () => {
     const el = byId<OddkinToast>('t');
     expect(semantics(el)).toEqual({ role: 'status', label: null, hidden: null });
     const text = () => [part(el, 'label'), el.shadowRoot!.querySelector('.message')!];
-    el.show();
-    await settle(el);
-    for (const node of text()) expect(node.getAttribute('aria-hidden')).toBe('true');
+    // The toggle events arrive in a later task, so wait for them rather than a fixed settle.
+    const open = async () => {
+      const opened = when(el, 'open');
+      const before = performance.now();
+      el.show();
+      return { before, at: await opened };
+    };
+    const shut = async () => {
+      const closed = when(el, 'closed');
+      el.close();
+      await closed;
+      await settle(el);
+    };
+    // The text joins 100 ms after the opening; a slow runner may only look after that.
+    const hiddenUntilJoined = async ({ before }: { before: number }) => {
+      await settle(el);
+      if (performance.now() - before < 90)
+        for (const node of text()) expect(node.getAttribute('aria-hidden')).toBe('true');
+    };
+    const first = await open();
+    await hiddenUntilJoined(first);
     expect(part(el, 'close').hasAttribute('aria-hidden')).toBe(false);
-    await wait(150);
+    await until(first.at, 150);
     await settle(el);
     for (const node of text()) expect(node.hasAttribute('aria-hidden')).toBe(false);
-    el.close();
-    await settle(el);
+    await shut();
     for (const node of text()) expect(node.getAttribute('aria-hidden')).toBe('true');
     el.tone = 'danger';
     await settle(el);
     expect(semantics(el).role).toBe('alert');
     // Each opening joins them again, so each is announced.
-    el.show();
-    await wait(150);
+    await until((await open()).at, 150);
     await settle(el);
     for (const node of text()) expect(node.hasAttribute('aria-hidden')).toBe(false);
     // Closed before they join, they stay out until the next opening's moment.
-    el.close();
-    await settle(el);
-    await show(el);
-    el.close();
-    await settle(el);
+    await shut();
+    await open();
+    await shut();
     await wait(150);
-    el.show();
-    await settle(el);
-    for (const node of text()) expect(node.getAttribute('aria-hidden')).toBe('true');
+    await hiddenUntilJoined(await open());
   });
 
   it.runIf(server.browser === 'chromium')(

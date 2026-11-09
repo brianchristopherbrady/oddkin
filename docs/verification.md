@@ -6123,3 +6123,14 @@ A records-only slice: the owner's decisions recorded in [ADR 0049](./architectur
 | Elements | `browser-set.mjs` on the AI contract, conversation (new: a question in the conversation is validated inside nested shadow roots, answered through the intents, and keeps focus on its status once its controls go), elements (new: `odd-question` takes no answer where the capabilities given say so, with the host's reason or its own, and stays usable without capabilities), layout, Figma parity, frameworks, patterns, and reflow files | 314 passed, 4 skipped in each of Chromium, Firefox, and WebKit |
 | Probes | `mutate.mjs`, 15 mutants: a question part written as an approval part; the wait names every request an approval; a terminal attempt leaves its questions open; a skip records an empty answer; an answer recorded elsewhere dropped; a snapshot loses its questions; a snapshot keeps approvals with invalid scopes; the external store keeps invalid questions; a question not announced; the simulation skipping into the answer branch; the AI SDK adapter claiming nothing about questions; the question ignoring the capabilities given; the message showing no question; the conversation keeping its questions; an answer intent skipping | 15 killed |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write`, `node design/figma/reuse.render.mjs --write` | Each exit 0; `ai-chat` 60,164 B gzip (+2,135 from 58,029: `odd-message` composes `odd-question`; budget 60,224, Agent 1's call), `ai-headless` 15,044 (+575; budget 15,104), `ai-response` 24,623 (0); vocabulary 0 findings; the packed consumers pass; the Figma reuse map lists `odd-question` under `odd-message`, rendered into the component catalog (the reuse test caught it); `docs/diagnostics.md` regenerated (515 messages with the new question codes; none flagged) |
+
+## 2026-11-09 — `odd-toast` test waits for its toggle events (round 11, Agent 1)
+
+CI run 42606505101 on `0350306` failed in WebKit only: `toast.browser.test.ts:110` (expected `aria-hidden` `true` after closing, got `null`) and `e2e/docs.spec.ts:175` (the URL stayed `/foundations` after clicking "Read about spacing"). Neither file changed in `0350306` (an `@oddkin/ai` change); CI on the previous commit, `d6b788c`, passed.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Cause | Read `packages/components/src/toast/toast.ts` and `overlay/overlay.ts` | The toast hides its text in `onToggle`, which the overlay calls from the asynchronous `toggle` event; the test looked after a settle that does not wait for it |
+| Light gate | `gate-light.mjs 65222e0c` | Typecheck (with the tests), lint with build: pass |
+
+**Not verified here:** the browser run (Agent 1 is on light duty); CI verifies it in three engines.
