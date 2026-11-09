@@ -284,10 +284,11 @@ describe('odd-conversation', () => {
     document.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail), {
       once: true,
     });
-    const approval = articles()
-      .at(-1)!
-      .shadowRoot!.querySelector('odd-tool-call')!
-      .shadowRoot!.querySelector('odd-action-approval')!;
+    const call = articles().at(-1)!.shadowRoot!.querySelector('odd-tool-call')!;
+    const gate = () => call.shadowRoot!.querySelector('.status')?.textContent;
+    // The call's own status stays; its approval words the gate.
+    expect(gate()).toBe('Waiting for approval');
+    const approval = call.shadowRoot!.querySelector('odd-action-approval')!;
     const approve = approval.shadowRoot!.querySelector(
       'odd-button[appearance="primary"]',
     ) as HTMLElement;
@@ -305,7 +306,8 @@ describe('odd-conversation', () => {
       'The action runs separately',
     );
     expect(activity()).toBe('Responding…');
-    expect(controller.getSnapshot().tools['t']?.status).toBe('awaiting-approval');
+    expect(controller.getSnapshot().tools['t']?.status).toBe('input-available');
+    expect(gate()).toBe('Arguments ready; not run yet');
     release();
   });
 

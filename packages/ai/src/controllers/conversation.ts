@@ -859,9 +859,14 @@ export class ConversationController implements ExternalSource<ConversationState>
       case 'tool-error':
         this.#moveTool(event.toolCallId, 'output-error', (t) => ({ ...t, error: event.error }));
         return;
-      case 'tool-denied':
+      case 'tool-denied': {
         this.#moveTool(event.toolCallId, 'denied');
+        // The backend refused the call: an approval still open is rejected with it.
+        const now = this.#state.peek();
+        const approval = now.approvals[now.tools[event.toolCallId]?.approvalId ?? ''];
+        if (approval) this.#setApproval(approval.approvalId, approval.revision, 'rejected');
         return;
+      }
       case 'approval-request':
         this.#requestApproval(attempt, event.approval);
         return;
@@ -1041,11 +1046,11 @@ export class ConversationController implements ExternalSource<ConversationState>
     const record: ApprovalRecord = { ...incoming, status: 'requested' };
     this.#commit({ ...now, approvals: { ...now.approvals, [record.approvalId]: record } });
     if (record.toolCallId) {
+      // The approval states the gate; the call keeps its own status until it runs.
       this.#ensureTool(attempt, record.toolCallId);
-      this.#moveTool(record.toolCallId, 'awaiting-approval', (t) => ({
-        ...t,
-        approvalId: record.approvalId,
-      }));
+      this.#updateTool(record.toolCallId, (t) =>
+        t.approvalId === record.approvalId ? t : { ...t, approvalId: record.approvalId },
+      );
     } else {
       this.#upsertPart(attempt.messageId, `approval-${record.approvalId}`, () => ({
         type: 'approval',
@@ -1109,7 +1114,9 @@ export class ConversationController implements ExternalSource<ConversationState>
     const now = this.#state.peek();
     const approval = now.approvals[approvalId];
     if (!approval) return;
-    this.#commit({ ...now, approvals: { ...now.approvals, [approvalId]: update(approval) } });
+    const next = update(approval);
+    if (next === approval) return;
+    this.#commit({ ...now, approvals: { ...now.approvals, [approvalId]: next } });
     if (approval.attemptId) this.#syncWaiting(approval.attemptId);
   }
 

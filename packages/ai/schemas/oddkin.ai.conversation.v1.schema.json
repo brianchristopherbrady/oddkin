@@ -377,11 +377,10 @@
             "type": "string"
           },
           "status": {
-            "description": "Argument generation, approval, and execution are separate states.",
+            "description": "Argument generation and execution are separate states.",
             "enum": [
               "input-streaming",
               "input-available",
-              "awaiting-approval",
               "executing",
               "output-available",
               "output-error",

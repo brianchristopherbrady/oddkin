@@ -344,7 +344,8 @@ describe('ConversationController: tools and approvals', () => {
     );
     let s = c.getSnapshot();
     expect(s.tools['a']).toMatchObject({ status: 'input-available', inputText: '{"q":"x"}' });
-    expect(s.tools['b']).toMatchObject({ status: 'awaiting-approval', approvalId: 'ap' });
+    // The approval states the gate: the call keeps its own status and links it.
+    expect(s.tools['b']).toMatchObject({ status: 'input-available', approvalId: 'ap' });
     // A10: double activation sends one decision.
     const first = c.decide('ap', 1, 'approve');
     expect(await c.decide('ap', 1, 'approve')).toEqual({ ok: false, reason: 'duplicate' });
@@ -355,7 +356,7 @@ describe('ConversationController: tools and approvals', () => {
     s = c.getSnapshot();
     expect(s.approvals['ap']?.status).toBe('approved');
     // Approval is not execution: the tool is still waiting until its own events arrive.
-    expect(s.tools['b']?.status).toBe('awaiting-approval');
+    expect(s.tools['b']?.status).toBe('input-available');
     push(
       sink(),
       { type: 'tool-executing', toolCallId: 'b' },
@@ -375,6 +376,37 @@ describe('ConversationController: tools and approvals', () => {
   const request = (approvalId: string): AiEvent => ({
     type: 'approval-request',
     approval: { approvalId, revision: 1, title: approvalId, status: 'requested' },
+  });
+
+  it('a denied call rejects its approval while it is open, and only then', async () => {
+    const { transport, sink } = manual({ decide: async () => 'accepted' });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    const gated = (toolCallId: string): AiEvent[] => [
+      { type: 'tool-input-available', toolCallId, input: {} },
+      {
+        type: 'approval-request',
+        approval: {
+          approvalId: `ap-${toolCallId}`,
+          toolCallId,
+          revision: 1,
+          title: 'T',
+          status: 'requested',
+        },
+      },
+    ];
+    push(sink(), ...gated('a'), ...gated('b'), { type: 'tool-denied', toolCallId: 'a' });
+    let s = c.getSnapshot();
+    expect(s.tools['a']).toMatchObject({ status: 'denied', approvalId: 'ap-a' });
+    // The two records never disagree: an approval cannot stay open for a refused call.
+    expect(s.approvals['ap-a']?.status).toBe('rejected');
+    expect(await c.decide('ap-b', 1, 'approve')).toEqual({ ok: true });
+    // Refused after approval (the backend decides last): the approval keeps its decision.
+    push(sink(), { type: 'tool-denied', toolCallId: 'b' });
+    s = c.getSnapshot();
+    expect(s.tools['b']?.status).toBe('denied');
+    expect(s.approvals['ap-b']?.status).toBe('approved');
+    expect(attempt(c)?.status).toBe('streaming');
   });
 
   it('an attempt awaits input while one of its approvals waits for the person', async () => {
@@ -621,7 +653,7 @@ describe('simulation transport', () => {
     const sending = c.send({ text: 'pay' });
     await vi.advanceTimersByTimeAsync(30);
     await sending;
-    expect(c.getSnapshot().tools['t']?.status).toBe('awaiting-approval');
+    expect(c.getSnapshot().tools['t']?.status).toBe('input-available');
     const deciding = c.decide('ap', 1, 'approve');
     await vi.advanceTimersByTimeAsync(10);
     await deciding;

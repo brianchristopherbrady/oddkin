@@ -275,6 +275,47 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(retries).toEqual([{ toolCallId: 't1' }]);
   });
 
+  it('words the gate from the approval until the call runs (ADR 0049)', async () => {
+    const approval = (status: ApprovalRecord['status']): ApprovalRecord => ({
+      approvalId: 'ap',
+      toolCallId: 't1',
+      revision: 1,
+      title: 'Search the web',
+      status,
+    });
+    const el = await mount(
+      'odd-tool-call',
+      () => import('../src/tool-call/tool-call.define.js'),
+      (e) => {
+        e.tool = tool('input-available', { approvalId: 'ap' });
+        e.approval = approval('requested');
+      },
+    );
+    const status = () => [text($(el, '.status')), $(el, '.status')!.dataset['tone']];
+    const show = async (call: ToolCallRecord['status'], gate: ApprovalRecord['status']) => {
+      el.tool = tool(call, { approvalId: 'ap' });
+      el.approval = approval(gate);
+      await settle(el);
+      return status();
+    };
+    expect(status()).toEqual(['Waiting for approval', 'active']);
+    expect(await show('input-available', 'decision-pending')).toEqual([
+      'Waiting for approval',
+      'active',
+    ]);
+    expect(await show('input-available', 'decision-failed')).toEqual([
+      'Waiting for approval',
+      'active',
+    ]);
+    for (const gate of ['rejected', 'expired', 'superseded'] as const)
+      expect(await show('input-available', gate)).toEqual(['Not run', '']);
+    // Approval is not execution: an approved call is ready until it runs.
+    expect(await show('input-available', 'approved')).toEqual(['Arguments ready; not run yet', '']);
+    // Once the call runs or settles, it speaks for itself.
+    expect(await show('executing', 'approved')).toEqual(['Running…', 'active']);
+    expect(await show('denied', 'rejected')).toEqual(['Not run: denied', 'danger']);
+  });
+
   it('status labels take their colours from the shared tone styles', async () => {
     const theme = document.createElement('link');
     theme.rel = 'stylesheet';

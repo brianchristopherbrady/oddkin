@@ -288,7 +288,9 @@ function requestApproval(revision) {
         toolCallId: 'deploy-tool',
         toolName: 'deploy',
         title: 'Deploy',
-        status: 'awaiting-approval',
+        // The approval states the gate; the call has not run yet.
+        status: 'input-available',
+        approvalId: 'deploy',
         input: { regions: revision > 1 ? 1 : 3 },
       },
     ],

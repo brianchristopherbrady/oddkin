@@ -123,14 +123,13 @@ const toolStatus = m.enum(
   [
     'input-streaming',
     'input-available',
-    'awaiting-approval',
     'executing',
     'output-available',
     'output-error',
     'denied',
     'cancelled',
   ],
-  'Argument generation, approval, and execution are separate states.',
+  'Argument generation and execution are separate states.',
 );
 
 export const ToolCallModel = defineModel('oddkin.ai.tool-call', {

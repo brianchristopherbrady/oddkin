@@ -111,7 +111,9 @@ A terminal event arriving while stop is `requested` sets stop to `confirmed` (if
 
 ### 4.4 Tools
 
-`input-streaming → input-available | output-error | cancelled`; `input-available → awaiting-approval | executing | output-available | output-error | denied | cancelled`; `awaiting-approval → executing | output-available | output-error | denied | cancelled`; `executing → output-available | output-error | cancelled`; `output-error → executing` (host retry). Complete arguments are shown as "Arguments ready; not run yet", never as success (A08). Each tool keeps its own identity and state (A09).
+`input-streaming → input-available | output-error | cancelled`; `input-available → executing | output-available | output-error | denied | cancelled`; `executing → output-available | output-error | cancelled`; `output-error → executing` (host retry). Complete arguments are shown as "Arguments ready; not run yet", never as success (A08). Each tool keeps its own identity and state (A09).
+
+A call that needs approval links it (`approvalId`) and keeps its own status: the approval alone states the gate (ADR 0049). Until the call runs, `odd-tool-call` words the gate from it: "Waiting for approval" while it is unresolved (`requested`, `decision-pending`, `decision-failed`), "Not run" once it is `rejected`, `expired`, or `superseded`. `denied` is the backend refusing to run the call, with or without an approval; when an adapter reports it while the call's approval is unresolved, the controller marks that approval `rejected`, so the two records never disagree.
 
 ### 4.5 Approvals
 

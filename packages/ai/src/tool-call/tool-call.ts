@@ -7,12 +7,13 @@ import { strings } from '../internal/strings.js';
 export const TOOL_CALL_STRINGS = {
   'input-streaming': 'Preparing arguments…',
   'input-available': 'Arguments ready; not run yet',
-  'awaiting-approval': 'Waiting for approval',
   executing: 'Running…',
   'output-available': 'Finished',
   'output-error': 'Failed',
   denied: 'Not run: denied',
   cancelled: 'Cancelled',
+  waiting: 'Waiting for approval',
+  notRun: 'Not run',
   arguments: 'Arguments',
   result: 'Result',
   error: 'Error',
@@ -26,7 +27,8 @@ export type ToolOutputRenderer = (tool: ToolCallRecord) => Node | undefined;
 /**
  * One tool call: identity, purpose, streamed arguments, execution state, result or failure, and
  * the recovery actions the host supports. Argument generation, approval, and execution are
- * shown as distinct states; complete arguments never read as success.
+ * shown as distinct states; complete arguments never read as success. Until the call runs, its
+ * approval words the gate: waiting while undecided, not run once rejected, expired, or superseded.
  *
  * @csspart base - The tool call surface.
  * @csspart summary - Name, purpose, and status (a native disclosure summary).
@@ -81,6 +83,16 @@ export class OddkinToolCall extends OddkinElement.with({
     if (!tool) return '';
     if (tool.input !== undefined) return JSON.stringify(tool.input, null, 2);
     return tool.inputText ?? '';
+  }
+
+  /** @internal The status key: the call's own, or, until it runs, its approval's gate. */
+  _status(tool: ToolCallRecord): keyof typeof TOOL_CALL_STRINGS {
+    const gate = this.approval?.status;
+    return !gate || gate === 'approved' || !tool.status.startsWith('input-')
+      ? tool.status
+      : gate === 'rejected' || gate === 'expired' || gate === 'superseded'
+        ? 'notRun'
+        : 'waiting';
   }
 
   /** @internal */

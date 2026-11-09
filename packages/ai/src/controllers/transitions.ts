@@ -37,15 +37,7 @@ export const ATTEMPT_TRANSITIONS: Table<AttemptStatus> = {
 
 export const TOOL_TRANSITIONS: Table<ToolStatus> = {
   'input-streaming': ['input-available', 'output-error', 'cancelled'],
-  'input-available': [
-    'awaiting-approval',
-    'executing',
-    'output-available',
-    'output-error',
-    'denied',
-    'cancelled',
-  ],
-  'awaiting-approval': ['executing', 'output-available', 'output-error', 'denied', 'cancelled'],
+  'input-available': ['executing', 'output-available', 'output-error', 'denied', 'cancelled'],
   executing: ['output-available', 'output-error', 'cancelled'],
   // A host retry runs the tool again.
   'output-error': ['executing'],

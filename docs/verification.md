@@ -6052,3 +6052,12 @@ The owner asked to publish to npm by hand with two-factor approval in Chrome (tr
 | Reproduced | The artifact test in Chromium, with the test's wide font (Verdana) adopted for the toolbar checks after the 12rem wrap check | Fails as CI did: items on the first line, expected 1 to be greater than 1 |
 | The fix in a wide font | The reordered test, with the wide font adopted for the row checks at 40rem | 2 passed |
 | The file | `browser-set.mjs packages/ai/test/layout.browser.test.ts` | 30 passed in each of Chromium, Firefox, and WebKit |
+
+## 2026-11-08 — The tool call without awaiting-approval (round 11, Agent 2; row 14, ADR 0049 §6 item 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Controller | `npx vitest run --project node`; in `packages/ai/test/conversation.test.ts`, a call with an approval keeps `input-available` and links it; new: a denied call rejects its approval while it is open, and one already approved keeps its decision | 1,719 passed, 2 skipped (140 files) |
+| Elements | `browser-set.mjs` on the AI contract, conversation (the call reads Waiting for approval, then Arguments ready; not run yet once approved), elements (new: the words and tones of the gate for each approval status, before and after the call runs), layout, and Figma parity files | 289 passed, 4 skipped in each of Chromium, Firefox, and WebKit |
+| Probes | `mutate.mjs`, 7 mutants: the controller does not link the approval; a denied call leaves its approval open; a superseded approval reads as waiting; the gate words a call that already ran; an approved call reads as waiting; waiting loses its tone; the conversation's call ignores its approval | 7 killed |
+| Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run lint` | Each exit 0; `ai-chat` 56,617 B gzip (+74; budget 56,640, Agent 1's call), `ai-headless` 13,968 (+20), `ai-response` 24,623 (0); first measured 56,662 before the shipped model descriptions were shortened and the gate helper compacted |

@@ -7,7 +7,7 @@ const TONE: Record<string, string> = {
   denied: 'danger',
   executing: 'active',
   'input-streaming': 'active',
-  'awaiting-approval': 'active',
+  waiting: 'active',
 };
 
 /** Anatomy: `base` with a native disclosure (`summary`, `arguments`, `result`), then any approval. */
@@ -15,13 +15,14 @@ export const toolCallTemplate = (host: OddkinToolCall) => {
   const t = host._strings;
   const tool = host.tool;
   if (!tool) return html``;
+  const status = host._status(tool);
   const output = host._output();
   const args = host._arguments();
   return html`<div part="base" class="base" data-status=${tool.status}>
       <details class="details">
         <summary part="summary" class="summary">
           <span class="name">${tool.title || tool.toolName}</span>
-          <span class="status" data-tone=${TONE[tool.status] ?? ''}>${t[tool.status]}</span>
+          <span class="status" data-tone=${TONE[status] ?? ''}>${t[status]}</span>
           <span class="purpose muted" ?hidden=${!tool.purpose}>${tool.purpose ?? ''}</span>
         </summary>
         <div class="body">

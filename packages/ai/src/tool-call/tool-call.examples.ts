@@ -64,7 +64,7 @@ export default defineExamples('odd-tool-call', {
         toolName: 'send_email',
         title: 'Send email',
         purpose: 'Share the release notes.',
-        status: 'awaiting-approval',
+        status: 'input-available',
         input: { to: 'team@example.com', subject: 'Release 2.0' },
         approvalId: 'ap1',
       },
@@ -80,7 +80,7 @@ export default defineExamples('odd-tool-call', {
       capabilities: { respondToApproval: { available: true } },
     },
     guidance:
-      'A call that needs approval shows its approval after it. The decision is a request: the host records it, then runs the call (Running…, then Finished) or does not (Not run: denied).',
+      'A call that needs approval links it and shows it after the call; until the call runs, the approval words its status. The decision is a request: the host records it, then runs the call (Running…, then Finished) or reports it denied (Not run: denied).',
     // The host: records the decision, then runs the call, or does not.
     fixture({ scope, element }) {
       scope.listen<GlobalEventHandlersEventMap['odd-approval-decide']>(
