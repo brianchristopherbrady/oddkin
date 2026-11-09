@@ -9,6 +9,7 @@ import type { OddkinMessage } from './message.js';
 interface PartContext {
   readonly tools: OddkinMessage['tools'];
   readonly approvals: OddkinMessage['approvals'];
+  readonly questions: OddkinMessage['questions'];
   readonly artifacts: OddkinMessage['artifacts'];
   readonly capabilities: OddkinMessage['capabilities'];
   readonly markdown: OddkinMessage['markdown'];
@@ -66,6 +67,14 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
         .capabilities=${c.capabilities}
       ></odd-action-approval>`;
     }
+    case 'question': {
+      const question = c.questions?.[p.questionId];
+      if (!question) return html`<p class="fallback">${t.questionMissing}</p>`;
+      return html`<odd-question
+        .question=${question}
+        .capabilities=${c.capabilities}
+      ></odd-question>`;
+    }
     case 'artifact': {
       const artifact = c.artifacts?.[p.artifactId];
       if (!artifact) return html`<p class="fallback">${t.artifactMissing}</p>`;
@@ -105,6 +114,7 @@ export const messageTemplate = (host: OddkinMessage) => {
   const context: PartContext = {
     tools: host.tools,
     approvals: host.approvals,
+    questions: host.questions,
     artifacts: host.artifacts,
     capabilities: host.capabilities,
     markdown: host.markdown,

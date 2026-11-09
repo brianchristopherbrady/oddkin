@@ -310,6 +310,12 @@ describe('UI message stream transport (recorded fixtures)', () => {
       available: false,
       reason: 'Approvals are not supported.',
     });
+    // The protocol has no question chunk: answers are a stated limitation, never dropped.
+    expect(transport.capabilities.respondToQuestion).toEqual({
+      available: false,
+      reason: 'Questions are not supported.',
+    });
+    expect(transport.answer).toBeUndefined();
   });
 
   it('A06: a replayed resume rebuilds the message without duplicates or a new attempt', async () => {

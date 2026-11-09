@@ -17,6 +17,7 @@ import type {
   EventSink,
   FeedbackRecord,
   PublicError,
+  QuestionResponse,
   SendRequest,
   StopOutcome,
 } from '../contracts/types.js';
@@ -32,6 +33,13 @@ export type ScriptStep =
       readonly awaitDecision: string;
       readonly approve: readonly ScriptStep[];
       readonly reject: readonly ScriptStep[];
+    }
+  /** Pause until the question is answered or skipped, then continue with the matching steps. */
+  | {
+      readonly after: number;
+      readonly awaitAnswer: string;
+      readonly answer: readonly ScriptStep[];
+      readonly skip: readonly ScriptStep[];
     };
 
 export type Script = (request: SendRequest) => readonly ScriptStep[];
@@ -43,6 +51,7 @@ export interface SimulationControls {
   acceptDelay: number;
   stopBehavior: 'cancel' | 'already-finished' | 'unknown' | 'fail';
   stopDelay: number;
+  /** The outcome and delay of every decision and answer (or skip). */
   decisionOutcome: DecisionOutcome | 'fail';
   decisionDelay: number;
   /** Events re-delivered on resume to exercise deduplication. */
@@ -74,7 +83,8 @@ interface Run {
   /** The server stopped producing (terminal event, cancellation, or drop). */
   ended: boolean;
   waiting: string | undefined;
-  branches: { approve: readonly ScriptStep[]; reject: readonly ScriptStep[] } | undefined;
+  /** The steps after the awaited request, by response: approve, reject, answer, or skip. */
+  branches: Readonly<Record<string, readonly ScriptStep[]>> | undefined;
   dropped: boolean;
 }
 
@@ -91,6 +101,7 @@ const DEFAULT_CAPABILITIES: Capabilities = {
   switchBranch: { available: true },
   respondToApproval: { available: true },
   approvalScopes: { available: true },
+  respondToQuestion: { available: true },
   history: { available: true },
   feedback: { available: true },
   attachments: { available: true },
@@ -170,13 +181,29 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
         const sink = run.sink;
         run.sink = undefined;
         sink?.close();
-      } else {
+      } else if ('awaitDecision' in step) {
         run.waiting = step.awaitDecision;
         run.branches = { approve: step.approve, reject: step.reject };
+        return;
+      } else {
+        run.waiting = step.awaitAnswer;
+        run.branches = { answer: step.answer, skip: step.skip };
         return;
       }
       advance(run);
     });
+  };
+
+  /** The awaited request was resolved: report it, then continue with the matching steps. */
+  const proceed = (attemptId: string, id: string, response: string, resolved: AiEvent): void => {
+    const run = runs.get(attemptId);
+    const branch = run?.waiting === id ? run.branches?.[response] : undefined;
+    if (!run || !branch) return;
+    run.waiting = undefined;
+    run.branches = undefined;
+    produce(run, resolved);
+    run.queue = [...branch, ...run.queue];
+    advance(run);
   };
 
   const transport: SimulatedTransport = {
@@ -271,20 +298,39 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
           },
         );
       const outcome = controls.decisionOutcome;
-      const run = runs.get(decision.attemptId);
-      if (outcome === 'accepted' && run && run.waiting === decision.approvalId && run.branches) {
-        const branch = decision.decision === 'approve' ? run.branches.approve : run.branches.reject;
-        run.waiting = undefined;
-        run.branches = undefined;
-        produce(run, {
+      if (outcome === 'accepted')
+        proceed(decision.attemptId, decision.approvalId, decision.decision, {
           type: 'approval-resolved',
           approvalId: decision.approvalId,
           revision: decision.revision,
           status: decision.decision === 'approve' ? 'approved' : 'rejected',
         });
-        run.queue = [...branch, ...run.queue];
-        advance(run);
-      }
+      return outcome;
+    },
+    async answer(response: QuestionResponse): Promise<DecisionOutcome> {
+      await wait(controls.decisionDelay);
+      if (controls.decisionOutcome === 'fail')
+        throw toPublicError(
+          {
+            code: 'ai.question.failed',
+            message: 'The answer could not be recorded. Try again.',
+            retryable: true,
+          },
+          {
+            code: 'ai.question.failed',
+            message: 'The answer could not be recorded. Try again.',
+          },
+        );
+      const outcome = controls.decisionOutcome;
+      if (outcome === 'accepted')
+        proceed(response.attemptId, response.questionId, response.kind, {
+          type: 'question-resolved',
+          questionId: response.questionId,
+          revision: response.revision,
+          ...(response.kind === 'answer'
+            ? { status: 'answered', answer: response.answer }
+            : { status: 'skipped' }),
+        });
       return outcome;
     },
     async loadHistory(conversationId) {

@@ -1919,6 +1919,38 @@ describe('odd-message fallbacks and provenance', () => {
 });
 
 describe('odd-question and odd-task-plan examples', () => {
+  it('odd-question takes answers only where the capabilities given allow them; alone, its host answers', async () => {
+    const el = await mount(
+      'odd-question',
+      () => import('../src/question/question.define.js'),
+      (e) => {
+        e.question = {
+          questionId: 'q',
+          revision: 1,
+          prompt: 'Which audience?',
+          kind: 'text',
+          status: 'requested',
+        };
+        e.capabilities = {
+          respondToQuestion: { available: false, reason: 'This service asks nothing.' },
+        };
+      },
+    );
+    const submit = () => $(el, 'odd-button[type="submit"]') as HTMLButtonElement;
+    expect(text($(el, '.state'))).toBe('This service asks nothing.');
+    expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
+    expect(submit().disabled).toBe(true);
+    el.capabilities = {};
+    await settle(el);
+    expect(text($(el, '.state'))).toBe('Answers are not available here.');
+    // Without capabilities the question stays usable on its own.
+    el.capabilities = undefined;
+    await settle(el);
+    expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(false);
+    expect(submit().disabled).toBe(false);
+    expect($(el, '.state')!.hidden).toBe(true);
+  });
+
   it("odd-question's default example plays the host: an answer or a skip comes back recorded", async () => {
     await import('../src/question/question.define.js');
     const { default: set } = await import('../src/question/question.examples.js');

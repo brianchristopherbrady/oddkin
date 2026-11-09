@@ -212,6 +212,28 @@
             "type": "object",
             "properties": {
               "type": {
+                "const": "question"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "questionId": {
+                "description": "Key of the question record.",
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "questionId"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
                 "const": "artifact"
               },
               "id": {

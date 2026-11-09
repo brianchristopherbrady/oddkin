@@ -7,6 +7,8 @@ import type {
   ConversationState,
   ConversationTransport,
   EventSink,
+  QuestionRecord,
+  QuestionResponse,
 } from '../src/contracts/types.js';
 import { ConversationController } from '../src/controllers/conversation.js';
 import { describeConversationChange } from '../src/controllers/announcer.js';
@@ -818,6 +820,265 @@ describe('ConversationController: approval scopes (ADR 0049 §6 item 3)', () => 
   });
 });
 
+describe('ConversationController: questions (ADR 0049 §6 item 4)', () => {
+  const ASKS = { ...ALL, respondToQuestion: { available: true } };
+  const ask = (questionId: string, revision = 1, extra: Partial<QuestionRecord> = {}): AiEvent => ({
+    type: 'question-request',
+    question: {
+      questionId,
+      revision,
+      prompt: 'Which audience?',
+      kind: 'choice',
+      options: [
+        { id: 'eng', label: 'Engineers' },
+        { id: 'all', label: 'Everyone' },
+      ],
+      status: 'requested',
+      ...extra,
+    },
+  });
+  const asking = (answer?: ConversationTransport['answer'], capabilities: Capabilities = ASKS) => {
+    const responses: QuestionResponse[] = [];
+    const diagnostics: string[] = [];
+    const { transport, sink } = manual({
+      capabilities,
+      decide: async () => 'accepted',
+      answer: answer ?? (async (r) => (responses.push(r), 'accepted')),
+    });
+    const c = new ConversationController({
+      transport,
+      onDiagnostic: (d) => diagnostics.push(d.code),
+    });
+    return { c, sink, responses, diagnostics };
+  };
+  const q = (id: string) => ({ kind: 'question', id });
+
+  it('a question keeps its place in the message, waits for the person, and an answer resolves it', async () => {
+    const { c, sink, responses } = asking();
+    await c.send({ text: 'Write the notes' });
+    push(
+      sink(),
+      { type: 'text-delta', partId: 'p', delta: 'Before I write them: ' },
+      ask('q1'),
+      { type: 'text-start', partId: 'p2' },
+      { type: 'text-delta', partId: 'p2', delta: 'Waiting.' },
+    );
+    const s = c.getSnapshot();
+    expect(s.messages[1]?.parts.map((p) => p.type)).toEqual(['text', 'question', 'text']);
+    expect(s.questions['q1']).toMatchObject({ status: 'requested', attemptId: s.activeAttemptId });
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      wait: { action: [q('q1')], submitting: [] },
+    });
+    expect(await c.answer('q1', 1, { choice: 'eng' })).toEqual({ ok: true });
+    expect(responses).toEqual([
+      expect.objectContaining({
+        questionId: 'q1',
+        revision: 1,
+        kind: 'answer',
+        answer: { choice: 'eng' },
+      }),
+    ]);
+    expect(c.getSnapshot().questions['q1']).toMatchObject({
+      status: 'answered',
+      answer: { choice: 'eng' },
+    });
+    expect(attempt(c)?.status).toBe('streaming');
+    expect(attempt(c)?.wait).toBeUndefined();
+  });
+
+  it('a skip is its own response, never an empty answer; a failed one is sent again', async () => {
+    let fail = true;
+    const sent: QuestionResponse[] = [];
+    const { c, sink } = asking(async (r) => {
+      sent.push(r);
+      if (fail) throw new Error('offline');
+      return 'accepted';
+    });
+    await c.send({ text: 'q' });
+    push(sink(), ask('q1'));
+    expect(await c.skip('q1', 1)).toMatchObject({
+      ok: false,
+      reason: 'rejected',
+      error: { code: 'ai.question.failed' },
+    });
+    // Not sent: the person is asked again.
+    expect(c.getSnapshot().questions['q1']?.status).toBe('failed');
+    expect(attempt(c)?.wait?.action).toEqual([q('q1')]);
+    fail = false;
+    expect(await c.skip('q1', 1)).toEqual({ ok: true });
+    expect(sent.map((r) => r.kind)).toEqual(['skip', 'skip']);
+    expect(sent[1]).not.toHaveProperty('answer');
+    expect(c.getSnapshot().questions['q1']).toMatchObject({ status: 'skipped' });
+    expect(c.getSnapshot().questions['q1']?.answer).toBeUndefined();
+    // Responded: another response for the revision is refused without a request.
+    expect(await c.answer('q1', 1, { choice: 'eng' })).toEqual({ ok: false, reason: 'duplicate' });
+    expect(sent).toHaveLength(2);
+  });
+
+  it('two approvals and a question, resolved in another order than asked', async () => {
+    let release!: (outcome: 'accepted') => void;
+    const { c, sink } = asking(() => new Promise((r) => (release = r)));
+    await c.send({ text: 'q' });
+    const approval = (approvalId: string): AiEvent => ({
+      type: 'approval-request',
+      approval: { approvalId, revision: 1, title: approvalId, status: 'requested' },
+    });
+    push(sink(), approval('a'), ask('q1'), approval('b'));
+    const ref = (kind: string, id: string) => ({ kind, id });
+    expect(attempt(c)?.wait?.action).toEqual([
+      ref('approval', 'a'),
+      ref('approval', 'b'),
+      ref('question', 'q1'),
+    ]);
+    const answering = c.answer('q1', 1, { choice: 'all' });
+    expect(attempt(c)?.wait).toEqual({
+      action: [ref('approval', 'a'), ref('approval', 'b')],
+      submitting: [ref('question', 'q1')],
+    });
+    expect(await c.decide('b', 1, 'approve')).toEqual({ ok: true });
+    release('accepted');
+    expect(await answering).toEqual({ ok: true });
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      wait: { action: [ref('approval', 'a')], submitting: [] },
+    });
+    expect(await c.decide('a', 1, 'reject')).toEqual({ ok: true });
+    expect(attempt(c)?.status).toBe('streaming');
+    expect(attempt(c)?.wait).toBeUndefined();
+  });
+
+  it('replays are ignored; a newer revision replaces the question, and a response to the old one is stale', async () => {
+    const { c, sink, responses, diagnostics } = asking();
+    await c.send({ text: 'q' });
+    push(sink(), ask('q1'), ask('q1'));
+    expect(diagnostics).toContain('ai.question.stale');
+    expect(c.getSnapshot().messages[1]?.parts.filter((p) => p.type === 'question')).toHaveLength(1);
+    push(sink(), ask('q1', 2, { prompt: 'Which audience, now?' }));
+    expect(c.getSnapshot().questions['q1']).toMatchObject({
+      revision: 2,
+      prompt: 'Which audience, now?',
+      status: 'requested',
+    });
+    expect(c.getSnapshot().messages[1]?.parts.filter((p) => p.type === 'question')).toHaveLength(1);
+    expect(await c.answer('q1', 1, { choice: 'eng' })).toEqual({ ok: false, reason: 'stale' });
+    expect(responses).toEqual([]);
+  });
+
+  it('resolved elsewhere first: the record keeps that outcome, and a late response is stale', async () => {
+    let release!: (outcome: 'accepted') => void;
+    const { c, sink } = asking(() => new Promise((r) => (release = r)));
+    await c.send({ text: 'q' });
+    push(sink(), ask('q1'));
+    const answering = c.answer('q1', 1, { choice: 'eng' });
+    push(sink(), {
+      type: 'question-resolved',
+      questionId: 'q1',
+      revision: 1,
+      status: 'answered',
+      answer: { choice: 'all' },
+    });
+    release('accepted');
+    expect(await answering).toEqual({ ok: true });
+    // Answered by another client: its answer stands.
+    expect(c.getSnapshot().questions['q1']).toMatchObject({
+      status: 'answered',
+      answer: { choice: 'all' },
+    });
+    push(sink(), ask('q2'));
+    const skipping = c.skip('q2', 1);
+    push(sink(), { type: 'question-resolved', questionId: 'q2', revision: 1, status: 'cancelled' });
+    release('accepted');
+    expect(await skipping).toEqual({ ok: false, reason: 'stale' });
+    expect(c.getSnapshot().questions['q2']?.status).toBe('cancelled');
+  });
+
+  it('only a terminal attempt withdraws its open questions', async () => {
+    const { c, sink } = asking();
+    await c.send({ text: 'q' });
+    push(sink(), ask('q1'), { type: 'finish', status: 'awaiting-input' });
+    sink().close();
+    // Paused: the question stays answerable without a stream.
+    expect(c.getSnapshot().questions['q1']?.status).toBe('requested');
+    expect(await c.answer('q1', 1, { choice: 'eng' })).toEqual({ ok: true });
+    const ended = asking();
+    await ended.c.send({ text: 'q' });
+    push(ended.sink(), ask('q2'), { type: 'finish' });
+    expect(ended.c.getSnapshot().questions['q2']?.status).toBe('cancelled');
+    expect(await ended.c.answer('q2', 1, { choice: 'eng' })).toEqual({
+      ok: false,
+      reason: 'stale',
+    });
+    expect(ended.responses).toEqual([]);
+  });
+
+  it('a transport without answers says so; nothing is reported as answered', async () => {
+    const { transport, sink } = manual({ capabilities: ASKS });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), ask('q1'));
+    expect(await c.answer('q1', 1, { choice: 'eng' })).toEqual({
+      ok: false,
+      reason: 'unavailable',
+    });
+    const { c: denied, sink: deniedSink } = asking(undefined, ALL);
+    await denied.send({ text: 'q' });
+    push(deniedSink(), ask('q1'));
+    expect(await denied.skip('q1', 1)).toEqual({ ok: false, reason: 'unavailable' });
+    expect(c.getSnapshot().questions['q1']?.status).toBe('requested');
+    expect(denied.getSnapshot().questions['q1']?.status).toBe('requested');
+  });
+
+  it('a snapshot restores questions with their parts; approvals with invalid scopes are left out', () => {
+    const diagnostics: string[] = [];
+    const { transport } = manual({ capabilities: ASKS });
+    const c = new ConversationController({
+      transport,
+      onDiagnostic: (d) => diagnostics.push(d.code),
+    });
+    const result = c.load({
+      conversationId: 'c1',
+      messages: [
+        { id: 'u', role: 'user', parts: [{ type: 'text', id: 't', text: 'Write it' }] },
+        {
+          id: 'a',
+          role: 'assistant',
+          parentId: 'u',
+          parts: [{ type: 'question', id: 'question-q1', questionId: 'q1' }],
+        },
+      ],
+      questions: [
+        {
+          questionId: 'q1',
+          revision: 2,
+          prompt: 'Which audience?',
+          kind: 'text',
+          status: 'answered',
+          answer: { text: 'Engineers' },
+        },
+      ],
+      approvals: [
+        {
+          approvalId: 'bad',
+          revision: 1,
+          title: 'Write',
+          status: 'requested',
+          scopes: [{ id: 'x', label: 'X' }],
+          defaultScopeId: 'y',
+        },
+      ],
+    });
+    expect(result.ok).toBe(true);
+    const s = c.getSnapshot();
+    expect(s.messages[1]?.parts).toEqual([
+      { type: 'question', id: 'question-q1', questionId: 'q1' },
+    ]);
+    expect(s.questions['q1']).toMatchObject({ revision: 2, status: 'answered' });
+    expect(s.approvals).toEqual({});
+    expect(diagnostics).toContain('ai.approval.scopes');
+  });
+});
+
 describe('ConversationController: branches and history', () => {
   it('A17: regenerate and edit add branches; switching preserves every version', async () => {
     const { transport, sinks } = manual();
@@ -933,6 +1194,36 @@ describe('announcement policy', () => {
       'Approval withdrawn: Deploy',
     ]);
   });
+
+  it('announces a question once when asked, and once withdrawn', async () => {
+    const { transport, sink } = manual();
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    const announced: string[] = [];
+    let previous = c.getSnapshot();
+    c.subscribe(() => {
+      const next = c.getSnapshot();
+      announced.push(...describeConversationChange(previous, next, 'all').map((a) => a.text));
+      previous = next;
+    });
+    await c.send({ text: 'q' });
+    const question = {
+      questionId: 'q1',
+      revision: 1,
+      prompt: 'Which audience?',
+      kind: 'text',
+      status: 'requested',
+    } as const;
+    push(
+      sink(),
+      { type: 'question-request', question },
+      { type: 'text-delta', partId: 'p', delta: 'More text.' },
+      { type: 'finish' },
+    );
+    expect(announced.filter((text) => text.includes('Which audience?'))).toEqual([
+      'Question: Which audience?',
+      'Question withdrawn: Which audience?',
+    ]);
+  });
 });
 
 describe('simulation transport', () => {
@@ -981,6 +1272,47 @@ describe('simulation transport', () => {
     await deciding;
     await vi.advanceTimersByTimeAsync(20);
     expect(c.getSnapshot().tools['t']?.status).toBe('output-available');
+    expect(attempt(c)?.status).toBe('completed');
+    expect(transport.pendingTimers).toBe(0);
+  });
+
+  it('pauses at a question and continues on the skipped branch', async () => {
+    const transport = createSimulatedTransport({
+      script: () => [
+        {
+          after: 5,
+          event: {
+            type: 'question-request',
+            question: {
+              questionId: 'q1',
+              revision: 1,
+              prompt: 'Which audience?',
+              kind: 'text',
+              status: 'requested',
+            },
+          },
+        },
+        {
+          after: 5,
+          awaitAnswer: 'q1',
+          answer: [{ after: 5, event: { type: 'text-delta', partId: 'p', delta: 'For them.' } }],
+          skip: [{ after: 5, event: { type: 'text-delta', partId: 'p', delta: 'For everyone.' } }],
+        },
+        { after: 5, event: { type: 'finish' } },
+      ],
+      controls: { acceptDelay: 0, decisionDelay: 10 },
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    const sending = c.send({ text: 'notes' });
+    await vi.advanceTimersByTimeAsync(20);
+    await sending;
+    expect(attempt(c)?.status).toBe('awaiting-input');
+    const skipping = c.skip('q1', 1);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(await skipping).toEqual({ ok: true });
+    await vi.advanceTimersByTimeAsync(20);
+    expect(c.getSnapshot().questions['q1']?.status).toBe('skipped');
+    expect(textOf(c.getSnapshot())).toBe('For everyone.');
     expect(attempt(c)?.status).toBe('completed');
     expect(transport.pendingTimers).toBe(0);
   });

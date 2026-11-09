@@ -10,6 +10,7 @@ import {
   ArtifactModel,
   ConversationSnapshotModel,
   MessageModel,
+  QuestionModel,
   ToolCallModel,
   partSchema,
 } from './models.js';
@@ -22,6 +23,7 @@ import type {
   MessagePart,
   MessageRecord,
   PublicError,
+  QuestionRecord,
   ToolCallRecord,
 } from './types.js';
 
@@ -197,20 +199,18 @@ export function normalizeApproval(raw: unknown, path = ''): Normalized<ApprovalR
   const result = normalizeRecord<ApprovalRecord>(ApprovalModel, raw, path);
   return !result.value || scopesValid(result.value)
     ? result
-    : {
-        ok: false,
-        value: undefined,
-        diagnostics: [
-          ...result.diagnostics,
-          {
-            code: 'ai.approval.scopes',
-            path: `${path}/scopes`,
-            message:
-              'Scope ids repeat, or the default scope is not offered; give each scope its own id and offer the default.',
-          },
-        ],
-      };
+    : { ok: false, value: undefined, diagnostics: [...result.diagnostics, scopesInvalid(path)] };
 }
+
+const scopesInvalid = (path: string): NormalizeDiagnostic => ({
+  code: 'ai.approval.scopes',
+  path: `${path}/scopes`,
+  message:
+    'Scope ids repeat, or the default scope is not offered; give each scope its own id and offer the default.',
+});
+
+export const normalizeQuestion = (raw: unknown, path = ''): Normalized<QuestionRecord> =>
+  normalizeRecord(QuestionModel, raw, path);
 export const normalizeArtifact = (raw: unknown, path = ''): Normalized<ArtifactRecord> =>
   normalizeRecord(ArtifactModel, raw, path);
 
@@ -237,9 +237,15 @@ export function normalizeSnapshot(raw: unknown): Normalized<ConversationSnapshot
   );
   if (failed || result.diagnostics.some((d) => d.severity === 'error'))
     return { ok: false, value: undefined, diagnostics };
+  const value = pickDeclared(ConversationSnapshotModel.schema, candidate) as ConversationSnapshot;
+  // An approval whose scopes are invalid configuration is left out, as everywhere it is read.
+  const approvals = value.approvals?.filter(
+    (approval, i) =>
+      scopesValid(approval) || (diagnostics.push(scopesInvalid(`/approvals/${i}`)), false),
+  );
   return {
     ok: true,
-    value: pickDeclared(ConversationSnapshotModel.schema, candidate) as ConversationSnapshot,
+    value: approvals ? { ...value, approvals } : value,
     diagnostics,
   };
 }
@@ -258,6 +264,7 @@ export const CAPABILITY_NAMES: readonly CapabilityName[] = [
   'switchBranch',
   'respondToApproval',
   'approvalScopes',
+  'respondToQuestion',
   'editApproval',
   'restoreCheckpoint',
   'voice',

@@ -77,7 +77,9 @@ export const BUDGETS = {
   // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation).
   // 14,528 since 2026-11-09 (Agent 1's call): measured 14,469 (+316 from 14,153) with approval
   // scopes in the model and the controller's scope rules (ADR 0049 slice 3).
-  'ai-headless': 14528,
+  // 15,104 since 2026-11-09 (Agent 1's call): measured 15,044 (+575) with questions in the
+  // controller on one request path shared with approvals (ADR 0049 slice 3).
+  'ai-headless': 15104,
   // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations). 21,952 since
   // 2026-11-06 (Agent 1's call): measured 21,915 (+644) with the native-button sheet for its copy
   // buttons (component-architecture-audit.md §9, step 2). 21,824 since 2026-11-07 (Agent 1's call),
@@ -128,7 +130,9 @@ export const BUDGETS = {
   // 58,048 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 58,029 (+1,269
   // from 56,760) with approval scopes (ADR 0049 slice 3): the choice in odd-action-approval and
   // the model (+685), and its radios drawn by the shared control-indicator sheets (+584).
-  'ai-chat': 58048,
+  // 60,224 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,164 (+2,135)
+  // once odd-message composes odd-question for question parts (ADR 0049 slice 3).
+  'ai-chat': 60224,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

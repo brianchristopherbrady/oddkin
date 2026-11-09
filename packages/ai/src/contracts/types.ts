@@ -48,6 +48,7 @@ export type PlanRecord = Infer<typeof PlanModel>;
 export type PlanStep = PlanRecord['steps'][number];
 export type StepStatus = PlanStep['status'];
 export type QuestionRecord = Infer<typeof QuestionModel>;
+export type QuestionStatus = QuestionRecord['status'];
 export type ContextItem = Infer<typeof ContextItemModel>;
 export type ModelOption = Infer<typeof ModelOptionModel>;
 export type FeedbackRecord = Infer<typeof FeedbackModel>;
@@ -126,6 +127,7 @@ export interface ConversationState {
   readonly messages: readonly MessageRecord[];
   readonly tools: Readonly<Record<string, ToolCallRecord>>;
   readonly approvals: Readonly<Record<string, ApprovalRecord>>;
+  readonly questions: Readonly<Record<string, QuestionRecord>>;
   readonly artifacts: Readonly<Record<string, ArtifactRecord>>;
   readonly attempts: Readonly<Record<string, AttemptRecord>>;
   /** Alternatives for messages that have siblings, keyed by message id. */
@@ -204,6 +206,16 @@ export type AiEvent = EventIdentity &
         /** `cancelled`: the host or backend withdrew the request, or its action can no longer run. */
         readonly status: 'approved' | 'rejected' | 'expired' | 'superseded' | 'cancelled';
       }
+    | { readonly type: 'question-request'; readonly question: QuestionRecord }
+    | {
+        readonly type: 'question-resolved';
+        readonly questionId: string;
+        readonly revision: number;
+        /** `cancelled`: the host or backend withdrew the question, or its attempt can no longer use it. */
+        readonly status: 'answered' | 'skipped' | 'expired' | 'superseded' | 'cancelled';
+        /** The answer recorded elsewhere, with `answered`. */
+        readonly answer?: JsonValue | undefined;
+      }
     | { readonly type: 'artifact'; readonly artifact: ArtifactRecord }
     | { readonly type: 'usage'; readonly usage: Usage }
     /** Replace the attempt's message wholesale (reconciliation against a known scope). */
@@ -256,6 +268,12 @@ export interface ApprovalDecision extends AttemptTarget {
   readonly scope?: string | undefined;
 }
 
+/** A person's response to one question revision: an answer, or a skip, which is never an empty answer. */
+export type QuestionResponse = AttemptTarget & {
+  readonly questionId: string;
+  readonly revision: number;
+} & ({ readonly kind: 'answer'; readonly answer: JsonValue } | { readonly kind: 'skip' });
+
 /**
  * What an adapter provides. Optional methods are capabilities; their absence makes the matching
  * action unavailable. Promises resolve with the authoritative outcome or reject with a
@@ -272,6 +290,8 @@ export interface ConversationTransport {
   /** Reattach to the same attempt; never starts new work. */
   resume?(target: AttemptTarget, sink: EventSink): Promise<void>;
   decide?(decision: ApprovalDecision): Promise<DecisionOutcome>;
+  /** Send an answer or a skip; without it (`respondToQuestion` unavailable) questions take no answer. */
+  answer?(response: QuestionResponse): Promise<DecisionOutcome>;
   loadHistory?(conversationId: string, before: string | undefined): Promise<ConversationSnapshot>;
   submitFeedback?(feedback: FeedbackRecord): Promise<void>;
 }

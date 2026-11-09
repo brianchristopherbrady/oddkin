@@ -42,6 +42,7 @@ const CAPS = {
   history: { available: true },
   respondToApproval: { available: true },
   approvalScopes: { available: true },
+  respondToQuestion: { available: true },
   regenerate: { available: true },
   feedback: { available: true },
 };
@@ -73,6 +74,7 @@ function harness(history: ConversationSnapshot[] = []) {
     },
     stop: async () => 'cancelled',
     decide: async () => 'accepted',
+    answer: async () => 'accepted',
     loadHistory: () => new Promise((resolve) => (resolveHistory = resolve)),
   };
   const controller = new ConversationController({
@@ -340,6 +342,50 @@ describe('odd-conversation', () => {
       status: 'approved',
       scope: 'session',
     });
+    release();
+  });
+
+  it('a question in the conversation: validated and answered inside nested shadow roots, focus kept (ADR 0049)', async () => {
+    const { controller, sink } = harness();
+    const { el, articles } = await mount(controller);
+    const release = bindIntents(el, controllerIntents(controller));
+    await controller.send({ text: 'Write the notes' });
+    push(sink(), {
+      type: 'question-request',
+      question: {
+        questionId: 'q1',
+        revision: 1,
+        prompt: 'Which audience?',
+        kind: 'choice',
+        options: [
+          { id: 'eng', label: 'Engineers' },
+          { id: 'all', label: 'Everyone' },
+        ],
+        status: 'requested',
+      },
+    });
+    await settle(el);
+    const question = articles().at(-1)!.shadowRoot!.querySelector('odd-question')!;
+    const inner = question.shadowRoot!;
+    const submit = () => inner.querySelector('odd-button[type="submit"]') as HTMLElement;
+    expect(inner.querySelector('legend')?.textContent).toBe('Which audience?');
+    // Nothing chosen: the form says so and nothing is sent.
+    submit().click();
+    await settle(question);
+    expect(inner.querySelector('.error')?.textContent).toBe('Choose an option or enter an answer.');
+    expect(controller.getSnapshot().questions['q1']?.status).toBe('requested');
+    inner.querySelectorAll<HTMLInputElement>('input[name="choice"]')[1]!.click();
+    submit().focus();
+    submit().click();
+    await settle(el);
+    await settle(question);
+    expect(controller.getSnapshot().questions['q1']).toMatchObject({
+      status: 'answered',
+      answer: { choice: 'all' },
+    });
+    expect(inner.querySelector('.state')?.textContent?.trim()).toBe('Answered.');
+    // The answer's controls went: focus moved to the question's status, not the page.
+    expect(inner.activeElement).toBe(inner.querySelector('.state'));
     release();
   });
 

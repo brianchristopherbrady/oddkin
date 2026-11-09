@@ -8,15 +8,18 @@ export const questionTemplate = (host: OddkinQuestion) => {
   const q = host.question;
   if (!q) return html``;
   const locked = host._locked;
-  const pending =
-    q.status === 'submitting' || (locked && (q.status === 'requested' || q.status === 'failed'));
+  const unavailable = host._unavailable;
+  const open = q.status === 'requested' || q.status === 'failed';
+  const pending = q.status === 'submitting' || (locked && open && unavailable === undefined);
   const status = pending
     ? t.submitting
-    : q.status === 'failed'
-      ? format(t.failed, { message: q.error?.message ?? '' })
-      : q.status === 'requested'
-        ? ''
-        : t[q.status];
+    : open && unavailable
+      ? unavailable
+      : q.status === 'failed'
+        ? format(t.failed, { message: q.error?.message ?? '' })
+        : q.status === 'requested'
+          ? ''
+          : t[q.status];
   const choice = q.kind === 'choice' || q.kind === 'multi-choice';
   const inputType = q.kind === 'choice' ? 'radio' : 'checkbox';
   const expires = host._expires();

@@ -456,6 +456,8 @@ export function createUiMessageStreamTransport(
       : { available: false, reason: 'This service cannot resume responses.' },
     respondToApproval: decisions,
     approvalScopes: decisions,
+    // The protocol asks only through tool approvals: it has no question chunk to answer.
+    respondToQuestion: { available: false, reason: 'Questions are not supported.' },
     ...options.capabilities,
   };
 

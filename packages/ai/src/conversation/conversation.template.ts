@@ -73,6 +73,7 @@ export const conversationTemplate = (host: OddkinConversation) => {
               .attempt=${m.attemptId ? state?.attempts[m.attemptId] : undefined}
               .tools=${state?.tools}
               .approvals=${state?.approvals}
+              .questions=${state?.questions}
               .artifacts=${state?.artifacts}
               .branch=${state?.branches[m.id]}
               .feedback=${state?.feedback[m.id]}

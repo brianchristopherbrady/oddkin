@@ -2097,12 +2097,13 @@
         "odd-copy-button",
         "odd-disclosure",
         "odd-message-branch",
+        "odd-question",
         "odd-response",
         "odd-response-feedback",
         "odd-sources",
         "odd-tool-call"
       ],
-      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
+      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, questions, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
     },
     "odd-message-branch": { "dependencies": [] },
     "odd-model-select": {

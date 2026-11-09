@@ -57,21 +57,21 @@ All records are defined once with `@oddkin/core/model` in `packages/ai/src/contr
 | Record | Model | Key | Notes |
 | --- | --- | --- | --- |
 | Message | `oddkin.ai.message` | `id` | `role`, `parentId` (branch tree), ordered `parts`, `attemptId`, `provenance` |
-| Part | union on `type` | `id` | `text`, `reasoning`, `file`, `source`, `tool-call`, `approval`, `artifact`, `data` (`m.json`, renderer key), `unsupported` |
+| Part | union on `type` | `id` | `text`, `reasoning`, `file`, `source`, `tool-call`, `approval`, `question`, `artifact`, `data` (`m.json`, renderer key), `unsupported` |
 | Tool call | `oddkin.ai.tool-call` | `toolCallId` | streamed `inputText` vs complete `input`; `status` separate from approval |
 | Approval | `oddkin.ai.approval` | `approvalId` + `revision` | target, changes, risk, `scopes` and `defaultScopeId`, expiry, decision with its `scope`, error |
 | Artifact | `oddkin.ai.artifact` | `artifactId` | revisions with stable identity; `currentRevisionId` |
 | Usage | `oddkin.ai.usage` | — | `precision`: measured / estimated / unknown, supplied by the host |
 | Checkpoint | `oddkin.ai.checkpoint` | `checkpointId` | `restores` lists every replaced state; `outcome` host-confirmed |
 | Plan | `oddkin.ai.plan` | `planId` | steps with `tasks` (parallel), `blocker`, `inputRequest` |
-| Question | `oddkin.ai.question` | `questionId` + `revision` | choice, multi-choice, form, text; custom answers |
+| Question | `oddkin.ai.question` | `questionId` + `revision` | choice, multi-choice, form, text; custom answers; `attemptId` in a conversation |
 | Context item, model option, feedback, suggestion, transcript segment, conversation snapshot | `oddkin.ai.*` | `id` | see schemas |
 
 `AttemptRecord`, `ConversationState`, `Capabilities`, `PublicError`, and `AiEvent` are TypeScript contracts (runtime state, not persisted). `PublicError` carries `code`, user-presentable `message`, and `retryable`; diagnostic details stay in host logs. Runtime resources (File, streams, AbortControllers, DOM selections) never appear in records.
 
 Ingestion (`normalizeMessage`, `normalizeSnapshot`, …): only declared fields are kept (`pickDeclared`); unknown or invalid parts become explicit `unsupported` parts; invalid records are dropped and reported as diagnostics (an approval whose scope ids repeat, or whose default is not offered, is invalid: `ai.approval.scopes`); provider metadata never reaches rendered content (A15).
 
-**Capabilities.** Every action (`send`, `stop`, `disconnect`, `reconnect`, `resume`, `retry`, `edit`, `regenerate`, `switchBranch`, `respondToApproval`, `approvalScopes`, `editApproval`, `restoreCheckpoint`, `voice`, `attachments`, `history`, `feedback`) is `{ available, reason? }`; absent means unavailable. `approvalScopes` says the transport carries a decision's scope: without it, an approval with a scope is refused rather than sent without one. The controller intersects what the transport implements with the host policy (`intersectCapabilities` only narrows). Elements hide or disable unavailable controls and show the reason; controller methods return `{ ok: false, reason: 'unavailable' }` instead of throwing.
+**Capabilities.** Every action (`send`, `stop`, `disconnect`, `reconnect`, `resume`, `retry`, `edit`, `regenerate`, `switchBranch`, `respondToApproval`, `approvalScopes`, `respondToQuestion`, `editApproval`, `restoreCheckpoint`, `voice`, `attachments`, `history`, `feedback`) is `{ available, reason? }`; absent means unavailable. `approvalScopes` says the transport carries a decision's scope: without it, an approval with a scope is refused rather than sent without one. The controller intersects what the transport implements with the host policy (`intersectCapabilities` only narrows). Elements hide or disable unavailable controls and show the reason; controller methods return `{ ok: false, reason: 'unavailable' }` instead of throwing.
 
 ## 4. Lifecycle
 
@@ -129,11 +129,13 @@ A call that needs approval links it (`approvalId`) and keeps its own status: the
 
 Checkpoint restore: `available → restore-pending → restored | restore-failed`; success text appears only when the host's record says `restored` (A20). Questions: `requested → submitting → answered | failed`, `skipped`, `expired`, `superseded` once a newer revision replaces the question, and `cancelled` once it is withdrawn, per revision. Feedback: `idle → pending → submitted | failed`. Document proposals (§7.3): `requested`, then `applied`, `rejected`, `stale`, or `failed`, and an applied one `undone`; a host that applies asynchronously shows `applying` or `undoing` meanwhile.
 
+**Questions in the conversation** (ADR 0049 §6 item 4). `ConversationState.questions` holds question records by `questionId`, each bound to its attempt (`attemptId`) and revision, and a `question` part keeps its place among the message's parts. The stream asks with `question-request` and reports an outcome decided elsewhere with `question-resolved`; a replayed or older revision is ignored, and a newer one replaces the record and resets any response bound to the old one. `answer(questionId, revision, answer)` and `skip(questionId, revision)` follow the approvals' path (one shared request path in the controller): one response per revision, `submitting` until the backend acknowledges it, `failed` to respond again, `stale` when the record changed meanwhile. The transport's optional `answer(response)` tells an answer (`kind: 'answer'`, with its value) from a skip (`kind: 'skip'`): a skip is never an empty answer. Without it, or without `respondToQuestion`, the controller answers `unavailable`, and `odd-question` given those capabilities says so and takes no answer; given none, it stays usable for a host that owns its records. Questions join the attempt's wait (`kind: 'question'`) and are withdrawn with it (§4.1). Snapshots and `createConversationView` carry them too.
+
 ## 5. Streams and adapters
 
 ### 5.1 Normalized event stream
 
-Adapters translate a wire protocol into `AiEvent`s and push them into an `EventSink` bound to one attempt (`conversationId`, `runId`, `attemptId`). Event types: `attempt-accepted`, `message-start`, `message-reset`, `step-start`, `step-reset`, `text-start/-delta/-end` (`kind: text | reasoning`), `part`, `tool-input-start/-delta/-available`, `tool-executing`, `tool-output`, `tool-error`, `tool-denied`, `approval-request`, `approval-resolved`, `artifact`, `usage`, `snapshot`, `finish`, `abort`, `error`, `metadata`.
+Adapters translate a wire protocol into `AiEvent`s and push them into an `EventSink` bound to one attempt (`conversationId`, `runId`, `attemptId`). Event types: `attempt-accepted`, `message-start`, `message-reset`, `step-start`, `step-reset`, `text-start/-delta/-end` (`kind: text | reasoning`), `part`, `tool-input-start/-delta/-available`, `tool-executing`, `tool-output`, `tool-error`, `tool-denied`, `approval-request`, `approval-resolved`, `question-request`, `question-resolved`, `artifact`, `usage`, `snapshot`, `finish`, `abort`, `error`, `metadata`.
 
 Controller guarantees:
 
@@ -145,7 +147,7 @@ Controller guarantees:
 
 ### 5.2 Simulation adapter (`createSimulatedTransport`)
 
-Deterministic, clearly simulated (`simulated: true`), no network. Scripts are timed steps (`event`, `drop`, `awaitDecision` with approve/reject branches). The simulated server keeps producing while disconnected and numbers every event so a resume replays an overlap (`replayOverlap`) that the controller deduplicates. Controls: `failNextSend`, `acceptDelay`, `stopBehavior` (`cancel`, `already-finished`, `unknown`, `fail`), `stopDelay`, `decisionOutcome`, `decisionDelay`, `feedbackDelay`, `failFeedback`, `historyDelay`; `inject()` pushes a late event; `pendingTimers` proves cleanup. Used by tests and demos.
+Deterministic, clearly simulated (`simulated: true`), no network. Scripts are timed steps (`event`, `drop`, `awaitDecision` with approve/reject branches, `awaitAnswer` with answer/skip branches). The simulated server keeps producing while disconnected and numbers every event so a resume replays an overlap (`replayOverlap`) that the controller deduplicates. Controls: `failNextSend`, `acceptDelay`, `stopBehavior` (`cancel`, `already-finished`, `unknown`, `fail`), `stopDelay`, `decisionOutcome`, `decisionDelay`, `feedbackDelay`, `failFeedback`, `historyDelay`; `inject()` pushes a late event; `pendingTimers` proves cleanup. Used by tests and demos.
 
 ### 5.3 External store (`selectSource`, `createConversationView`)
 
@@ -168,7 +170,7 @@ Inspected at <https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol>, <https://ai-sd
 | `data-*` (persistent) | `part` (`data`, renderer key = suffix) |
 | `message-metadata`, `custom`, unknown | `metadata` or a diagnostic; never rendered |
 
-Guarantees and limits: arrival order; **no event ids or offsets in the protocol, so nothing is deduplicated by identity**; resumed streams are full replays (SDK default), rebuilt through `message-reset`. Information loss: `providerMetadata`, `messageMetadata`, `custom` parts, `finish-step`, `finishReason`, preliminary tool outputs, and transient data parts are not rendered. Optional endpoints: `resumeApi` (GET, `resume` capability), `stopApi` (POST, `stop`), `decideApi` (POST approvals, the decision as the body with its `scope`; `respondToApproval` and `approvalScopes`). Without `stopApi`, stop is unavailable (aborting the fetch is a disconnect, not a stop). A run that asks for approval ends its stream before the answer (the SDK sends the answer with the next request), so the adapter ends it paused for input and the approval stays answerable (§4.1). Recorded fixtures: `packages/ai/test/fixtures/ui-message-stream/*.sse`, replayed at every byte split point (A03).
+Guarantees and limits: arrival order; **no event ids or offsets in the protocol, so nothing is deduplicated by identity**; resumed streams are full replays (SDK default), rebuilt through `message-reset`. Information loss: `providerMetadata`, `messageMetadata`, `custom` parts, `finish-step`, `finishReason`, preliminary tool outputs, and transient data parts are not rendered. Optional endpoints: `resumeApi` (GET, `resume` capability), `stopApi` (POST, `stop`), `decideApi` (POST approvals, the decision as the body with its `scope`; `respondToApproval` and `approvalScopes`). Without `stopApi`, stop is unavailable (aborting the fetch is a disconnect, not a stop). A run that asks for approval ends its stream before the answer (the SDK sends the answer with the next request), so the adapter ends it paused for input and the approval stays answerable (§4.1). The protocol asks the person only through tool approvals and has no question chunk, so `respondToQuestion` is unavailable ("Questions are not supported."). Recorded fixtures: `packages/ai/test/fixtures/ui-message-stream/*.sse`, replayed at every byte split point (A03).
 
 ### 5.5 AG-UI (design note)
 
@@ -209,7 +211,7 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-feedback-submit` | `messageId`, `rating`, `reasons`, `comment` | no | Request; confirmed by the feedback record |
 | `odd-model-change` | `modelId`, `previousModelId` | yes (veto keeps the previous model) | Selection |
 | `odd-checkpoint-restore` | `checkpointId` | no | Request |
-| `odd-question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request |
+| `odd-question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request; `controllerIntents` routes them to `answer()` and `skip()` |
 | `odd-change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
 | `odd-assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
 | `odd-context-add` / `-remove` | `{kind:'file', files}` or `{kind:'url', url}` / `itemId` | no | Request; items appear when the host adds records |
@@ -278,7 +280,7 @@ Conversation: `role="feed"` of `article` messages with `aria-posinset`/`aria-set
 
 ### 9.2 Announcement policy
 
-`describeConversationChange` decides which transitions are announced: sent, responding (`all` only), completed, stopped, stop too-late/unknown, failed (assertive), interrupted, disconnected, waiting for input, approval requested/approved/rejected/expired/superseded/withdrawn, tool failed, history loaded. **Never streamed text** and never per-token. Levels: `important` (default), `all`, `none` (`announcements` property). Each message has a key; a surface's `LiveAnnouncer` drops repeated keys. One polite and one assertive region per surface; standalone elements emit `odd-announce`, which the nearest announcer (a conversation or `createAnnouncer(container)`) handles and cancels so overlapping regions stay silent; elements with an `announce` property only announce when enabled. Arriving content never moves focus (A21).
+`describeConversationChange` decides which transitions are announced: sent, responding (`all` only), completed, stopped, stop too-late/unknown, failed (assertive), interrupted, disconnected, waiting for input, approval requested/approved/rejected/expired/superseded/withdrawn, question asked/withdrawn, tool failed, history loaded. **Never streamed text** and never per-token. Levels: `important` (default), `all`, `none` (`announcements` property). Each message has a key; a surface's `LiveAnnouncer` drops repeated keys. One polite and one assertive region per surface; standalone elements emit `odd-announce`, which the nearest announcer (a conversation or `createAnnouncer(container)`) handles and cancels so overlapping regions stay silent; elements with an `announce` property only announce when enabled. Arriving content never moves focus (A21).
 
 ### 9.3 Localization
 

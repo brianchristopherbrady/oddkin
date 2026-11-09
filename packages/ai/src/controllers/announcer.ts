@@ -29,6 +29,8 @@ export interface AnnouncementStrings {
   readonly approvalExpired: string;
   readonly approvalSuperseded: string;
   readonly approvalCancelled: string;
+  readonly questionAsked: string;
+  readonly questionCancelled: string;
   readonly toolFailed: string;
   readonly historyLoaded: string;
 }
@@ -51,6 +53,8 @@ export const DEFAULT_ANNOUNCEMENTS: AnnouncementStrings = {
   approvalExpired: 'Approval expired: {title}',
   approvalSuperseded: 'The proposal changed: {title}. Review it again.',
   approvalCancelled: 'Approval withdrawn: {title}',
+  questionAsked: 'Question: {prompt}',
+  questionCancelled: 'Question withdrawn: {prompt}',
   toolFailed: '{tool} failed.',
   historyLoaded: 'Earlier messages loaded.',
 };
@@ -186,6 +190,24 @@ export function describeConversationChange(
                 ? format(strings.approvalCancelled, { title })
                 : undefined;
     if (text) out.push({ text, priority: 'polite', key, level: 'important' });
+  }
+  for (const question of Object.values(next.questions ?? {})) {
+    const before = previous.questions?.[question.questionId];
+    if (before && before.revision === question.revision && before.status === question.status)
+      continue;
+    const text =
+      question.status === 'requested'
+        ? strings.questionAsked
+        : question.status === 'cancelled'
+          ? strings.questionCancelled
+          : undefined;
+    if (text)
+      out.push({
+        text: format(text, { prompt: question.prompt }),
+        priority: 'polite',
+        key: `question:${question.questionId}:${question.revision}:${question.status}`,
+        level: 'important',
+      });
   }
   for (const tool of Object.values(next.tools)) {
     const before = previous.tools[tool.toolCallId];

@@ -7,6 +7,7 @@ import {
   normalizeApproval,
   normalizeArtifact,
   normalizeMessage,
+  normalizeQuestion,
   normalizeToolCall,
   type NormalizeDiagnostic,
 } from '../contracts/normalize.js';
@@ -59,6 +60,7 @@ export interface ConversationViewInput {
   readonly messages: readonly unknown[];
   readonly tools?: readonly unknown[];
   readonly approvals?: readonly unknown[];
+  readonly questions?: readonly unknown[];
   readonly artifacts?: readonly unknown[];
   readonly attempts?: readonly AttemptRecord[];
   readonly activeAttemptId?: string;
@@ -104,6 +106,9 @@ export function createConversationView(
     ),
     approvals: Object.fromEntries(
       keep(input.approvals, normalizeApproval, '/approvals').map((a) => [a.approvalId, a]),
+    ),
+    questions: Object.fromEntries(
+      keep(input.questions, normalizeQuestion, '/questions').map((q) => [q.questionId, q]),
     ),
     artifacts: Object.fromEntries(
       keep(input.artifacts, normalizeArtifact, '/artifacts').map((a) => [a.artifactId, a]),

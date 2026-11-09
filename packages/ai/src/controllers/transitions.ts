@@ -8,6 +8,7 @@ import type {
   ApprovalStatus,
   AttemptStatus,
   ConnectionState,
+  QuestionStatus,
   StopOutcome,
   StopState,
   ToolStatus,
@@ -58,8 +59,20 @@ export const APPROVAL_TRANSITIONS: Table<ApprovalStatus> = {
   cancelled: [],
 };
 
-/** The approval waits for the person: not decided yet, or the decision did not reach the backend. */
-export const awaitsPerson = (status: ApprovalStatus): boolean =>
+export const QUESTION_TRANSITIONS: Table<QuestionStatus> = {
+  // answered/skipped directly: answered elsewhere (another client).
+  requested: ['submitting', 'answered', 'skipped', 'expired', 'superseded', 'cancelled'],
+  submitting: ['answered', 'skipped', 'failed', 'expired', 'superseded', 'cancelled'],
+  failed: ['submitting', 'answered', 'skipped', 'expired', 'superseded', 'cancelled'],
+  answered: [],
+  skipped: [],
+  expired: [],
+  superseded: [],
+  cancelled: [],
+};
+
+/** The request waits for the person: not answered yet, or the answer did not reach the backend. */
+export const awaitsPerson = (status: ApprovalStatus | QuestionStatus): boolean =>
   status === 'requested' || status === 'failed';
 
 export const CONNECTION_TRANSITIONS: Table<ConnectionState> = {

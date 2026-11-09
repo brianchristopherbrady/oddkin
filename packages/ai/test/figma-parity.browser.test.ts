@@ -727,6 +727,7 @@ describe('Figma parity: odd-conversation', () => {
         revision: 1,
         tools: {},
         approvals: {},
+        questions: {},
         artifacts: {},
         attempts: {},
         branches: {},

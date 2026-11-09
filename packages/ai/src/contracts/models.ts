@@ -37,6 +37,7 @@ export const capabilitiesSchema = m.object(
     switchBranch: m.optional(capabilitySchema),
     respondToApproval: m.optional(capabilitySchema),
     approvalScopes: m.optional(capabilitySchema),
+    respondToQuestion: m.optional(capabilitySchema),
     editApproval: m.optional(capabilitySchema),
     restoreCheckpoint: m.optional(capabilitySchema),
     voice: m.optional(capabilitySchema),
@@ -78,6 +79,7 @@ export const partSchema = m.union('type', {
     toolCallId: m.id('Key of the tool call record; its state lives there.'),
   }),
   approval: m.object({ id: m.id(), approvalId: m.id('Key of the approval record.') }),
+  question: m.object({ id: m.id(), questionId: m.id('Key of the question record.') }),
   artifact: m.object({
     id: m.id(),
     artifactId: m.id('Key of the artifact record.'),
@@ -298,6 +300,7 @@ export const QuestionModel = defineModel('oddkin.ai.question', {
   version: 1,
   schema: m.object({
     questionId: m.id(),
+    attemptId: m.optional(m.id()),
     revision: m.number({ integer: true, minimum: 1 }),
     prompt: m.string({ minLength: 1 }),
     kind: m.enum(['choice', 'multi-choice', 'form', 'text']),
@@ -409,6 +412,7 @@ export const ConversationSnapshotModel = defineModel('oddkin.ai.conversation', {
     activeLeafId: m.optional(m.id()),
     tools: m.optional(m.array(ToolCallModel.schema)),
     approvals: m.optional(m.array(ApprovalModel.schema)),
+    questions: m.optional(m.array(QuestionModel.schema)),
     artifacts: m.optional(m.array(ArtifactModel.schema)),
     hasMoreHistory: m.optional(m.boolean()),
   }),

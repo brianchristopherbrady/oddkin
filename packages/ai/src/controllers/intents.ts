@@ -5,6 +5,7 @@
  */
 import type { ActionResult, ConversationController } from './conversation.js';
 import type { ComposerController } from './composer.js';
+import type { JsonValue } from '../contracts/types.js';
 import type { ApprovalDecideDetail, FeedbackSubmitDetail, PromptSubmitDetail } from '../events.js';
 
 export interface IntentHandlers {
@@ -20,6 +21,11 @@ export interface IntentHandlers {
   'odd-attempt-resume'(detail: { attemptId: string }, event: Event): void;
   'odd-branch-switch'(detail: { messageId: string; targetMessageId: string }, event: Event): void;
   'odd-approval-decide'(detail: ApprovalDecideDetail, event: Event): void;
+  'odd-question-answer'(
+    detail: { questionId: string; revision: number; answer: JsonValue },
+    event: Event,
+  ): void;
+  'odd-question-skip'(detail: { questionId: string; revision: number }, event: Event): void;
   'odd-feedback-submit'(detail: FeedbackSubmitDetail, event: Event): void;
   'odd-suggestion-submit'(detail: { suggestionId: string; prompt: string }, event: Event): void;
   'odd-suggestion-select'(detail: { suggestionId: string; prompt: string }, event: Event): void;
@@ -100,6 +106,12 @@ export function controllerIntents(
       void controller
         .decide(detail.approvalId, detail.revision, detail.decision, detail.reason, detail.scope)
         .then(report('odd-approval-decide')),
+    'odd-question-answer': (detail) =>
+      void controller
+        .answer(detail.questionId, detail.revision, detail.answer)
+        .then(report('odd-question-answer')),
+    'odd-question-skip': (detail) =>
+      void controller.skip(detail.questionId, detail.revision).then(report('odd-question-skip')),
     'odd-feedback-submit': (detail) =>
       void controller
         .submitFeedback({

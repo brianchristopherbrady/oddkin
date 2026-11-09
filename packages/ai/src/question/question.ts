@@ -1,7 +1,8 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
-import type { JsonValue, QuestionRecord } from '../contracts/types.js';
+import { can, unavailableReason } from '../contracts/normalize.js';
+import type { Capabilities, JsonValue, QuestionRecord } from '../contracts/types.js';
 import { announceEvent, questionAnswerEvent, questionSkipEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
@@ -18,6 +19,7 @@ export const QUESTION_STRINGS = {
   superseded: 'This question changed. Answer the new version.',
   cancelled: 'This question was withdrawn; no answer is needed.',
   failed: 'Your answer was not sent: {message}',
+  unavailable: 'Answers are not available here.',
   required: 'Choose an option or enter an answer.',
   expires: 'Answer by {time}',
   yes: 'Yes',
@@ -40,6 +42,10 @@ export const QUESTION_STRINGS = {
  */
 export class OddkinQuestion extends OddkinElement.with({
   question: prop.object<QuestionRecord>({ description: 'The question record.' }),
+  capabilities: prop.object<Capabilities>({
+    description:
+      'When given, `respondToQuestion` decides whether answers can be sent; without it, the host that shows the question answers it.',
+  }),
   announce: prop.enum(['none', 'important'], {
     default: 'none',
     empty: 'important',
@@ -74,11 +80,20 @@ export class OddkinQuestion extends OddkinElement.with({
     return time ? format(this._strings.expires, { time }) : undefined;
   }
 
+  /** @internal Why answers cannot be sent, when the capabilities given say so. */
+  get _unavailable(): string | undefined {
+    const c = this.capabilities;
+    return c && !can(c, 'respondToQuestion')
+      ? (unavailableReason(c, 'respondToQuestion') ?? this._strings.unavailable)
+      : undefined;
+  }
+
   /** @internal */
   get _locked(): boolean {
     const q = this.question;
     if (!q) return true;
     if (q.status !== 'requested' && q.status !== 'failed') return true;
+    if (this._unavailable !== undefined) return true;
     return this._decisions.asked(`${q.questionId}:${q.revision}`);
   }
 

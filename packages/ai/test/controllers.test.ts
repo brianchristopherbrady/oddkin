@@ -8,6 +8,7 @@ import {
 } from '../src/contracts/normalize.js';
 import { MessageModel } from '../src/contracts/models.js';
 import { ComposerController, matchesAccept } from '../src/controllers/composer.js';
+import { createConversationView } from '../src/controllers/external-store.js';
 import { diffLines, diffWords } from '../src/controllers/diff.js';
 import {
   DocumentSession,
@@ -83,7 +84,38 @@ describe('contracts', () => {
       stop: { available: false, reason: 'No stop endpoint' },
       voice: { available: false },
     });
-    expect(CAPABILITY_NAMES).toHaveLength(17);
+    expect(CAPABILITY_NAMES).toHaveLength(18);
+  });
+
+  it("an application's questions and approvals are validated like the controller's (ADR 0049)", () => {
+    const codes: string[] = [];
+    const view = createConversationView(
+      {
+        conversationId: 'c',
+        messages: [],
+        questions: [
+          { questionId: 'q1', revision: 1, prompt: 'Which?', kind: 'text', status: 'requested' },
+          { questionId: 'q2', revision: 0, prompt: 'Broken', kind: 'text', status: 'requested' },
+        ],
+        approvals: [
+          {
+            approvalId: 'a1',
+            revision: 1,
+            title: 'Write',
+            status: 'requested',
+            scopes: [
+              { id: 'x', label: 'X' },
+              { id: 'x', label: 'Again' },
+            ],
+          },
+        ],
+        capabilities: {},
+      },
+      (d) => codes.push(d.code),
+    );
+    expect(Object.keys(view.questions)).toEqual(['q1']);
+    expect(view.approvals).toEqual({});
+    expect(codes).toContain('ai.approval.scopes');
   });
 });
 

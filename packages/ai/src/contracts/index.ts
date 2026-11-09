@@ -31,6 +31,7 @@ export {
   normalizeArtifact,
   normalizeMessage,
   normalizePart,
+  normalizeQuestion,
   normalizeSnapshot,
   normalizeToolCall,
   pickDeclared,

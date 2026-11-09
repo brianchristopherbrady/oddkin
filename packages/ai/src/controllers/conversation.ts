@@ -14,6 +14,7 @@ import {
   normalizeArtifact,
   normalizeMessage,
   normalizePart,
+  normalizeQuestion,
   normalizeSnapshot,
   toPublicError,
   type NormalizeDiagnostic,
@@ -30,15 +31,20 @@ import type {
   AttemptWait,
   BranchPosition,
   Capabilities,
+  CapabilityName,
   ConversationSnapshot,
   ConversationState,
   ConversationTransport,
+  DecisionOutcome,
   EventSink,
   ExternalSource,
   FeedbackRecord,
+  JsonValue,
   MessagePart,
   MessageRecord,
   PublicError,
+  QuestionRecord,
+  QuestionStatus,
   ToolCallRecord,
   ToolStatus,
   WaitRequest,
@@ -47,6 +53,7 @@ import { createId } from '../internal/ids.js';
 import {
   APPROVAL_TRANSITIONS,
   ATTEMPT_TRANSITIONS,
+  QUESTION_TRANSITIONS,
   TOOL_TRANSITIONS,
   applyStopOutcome,
   awaitsPerson,
@@ -93,6 +100,11 @@ const DECISION_FAILED: PublicError = {
   message: 'The decision could not be submitted. Try again.',
   retryable: true,
 };
+const ANSWER_FAILED: PublicError = {
+  code: 'ai.question.failed',
+  message: 'The answer could not be sent. Try again.',
+  retryable: true,
+};
 const STREAM_FAILED: PublicError = {
   code: 'ai.stream.failed',
   message: 'The response failed. Try again.',
@@ -105,9 +117,35 @@ interface ReplayState {
   ids: Set<string>;
   order: string[];
 }
+
+/** The records a person responds to: approvals and questions share one lifecycle (ADR 0049 §5). */
+type Requests = 'approvals' | 'questions';
+type RequestRecord = ApprovalRecord | QuestionRecord;
+const REQUESTS: readonly Requests[] = ['approvals', 'questions'];
+
+/** How one kind of response travels: its capability, transport call, and records. */
+interface RequestReply {
+  readonly capability: CapabilityName;
+  readonly send:
+    ((target: AttemptTarget, record: RequestRecord) => Promise<DecisionOutcome>) | undefined;
+  /** Refuses the response before anything is sent, when it does not fit the record. */
+  readonly check?: (record: RequestRecord) => ActionResult | undefined;
+  /** The record while the response is on its way (its status is already `submitting`). */
+  readonly submitting: (record: RequestRecord) => RequestRecord;
+  /** The status once the backend accepted the response. */
+  readonly accepted: ApprovalStatus | QuestionStatus;
+  readonly failure: PublicError;
+}
 const MAX_EVENT_IDS = 4096;
 /** Events still meaningful after an attempt ended: reconciliation and bookkeeping only. */
-const AFTER_TERMINAL = new Set(['snapshot', 'usage', 'metadata', 'approval-resolved', 'artifact']);
+const AFTER_TERMINAL = new Set([
+  'snapshot',
+  'usage',
+  'metadata',
+  'approval-resolved',
+  'question-resolved',
+  'artifact',
+]);
 
 class Sink implements EventSink {
   #open = true;
@@ -159,7 +197,7 @@ export class ConversationController implements ExternalSource<ConversationState>
    * a stream until new events arrive. `true` when requests were open at the pause.
    */
   #paused = new Map<string, boolean>();
-  #pendingDecisions = new Set<string>();
+  #pendingResponses = new Set<string>();
   #pendingStops = new Map<string, number>();
   #disposed = false;
 
@@ -224,6 +262,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       ...base,
       tools: Object.fromEntries((snapshot.tools ?? []).map((t) => [t.toolCallId, t])),
       approvals: Object.fromEntries((snapshot.approvals ?? []).map((a) => [a.approvalId, a])),
+      questions: Object.fromEntries((snapshot.questions ?? []).map((q) => [q.questionId, q])),
       artifacts: Object.fromEntries((snapshot.artifacts ?? []).map((a) => [a.artifactId, a])),
       hasMoreHistory: snapshot.hasMoreHistory ?? false,
       history: snapshot.hasMoreHistory ? 'idle' : 'complete',
@@ -510,7 +549,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     }
   }
 
-  // ---- Approvals ----
+  // ---- Approvals and questions ----
 
   /**
    * Submit a decision for one approval revision. Repeated activation, stale revisions, and
@@ -519,104 +558,162 @@ export class ConversationController implements ExternalSource<ConversationState>
    * `scope` goes only with `approve`: one of the revision's scopes, else its only scope or its
    * default; a transport without `approvalScopes` cannot carry one, so the decision is refused.
    */
-  async decide(
+  decide(
     approvalId: string,
     revision: number,
     decision: 'approve' | 'reject',
     reason?: string,
     scope?: string,
   ): Promise<ActionResult> {
+    let chosen: string | undefined;
+    return this.#respond('approvals', approvalId, revision, {
+      capability: 'respondToApproval',
+      send:
+        this.#transport.decide &&
+        ((target, approval) =>
+          this.#transport.decide!({
+            ...target,
+            approvalId,
+            toolCallId: (approval as ApprovalRecord).toolCallId,
+            revision,
+            decision,
+            reason,
+            ...(chosen !== undefined ? { scope: chosen } : {}),
+          })),
+      check: (record) => {
+        const approval = record as ApprovalRecord;
+        const scopes = approval.scopes ?? [];
+        chosen =
+          decision === 'reject' || scope !== undefined
+            ? scope
+            : scopes.length === 1
+              ? scopes[0]?.id
+              : approval.defaultScopeId;
+        // A rejection never carries a scope; an approval carries one of this revision's, if any.
+        if (
+          decision === 'reject'
+            ? chosen !== undefined
+            : scopes.length
+              ? !scopes.some((s) => s.id === chosen)
+              : chosen !== undefined
+        )
+          return { ok: false, reason: 'invalid' };
+        if (chosen !== undefined && !can(this.#state.peek().capabilities, 'approvalScopes'))
+          return { ok: false, reason: 'unavailable' };
+        return undefined;
+      },
+      submitting: (record) => {
+        const { scope: _scope, ...rest } = record as ApprovalRecord;
+        return {
+          ...rest,
+          decision,
+          ...(reason ? { reason } : {}),
+          ...(chosen !== undefined ? { scope: chosen } : {}),
+        };
+      },
+      accepted: decision === 'approve' ? 'approved' : 'rejected',
+      failure: DECISION_FAILED,
+    });
+  }
+
+  /** Answer one question revision; the answer is bound to it, like a decision to an approval. */
+  answer(questionId: string, revision: number, answer: JsonValue): Promise<ActionResult> {
+    return this.#reply(questionId, revision, { kind: 'answer', answer });
+  }
+
+  /** Skip one question revision: a skip of its own, never an empty answer. */
+  skip(questionId: string, revision: number): Promise<ActionResult> {
+    return this.#reply(questionId, revision, { kind: 'skip' });
+  }
+
+  #reply(
+    questionId: string,
+    revision: number,
+    response: { readonly kind: 'answer'; readonly answer: JsonValue } | { readonly kind: 'skip' },
+  ): Promise<ActionResult> {
+    return this.#respond('questions', questionId, revision, {
+      capability: 'respondToQuestion',
+      send:
+        this.#transport.answer &&
+        ((target) => this.#transport.answer!({ ...target, questionId, revision, ...response })),
+      submitting: (record) => {
+        const { answer: _answer, ...rest } = record as QuestionRecord;
+        return response.kind === 'answer' ? { ...rest, answer: response.answer } : rest;
+      },
+      accepted: response.kind === 'answer' ? 'answered' : 'skipped',
+      failure: ANSWER_FAILED,
+    });
+  }
+
+  /**
+   * A person's response to a request (an approval's decision, a question's answer or skip): one in
+   * flight per revision, `submitting` until the backend acknowledges it, `failed` to respond
+   * again, and the record decides when it changed meanwhile (resolved elsewhere, or withdrawn).
+   */
+  async #respond(
+    kind: Requests,
+    id: string,
+    revision: number,
+    r: RequestReply,
+  ): Promise<ActionResult> {
     const state = this.#state.peek();
-    const approval = state.approvals[approvalId];
-    if (!approval) return { ok: false, reason: 'invalid' };
-    if (!can(state.capabilities, 'respondToApproval') || !this.#transport.decide)
+    const record = state[kind][id];
+    if (!record) return { ok: false, reason: 'invalid' };
+    if (!can(state.capabilities, r.capability) || !r.send)
       return { ok: false, reason: 'unavailable' };
-    if (approval.revision !== revision) return { ok: false, reason: 'stale' };
-    const key = `${approvalId}:${revision}`;
-    if (this.#pendingDecisions.has(key)) return { ok: false, reason: 'duplicate' };
-    if (approval.status !== 'requested' && approval.status !== 'failed')
+    if (record.revision !== revision) return { ok: false, reason: 'stale' };
+    const key = `${kind}:${id}:${revision}`;
+    if (this.#pendingResponses.has(key)) return { ok: false, reason: 'duplicate' };
+    if (!awaitsPerson(record.status))
       return {
         ok: false,
         reason:
-          approval.status === 'expired' ||
-          approval.status === 'superseded' ||
-          approval.status === 'cancelled'
+          record.status === 'expired' ||
+          record.status === 'superseded' ||
+          record.status === 'cancelled'
             ? 'stale'
             : 'duplicate',
       };
-    const scopes = approval.scopes ?? [];
-    const chosen =
-      decision === 'reject' || scope !== undefined
-        ? scope
-        : scopes.length === 1
-          ? scopes[0]?.id
-          : approval.defaultScopeId;
-    // A rejection never carries a scope; an approval carries one of this revision's, if it offers any.
-    if (
-      decision === 'reject'
-        ? chosen !== undefined
-        : scopes.length
-          ? !scopes.some((s) => s.id === chosen)
-          : chosen !== undefined
-    )
-      return { ok: false, reason: 'invalid' };
-    if (chosen !== undefined && !can(state.capabilities, 'approvalScopes'))
-      return { ok: false, reason: 'unavailable' };
-    if (approval.expiresAt && Date.parse(approval.expiresAt) <= Date.now()) {
-      this.#setApproval(approvalId, revision, 'expired');
+    const refused = r.check?.(record);
+    if (refused) return refused;
+    if (record.expiresAt && Date.parse(record.expiresAt) <= Date.now()) {
+      this.#setRequest(kind, id, revision, 'expired');
       return { ok: false, reason: 'stale' };
     }
-    this.#pendingDecisions.add(key);
+    this.#pendingResponses.add(key);
     const generation = this.#generation;
-    this.#updateApproval(approvalId, (a) => {
-      const { error: _error, scope: _scope, ...rest } = a;
-      return {
-        ...rest,
-        status: 'submitting',
-        decision,
-        ...(reason ? { reason } : {}),
-        ...(chosen !== undefined ? { scope: chosen } : {}),
-      };
+    this.#updateRequest(kind, id, (current) => {
+      const { error: _error, ...rest } = current;
+      return r.submitting({ ...rest, status: 'submitting' } as RequestRecord);
     });
-    const attempt = approval.attemptId ? state.attempts[approval.attemptId] : undefined;
+    const attempt = record.attemptId ? state.attempts[record.attemptId] : undefined;
     try {
-      const outcome = await this.#transport.decide({
+      const target = {
         conversationId: state.conversationId,
         runId: attempt?.runId ?? '',
-        attemptId: approval.attemptId ?? '',
-        approvalId,
-        toolCallId: approval.toolCallId,
-        revision,
-        decision,
-        reason,
-        ...(chosen !== undefined ? { scope: chosen } : {}),
-      });
+        attemptId: record.attemptId ?? '',
+      };
+      const outcome = await r.send(target, record);
       if (generation !== this.#generation) return { ok: false, reason: 'stale' };
-      const status: ApprovalStatus =
-        outcome === 'accepted'
-          ? decision === 'approve'
-            ? 'approved'
-            : 'rejected'
-          : outcome === 'expired'
-            ? 'expired'
-            : 'superseded';
-      this.#setApproval(approvalId, revision, status);
-      // The record decides: a request withdrawn or decided elsewhere meanwhile keeps its outcome.
-      if (this.#state.peek().approvals[approvalId]?.status !== status)
-        return { ok: false, reason: 'stale' };
+      const status =
+        outcome === 'accepted' ? r.accepted : outcome === 'expired' ? 'expired' : 'superseded';
+      this.#setRequest(kind, id, revision, status);
+      // The record decides: a request withdrawn or resolved elsewhere meanwhile keeps its outcome.
+      if (this.#state.peek()[kind][id]?.status !== status) return { ok: false, reason: 'stale' };
       return outcome === 'accepted' ? { ok: true } : { ok: false, reason: 'stale' };
     } catch (error) {
       if (generation !== this.#generation) return { ok: false, reason: 'stale' };
-      const current = this.#state.peek().approvals[approvalId];
+      const failure = toPublicError(error, r.failure);
+      const current = this.#state.peek()[kind][id];
       if (current?.revision === revision && current.status === 'submitting')
-        this.#updateApproval(approvalId, (a) => ({
-          ...a,
-          status: 'failed',
-          error: toPublicError(error, DECISION_FAILED),
-        }));
-      return { ok: false, reason: 'rejected', error: toPublicError(error, DECISION_FAILED) };
+        this.#updateRequest(
+          kind,
+          id,
+          (c) => ({ ...c, status: 'failed', error: failure }) as RequestRecord,
+        );
+      return { ok: false, reason: 'rejected', error: failure };
     } finally {
-      this.#pendingDecisions.delete(key);
+      this.#pendingResponses.delete(key);
     }
   }
 
@@ -903,14 +1000,23 @@ export class ConversationController implements ExternalSource<ConversationState>
         // A refusal is not a person's rejection: an approval still open is withdrawn.
         const now = this.#state.peek();
         const approval = now.approvals[now.tools[event.toolCallId]?.approvalId ?? ''];
-        if (approval) this.#setApproval(approval.approvalId, approval.revision, 'cancelled');
+        if (approval)
+          this.#setRequest('approvals', approval.approvalId, approval.revision, 'cancelled');
         return;
       }
       case 'approval-request':
-        this.#requestApproval(attempt, event.approval);
+        this.#request(attempt, 'approvals', normalizeApproval, event.approval);
         return;
       case 'approval-resolved':
-        this.#setApproval(event.approvalId, event.revision, event.status);
+        this.#setRequest('approvals', event.approvalId, event.revision, event.status);
+        return;
+      case 'question-request':
+        this.#request(attempt, 'questions', normalizeQuestion, event.question);
+        return;
+      case 'question-resolved':
+        this.#setRequest('questions', event.questionId, event.revision, event.status, (q) =>
+          event.answer === undefined ? q : { ...q, answer: event.answer },
+        );
         return;
       case 'artifact': {
         const result = normalizeArtifact(event.artifact);
@@ -1007,12 +1113,14 @@ export class ConversationController implements ExternalSource<ConversationState>
   #wait(attemptId: string): AttemptWait | undefined {
     const action: WaitRequest[] = [];
     const submitting: WaitRequest[] = [];
-    for (const approval of Object.values(this.#state.peek().approvals)) {
-      if (approval.attemptId !== attemptId) continue;
-      const request: WaitRequest = { kind: 'approval', id: approval.approvalId };
-      if (approval.status === 'submitting') submitting.push(request);
-      else if (awaitsPerson(approval.status)) action.push(request);
-    }
+    const state = this.#state.peek();
+    for (const kind of REQUESTS)
+      for (const [id, record] of Object.entries(state[kind])) {
+        if (record.attemptId !== attemptId) continue;
+        const request: WaitRequest = { kind: kind === 'approvals' ? 'approval' : 'question', id };
+        if (record.status === 'submitting') submitting.push(request);
+        else if (awaitsPerson(record.status)) action.push(request);
+      }
     return action.length || submitting.length ? { action, submitting } : undefined;
   }
 
@@ -1090,39 +1198,66 @@ export class ConversationController implements ExternalSource<ConversationState>
     }
   }
 
-  #requestApproval(attempt: AttemptRecord, raw: ApprovalRecord): void {
-    const result = normalizeApproval({ ...raw, attemptId: raw.attemptId ?? attempt.attemptId });
+  /**
+   * A request for the person (an approval or a question) from the stream: validated, bound to its
+   * attempt, and placed in the message where it arrived. A newer revision replaces the record and
+   * any response bound to the old one; an older or equal revision is ignored (replays).
+   */
+  #request(
+    attempt: AttemptRecord,
+    kind: Requests,
+    normalize: (raw: unknown) => Normalized<RequestRecord>,
+    raw: RequestRecord,
+  ): void {
+    const result = normalize({ ...raw, attemptId: raw.attemptId ?? attempt.attemptId });
     for (const d of result.diagnostics) this.#report({ ...d, attemptId: attempt.attemptId });
     if (!result.value) return;
     const incoming = result.value;
+    const approval = kind === 'approvals' ? (incoming as ApprovalRecord) : undefined;
+    const id = approval ? approval.approvalId : (incoming as QuestionRecord).questionId;
     const now = this.#state.peek();
-    const existing = now.approvals[incoming.approvalId];
+    const existing = now[kind][id];
     if (existing && existing.revision >= incoming.revision) {
-      this.#report({
-        code: 'ai.approval.stale',
-        path: '',
-        message: 'Ignored an older approval revision; nothing to do.',
-        attemptId: attempt.attemptId,
-      });
+      const attemptId = attempt.attemptId;
+      this.#report(
+        approval
+          ? {
+              code: 'ai.approval.stale',
+              path: '',
+              message: 'Ignored an older approval revision; nothing to do.',
+              attemptId,
+            }
+          : {
+              code: 'ai.question.stale',
+              path: '',
+              message: 'Ignored an older question revision; nothing to do.',
+              attemptId,
+            },
+      );
       return;
     }
-    // A new revision supersedes any decision bound to the previous one.
-    const record: ApprovalRecord = { ...incoming, status: 'requested' };
-    this.#commit({ ...now, approvals: { ...now.approvals, [record.approvalId]: record } });
-    if (record.toolCallId) {
+    // A new revision supersedes any response bound to the previous one.
+    this.#commit({
+      ...now,
+      [kind]: { ...now[kind], [id]: { ...incoming, status: 'requested' } },
+    } as ConversationState);
+    if (approval?.toolCallId) {
       // The approval states the gate; the call keeps its own status until it runs.
-      this.#ensureTool(attempt, record.toolCallId);
-      this.#updateTool(record.toolCallId, (t) =>
-        t.approvalId === record.approvalId ? t : { ...t, approvalId: record.approvalId },
-      );
+      const toolCallId = approval.toolCallId;
+      this.#ensureTool(attempt, toolCallId);
+      this.#updateTool(toolCallId, (t) => (t.approvalId === id ? t : { ...t, approvalId: id }));
     } else {
-      this.#upsertPart(attempt.messageId, `approval-${record.approvalId}`, () => ({
-        type: 'approval',
-        id: `approval-${record.approvalId}`,
-        approvalId: record.approvalId,
-      }));
+      const type = approval ? 'approval' : 'question';
+      this.#upsertPart(
+        attempt.messageId,
+        `${type}-${id}`,
+        () =>
+          (approval
+            ? { type, id: `${type}-${id}`, approvalId: id }
+            : { type, id: `${type}-${id}`, questionId: id }) as MessagePart,
+      );
     }
-    this.#syncWaiting(record.attemptId ?? attempt.attemptId);
+    this.#syncWaiting(incoming.attemptId ?? attempt.attemptId);
   }
 
   // ---- Record helpers ----
@@ -1174,21 +1309,35 @@ export class ConversationController implements ExternalSource<ConversationState>
     });
   }
 
-  #updateApproval(approvalId: string, update: (a: ApprovalRecord) => ApprovalRecord): void {
+  #updateRequest(
+    kind: Requests,
+    id: string,
+    update: (record: RequestRecord) => RequestRecord,
+  ): void {
     const now = this.#state.peek();
-    const approval = now.approvals[approvalId];
-    if (!approval) return;
-    const next = update(approval);
-    if (next === approval) return;
-    this.#commit({ ...now, approvals: { ...now.approvals, [approvalId]: next } });
-    if (approval.attemptId) this.#syncWaiting(approval.attemptId);
+    const record = now[kind][id];
+    if (!record) return;
+    const next = update(record);
+    if (next === record) return;
+    this.#commit({ ...now, [kind]: { ...now[kind], [id]: next } } as ConversationState);
+    if (record.attemptId) this.#syncWaiting(record.attemptId);
   }
 
-  #setApproval(approvalId: string, revision: number, status: ApprovalStatus): void {
-    this.#updateApproval(approvalId, (a) => {
-      if (a.revision !== revision || !canTransition(APPROVAL_TRANSITIONS, a.status, status))
-        return a;
-      return { ...a, status };
+  /** Move a request's revision to `status` when its lifecycle allows it; `add` sets more fields. */
+  #setRequest(
+    kind: Requests,
+    id: string,
+    revision: number,
+    status: ApprovalStatus | QuestionStatus,
+    add?: (record: RequestRecord) => RequestRecord,
+  ): void {
+    const table = (kind === 'approvals' ? APPROVAL_TRANSITIONS : QUESTION_TRANSITIONS) as Readonly<
+      Record<string, readonly string[]>
+    >;
+    this.#updateRequest(kind, id, (r) => {
+      if (r.revision !== revision || !canTransition(table, r.status, status)) return r;
+      const next = { ...r, status } as RequestRecord;
+      return add ? add(next) : next;
     });
   }
 
@@ -1202,9 +1351,10 @@ export class ConversationController implements ExternalSource<ConversationState>
     // Only a terminal attempt withdraws its open requests (ADR 0049 §6 item 2); it waits no more.
     if (isTerminal(next.status) && !isTerminal(attempt.status)) {
       this.#paused.delete(attemptId);
-      for (const approval of Object.values(this.#state.peek().approvals))
-        if (approval.attemptId === attemptId)
-          this.#setApproval(approval.approvalId, approval.revision, 'cancelled');
+      for (const kind of REQUESTS)
+        for (const [id, record] of Object.entries(this.#state.peek()[kind]))
+          if (record.attemptId === attemptId)
+            this.#setRequest(kind, id, record.revision, 'cancelled');
       this.#syncWaiting(attemptId);
     }
   }
@@ -1343,7 +1493,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     this.#replay.clear();
     this.#stepStart.clear();
     this.#paused.clear();
-    this.#pendingDecisions.clear();
+    this.#pendingResponses.clear();
     this.#pendingStops.clear();
     this.#preferred.clear();
   }
@@ -1355,6 +1505,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       messages: [],
       tools: {},
       approvals: {},
+      questions: {},
       artifacts: {},
       attempts: {},
       branches: {},

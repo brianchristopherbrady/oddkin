@@ -12,6 +12,7 @@ import type {
   MessagePart,
   MessageRecord,
   PartOf,
+  QuestionRecord,
   ToolCallRecord,
 } from '../contracts/types.js';
 import type { ArtifactRenderer } from '../artifact/artifact.js';
@@ -41,6 +42,7 @@ export const MESSAGE_STRINGS = {
   unsupported: 'This message contains content ({type}) that can’t be shown here.',
   toolMissing: 'A tool call is referenced but its record is missing.',
   approvalMissing: 'An approval is referenced but its record is missing.',
+  questionMissing: 'A question is referenced but its record is missing.',
   artifactMissing: 'An artifact is referenced but its record is missing.',
   dataInvalid: 'Structured content “{name}” was not shown because it did not pass validation.',
   file: 'Attachment',
@@ -54,7 +56,7 @@ export interface DataRenderer {
 
 /**
  * One message: its role, structured parts in order (text, reasoning, files, sources, tools,
- * approvals, artifacts, data), and message actions (copy, regenerate, edit, versions,
+ * approvals, questions, artifacts, data), and message actions (copy, regenerate, edit, versions,
  * feedback, provenance). Parts with unknown types or missing records render explicit fallbacks.
  *
  * @csspart header - Role label and provenance.
@@ -78,13 +80,16 @@ export class OddkinMessage extends OddkinElement.with({
   approvals: prop.object<Readonly<Record<string, ApprovalRecord>>>({
     description: 'Approval records by id.',
   }),
+  questions: prop.object<Readonly<Record<string, QuestionRecord>>>({
+    description: 'Question records by id.',
+  }),
   artifacts: prop.object<Readonly<Record<string, ArtifactRecord>>>({
     description: 'Artifact records by id.',
   }),
   branch: prop.object<BranchPosition>({ description: 'Position among alternative versions.' }),
   feedback: prop.object<FeedbackRecord>({ description: 'Feedback record for this message.' }),
   capabilities: prop.object<Capabilities>({
-    description: 'Enables regenerate, edit, branches, feedback, approvals.',
+    description: 'Enables regenerate, edit, branches, feedback, approvals, questions.',
   }),
   markdown: prop.object<MarkdownOptions>({ description: 'Markdown rendering options.' }),
   renderers: prop.object<Renderers>({

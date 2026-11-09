@@ -7,6 +7,7 @@ import { aiLabelDefinition } from '../ai-label/ai-label.definition.js';
 import { artifactDefinition } from '../artifact/artifact.definition.js';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { messageBranchDefinition } from '../message-branch/message-branch.definition.js';
+import { questionDefinition } from '../question/question.definition.js';
 import { responseFeedbackDefinition } from '../response-feedback/response-feedback.definition.js';
 import { responseDefinition } from '../response/response.definition.js';
 import { sourcesDefinition } from '../sources/sources.definition.js';
@@ -28,6 +29,7 @@ export const messageDefinition = compose({
     sources: sourcesDefinition,
     toolCall: toolCallDefinition,
     approval: actionApprovalDefinition,
+    question: questionDefinition,
     artifact: artifactDefinition,
     branch: messageBranchDefinition,
     feedback: responseFeedbackDefinition,
