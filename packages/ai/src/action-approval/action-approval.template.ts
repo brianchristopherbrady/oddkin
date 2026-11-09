@@ -7,8 +7,9 @@ import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
 /**
- * Anatomy: a labelled `base` group with summary, target, `changes`, `scope`, the reason, and the
- * decision row (Figma page 08): Approve, Reject and Edit, or the outcome in their place.
+ * Anatomy: a labelled `base` group with summary, target, `changes`, `scope`, the reason (a
+ * textarea in an `odd-disclosure`), and the decision row (Figma page 08): Approve, Reject and
+ * Edit, or the outcome in their place.
  */
 export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const t = host._strings;
@@ -18,6 +19,7 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const approveBlocked = host._approveBlocked;
   const scopes = approval.scopes ?? [];
   const scope = host._scopeOf(approval);
+  const reason = host._reasonOf(approval);
   const status = approval.status;
   const decided = host._decisions.choice(host._key(approval));
   const actionable = status === 'requested' || status === 'failed';
@@ -84,15 +86,24 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
       t,
     )}
     <p class="state" ?hidden=${status !== 'requested' || pending}>${t.requested}</p>
-    <label class="reason" ?hidden=${!actionable && !pending}>
-      <span class="muted">${t.reason}</span>
+    <odd-disclosure
+      class="reason"
+      label=${t.reason}
+      .open=${reason.open}
+      ?disabled=${blocked !== undefined}
+      ?hidden=${!actionable && !pending}
+      @toggle=${host._onReason}
+    >
       <textarea
-        rows="1"
-        .value=${host._reason.value}
-        @input=${host._onReason}
+        class="control"
+        rows="4"
+        aria-label=${t.reason}
+        placeholder=${t.reasonPlaceholder}
+        .value=${reason.text}
         ?disabled=${blocked !== undefined}
+        @input=${host._onReason}
       ></textarea>
-    </label>
+    </odd-disclosure>
     ${decisionRow(
       [
         {

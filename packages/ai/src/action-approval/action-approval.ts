@@ -12,6 +12,7 @@ export const APPROVAL_STRINGS = {
   reject: 'Reject',
   edit: 'Edit',
   reason: 'Reason (optional)',
+  reasonPlaceholder: 'Add a reason',
   target: 'Affects',
   changes: 'Proposed changes',
   before: 'Before',
@@ -57,7 +58,7 @@ export const APPROVAL_STRINGS = {
  * @csspart changes - Before/after list.
  * @csspart scope - What an approval covers: the one scope explained, or a choice among several.
  * @csspart actions - Decision controls.
- * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Before/after values carry visually hidden "Before"/"After" labels. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so.
+ * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Before/after values carry visually hidden "Before"/"After" labels. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so. The optional reason is a native textarea in an `odd-disclosure`, named by the label the disclosure's summary shows: collapsed while empty, open once written, and empty again for a new revision.
  * @keyboard Tab to the controls; Enter or Space decides.
  * @useFor Human approval of agent actions (tool calls, writes, purchases).
  * @notFor Confirming the user's own direct actions; use a dialog.
@@ -92,8 +93,8 @@ export class OddkinActionApproval extends OddkinElement.with({
   readonly _decisions = new DecisionController(this, () =>
     this.shadowRoot?.querySelector<HTMLElement>('.outcome'),
   );
-  /** @internal Local draft of the rejection reason. */
-  readonly _reason = signal('');
+  /** @internal The person's reason, and whether they opened its field, for the revision it was written on. */
+  readonly _reason = signal<{ key: string; text: string; open: boolean } | undefined>(undefined);
   /** @internal The scope the person chose, for the revision it was chosen on. */
   readonly _scope = signal<{ key: string; id: string } | undefined>(undefined);
 
@@ -131,6 +132,12 @@ export class OddkinActionApproval extends OddkinElement.with({
       : scopes.length === 1
         ? scopes[0]?.id
         : approval.defaultScopeId;
+  }
+
+  /** @internal The reason for this revision: a new revision starts empty, its field collapsed. */
+  _reasonOf(approval: ApprovalRecord): { text: string; open: boolean } {
+    const own = this._reason.value;
+    return own?.key === this._key(approval) ? own : { text: '', open: false };
   }
 
   /** @internal Whether the host's valid default is the scope chosen, not the person. */
@@ -176,7 +183,7 @@ export class OddkinActionApproval extends OddkinElement.with({
       approvalId: approval.approvalId,
       revision: approval.revision,
       decision,
-      reason: this._reason.peek() || undefined,
+      reason: this._reasonOf(approval).text || undefined,
       scope: decision === 'approve' ? this._scopeOf(approval) : undefined,
     });
   };
@@ -193,9 +200,19 @@ export class OddkinActionApproval extends OddkinElement.with({
         revision: approval.revision,
       });
   };
-  /** @internal */
+  /**
+   * @internal The person wrote (the field stays open for this revision), or opened or closed the
+   * field's disclosure.
+   */
   readonly _onReason = (event: Event): void => {
-    this._reason.value = (event.target as HTMLTextAreaElement).value;
+    const approval = this.approval;
+    const input = event.type === 'input';
+    if (approval)
+      this._reason.value = {
+        key: this._key(approval),
+        text: input ? (event.target as HTMLTextAreaElement).value : this._reasonOf(approval).text,
+        open: input || (event as ToggleEvent).newState === 'open',
+      };
   };
   /** @internal */
   readonly _onScope = (event: Event): void => {

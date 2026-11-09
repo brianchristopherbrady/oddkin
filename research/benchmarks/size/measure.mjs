@@ -146,7 +146,12 @@ export const BUDGETS = {
   // 61,760 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 61,726 with Figma
   // page 08's expiry badge (internal/expiry.ts, +57) for the approval and the question, and the
   // host's valid default scope chosen again with its Defaulted hint (+80).
-  'ai-chat': 61760,
+  // 62,656 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 62,600 (+874) with
+  // Figma page 08's ReasonField: a native textarea drawn by the components' field sheets
+  // (fieldStructuralStyles, controlStyles) in body type in an odd-disclosure, disabled with it while
+  // a decision is pending, its draft kept per revision; odd-textarea itself would have cost +3,328
+  // for its form-control stack.
+  'ai-chat': 62656,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

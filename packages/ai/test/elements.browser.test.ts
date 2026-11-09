@@ -772,6 +772,83 @@ describe('the shared decision row (ADR 0049 §4)', () => {
     expect(el.shadowRoot!.activeElement).toBe($(el, '.outcome'));
   });
 
+  it('the reason: a textarea in a disclosure, collapsed while empty, open once written, and empty again for a new revision (Figma page 08)', async () => {
+    const record = (extra: Partial<ApprovalRecord> = {}): ApprovalRecord => ({
+      approvalId: 'ap',
+      revision: 1,
+      title: 'Deploy',
+      status: 'requested',
+      ...extra,
+    });
+    const el = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = record();
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+    const disclosure = () => $(el, '.reason') as HTMLElementTagNameMap['odd-disclosure'];
+    const field = () => $(el, '.reason textarea') as HTMLTextAreaElement;
+    expect(disclosure().label).toBe('Reason (optional)');
+    expect(disclosure().open).toBe(false);
+    // Named by the label the disclosure's summary shows.
+    expect(field().getAttribute('aria-label')).toBe('Reason (optional)');
+    expect(field().placeholder).toBe('Add a reason');
+    // The person opens it: the toggle the disclosure reports after its summary is activated.
+    const open = async () => {
+      const toggled = new Promise((resolve) =>
+        disclosure().addEventListener('toggle', resolve, { once: true }),
+      );
+      disclosure().shadowRoot!.querySelector('summary')!.click();
+      await toggled;
+      await settle(el);
+      expect(disclosure().open).toBe(true);
+    };
+    // Opened and emptied again, it stays open while the person is in it.
+    await open();
+    const write = async (value: string) => {
+      field().value = value;
+      field().dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await settle(el);
+    };
+    await write('x');
+    await write('');
+    expect(disclosure().open).toBe(true);
+    await write('Use the pilot region agreed with the support team.');
+    // A failure keeps the reason, open; so does putting the element back.
+    el.approval = record({ status: 'failed', error: { code: 'x', message: 'Timed out.' } });
+    await settle(el);
+    const parent = el.parentElement!;
+    el.remove();
+    parent.append(el);
+    await settle(el);
+    expect(disclosure().open).toBe(true);
+    expect(field().value).toBe('Use the pilot region agreed with the support team.');
+    // A new revision starts empty and collapsed, and sends no reason.
+    el.approval = record({ revision: 2 });
+    await settle(el);
+    expect(disclosure().open).toBe(false);
+    expect(field().value).toBe('');
+    const seen: unknown[] = [];
+    el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
+    ($(el, '[data-action="approve"]') as HTMLElement).click();
+    expect(seen).toEqual([
+      { approvalId: 'ap', revision: 2, decision: 'approve', reason: undefined, scope: undefined },
+    ]);
+    // While the decision is pending, the field is disabled (page 08 ReasonField, Disabled).
+    await settle(el);
+    expect(field().disabled).toBe(true);
+    expect(disclosure().disabled).toBe(true);
+    // Opened without a word, it still collapses for the next revision.
+    el.approval = record({ revision: 3 });
+    await settle(el);
+    await open();
+    el.approval = record({ revision: 4 });
+    await settle(el);
+    expect(disclosure().open).toBe(false);
+  });
+
   it("keeps the question's buttons: the chosen one loads, Answer for an answer, Skip for a skip", async () => {
     const el = await mount(
       'odd-question',

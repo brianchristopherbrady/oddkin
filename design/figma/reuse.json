@@ -13,12 +13,12 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 121,
+    "style": 122,
     "slot": 54,
-    "deferred": 20,
+    "deferred": 18,
     "controller": 18,
     "native": 7,
-    "element": 24
+    "element": 25
   },
   "references": [
     {
@@ -54,8 +54,8 @@
       "source": "Oddkin/AI/Internal/DisclosureTrigger",
       "sourceId": "812:627",
       "count": 14,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The approval's reason sits in a complete odd-disclosure whose summary is this trigger; DisclosureTrigger is its Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -63,8 +63,8 @@
       "source": "Oddkin/AI/Internal/ReasonField",
       "sourceId": "834:2353",
       "count": 5,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The approval (packages/ai/src/action-approval) draws its reason as a native textarea with the components' shared field sheets (fieldStructuralStyles, controlStyles), odd-textarea's rows and resize, in an odd-disclosure: not odd-textarea, whose form-control stack costs the chat bundle 3,328 B gzip against 759 (Agent 1, 2026-11-09)."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -2220,8 +2220,8 @@
   ],
   "elements": {
     "odd-action-approval": {
-      "dependencies": ["odd-badge", "odd-button"],
-      "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2); the expiry is a complete odd-badge (Figma page 08, Expiry)."
+      "dependencies": ["odd-badge", "odd-button", "odd-disclosure"],
+      "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2); the expiry is a complete odd-badge (Figma page 08, Expiry); the optional reason is a native textarea drawn by the components' shared field sheets in a complete odd-disclosure (Figma page 08, ReasonField)."
     },
     "odd-activity": {
       "dependencies": ["odd-badge"],

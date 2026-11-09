@@ -1115,8 +1115,8 @@ describe('Figma parity: odd-action-approval', () => {
       };
       el.capabilities = { respondToApproval: { available: true } };
       await settle(el);
-      const field = shadow(el, 'textarea');
-      restyle(field);
+      // Not compared: the specimen's reason ("Reason (optional)" over a native field) is page 08's
+      // ReasonField now, collapsed in an odd-disclosure until opened (compared below).
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
         { layer: ['Update example document'], el: shadow(el, '.title'), kind: 'text' },
@@ -1136,14 +1136,6 @@ describe('Figma parity: odd-action-approval', () => {
         },
         { layer: ['Proposed changes', 'After: Revised text'], el: shadow(el, 'ins'), kind: 'text' },
         { layer: ['Waiting for your decision'], el: shadow(el, '.state'), kind: 'text' },
-        { layer: ['Reason (optional)'], el: shadow(el, '.reason .muted'), kind: 'text' },
-        {
-          layer: ['Native field'],
-          el: field,
-          kind: 'frame',
-          fields: [['minHeight', 'min-block-size']],
-        },
-        { layer: ['Native field', 'Text'], el: field, kind: 'text' },
         {
           layer: ['Actions'],
           el: shadow(el, '[part="actions"]'),
@@ -1161,6 +1153,56 @@ describe('Figma parity: odd-action-approval', () => {
       expect(el.shadowRoot!.querySelector('.changes .visually-hidden')).toBeNull();
       const gap = ins.getBoundingClientRect().top - del.getBoundingClientRect().bottom;
       expect(Math.round(gap)).toBe(space(el, 'xs'));
+    });
+});
+
+// Page 08's ReasonField (`Oddkin/AI/Internal/ReasonField`): the approval's reason, a native
+// textarea drawn by the components' field sheets in an odd-disclosure whose summary shows the
+// label the specimen draws above the field (ADR 0049). Its states: Empty (the placeholder), Filled,
+// Focus (the ring), and Disabled (while a decision is pending, the disclosure with it).
+describe('Figma parity: the reason field (page 08)', () => {
+  for (const mode of MODES)
+    it(`Empty, Filled, Focus, and Disabled (${mode})`, async () => {
+      await import('../src/action-approval/action-approval.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-action-approval></odd-action-approval>',
+      ) as HTMLElementTagNameMap['odd-action-approval'];
+      el.approval = { approvalId: 'ap1', revision: 1, title: 'Deploy', status: 'requested' };
+      el.capabilities = { respondToApproval: { available: true } };
+      await settle(el);
+      const disclosure = shadow(el, '.reason') as HTMLElementTagNameMap['odd-disclosure'];
+      disclosure.open = true;
+      await settle(disclosure);
+      const field = shadow(el, '.reason textarea') as HTMLTextAreaElement;
+      const label = disclosure.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+      const expectState = async (state: string) => {
+        restyle(field);
+        const path = [`Textarea / ${state}`];
+        const targets: Target[] = [
+          { layer: [...path, 'Surface'], el: field, kind: state === 'Focus' ? 'ring' : 'frame' },
+          {
+            layer: [...path, 'Surface', 'reason draft'],
+            el: field,
+            kind: 'text',
+            ...(field.value ? {} : { pseudo: '::placeholder' }),
+          },
+          { layer: [...path, 'reason label'], el: label, kind: 'text' },
+        ];
+        await transitions(targets);
+        expectNone(compare('Oddkin/AI/Internal/ReasonField', { State: state }, targets));
+      };
+      await expectState('Empty');
+      field.value = 'Use the pilot region agreed with the support team.';
+      field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await settle(el);
+      await expectState('Filled');
+      field.focus();
+      await expectState('Focus');
+      field.blur();
+      shadow(el, '[data-action="approve"]').click();
+      await settle(el);
+      await expectState('Disabled');
     });
 });
 

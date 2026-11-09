@@ -473,7 +473,6 @@ describe('odd-action-approval', () => {
     expectColumn($(el, '.base'), space('xs'));
     expectColumn($(el, '.changes'), space('xs'));
     expectColumn($(el, '.change'), space('xs'));
-    expectColumn($(el, '.reason'), space('2xs'));
     // The reason sits above the decision row (Figma page 08), whose buttons share a line.
     const reason = $(el, '.reason')!.getBoundingClientRect();
     const buttons = items($(el, '.actions'));

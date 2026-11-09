@@ -1,8 +1,11 @@
 import { badgeDefinition } from '@oddkin/components/badge';
 import { buttonDefinition } from '@oddkin/components/button';
+import { disclosureDefinition } from '@oddkin/components/disclosure';
 import {
   controlIndicatorStructuralStyles,
   controlIndicatorStyles,
+  controlStyles,
+  fieldStructuralStyles,
 } from '@oddkin/components/styles';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
@@ -20,9 +23,15 @@ export const actionApprovalDefinition = compose({
     aiBaseStyles,
     controlIndicatorStructuralStyles,
     controlIndicatorStyles,
+    fieldStructuralStyles,
+    controlStyles,
     decisionRowStyles,
     scopeChoiceStyles,
     actionApprovalStyles,
   ],
-  dependencies: { badge: badgeDefinition, button: buttonDefinition },
+  dependencies: {
+    badge: badgeDefinition,
+    button: buttonDefinition,
+    disclosure: disclosureDefinition,
+  },
 });

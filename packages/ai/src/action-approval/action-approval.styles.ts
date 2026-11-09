@@ -53,14 +53,14 @@ export const actionApprovalStyles = css`
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
-  textarea {
-    min-block-size: ${token('control.height.md')};
-    padding: ${token('space.2xs')} ${token('space.xs')};
-    border: ${token('border.width.default')} solid ${token('color.border.default')};
-    border-radius: ${token('control.radius')};
-    font: inherit;
-    color: inherit;
-    background: ${token('color.surface.default')};
+  /*
+   * The reason is a native textarea drawn by the components' field sheets, with odd-textarea's
+   * inset and resize, in body type (the disclosure around it sets UI type).
+   */
+  .reason .control {
+    padding-block: ${token('space.sm')};
+    font-family: ${token('type.body.family')};
+    font-weight: ${token('type.body.weight')};
     resize: vertical;
   }
   @media (forced-colors: active) {
