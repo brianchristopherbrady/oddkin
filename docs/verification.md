@@ -6299,3 +6299,17 @@ Read-only export through the Figma MCP (session `f420d5e6`), file `E7LfRysny8V3q
 | Browser | `browser-set.mjs` on the AI contract, conversation, elements, layout, Figma parity, frameworks, patterns, and reflow files (no browser code changed) | WebKit 332 passed and 4 skipped; Chromium 331 passed, and the test that failed under the machine's load passes alone (the patterns file, 12 of 12); Firefox 269 passed, with 6 failures and the Figma parity file not loaded under load, which pass alone (conversation, patterns, and reflow, 25 of 25; Figma parity, 57 of 57) |
 | Probes | `mutate.mjs`, 6 mutants: a dirty base still reusing; a dirty result reused; a result from another revision reused; a result that names a revision reused against a base that names none; the kit recording no source; the packaged check comparing the source too | 6 of 6 killed |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata` (the packaged kits regenerate: the generator's version hashes the kit modules), `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write` | Each exit 0; no bundle changed size (`ai-chat` 64,481 B gzip); the packed consumers pass. No e2e: no page or element changed |
+
+## 2026-11-09 — The change review's family in the Figma snapshot (round 11, Agent 1, item 7)
+
+Read-only export through the Figma MCP (session `f420d5e6`), as for item 6.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Page 11 approved | `use_figma`, read-only: the index rows on page `805:2` | "11 · AI · Change review · Approved"; 10, 12, 13, and 14 await review |
+| Families on page 11 | `use_figma`, read-only: component sets of `908:6118` | One: `Oddkin/AI/ChangeReview/Proposal` (`909:46859`), 20 variants |
+| Transfer | One `use_figma` slice, saved verbatim, checked by its length and FNV-1a | 10,370 characters, FNV-1a 1535871646: OK |
+| Snapshot and map | A script: the family and its page appended; 5 references inserted in order as `deferred`; `npx prettier --write`; `node design/figma/reuse.render.mjs --write` | 1,943 families, 8 pages; deferred 35 to 40 |
+| Node tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/figma-component-export.test.ts` | 3 files, 9 tests passed |
+
+**Not verified here:** the browser parity tests (no test compares the new family yet: Agent 2's item 24 adds that comparison with the visual pass).

@@ -15,7 +15,7 @@
   "counts": {
     "style": 122,
     "slot": 54,
-    "deferred": 16,
+    "deferred": 21,
     "controller": 18,
     "native": 7,
     "element": 26,
@@ -84,6 +84,51 @@
       "count": 10,
       "class": "deferred",
       "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ChangeReview/Proposal",
+      "consumerId": "909:46859",
+      "source": "Oddkin/AI/Internal/DecisionRow/ChangeReview",
+      "sourceId": "807:820",
+      "count": 10,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+    },
+    {
+      "consumer": "Oddkin/AI/ChangeReview/Proposal",
+      "consumerId": "909:46859",
+      "source": "Oddkin/AI/Internal/DecisionRow/ReviewDismiss",
+      "sourceId": "826:1691",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+    },
+    {
+      "consumer": "Oddkin/AI/ChangeReview/Proposal",
+      "consumerId": "909:46859",
+      "source": "Oddkin/AI/Internal/DecisionRow/ReviewUndo",
+      "sourceId": "826:1596",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+    },
+    {
+      "consumer": "Oddkin/AI/ChangeReview/Proposal",
+      "consumerId": "909:46859",
+      "source": "Oddkin/AI/Internal/DiffView",
+      "sourceId": "809:671",
+      "count": 21,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+    },
+    {
+      "consumer": "Oddkin/AI/ChangeReview/Proposal",
+      "consumerId": "909:46859",
+      "source": "Oddkin/AI/Internal/Status",
+      "sourceId": "806:181",
+      "count": 8,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
     },
     {
       "consumer": "Oddkin/AI/Internal/BadgePresentation",
