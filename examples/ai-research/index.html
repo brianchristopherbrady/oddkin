@@ -25,7 +25,13 @@
       <div class="workspace odd-split">
         <aside class="side" aria-labelledby="context-heading">
           <h2 id="context-heading">Context</h2>
-          <odd-context-picker allow-urls accept="image/*,.pdf,.txt,.md"></odd-context-picker>
+          <odd-context-picker></odd-context-picker>
+          <div
+            id="chosen-context"
+            class="odd-cluster"
+            aria-label="Chosen context"
+            role="group"
+          ></div>
           <h2>Usage</h2>
           <odd-usage-meter label="Usage of the last response"></odd-usage-meter>
           <details class="controls">

@@ -1,6 +1,7 @@
 // Research assistant demo: composer, context, streaming Markdown with citations, tools, sources,
 // artifacts, usage, history, stop/disconnect/resume, and isolation. Simulated; no network.
 import '@oddkin/components/define/button';
+import '@oddkin/components/define/chip';
 import '@oddkin/ai/define/conversation';
 import '@oddkin/ai/define/prompt-input';
 import '@oddkin/ai/define/context-picker';
@@ -92,60 +93,84 @@ const sync = () => {
 controller.subscribe(sync);
 sync();
 
-// Context is application-owned: requests become records with simulated upload progress.
-let items = [];
-const setItems = (next) => {
-  items = next;
-  picker.items = items;
-};
-const progress = (id, steps) => {
-  if (!steps.length) return;
-  const [status, ...rest] = steps;
-  setTimeout(() => {
-    if (!items.some((i) => i.id === id)) return;
-    setItems(items.map((i) => (i.id === id ? { ...i, status } : i)));
-    progress(id, rest);
-  }, 400);
-};
-let contextId = 0;
-picker.addEventListener('odd-context-add', (event) => {
-  const detail = event.detail;
-  const added =
-    detail.kind === 'url'
-      ? [
-          {
-            id: `ctx-${++contextId}`,
-            kind: 'url',
-            label: detail.url,
-            url: detail.url,
-            status: 'selected',
-            preview: 'Fetched page text appears here (simulated).',
-          },
-        ]
-      : detail.files.map((file) => ({
-          id: `ctx-${++contextId}`,
-          kind: 'file',
-          label: file.name,
-          size: file.size,
-          mediaType: file.type,
-          status: 'selected',
-        }));
-  setItems([...items, ...added]);
-  for (const item of added) progress(item.id, ['uploading', 'processing', 'ready']);
-});
-picker.addEventListener('odd-context-remove', (event) =>
-  setItems(items.filter((i) => i.id !== event.detail.itemId)),
-);
-setItems([
+// Context is application-owned: the host answers the picker's searches from its connected sources,
+// accepts each change by setting `value`, and shows the chosen resources as removable chips.
+const contextSources = [
+  { id: 'notes', label: 'Notes' },
+  { id: 'papers', label: 'Papers' },
+  { id: 'web', label: 'Saved pages' },
+];
+const library = [
   {
-    id: 'ctx-0',
-    kind: 'selection',
-    label: 'Selected text from notes',
-    status: 'ready',
-    preview: 'Marine heatwaves: prolonged periods of unusually warm sea temperatures.',
+    sourceId: 'notes',
+    id: 'heatwaves',
+    label: 'Marine heatwaves',
+    type: 'note',
+    path: 'Ocean',
+    description: 'Selected text',
   },
-]);
-
+  {
+    sourceId: 'papers',
+    id: 'reef-survey',
+    label: 'Reef survey 2024',
+    type: 'paper',
+    path: 'Coral',
+    description: 'PDF · 12 pages',
+  },
+  {
+    sourceId: 'papers',
+    id: 'kelp-loss',
+    label: 'Kelp forest loss',
+    type: 'paper',
+    path: 'Temperate seas',
+    description: 'PDF · 8 pages',
+  },
+  {
+    sourceId: 'web',
+    id: 'noaa',
+    label: 'NOAA coral bleaching watch',
+    type: 'page',
+    path: 'noaa.gov',
+    description: 'Saved yesterday',
+  },
+];
+picker.sources = contextSources;
+picker.multiple = true;
+const chosen = $('#chosen-context');
+const showChosen = () => {
+  chosen.replaceChildren(
+    ...picker.value.map((resource) => {
+      const chip = document.createElement('odd-chip');
+      chip.removable = true;
+      chip.textContent = resource.label;
+      chip.addEventListener('odd-chip-remove', () => {
+        picker.value = picker.value.filter((r) => r !== resource);
+        showChosen();
+      });
+      return chip;
+    }),
+  );
+};
+picker.addEventListener('odd-context-query', ({ detail }) => {
+  const query = detail.query.toLocaleLowerCase();
+  setTimeout(() => {
+    if (detail.signal.aborted) return;
+    picker.results = {
+      requestId: detail.requestId,
+      items: library.filter(
+        (r) => detail.sourceIds.includes(r.sourceId) && r.label.toLocaleLowerCase().includes(query),
+      ),
+      sources: detail.sourceIds.map((sourceId) => ({ sourceId, status: 'complete' })),
+    };
+  }, 250);
+});
+picker.addEventListener('odd-context-change', ({ detail }) => {
+  picker.value = detail.value;
+  showChosen();
+  note(`context: ${detail.reason} (${detail.value.length} chosen)`);
+});
+picker.value = library.slice(0, 1);
+showChosen();
 modelSelect.addEventListener('odd-model-change', (event) => note(`model: ${event.detail.modelId}`));
 
 // Simulation controls.

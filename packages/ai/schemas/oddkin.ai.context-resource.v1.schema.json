@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.context-resource.v1.schema.json",
+  "title": "oddkin.ai.context-resource",
+  "description": "A resource a person can add as context. Identity is `sourceId` with `id`.",
+  "type": "object",
+  "properties": {
+    "sourceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "label": {
+      "description": "Untrusted; rendered as text.",
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "description": "What it is, in the host’s words: document, page, account.",
+      "type": "string",
+      "minLength": 1
+    },
+    "path": {
+      "description": "Where it is, e.g. \"Product / Launch\".",
+      "type": "string"
+    },
+    "description": {
+      "description": "Useful metadata, e.g. \"2h ago\".",
+      "type": "string"
+    },
+    "unavailable": {
+      "description": "Why it cannot be used now; absent when it can.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "sourceId",
+    "id",
+    "label",
+    "type"
+  ]
+}

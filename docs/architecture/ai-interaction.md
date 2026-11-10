@@ -31,7 +31,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C04 | Citations/sources | `odd-citation`, `odd-sources` | — | `odd-popover`; native `button`/links |
 | C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | `odd-disclosure` (Details) |
 | C06 | Action approval | `odd-action-approval` | `ConversationController.decide` | `odd-button` |
-| C07 | Context selection | `odd-context-picker` | host records (`ContextItemModel`) | native file/URL inputs |
+| C07 | Context selection | `odd-context-picker` | host sources, results, and chosen resources (`ContextSourceModel`, `ContextResultsModel`, `ContextResourceModel`) | an anchored non-modal dialog: search, scope, a separate listbox (Figma C07, page 767:2) |
 | C08 | Agent activity/plans | `odd-activity`, `odd-task-plan` | `isActive`, attempt records | native lists |
 | C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers, `odd-copy-button` |
 | C10 | Inline assistance | `odd-inline-assist` | `captureSelection`, `DocumentSession` | APG toolbar pattern |
@@ -65,7 +65,7 @@ All records are defined once with `@oddkin/core/model` in `packages/ai/src/contr
 | Checkpoint | `oddkin.ai.checkpoint` | `checkpointId` | `restores` lists every replaced state; `outcome` host-confirmed |
 | Plan | `oddkin.ai.plan` | `planId` | steps with `tasks` (parallel), `blocker`, `inputRequest` |
 | Question | `oddkin.ai.question` | `questionId` + `revision` | choice, multi-choice, form, text; custom answers; `attemptId` in a conversation |
-| Context item, model option, feedback, transcript segment, conversation snapshot | `oddkin.ai.*` | `id` | see schemas |
+| Context source, context resource, context results, model option, feedback, transcript segment, conversation snapshot | `oddkin.ai.*` | `id` (a resource: `sourceId` with `id`; results: `requestId`) | see schemas |
 
 `AttemptRecord`, `ConversationState`, `Capabilities`, `PublicError`, and `AiEvent` are TypeScript contracts (runtime state, not persisted). `PublicError` carries `code`, user-presentable `message`, and `retryable`; diagnostic details stay in host logs. Runtime resources (File, streams, AbortControllers, DOM selections) never appear in records.
 
@@ -214,7 +214,8 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request; `controllerIntents` routes them to `answer()` and `skip()` |
 | `odd-change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
 | `odd-assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
-| `odd-context-add` / `-remove` | `{kind:'file', files}` or `{kind:'url', url}` / `itemId` | no | Request; items appear when the host adds records |
+| `odd-context-query` | `{requestId, query, sourceIds, signal}` | no | Find resources; the host answers with `results` carrying the `requestId`; a newer request aborts `signal` |
+| `odd-context-change` | `{value, reason: 'add' \| 'remove' \| 'replace' \| 'apply'}` | yes | A proposed selection; the host accepts by setting `value` in the handler, refuses by cancelling |
 | `odd-plan-input-request` | `planId`, `stepId` | no | Request |
 | `odd-voice-transcript` | `text` | no | Completed locally (final transcript chosen) |
 | `odd-transcript-change` | `segmentId`, `text` | no | User edit |

@@ -84,7 +84,7 @@ Elements use properties for records and typed, bubbling, composed events for int
 | `odd-citation`, `odd-sources` | Inline references with anchored popover previews or explicitly allocated inline details; source list |
 | `odd-tool-call` | Tool identity, purpose, streamed arguments, execution state, result, retry |
 | `odd-action-approval` | Approve/reject one revision of a proposed action |
-| `odd-context-picker` | Files, documents, URLs, selections with statuses |
+| `odd-context-picker` | Search the host's connected sources and choose resources as context (host-owned results and choice) |
 | `odd-activity`, `odd-task-plan` | Run status and recovery actions; plans with parallel tasks, blockers, input requests |
 | `odd-artifact` | Revisions, preview/source, copy, export, host renderers |
 | `odd-inline-assist`, `odd-change-review` | Selection actions; before/after review with accept, reject, undo |

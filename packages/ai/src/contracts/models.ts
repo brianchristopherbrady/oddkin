@@ -335,27 +335,56 @@ export const QuestionModel = defineModel('oddkin.ai.question', {
   }),
 });
 
-export const ContextItemModel = defineModel('oddkin.ai.context-item', {
+/** Where context comes from (a drive, a wiki, a CRM), as the host has connected it. */
+export const ContextSourceModel = defineModel('oddkin.ai.context-source', {
   version: 1,
   schema: m.object({
     id: m.id(),
-    kind: m.enum(['file', 'document', 'url', 'selection']),
+    label: m.label(),
+    description: m.optional(m.string()),
+  }),
+});
+
+const contextResourceSchema = m.object(
+  {
+    sourceId: m.id(),
+    id: m.id(),
     label: m.string({ minLength: 1, description: 'Untrusted; rendered as text.' }),
-    detail: m.optional(m.string()),
-    status: m.enum([
-      'selected',
-      'uploading',
-      'uploaded',
-      'processing',
-      'ready',
-      'failed',
-      'removed',
-    ]),
-    url: m.optional(m.url()),
-    preview: m.optional(m.string({ description: 'Plain-text excerpt for inspection.' })),
-    mediaType: m.optional(m.string()),
-    size: m.optional(m.number({ integer: true, minimum: 0 })),
-    error: m.optional(publicErrorSchema),
+    type: m.string({
+      minLength: 1,
+      description: 'What it is, in the host’s words: document, page, account.',
+    }),
+    path: m.optional(m.string({ description: 'Where it is, e.g. "Product / Launch".' })),
+    description: m.optional(m.string({ description: 'Useful metadata, e.g. "2h ago".' })),
+    unavailable: m.optional(
+      m.string({ description: 'Why it cannot be used now; absent when it can.' }),
+    ),
+  },
+  'A resource a person can add as context. Identity is `sourceId` with `id`.',
+);
+
+export const ContextResourceModel = defineModel('oddkin.ai.context-resource', {
+  version: 1,
+  schema: contextResourceSchema,
+});
+
+/** The host's answer to one `odd-context-query`. */
+export const ContextResultsModel = defineModel('oddkin.ai.context-results', {
+  version: 1,
+  schema: m.object({
+    requestId: m.id(),
+    items: m.array(contextResourceSchema),
+    sources: m.optional(
+      m.array(
+        m.object({
+          sourceId: m.id(),
+          status: m.enum(['complete', 'failed']),
+          error: m.optional(m.string({ description: 'Why it failed, for users.' })),
+        }),
+        { description: 'Each searched source; a failed source is never shown as no matches.' },
+      ),
+    ),
+    total: m.optional(m.number({ integer: true, minimum: 0 })),
   }),
 });
 

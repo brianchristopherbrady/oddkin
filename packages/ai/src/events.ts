@@ -10,7 +10,7 @@
  */
 import type { AnnounceDetail } from '@oddkin/components/copy-button';
 import { event, type EventDetail } from '@oddkin/core/element';
-import type { JsonValue } from './contracts/types.js';
+import type { ContextResource, JsonValue } from './contracts/types.js';
 import type { AttachmentState } from './controllers/composer.js';
 import type { TextSelection } from './controllers/document.js';
 
@@ -295,23 +295,37 @@ export const assistRequestEvent = event<AssistRequestDetail>('odd-assist-request
   description: 'Request assistance for the captured selection.',
 });
 
-export type ContextAddDetail =
-  | { readonly kind: 'file'; readonly files: readonly File[] }
-  | { readonly kind: 'url'; readonly url: string };
-export const contextAddEvent = event<ContextAddDetail>('odd-context-add', {
+export interface ContextQueryDetail {
+  /** Echo it in `results.requestId`; results for an older request are ignored. */
+  readonly requestId: string;
+  /** Empty when the picker opens: the host's recent or suggested resources. */
+  readonly query: string;
+  /** The sources to search: all of them, or the one chosen in the scope. */
+  readonly sourceIds: readonly string[];
+  /** Aborted when a newer request replaces this one or the picker closes. */
+  readonly signal: AbortSignal;
+}
+export const contextQueryEvent = event<ContextQueryDetail>('odd-context-query', {
   bubbles: true,
   composed: true,
   cancelable: false,
   intent: 'user',
-  description: 'Request to add context; the item appears once the host adds its record.',
+  description:
+    'Find resources: answer with `results` carrying the same `requestId`; a newer request aborts `signal`.',
 });
 
-export const contextRemoveEvent = event<{ readonly itemId: string }>('odd-context-remove', {
+export interface ContextChangeDetail {
+  /** The proposed committed value, a new array: accept it with `picker.value = detail.value`. */
+  readonly value: ContextResource[];
+  readonly reason: 'add' | 'remove' | 'replace' | 'apply';
+}
+export const contextChangeEvent = event<ContextChangeDetail>('odd-context-change', {
   bubbles: true,
   composed: true,
-  cancelable: false,
+  cancelable: true,
   intent: 'user',
-  description: 'Request to remove a context item.',
+  description:
+    'A proposed selection: set `value` in the handler to accept it, or cancel the event to refuse it.',
 });
 
 export const planInputEvent = event<{ readonly planId: string; readonly stepId: string }>(
@@ -374,8 +388,8 @@ declare global {
     'odd-change-undo': CustomEvent<EventDetail<typeof changeUndoEvent>>;
     'odd-checkpoint-restore': CustomEvent<EventDetail<typeof checkpointRestoreEvent>>;
     'odd-citation-open': CustomEvent<EventDetail<typeof citationOpenEvent>>;
-    'odd-context-add': CustomEvent<EventDetail<typeof contextAddEvent>>;
-    'odd-context-remove': CustomEvent<EventDetail<typeof contextRemoveEvent>>;
+    'odd-context-query': CustomEvent<EventDetail<typeof contextQueryEvent>>;
+    'odd-context-change': CustomEvent<EventDetail<typeof contextChangeEvent>>;
     'odd-feedback-submit': CustomEvent<EventDetail<typeof feedbackSubmitEvent>>;
     'odd-history-request': CustomEvent<EventDetail<typeof historyRequestEvent>>;
     'odd-message-edit': CustomEvent<EventDetail<typeof messageEditEvent>>;

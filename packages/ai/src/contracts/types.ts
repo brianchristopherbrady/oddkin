@@ -7,7 +7,9 @@ import type {
   ApprovalModel,
   ArtifactModel,
   CheckpointModel,
-  ContextItemModel,
+  ContextResourceModel,
+  ContextResultsModel,
+  ContextSourceModel,
   ConversationSnapshotModel,
   FeedbackModel,
   MessageModel,
@@ -48,7 +50,9 @@ export type PlanStep = PlanRecord['steps'][number];
 export type StepStatus = PlanStep['status'];
 export type QuestionRecord = Infer<typeof QuestionModel>;
 export type QuestionStatus = QuestionRecord['status'];
-export type ContextItem = Infer<typeof ContextItemModel>;
+export type ContextSource = Infer<typeof ContextSourceModel>;
+export type ContextResource = Infer<typeof ContextResourceModel>;
+export type ContextResults = Infer<typeof ContextResultsModel>;
 export type ModelOption = Infer<typeof ModelOptionModel>;
 export type FeedbackRecord = Infer<typeof FeedbackModel>;
 export type TranscriptSegment = Infer<typeof TranscriptSegmentModel>;

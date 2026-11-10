@@ -235,7 +235,7 @@ on `odd-button`, §6). Node ids: `design/figma/components.json`.
 | `odd-input/{empty,filled,focus,invalid,disabled}` (10) | `odd-input` | empty or set `value`, `:focus-visible`, `error` set (`aria-invalid`), `disabled` | — |
 | `odd-prompt-input/Draft ready` | `odd-prompt-input` | a non-empty draft, send enabled | `button` (send) |
 | `odd-model-select/Available model` | `odd-model-select` | `models` with the selected model available | — |
-| `odd-context-picker/Ready context` | `odd-context-picker` | `items` ready | — |
+| `odd-context-picker/Ready context` | `odd-context-picker` | Superseded by the C07 design (Figma page 767:2, `Oddkin/AI/ContextPicker`); its parity waits for the 767:2 families in the snapshot | — |
 | `odd-suggestions/Insert and send` | none: removed (ADR 0049); the Suggested prompts pattern | — | — |
 | `odd-response/Streaming` | `odd-response` | `status="streaming"` | — |
 | `odd-message/Assistant · completed` | `odd-message` | assistant message, attempt complete | — |

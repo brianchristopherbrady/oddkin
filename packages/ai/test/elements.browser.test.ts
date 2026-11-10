@@ -2269,23 +2269,23 @@ describe('selection, review, and controls', () => {
       citation.dispose();
     }
 
-    // Context picker: a link is added as processing, then ready; Remove takes an item away.
+    // Context picker: the host answers each search and accepts each change.
     const pickerSet = (await import('../src/context-picker/context-picker.examples.js')).default;
     const picker = await mountExample(pickerSet, 'default', container);
     try {
       const el = picker.element;
-      const input = $(el, 'input[type="url"]') as HTMLInputElement;
-      input.value = 'https://example.com/paper';
-      $(el, 'form.url')!.dispatchEvent(new Event('submit', { cancelable: true }));
+      el.open = true;
       await settle(el);
-      expect(el.items.at(-1)).toMatchObject({
-        label: 'https://example.com/paper',
-        status: 'processing',
-      });
-      await until(() => el.items.at(-1)?.status === 'ready', 'ready');
-      $(el, '[aria-label="Remove scan.tiff"]')!.click();
+      const search = $(el, '[part="search"]') as HTMLInputElement;
+      search.value = 'launch';
+      search.dispatchEvent(new Event('input', { bubbles: true }));
+      await until(
+        () => $$(el, '[role="option"]').length === 3 && !$(el, '[aria-busy="true"]'),
+        'three matches',
+      );
+      ($$(el, '[role="option"]')[1] as HTMLElement).click();
       await settle(el);
-      expect(el.items.map((item) => item.id)).not.toContain('f2');
+      expect(el.value.map((r) => r.id)).toEqual(['launch-brief', 'launch-checklist']);
     } finally {
       picker.dispose();
     }
@@ -2723,33 +2723,6 @@ describe('selection, review, and controls', () => {
     expect(text($(el, '#message'))).toBe(
       'The text changed after you selected it. Select it again.',
     );
-  });
-
-  it('odd-context-picker: validates links before requesting them and names remove buttons', async () => {
-    const el = await mount(
-      'odd-context-picker',
-      () => import('../src/context-picker/context-picker.define.js'),
-      (e) => {
-        e.allowUrls = true;
-        e.items = [
-          { id: 'c1', kind: 'file', label: 'notes.md', status: 'ready', preview: '# Notes' },
-        ];
-      },
-    );
-    const added: unknown[] = [];
-    el.addEventListener('odd-context-add', (e) => added.push((e as CustomEvent).detail));
-    const input = $(el, 'input[type="url"]') as HTMLInputElement;
-    input.value = 'javascript:alert(1)';
-    $(el, 'form.url')!.dispatchEvent(new Event('submit', { cancelable: true }));
-    await settle(el);
-    expect(added).toEqual([]);
-    expect(input.getAttribute('aria-invalid')).toBe('true');
-    input.value = 'https://example.com/paper';
-    $(el, 'form.url')!.dispatchEvent(new Event('submit', { cancelable: true }));
-    expect(added).toEqual([{ kind: 'url', url: 'https://example.com/paper' }]);
-    expect($$(el, '[aria-label^="Remove"]').map((b) => b.getAttribute('aria-label'))).toEqual([
-      'Remove notes.md',
-    ]);
   });
 
   it("odd-artifact: runs each renderer's cleanup exactly once, when replaced and when disconnected", async () => {

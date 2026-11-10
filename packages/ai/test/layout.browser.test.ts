@@ -519,17 +519,25 @@ describe('odd-checkpoint', () => {
 });
 
 describe('odd-context-picker', () => {
-  it('stacks the items; an item is a centred row that wraps; the URL form is a row', async () => {
-    const el = await example('context-picker');
-    // space.sm between the parts and inside an item's row, as the Figma specimen spaces them.
-    expectColumn($(el, '.base'), space('sm'));
-    expectColumn($(el, '.list'), space('2xs'));
-    const row = $(el, '.row');
-    expectRow(row, space('sm'));
-    expectRow($(el, '.url'), space('2xs'), { align: 'stretch' });
-    await expectWraps(row, '8rem');
-    // The URL field keeps its own width, so the button moves under it.
-    await expectWraps($(el, '.url'), '14rem');
+  it("stacks the surface; the title beside Close, the scope beside Selected, the footer's parts in rows", async () => {
+    const el = await example<HTMLElementTagNameMap['odd-context-picker']>('context-picker');
+    el.addEventListener('odd-context-query', ({ detail }) => {
+      el.results = {
+        requestId: detail.requestId,
+        items: el.value.concat(el.value.map((r) => ({ ...r, id: `${r.id}-2` }))),
+      };
+    });
+    el.open = true;
+    await settle(el);
+    // space.xs between the surface's parts and inside its rows, as Figma's C07 surface spaces them.
+    expectColumn($(el, '.surface'), space('xs'));
+    const header = $(el, '.header');
+    const [title, close] = [...header.children].map((child) => child.getBoundingClientRect());
+    expect(Math.abs(middle(title!) - middle(close!)), 'title beside Close').toBeLessThanOrEqual(1);
+    expect(round(header.getBoundingClientRect().right - close!.right), 'Close at the end').toBe(0);
+    expectRow($(el, '.scope-row'), space('xs'));
+    expectColumn($(el, '.results'), space('none'));
+    expectRow($(el, '.footer'), space('xs'));
   });
 });
 

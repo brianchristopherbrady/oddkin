@@ -1,3 +1,14 @@
+import {
+  controlIndicatorStructuralStyles,
+  controlIndicatorStyles,
+  controlStyles,
+  fieldStructuralStyles,
+  glyphStyles,
+  optionRowStructuralStyles,
+  optionRowStyles,
+  overlaySurfaceStructuralStyles,
+  overlaySurfaceStyles,
+} from '@oddkin/components/styles';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinContextPicker } from './context-picker.js';
@@ -8,5 +19,17 @@ export const contextPickerDefinition = compose({
   name: 'odd-context-picker',
   element: OddkinContextPicker,
   template: contextPickerTemplate,
-  styles: [aiBaseStyles, contextPickerStyles],
+  styles: [
+    aiBaseStyles,
+    glyphStyles,
+    fieldStructuralStyles,
+    controlStyles,
+    overlaySurfaceStructuralStyles,
+    overlaySurfaceStyles,
+    optionRowStructuralStyles,
+    optionRowStyles,
+    controlIndicatorStructuralStyles,
+    controlIndicatorStyles,
+    contextPickerStyles,
+  ],
 });
