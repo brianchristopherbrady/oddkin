@@ -7,6 +7,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
+import type { SourceProvenance } from '../impact.js';
 import {
   exportTarget,
   inputsHash,
@@ -40,6 +41,11 @@ export interface KitEntry {
 export interface KitManifest {
   schema: string;
   library: { name: string; version: string };
+  /**
+   * The commit the kit was generated at, and whether its working tree had uncommitted changes
+   * (`--source`); provenance only, outside the freshness check.
+   */
+  source?: SourceProvenance;
   fingerprint: Fingerprint;
   metadata: { file: string; sha256: string };
   guide: { path: string; budgetBytes: number; bytes: number };
@@ -684,12 +690,16 @@ function guide(
 /**
  * Generate one library's kit: `files` maps kit-relative paths to text; `manifest` is kit.json
  * (agent-kit.v1). `packaged`: the kit ships inside the package (no workspace inputs file, and a
- * guide that needs no refresh command). `extra`: more references.
+ * guide that needs no refresh command). `extra`: more references. `source`: the revision to record.
  */
 export function generateKit(
   project: Project,
   name: string,
-  { packaged = false, extra = [] }: { packaged?: boolean; extra?: KitFile[] } = {},
+  {
+    packaged = false,
+    extra = [],
+    source,
+  }: { packaged?: boolean; extra?: KitFile[]; source?: SourceProvenance } = {},
 ): { files: Map<string, string>; manifest: KitManifest } {
   const library = project.libraries.find((l) => l.name === name);
   if (!library)
@@ -805,6 +815,7 @@ export function generateKit(
   const manifest: KitManifest = {
     schema: KIT_SCHEMA,
     library: { name: library.name, version: library.version },
+    ...(source ? { source: { revision: source.revision, dirty: source.dirty } } : {}),
     fingerprint,
     // The metadata the kit was generated from, so a packed kit can be checked against the packed file.
     metadata: library.standard

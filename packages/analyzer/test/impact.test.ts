@@ -11,6 +11,7 @@ import {
   renderImpactMarkdown,
   type BaselineResult,
   type ImpactReport,
+  type SourceProvenance,
 } from '../src/impact.js';
 import { clone, library, type LibraryInputs } from './impact.fixture.js';
 
@@ -385,6 +386,38 @@ describe('change impact states and fallbacks', () => {
     const keys = report.checks.map((c) => `${c.id}@${c.product}`);
     expect(new Set(keys).size).toBe(keys.length);
     expect(keys.length).toBe(everyCheck(2).length);
+  });
+
+  it('reuses a result only from the base revision it ran at, with no uncommitted changes on either side', () => {
+    const at = { revision: 'a'.repeat(40), dirty: false };
+    const later = { revision: 'b'.repeat(40), dirty: false };
+    /** The unaffected quiet button's check: reused, or why it runs. */
+    const outcome = (base?: SourceProvenance, result?: SourceProvenance) => {
+      const report = impact(1, (head) => brand(head, 'color.surface', '#fafafa'), {
+        baseline: everyCheck(1).map((r) => (result ? { ...r, source: result } : r)),
+        both: (inputs) => {
+          if (base) Object.assign(inputs, { source: base });
+        },
+      });
+      const check = report.checks.find(
+        (c) => c.id === 'example:acme-quiet-button/default' && c.product === 'p1',
+      )!;
+      return check.state === 'reused' ? 'reused' : check.reason;
+    };
+    expect(outcome(at, at)).toBe('reused');
+    // Neither records a revision: as before provenance.
+    expect(outcome()).toBe('reused');
+    expect(outcome(at, later)).toBe(
+      'the baseline result ran at bbbbbbbbbbbb, not at the base aaaaaaaaaaaa',
+    );
+    expect(outcome(at, { ...at, dirty: true })).toBe(
+      'the baseline result ran with uncommitted changes',
+    );
+    expect(outcome({ ...at, dirty: true }, at)).toBe(
+      'the base has uncommitted changes, so no result can be tied to it',
+    );
+    expect(outcome(at)).toBe('the baseline result records no revision');
+    expect(outcome(undefined, at)).toBe('the base snapshot records no revision to match');
   });
 
   it('a token type change is incompatible', () => {

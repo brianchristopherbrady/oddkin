@@ -1,6 +1,7 @@
 {
   "schema": "https://oddkin.dev/schemas/agent-kit/v1.json",
   "library": { "name": "@oddkin/components", "version": "0.4.0" },
+  "source": { "revision": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
   "fingerprint": {
     "generator": { "name": "@oddkin/agent", "version": "0.1.0" },
     "schemaVersion": 1,

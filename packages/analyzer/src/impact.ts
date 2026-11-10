@@ -709,6 +709,11 @@ export interface BaselineResult {
   readonly product?: string;
   readonly state: 'passed' | 'failed';
   readonly conditions: Readonly<Record<string, unknown>>;
+  /**
+   * The commit the result ran at, and whether its working tree had uncommitted changes. When the
+   * base snapshot records its source, a result is reused only from that same clean revision.
+   */
+  readonly source?: SourceProvenance;
 }
 
 const PUBLIC = new Set<ItemKind>([
@@ -1057,32 +1062,49 @@ export function compareSnapshots(
         });
 
   // With a baseline, every other check is reused only from a passing result, whose conditions
-  // are listed; a missing or failed result is executed. Without one, unaffected checks are not
-  // part of this run.
+  // are listed; a missing or failed result is executed. When the base snapshot records its source,
+  // a result is reused only from that same revision, with neither side carrying uncommitted
+  // changes (technical plan, Workstream C). Without a baseline, unaffected checks are not part of
+  // this run.
   const checks = [...selected.values()];
   if (options.baseline) {
     const results = new Map<string, BaselineResult>(
       options.baseline.map((r) => [`${r.check}@${r.product ?? ''}`, r]),
     );
+    const short = (revision: string) => revision.slice(0, 12);
+    /** Why a result cannot be reused, or undefined when it can. */
+    const notReusable = (result: BaselineResult | undefined): string | undefined => {
+      if (!result) return 'no baseline result';
+      if (result.state !== 'passed') return 'the baseline result failed';
+      const at = base.source;
+      if (!at) return result.source ? 'the base snapshot records no revision to match' : undefined;
+      if (at.dirty) return 'the base has uncommitted changes, so no result can be tied to it';
+      if (!result.source) return 'the baseline result records no revision';
+      if (result.source.dirty) return 'the baseline result ran with uncommitted changes';
+      return result.source.revision === at.revision
+        ? undefined
+        : `the baseline result ran at ${short(result.source.revision)}, not at the base ${short(at.revision)}`;
+    };
     for (const context of contexts)
       for (const check of universe(context)) {
         const key = `${check.id}@${context.id ?? ''}`;
         if (selected.has(key)) continue;
         const result = results.get(key);
+        const reason = notReusable(result);
         checks.push(
-          result?.state === 'passed'
+          reason === undefined
             ? {
                 id: check.id,
                 ...(context.id ? { product: context.id } : {}),
                 state: 'reused',
                 reason: 'no input on its path changed',
-                conditions: result.conditions,
+                conditions: result!.conditions,
               }
             : {
                 id: check.id,
                 ...(context.id ? { product: context.id } : {}),
                 state: 'selected',
-                reason: result ? 'the baseline result failed' : 'no baseline result',
+                reason,
               },
         );
       }

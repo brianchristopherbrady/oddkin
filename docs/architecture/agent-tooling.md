@@ -114,7 +114,8 @@ It also reports which **capability paths** are in use (core-only authoring, toke
 
 ```text
 agent-kit/
-  kit.json                      manifest: schema, library, versions, fingerprint, entries, packaging targets
+  kit.json                      manifest: schema, library, versions, fingerprint, entries, packaging targets,
+                                and with --source the commit it was generated at (provenance, not checked)
   GUIDE.md                      concise entry guide (small, budgeted; links to references)
   references/
     components/<tag>.md         exact API generated from metadata

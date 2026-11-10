@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { afterAll, describe, expect, it, vi } from 'vitest';
+import { gitSource } from '../../packages/analyzer/src/history.js';
 import { main } from '../../packages/analyzer/src/kit/cli.js';
 import { GENERATOR, resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
 import { checkKit, generateKit, writeKit } from '../../packages/analyzer/src/kit/kit.js';
@@ -246,6 +247,28 @@ describe('a consuming library’s kit', () => {
     expect(message).toContain('error agent.kit.stale: @acme/ui');
     expect(message).toContain('theme.json (changed)');
     expect(message).toContain(`→ npx oddkin-kit --package @acme/ui --out ${out}`);
+  });
+
+  it('records the revision --source names in kit.json, outside the freshness checks', async () => {
+    const errors: string[] = [];
+    const io = { out: () => {}, err: (text: string) => errors.push(text) };
+    const out = join(temp, 'cli-source');
+    const args = ['--root', root, '--theme-config', 'theme.json', '--out', out];
+    expect(await main([...args, '--source', repo], io)).toBe(0);
+    const kit = JSON.parse(readFileSync(join(out, 'acme-ui', 'kit.json'), 'utf8'));
+    expect(validate(kit), JSON.stringify(validate.errors)).toBe(true);
+    expect(kit.source).toEqual(gitSource(repo));
+    expect(await main([...args, '--check'], io)).toBe(0);
+    // A packaged kit records it too, and its check compares everything else.
+    const packaged = ['package', '--root', root, '--theme-config', 'theme.json'];
+    expect(await main([...packaged, '--source', repo], io)).toBe(0);
+    const shipped = join(root, 'packages', 'ui', 'agent', 'kit.json');
+    expect(JSON.parse(readFileSync(shipped, 'utf8')).source).toEqual(gitSource(repo));
+    expect(await main([...packaged, '--check'], io)).toBe(0);
+    expect(errors.filter((line) => line.startsWith('error'))).toEqual([]);
+    // A directory outside any repository is a usage error.
+    expect(await main([...args, '--source', temp], io)).toBe(2);
+    expect(errors.join('\n')).toContain(`--source ${temp}: not a directory in a git repository.`);
   });
 });
 

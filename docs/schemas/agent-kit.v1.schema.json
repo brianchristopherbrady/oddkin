@@ -18,6 +18,16 @@
         "product": { "type": "string", "description": "Set when the kit covers one product only" }
       }
     },
+    "source": {
+      "type": "object",
+      "description": "Where the kit was generated: the commit, and whether the working tree had changes it does not hold (oddkin-kit --source). Provenance only: the freshness check ignores it. Absent when not recorded.",
+      "required": ["revision", "dirty"],
+      "additionalProperties": false,
+      "properties": {
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$" },
+        "dirty": { "type": "boolean" }
+      }
+    },
     "fingerprint": {
       "type": "object",
       "description": "Same shape as project-context.v1 fingerprint",

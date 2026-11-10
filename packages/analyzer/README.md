@@ -49,14 +49,14 @@ oddkin-kit package
 # Check every shipped kit against the installed package's metadata: the packages named, or the workspace's own.
 oddkin-kit package --check --package @oddkin/components
 # A kit for the repository itself, in .oddkin/agent-kit/<name>/; --check names the inputs that changed.
-oddkin-kit [--package <name>]... [--out <dir>] [--theme-config <file>] [--check]
+oddkin-kit [--package <name>]... [--out <dir>] [--theme-config <file>] [--source <repo-dir>] [--check]
 # The managed section of AGENTS.md; text outside its markers is kept.
 oddkin-kit agents-md [--write | --check]
 # A documentation site's llms.txt (llmstxt.org) and the kit files it links, in <dir>/agent/<name>/.
 oddkin-kit llms --base https://docs.example/ --out <dir> [--title <text>] [--summary <text>]
 ```
 
-Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENTS.md` section; 2 usage error. The same functions are exported from `@oddkin/analyzer/kit` (`resolveProjectContext`, `generateKit`, `checkKit`, `packageKit`, `siteLlmsText`, `renderSection`, `updateAgentsMd`, and `main`). A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.
+Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENTS.md` section; 2 usage error. With `--source <repo-dir>`, a kit or packaged kit records in `kit.json` the commit checked out in that git repository and whether its working tree had uncommitted changes (`source`); it is provenance, so `--check` leaves it out. The same functions are exported from `@oddkin/analyzer/kit` (`resolveProjectContext`, `generateKit`, `checkKit`, `packageKit`, `siteLlmsText`, `renderSection`, `updateAgentsMd`, and `main`). A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.
 
 A library not built with Oddkin gets a kit from its standard Custom Elements Manifest alone (the package's `customElements` field). Each component reference lists the API the manifest states and the registration entry: the package export that loads the module with the tag's `custom-element-definition`. The guide says that property-only values, event intents, guidance, examples, and verification are unknown. When the package also exports the `oddkin.metadata.json` that `oddkin-analyze --manifest` writes, each reference lists its examples too.
 

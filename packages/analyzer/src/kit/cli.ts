@@ -1,8 +1,9 @@
 /**
  * `oddkin-kit` commands, kept free of a shebang so tests can import them.
  *
- *   oddkin-kit [--root <dir>] [--package <name>]... [--out <dir>] [--theme-config <file>] [--check]
- *   oddkin-kit package [--root <dir>] [--package <name>]... [--check]
+ *   oddkin-kit [--root <dir>] [--package <name>]... [--out <dir>] [--theme-config <file>]
+ *              [--source <repo-dir>] [--check]
+ *   oddkin-kit package [--root <dir>] [--package <name>]... [--source <repo-dir>] [--check]
  *   oddkin-kit agents-md [--root <dir>] [--write | --check]
  *   oddkin-kit llms --base <url> --out <dir> [--root <dir>] [--package <name>]... [--title <text>]
  *                   [--summary <text>]
@@ -13,6 +14,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+import { gitSource } from '../history.js';
+import type { SourceProvenance } from '../impact.js';
 import { lineDiff, renderSection, updateAgentsMd } from './agents-md.js';
 import { resolveProjectContext, type Project } from './context.js';
 import { checkKit, generateKit, kitDirName, refreshCommand, writeKit } from './kit.js';
@@ -20,14 +23,16 @@ import { siteLlmsText, type SiteKit } from './llms.js';
 import { packageKit } from './package-kit.js';
 
 export const USAGE = `Usage:
-  oddkin-kit [--root <dir>] [--package <name>]... [--out <dir>] [--theme-config <file>] [--check]
+  oddkin-kit [--root <dir>] [--package <name>]... [--out <dir>] [--theme-config <file>] [--source <repo-dir>] [--check]
       Write each library's agent kit into <out>/<name>/ (default .oddkin/agent-kit): the
       workspace's own libraries, or those named with --package. --check reports stale or
       missing kits instead.
-  oddkin-kit package [--root <dir>] [--package <name>]... [--check]
+  oddkin-kit package [--root <dir>] [--package <name>]... [--source <repo-dir>] [--check]
       Write the kit each component package ships into <package>/agent/: the workspace's own
       packages, or those named with --package. --check regenerates each kit and compares it
       with the files there, installed packages included.
+  --source <repo-dir> records in kit.json the commit checked out in that git repository and
+      whether its working tree had uncommitted changes; --check ignores it.
   oddkin-kit agents-md [--root <dir>] [--write | --check]
       Show, write, or check the managed section of the workspace's AGENTS.md.
   oddkin-kit llms --base <url> --out <dir> [--root <dir>] [--package <name>]... [--title <text>] [--summary <text>]
@@ -55,6 +60,7 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
         package: { type: 'string', multiple: true },
         out: { type: 'string', default: '.oddkin/agent-kit' },
         'theme-config': { type: 'string' },
+        source: { type: 'string' },
         check: { type: 'boolean', default: false },
         write: { type: 'boolean', default: false },
         base: { type: 'string' },
@@ -70,6 +76,18 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
   if (values.help) {
     io.out(USAGE);
     return 0;
+  }
+  let source: SourceProvenance | undefined;
+  if (values.source !== undefined) {
+    if (command !== 'kit' && command !== 'package') {
+      io.err(`--source applies to kits and packaged kits only.\n${USAGE}`);
+      return 2;
+    }
+    source = gitSource(resolve(values.source));
+    if (!source) {
+      io.err(`--source ${values.source}: not a directory in a git repository.\n${USAGE}`);
+      return 2;
+    }
   }
   let base: URL | undefined;
   if (command === 'llms') {
@@ -119,8 +137,8 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
     return llms(project, names, resolve(values.root, values.out), base, title, values.summary, io);
   }
   return command === 'package'
-    ? packaged(project, names, values.check, io)
-    : kits(project, names, values.root, values.out, values.check, io);
+    ? packaged(project, names, values.check, source, io)
+    : kits(project, names, values.root, values.out, values.check, source, io);
 }
 
 async function llms(
@@ -155,6 +173,7 @@ function kits(
   root: string,
   out: string,
   check: boolean,
+  source: SourceProvenance | undefined,
   io: Io,
 ): number {
   let failed = false;
@@ -171,7 +190,7 @@ function kits(
       }
       continue;
     }
-    const { files, manifest } = generateKit(project, name);
+    const { files, manifest } = generateKit(project, name, source ? { source } : {});
     writeKit(dir, files);
     io.out(
       `${name}: ${files.size} files in ${dir}; GUIDE.md ${manifest.guide.bytes} of ${manifest.guide.budgetBytes} bytes`,
@@ -188,12 +207,23 @@ async function packaged(
   project: Project,
   names: string[],
   check: boolean,
+  source: SourceProvenance | undefined,
   io: Io,
 ): Promise<number> {
   let failed = false;
+  // The revision a kit records is provenance, not content: the check leaves it out.
+  const comparable = (path: string, text: string) => {
+    if (path !== 'kit.json') return text;
+    const { source: _source, ...rest } = JSON.parse(text) as Record<string, unknown>;
+    return JSON.stringify(rest);
+  };
   for (const name of names) {
     const library = project.libraries.find((l) => l.name === name)!;
-    const { dir, files, manifest } = await packageKit(project, library);
+    const { dir, files, manifest } = await packageKit(
+      project,
+      library,
+      source && !check ? { source } : {},
+    );
     const where = relative(project.root, dir).split('\\').join('/');
     if (manifest.guide.bytes > manifest.guide.budgetBytes) {
       failed = true;
@@ -202,7 +232,8 @@ async function packaged(
     if (check) {
       const stale = [...files].filter(
         ([path, text]) =>
-          !existsSync(join(dir, path)) || readFileSync(join(dir, path), 'utf8') !== text,
+          !existsSync(join(dir, path)) ||
+          comparable(path, readFileSync(join(dir, path), 'utf8')) !== comparable(path, text),
       );
       if (!stale.length) {
         io.out(`${name}: current (${where})`);

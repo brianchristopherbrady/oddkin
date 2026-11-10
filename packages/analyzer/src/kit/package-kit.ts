@@ -9,6 +9,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import type { SourceProvenance } from '../impact.js';
 import type { Library, Project } from './context.js';
 import { generateKit, type KitFile, type KitManifest } from './kit.js';
 
@@ -312,12 +313,14 @@ export function llmsText(library: Library, manifest: KitManifest): string {
 export async function packageKit(
   project: Project,
   library: Library,
+  { source }: { source?: SourceProvenance } = {},
 ): Promise<{ dir: string; files: Map<string, string>; manifest: KitManifest }> {
   const composition = await compositionReference(library);
   const patterns = patternsReference(library);
   const { files, manifest } = generateKit(project, library.name, {
     packaged: true,
     extra: [composition, patterns].filter((file): file is KitFile => !!file),
+    ...(source ? { source } : {}),
   });
   manifest.packaging = ['llms-txt'];
   files.set('kit.json', `${JSON.stringify(manifest, null, 2)}\n`);
