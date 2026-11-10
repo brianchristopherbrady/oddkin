@@ -146,8 +146,9 @@ export const scopeReceipt = (approval: ApprovalRecord, t: ScopeReceiptStrings) =
 
 /**
  * The scope choice on the sunken surface, its hints and descriptions in the small secondary text,
- * and each radio drawn round on the shared control indicator. Its arrangement is the approval's
- * layout recipe; the look is light until the approval's own Figma design (owner, 2026-11-09).
+ * and each radio drawn round on the shared control indicator. Floated, the legend is an ordinary
+ * item inside the sunken box rather than on its edge. Its arrangement is the approval's layout
+ * recipe; the look is light until the approval's own Figma design (owner, 2026-11-09).
  */
 export const scopeChoiceStyles = css`
   .scope-choice {
@@ -157,7 +158,6 @@ export const scopeChoiceStyles = css`
     border-radius: ${token('radius.md')};
     background: ${token('color.surface.sunken')};
   }
-  /* Floated, the legend is an ordinary item inside the sunken box rather than on its edge. */
   .scope-legend {
     float: inline-start;
     margin: 0;

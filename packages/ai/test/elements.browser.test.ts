@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import { mountExample } from '@oddkin/workbench/testing';
@@ -3084,5 +3085,125 @@ describe('odd-action-approval to Figma page 09', () => {
     expect(buttons).toHaveLength(2);
     expect(buttons.some((b) => b.hasAttribute('loading'))).toBe(false);
     expect(buttons.every((b) => b.hasAttribute('disabled'))).toBe(true);
+  });
+
+  it('is laid out by its container: 640 px wide, 720 at most, 24 px in; below 480 px, 16 px in, its buttons stacked full width and 48 px tall', async () => {
+    const removeTheme = await loadTheme();
+    try {
+      const el = await approval();
+      const base = $(el, '.base')!;
+      const buttons = () =>
+        $$(el, '[part="actions"] odd-button').map((b) =>
+          b.shadowRoot!.querySelector('button')!.getBoundingClientRect(),
+        );
+      const width = () => el.getBoundingClientRect().width;
+      container.style.inlineSize = '1000px';
+      await frames();
+      expect(width()).toBe(640);
+      // The rest of the space is the parent's: it may widen the card, to 720 px.
+      el.style.inlineSize = '100%';
+      await frames();
+      expect(width()).toBe(720);
+      el.style.inlineSize = '';
+      container.style.inlineSize = '600px';
+      await frames();
+      expect(width()).toBe(600);
+      expect(getComputedStyle(base).paddingInlineStart).toBe('24px');
+      expect(new Set(buttons().map((b) => b.top)).size).toBe(1);
+      expect(buttons().map((b) => b.height)).toEqual([40, 40]);
+      container.style.inlineSize = '479px';
+      await frames();
+      expect(getComputedStyle(base).paddingInlineStart).toBe('16px');
+      const row = $(el, '[part="actions"]')!.getBoundingClientRect();
+      const [approve, reject] = buttons();
+      expect([approve!.left, approve!.width, approve!.height]).toEqual([row.left, row.width, 48]);
+      expect([reject!.left, reject!.width, reject!.height]).toEqual([row.left, row.width, 48]);
+      expect(reject!.top).toBeGreaterThan(approve!.bottom);
+    } finally {
+      removeTheme();
+    }
+  });
+
+  it('takes Tab through the long change, the scope, and the reason to Approve, Reject, and Edit; Enter decides only on a button', async () => {
+    const lines = (value: string) =>
+      Array.from({ length: 12 }, (_, i) => `"key${i}": "${value}",\n`).join('');
+    const scopes = [
+      { id: 'once', label: 'This action only', description: 'Ask again for any other action.' },
+      { id: 'conversation', label: 'For this conversation', description: 'This conversation.' },
+    ];
+    const el = await approval({
+      changes: [{ label: 'Configuration', before: lines('a'), after: lines('b') }],
+      scopes,
+      defaultScopeId: 'once',
+    });
+    el.capabilities = {
+      respondToApproval: { available: true },
+      approvalScopes: { available: true },
+      editApproval: { available: true },
+    };
+    await settle(el);
+    const decided: unknown[] = [];
+    el.addEventListener('odd-approval-decide', (e) => decided.push((e as CustomEvent).detail));
+    /** The focused control, named by what it is in the approval. */
+    const focused = () => {
+      const active = el.shadowRoot!.activeElement as HTMLElement | null;
+      if (!active) return `outside ${document.activeElement?.localName}`;
+      if (active instanceof HTMLInputElement) return `scope ${active.value}`;
+      if (active.localName === 'odd-button') return active.dataset['action'];
+      if (active.localName === 'odd-disclosure') return `${active.className} disclosure`;
+      if (active.getAttribute('role') === 'region')
+        return `region ${active.getAttribute('aria-label')}`;
+      return active.localName;
+    };
+    const tab = async (shift = false) => {
+      await userEvent.tab({ shift });
+      await settle(el);
+      return focused();
+    };
+    const press = async (keys: string) => {
+      await userEvent.keyboard(keys);
+      await settle(el);
+      await frames();
+    };
+    const before = document.createElement('button');
+    before.textContent = 'before';
+    container.prepend(before);
+    before.focus();
+    const closed = [];
+    for (let i = 0; i < 6; i++) closed.push(await tab());
+    expect(closed).toEqual([
+      'long disclosure',
+      'scope once',
+      'reason disclosure',
+      'approve',
+      'reject',
+      'edit',
+    ]);
+    before.focus();
+    expect(await tab()).toBe('long disclosure');
+    await press('{Enter}');
+    expect(await tab()).toBe('region 12 changed lines');
+    expect(await tab()).toBe('scope once');
+    await press('{ArrowDown}');
+    expect(focused()).toBe('scope conversation');
+    await press('{Enter}');
+    expect(await tab()).toBe('reason disclosure');
+    await press('{Enter}');
+    expect(await tab()).toBe('textarea');
+    await press('Pilot{Enter}region');
+    expect(($(el, '.reason textarea') as HTMLTextAreaElement).value).toBe('Pilot\nregion');
+    expect(decided).toEqual([]);
+    expect([await tab(), await tab(), await tab()]).toEqual(['approve', 'reject', 'edit']);
+    expect([await tab(true), await tab(true)]).toEqual(['reject', 'approve']);
+    await press('{Enter}');
+    expect(decided).toEqual([
+      {
+        approvalId: 'launch',
+        revision: 1,
+        decision: 'approve',
+        reason: 'Pilot\nregion',
+        scope: 'conversation',
+      },
+    ]);
   });
 });

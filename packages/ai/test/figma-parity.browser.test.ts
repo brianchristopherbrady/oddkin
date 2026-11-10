@@ -37,6 +37,10 @@ deliberate(
     /^odd-[a-z-]+\/.+\/(light|dark)\s+.+ strokes \(--odd-color-selection-background\): border-block-start-color rgba\(0, 0, 0, 0\), /,
     "A pressed button's border is transparent over its selection fill, as odd-button's is: the same pixels as the selection stroke Figma binds.",
   ],
+  [
+    /^odd-action-approval\/Requested\/(light|dark)\s+\S+ (paddingLeft|paddingTop) /,
+    'Page 09 sets the approval 24 px in, and 16 px in below 480 px of its container.',
+  ],
 );
 
 const MODES = ['light', 'dark'] as const;
@@ -1190,8 +1194,9 @@ describe('Figma parity: the reason field (page 08)', () => {
 // The decision row of page 08 (805:3, `Oddkin/AI/Internal/DecisionRow/*`): a family per operation,
 // a variant per state. Each state's frame and lines bind tokens; its buttons are named with their
 // state (`native button · Approve · Loading`), and the row shows those and no others, nor any line
-// the state does not draw. Full density only: the compact one comes with the elements' container
-// layouts (row 21). Not compared: the change review's Failed and Unavailable, and the dismissal's
+// the state does not draw. Full density (the approval in a 40rem container): the approval's
+// compact row binds the same tokens, its buttons stacked full width at 48 px (the elements tests
+// measure that). Not compared: the change review's Failed and Unavailable, and the dismissal's
 // and undo's Unavailable (the review has no capabilities, and a failed proposal is final in its
 // records: propose it again), and the confirmation's Failed and Unavailable (a restore request has
 // no failure of its own before the record says `restore-failed`, and Restore… does not open the
@@ -1260,6 +1265,7 @@ describe('Figma parity: the decision row (page 08)', () => {
       const el = mount(
         '<odd-action-approval></odd-action-approval>',
       ) as HTMLElementTagNameMap['odd-action-approval'];
+      el.parentElement!.style.inlineSize = '40rem';
       type Approval = NonNullable<typeof el.approval>;
       let revision = 0;
       const show = async (
