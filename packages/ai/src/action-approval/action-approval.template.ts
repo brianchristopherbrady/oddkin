@@ -1,20 +1,26 @@
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
 import { decisionRow, type DecisionState } from '../internal/decision-row.js';
+import { diffPart } from '../internal/diff-view.js';
 import { expiryBadge } from '../internal/expiry.js';
 import { scopeChoice } from '../internal/scope-choice.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
+/** The risk badge's tone (Figma page 09): passive, never the record's status. */
+const RISK_TONES = { low: 'neutral', medium: 'warning', high: 'danger' } as const;
+
 /**
- * Anatomy: a labelled `base` group with summary, target, `changes`, `scope`, the reason (a
- * textarea in an `odd-disclosure`), and the decision row (Figma page 08): Approve, Reject and
- * Edit, or the outcome in their place.
+ * Anatomy (Figma page 09): a labelled `base` group with summary, target, the risk and expiry
+ * badges, `changes` (each a Before block over an After block, from the shared diff view), `scope`,
+ * the reason (a textarea in an `odd-disclosure`), and the decision row (Figma page 08): Approve,
+ * Reject and Edit, or the outcome in their place.
  */
 export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const t = host._strings;
   const approval = host.approval;
   if (!approval) return html``;
+  const opened = host._opened.value;
   const blocked = host._blocked;
   const approveBlocked = host._approveBlocked;
   const scopes = approval.scopes ?? [];
@@ -24,6 +30,8 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const decided = host._decisions.choice(host._key(approval));
   const actionable = status === 'requested' || status === 'failed';
   const pending = status === 'submitting' || (actionable && decided !== undefined);
+  // Page 09 shows when the request expires in every status; it reads as soon only while open.
+  const expiry = expiryBadge(host, approval.expiresAt, t.expires, actionable || pending);
   const state: DecisionState = pending
     ? { loading: decided, pending: t.submitting }
     : actionable
@@ -52,23 +60,40 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
     <p class="target" ?hidden=${!approval.target}>
       <span class="muted">${t.target}:</span> ${approval.target ?? ''}
     </p>
-    <p class="muted" ?hidden=${!approval.risk}>
-      ${approval.risk ? format(t.risk, { risk: t[approval.risk] }) : ''}
-    </p>
-    ${actionable || pending ? expiryBadge(host, approval.expiresAt, t.expires) : null}
+    <div class="meta" ?hidden=${!approval.risk && !expiry}>
+      ${
+        approval.risk
+          ? html`<odd-badge class="risk" tone=${RISK_TONES[approval.risk]}
+              >${format(t.risk, { risk: t[approval.risk] })}</odd-badge
+            >`
+          : null
+      }
+      ${expiry}
+    </div>
     ${
       approval.changes?.length
         ? html`<div part="changes" class="changes" role="group" aria-label=${t.changes}>
             ${approval.changes.map(
-              (change) =>
+              (change, i) =>
                 html`<div class="change">
-                  <span class="change-label" ?hidden=${!change.label}>${change.label}</span>
-                  ${
-                    change.before !== undefined
-                      ? html`<del>${t.before}: ${change.before}</del>`
-                      : null
-                  }
-                  ${change.after !== undefined ? html`<ins>${t.after}: ${change.after}</ins>` : null}
+                  <p class="change-label" ?hidden=${!change.label}>${change.label}</p>
+                  <div class="diff">
+                    ${diffPart(
+                      {
+                        diff: host._diff(change),
+                        granularity: 'lines',
+                        view: 'inline',
+                        sides: {
+                          before: change.before !== undefined,
+                          after: change.after !== undefined,
+                        },
+                        key: `${host._key(approval)}:${i}`,
+                        opened,
+                        onToggle: host._onDiffToggle,
+                      },
+                      t,
+                    )}
+                  </div>
                 </div>`,
             )}
           </div>`

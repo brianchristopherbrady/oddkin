@@ -86,6 +86,8 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 - The approval shows its changes as Before and After blocks, as drawn, and gains no `granularity` property (replacing that part of §6 item 3).
 - Attention badges for `requested`, `expired`, and needs-input are added; outcome wording stays neutral.
 
+**Deliberate differences from the pages** (Agent 1, 2026-11-09): a disclosure's summary stays above its content while open, as the WAI-ARIA disclosure pattern and native `<details>` keep it, where page 08 draws the diff view's "Hide context" below the change: moving it would move the control just used.
+
 **Gaps.** The design records the pages cite (`C:\SLT_Backup_10-21-2026\ai-redesign\*.json`) are not on disk. The Figma-only adapters exist because the badge, textarea, and disclosure specimens on pages 02 and 03 have fixed geometry: making those primitives responsive in Figma is the owner's follow-up, followed by a snapshot refresh (Agent 1).
 
 **Rows.**

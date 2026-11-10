@@ -5,7 +5,7 @@ import type { DiffSegment } from '../controllers/diff.js';
 import type { EditProposal, ProposalStatus } from '../controllers/document.js';
 import { announceEvent, changeAcceptEvent, changeRejectEvent, changeUndoEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
-import { diffText } from '../internal/diff-view.js';
+import { diffText, toggleOpened } from '../internal/diff-view.js';
 import { format, strings } from '../internal/strings.js';
 
 export const CHANGE_REVIEW_STRINGS = {
@@ -113,11 +113,7 @@ export class OddkinChangeReview extends OddkinElement.with({
 
   /** @internal A diff disclosure was opened or closed. */
   readonly _onDiffToggle = (event: Event): void => {
-    const key = (event.currentTarget as HTMLElement).dataset['key']!;
-    const opened = new Set(this._opened.peek());
-    if ((event as ToggleEvent).newState === 'open') opened.add(key);
-    else opened.delete(key);
-    this._opened.value = opened;
+    this._opened.value = toggleOpened(this._opened.peek(), event);
   };
 
   /** @internal */

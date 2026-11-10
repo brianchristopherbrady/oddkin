@@ -3,8 +3,8 @@ import { token } from '@oddkin/tokens/refs';
 import { actionApprovalRecipeStyles } from './action-approval.recipe.styles.js';
 
 /**
- * The arrangement is the layout recipe in `action-approval.recipe.ts`. The visible "Before:" and
- * "After:" say which is which, so neither change line is struck through or underlined.
+ * The arrangement is the layout recipe in `action-approval.recipe.ts`; the changes' look is the
+ * shared diff view's (`internal/diff-view.ts`).
  */
 export const actionApprovalStyles = css`
   ${actionApprovalRecipeStyles}
@@ -40,14 +40,6 @@ export const actionApprovalStyles = css`
   }
   .change-label {
     font-weight: ${token('font.weight.medium')};
-  }
-  del {
-    color: ${token('color.danger.foreground')};
-    text-decoration: none;
-  }
-  ins {
-    color: ${token('color.success.foreground')};
-    text-decoration: none;
   }
   .state {
     font-size: ${token('font.size.sm')};

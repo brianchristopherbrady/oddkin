@@ -553,7 +553,9 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(decisions).toHaveLength(1);
     expect(text($(el, '.pending'))).toBe('Submitting your decision…');
     expect(approve().hasAttribute('loading')).toBe(true);
-    expect(text($(el, '[part="changes"]'))).toContain('Before: Draft');
+    expect(text($(el, '[part="changes"]'))).toBe(
+      'Subject Before [deleted: Draft] After [inserted: Final]',
+    );
     el.approval = approval('requested', 2);
     await settle(el);
     expect(approve().hasAttribute('loading')).toBe(false);
@@ -2882,7 +2884,7 @@ describe('the elements that act on their own or only show (contract review, 2026
 });
 
 describe('the expiry (Figma page 08)', () => {
-  it('shows when a request expires as a badge while it is open: a warning from five minutes before, nothing when absent or unformattable (Figma page 08, Expiry)', async () => {
+  it('shows when a request expires as a badge: a warning from five minutes before while it is open, nothing when absent or unformattable (Figma pages 08 and 09, Expiry)', async () => {
     const at = (minutes: number) => new Date(Date.now() + minutes * 60_000).toISOString();
     const approval = await mount(
       'odd-action-approval',
@@ -2912,11 +2914,13 @@ describe('the expiry (Figma page 08)', () => {
     expect((await show(at(4)))?.getAttribute('tone')).toBe('warning');
     expect(await show(undefined)).toBeNull();
     expect(await show('not a date')).toBeNull();
-    // Only the record says it expired: then the outcome speaks, and no badge.
-    expect(await show(at(-1), 'expired')).toBeNull();
+    // Only the record says it expired: then the outcome speaks. The approval still shows when it
+    // expired (Figma page 09), no longer as soon.
+    expect((await show(at(-1), 'expired'))?.getAttribute('tone')).toBe('neutral');
     expect(text($(approval, '.outcome'))).toBe(
       'This request expired before a decision was recorded.',
     );
+    expect((await show(at(4), 'approved'))?.getAttribute('tone')).toBe('neutral');
     const question = await mount(
       'odd-question',
       () => import('../src/question/question.define.js'),
@@ -2933,5 +2937,87 @@ describe('the expiry (Figma page 08)', () => {
     );
     expect(badge(question)?.getAttribute('tone')).toBe('warning');
     expect(text(badge(question))).toMatch(/^Answer by /);
+  });
+});
+
+describe('odd-action-approval to Figma page 09', () => {
+  const record = (extra: Partial<ApprovalRecord> = {}): ApprovalRecord => ({
+    approvalId: 'launch',
+    revision: 1,
+    title: 'Update the launch configuration',
+    status: 'requested',
+    ...extra,
+  });
+  const approval = (extra: Partial<ApprovalRecord> = {}) =>
+    mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = record(extra);
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+
+  it('shows the risk as a badge in the tone of its level, beside the expiry, and nothing without either', async () => {
+    const el = await approval({ risk: 'medium' });
+    const risk = () => $(el, 'odd-badge.risk');
+    expect(text(risk())).toBe('Risk: medium');
+    expect(risk()!.getAttribute('tone')).toBe('warning');
+    expect(risk()!.parentElement).toBe($(el, '.meta'));
+    el.approval = record({ revision: 2, risk: 'high' });
+    await settle(el);
+    expect(risk()!.getAttribute('tone')).toBe('danger');
+    el.approval = record({ revision: 3, risk: 'low' });
+    await settle(el);
+    expect(risk()!.getAttribute('tone')).toBe('neutral');
+    el.approval = record({ revision: 4 });
+    await settle(el);
+    expect(risk()).toBeNull();
+    expect(($(el, '.meta') as HTMLElement).hidden).toBe(true);
+  });
+
+  it('draws each change as its label over a Before block and an After block; an absent value has no block, an empty one an empty block', async () => {
+    const el = await approval({
+      changes: [
+        { label: 'Launch region', before: '"region": "eu-west"', after: '"region": "us-east"' },
+        { label: 'Note', after: '' },
+        { label: '', before: 'Pilot' },
+      ],
+    });
+    const changes = $$(el, '.change');
+    const blocks = (change: Element) =>
+      [...change.querySelectorAll('.side')].map((side) => [
+        text(side.querySelector('.muted')),
+        text(side.querySelector('.text')),
+      ]);
+    expect(text(changes[0]!.querySelector('.change-label'))).toBe('Launch region');
+    expect(blocks(changes[0]!)).toEqual([
+      ['Before', '[deleted: "region": "eu-west"]'],
+      ['After', '[inserted: "region": "us-east"]'],
+    ]);
+    expect(blocks(changes[1]!)).toEqual([['After', '']]);
+    expect((changes[2]!.querySelector('.change-label') as HTMLElement).hidden).toBe(true);
+    expect(blocks(changes[2]!)).toEqual([['Before', '[deleted: Pilot]']]);
+  });
+
+  it('keeps a change of more than ten lines behind its count, closed again for a new revision', async () => {
+    const lines = (value: string) =>
+      Array.from({ length: 12 }, (_, i) => `"key${i}": "${value}",\n`).join('');
+    const changes = [{ label: 'Configuration', before: lines('a'), after: lines('b') }];
+    const el = await approval({ changes });
+    const long = () => $(el, '.change .long') as HTMLElementTagNameMap['odd-disclosure'];
+    expect(long().label).toBe('12 changed lines · Review changes');
+    const toggled = new Promise((resolve) =>
+      long().addEventListener('toggle', resolve, { once: true }),
+    );
+    long().shadowRoot!.querySelector('summary')!.click();
+    await toggled;
+    await settle(el);
+    expect(long().label).toBe('Hide 12 changed lines');
+    expect($(el, '.change .scroll')!.getAttribute('aria-label')).toBe('12 changed lines');
+    el.approval = record({ revision: 2, changes });
+    await settle(el);
+    expect(long().open).toBe(false);
+    expect(long().label).toBe('12 changed lines · Review changes');
   });
 });

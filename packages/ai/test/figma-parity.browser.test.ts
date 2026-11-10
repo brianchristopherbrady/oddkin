@@ -1115,26 +1115,15 @@ describe('Figma parity: odd-action-approval', () => {
       };
       el.capabilities = { respondToApproval: { available: true } };
       await settle(el);
-      // Not compared: the specimen's reason ("Reason (optional)" over a native field) is page 08's
-      // ReasonField now, collapsed in an odd-disclosure until opened (compared below).
+      // Not compared, as page 09 redraws them: the specimen's reason ("Reason (optional)" over a
+      // native field) is page 08's ReasonField, collapsed in an odd-disclosure until opened
+      // (compared below); its risk line is a badge; and its changes' "Before: …" and "After: …"
+      // lines are the shared diff view's Before and After blocks.
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
         { layer: ['Update example document'], el: shadow(el, '.title'), kind: 'text' },
         { layer: ['Review the proposed change.'], el: shadow(el, '.summary'), kind: 'text' },
         { layer: ['Affects: example.txt'], el: shadow(el, '.target'), kind: 'text' },
-        { layer: ['Risk: low'], el: shadow(el, '.target + .muted'), kind: 'text' },
-        {
-          layer: ['Proposed changes'],
-          el: shadow(el, '[part="changes"]'),
-          kind: 'frame',
-          gap: 'row-gap',
-        },
-        {
-          layer: ['Proposed changes', 'Before: Original text'],
-          el: shadow(el, 'del'),
-          kind: 'text',
-        },
-        { layer: ['Proposed changes', 'After: Revised text'], el: shadow(el, 'ins'), kind: 'text' },
         { layer: ['Waiting for your decision'], el: shadow(el, '.state'), kind: 'text' },
         {
           layer: ['Actions'],
@@ -1145,14 +1134,6 @@ describe('Figma parity: odd-action-approval', () => {
       ];
       await transitions(targets);
       expectNone(compare(`odd-action-approval/Requested/${mode}`, {}, targets));
-      // As the specimen: each change reads "Before: …" and "After: …", in sight, one under the
-      // other and space.xs apart.
-      const del = shadow(el, 'del');
-      const ins = shadow(el, 'ins');
-      expect(del.textContent!.replace(/\s+/g, ' ').trim()).toBe('Before: Original text');
-      expect(el.shadowRoot!.querySelector('.changes .visually-hidden')).toBeNull();
-      const gap = ins.getBoundingClientRect().top - del.getBoundingClientRect().bottom;
-      expect(Math.round(gap)).toBe(space(el, 'xs'));
     });
 });
 

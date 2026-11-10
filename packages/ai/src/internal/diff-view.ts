@@ -123,8 +123,9 @@ export interface DiffStrings extends DiffLabels {
   readonly after: string;
   /** A diff that changes nothing. */
   readonly empty: string;
-  readonly showContext: string;
-  readonly hideContext: string;
+  /** The context's disclosure: needed only where a change has context. */
+  readonly showContext?: string;
+  readonly hideContext?: string;
   /** A long diff, collapsed; takes `{count}`. */
   readonly reviewLines: string;
   /** A long diff, open; takes `{count}`. */
@@ -133,6 +134,18 @@ export interface DiffStrings extends DiffLabels {
   readonly changedLines: string;
 }
 
+/**
+ * The names of the opened disclosures once `event`, a diff disclosure's toggle, opened or closed
+ * the one its `data-key` names.
+ */
+export const toggleOpened = (opened: ReadonlySet<string>, event: Event): ReadonlySet<string> => {
+  const key = (event.currentTarget as HTMLElement).dataset['key']!;
+  const next = new Set(opened);
+  if ((event as ToggleEvent).newState === 'open') next.add(key);
+  else next.delete(key);
+  return next;
+};
+
 /** One change to draw, and which of its disclosures the person opened. */
 export interface DiffSetup {
   readonly diff: readonly DiffSegment[];
@@ -140,6 +153,11 @@ export interface DiffSetup {
   readonly view: 'inline' | 'split';
   readonly context?:
     { readonly before?: string | undefined; readonly after?: string | undefined } | undefined;
+  /**
+   * The blocks a line or split diff shows: a value that is absent, not empty, has none (an
+   * approval's change that adds or removes a value). Both by default.
+   */
+  readonly sides?: { readonly before: boolean; readonly after: boolean } | undefined;
   /** Names the change's disclosures: `<key>:context` and `<key>:lines`. */
   readonly key: string;
   /** The names of the disclosures the person opened. */
@@ -154,21 +172,23 @@ export interface DiffSetup {
  * context before and after it; otherwise it follows the closed disclosure, once.
  */
 export const diffPart = (s: DiffSetup, t: DiffStrings) => {
-  if (!s.diff.some((segment) => segment.kind !== 'equal'))
+  const sides = s.sides ?? { before: true, after: true };
+  // With one side absent, its value is the change, even an empty one.
+  if (sides.before && sides.after && !s.diff.some((segment) => segment.kind !== 'equal'))
     return html`<p class="diff-empty">${t.empty}</p>`;
   const code = s.granularity === 'lines';
   const text = code ? 'text code' : 'text';
   const change =
     code || s.view === 'split'
       ? html`<div class=${s.view === 'split' ? 'split' : 'sides'}>
-          <div class="side">
-            <p class="muted">${t.before}</p>
-            <div class=${text}>${diffView(s.diff, t, 'before')}</div>
-          </div>
-          <div class="side">
-            <p class="muted">${t.after}</p>
-            <div class=${text}>${diffView(s.diff, t, 'after')}</div>
-          </div>
+          ${(['before', 'after'] as const).map((side) =>
+            sides[side]
+              ? html`<div class="side">
+                  <p class="muted">${t[side]}</p>
+                  <div class=${text}>${diffView(s.diff, t, side)}</div>
+                </div>`
+              : null,
+          )}
         </div>`
       : html`<div class=${text}>${diffView(s.diff, t)}</div>`;
   const count = code ? changedLines(s.diff) : 0;
@@ -205,7 +225,7 @@ export const diffPart = (s: DiffSetup, t: DiffStrings) => {
   return html`<odd-disclosure
       class="context-toggle"
       data-key=${key}
-      label=${open ? t.hideContext : t.showContext}
+      label=${(open ? t.hideContext : t.showContext) ?? ''}
       .open=${open}
       @toggle=${s.onToggle}
     >

@@ -10,6 +10,7 @@ import {
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { decisionRowStyles } from '../internal/decision-row.styles.js';
+import { diffViewStyles } from '../internal/diff-view.js';
 import { scopeChoiceStyles } from '../internal/scope-choice.js';
 import { OddkinActionApproval } from './action-approval.js';
 import { actionApprovalStyles } from './action-approval.styles.js';
@@ -27,6 +28,7 @@ export const actionApprovalDefinition = compose({
     controlStyles,
     decisionRowStyles,
     scopeChoiceStyles,
+    diffViewStyles,
     actionApprovalStyles,
   ],
   dependencies: {

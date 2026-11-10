@@ -3,9 +3,14 @@ import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { can, scopesValid, unavailableReason } from '../contracts/normalize.js';
 import type { ApprovalRecord, ApprovalStatus, Capabilities } from '../contracts/types.js';
+import { diffLines, type DiffSegment } from '../controllers/diff.js';
 import { announceEvent, approvalDecideEvent, approvalEditEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
+import { toggleOpened } from '../internal/diff-view.js';
 import { format, strings } from '../internal/strings.js';
+
+/** One of an approval's proposed changes. */
+type ApprovalChange = NonNullable<ApprovalRecord['changes']>[number];
 
 export const APPROVAL_STRINGS = {
   approve: 'Approve',
@@ -17,6 +22,12 @@ export const APPROVAL_STRINGS = {
   changes: 'Proposed changes',
   before: 'Before',
   after: 'After',
+  deleted: 'deleted',
+  inserted: 'inserted',
+  empty: 'No proposed changes.',
+  reviewLines: '{count} changed lines · Review changes',
+  hideLines: 'Hide {count} changed lines',
+  changedLines: '{count} changed lines',
   risk: 'Risk: {risk}',
   low: 'low',
   medium: 'medium',
@@ -55,10 +66,10 @@ export const APPROVAL_STRINGS = {
  * action.
  *
  * @csspart base - The approval surface.
- * @csspart changes - Before/after list.
+ * @csspart changes - The proposed changes: each one's label over its Before and After blocks.
  * @csspart scope - What an approval covers: the one scope explained, or a choice among several.
  * @csspart actions - Decision controls.
- * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Before/after values carry visually hidden "Before"/"After" labels. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so. The optional reason is a native textarea in an `odd-disclosure`, named by the label the disclosure's summary shows: collapsed while empty, open once written, and empty again for a new revision.
+ * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Each change reads as a Before block then an After block, each labelled, whose deletions and insertions carry visually hidden "deleted"/"inserted" labels; an absent value has no block, and a change of more than ten lines waits behind an `odd-disclosure` that says how many. The risk and the expiry are badges with their text. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so. The optional reason is a native textarea in an `odd-disclosure`, named by the label the disclosure's summary shows: collapsed while empty, open once written, and empty again for a new revision.
  * @keyboard Tab to the controls; Enter or Space decides.
  * @useFor Human approval of agent actions (tool calls, writes, purchases).
  * @notFor Confirming the user's own direct actions; use a dialog.
@@ -97,6 +108,21 @@ export class OddkinActionApproval extends OddkinElement.with({
   readonly _reason = signal<{ key: string; text: string; open: boolean } | undefined>(undefined);
   /** @internal The scope the person chose, for the revision it was chosen on. */
   readonly _scope = signal<{ key: string; id: string } | undefined>(undefined);
+  /** @internal The long changes the person opened: `<approvalId>:<revision>:<index>:lines`. */
+  readonly _opened = signal<ReadonlySet<string>>(new Set());
+  readonly #diffs = new WeakMap<ApprovalChange, readonly DiffSegment[]>();
+
+  /** @internal A change's line diff (cached by change record): a Before block and an After block. */
+  _diff(change: ApprovalChange): readonly DiffSegment[] {
+    let diff = this.#diffs.get(change);
+    if (!diff) this.#diffs.set(change, (diff = diffLines(change.before ?? '', change.after ?? '')));
+    return diff;
+  }
+
+  /** @internal A long change was opened or closed. */
+  readonly _onDiffToggle = (event: Event): void => {
+    this._opened.value = toggleOpened(this._opened.peek(), event);
+  };
 
   /** @internal */
   get _strings(): typeof APPROVAL_STRINGS {
