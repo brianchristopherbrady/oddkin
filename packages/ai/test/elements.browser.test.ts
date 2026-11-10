@@ -3020,4 +3020,69 @@ describe('odd-action-approval to Figma page 09', () => {
     expect(long().open).toBe(false);
     expect(long().label).toBe('12 changed lines · Review changes');
   });
+
+  it('once approved, says what the host confirms it covers, never the local choice; the recorded reason follows', async () => {
+    const scopes = [
+      { id: 'once', label: 'This action only', description: 'Ask again for any other action.' },
+      {
+        id: 'conversation',
+        label: 'For this conversation',
+        description: 'Allow this tool in the current conversation.',
+      },
+    ];
+    const el = await approval({ scopes, defaultScopeId: 'once' });
+    const receipt = () =>
+      [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part="scope"] p')]
+        .filter((p) => !p.hidden)
+        .map(text);
+    // The host confirms another scope than the default this view showed.
+    el.approval = record({
+      scopes,
+      defaultScopeId: 'once',
+      status: 'approved',
+      scope: 'conversation',
+    });
+    await settle(el);
+    expect(receipt()).toEqual([
+      'Approval covers',
+      'Approved scope: For this conversation',
+      'Allow this tool in the current conversation.',
+    ]);
+    expect($$(el, 'input[name="scope"]')).toHaveLength(0);
+    // Offered scopes, but none confirmed: not inferred from the default.
+    el.approval = record({ scopes, defaultScopeId: 'once', status: 'approved' });
+    await settle(el);
+    expect(receipt()).toEqual([
+      'Approval covers',
+      'Scope details were not supplied.',
+      'The approved scope cannot be inferred from this view.',
+    ]);
+    // No scopes: this action only. The reason is the record's.
+    el.approval = record({ status: 'approved', reason: 'Use the pilot region.' });
+    await settle(el);
+    expect(receipt()).toEqual([
+      'Approval covers',
+      'Approved scope: This action only',
+      'No additional actions are authorized.',
+    ]);
+    expect(text($(el, '.recorded-reason'))).toBe('Reason: Use the pilot region.');
+    // A rejection grants no scope; its reason still shows. Other outcomes show neither.
+    el.approval = record({ scopes, status: 'rejected', reason: 'Not this week.' });
+    await settle(el);
+    expect($(el, '[part="scope"]')).toBeNull();
+    expect(text($(el, '.recorded-reason'))).toBe('Reason: Not this week.');
+    el.approval = record({ scopes, status: 'expired', reason: 'Not this week.' });
+    await settle(el);
+    expect($(el, '[part="scope"]')).toBeNull();
+    expect(($(el, '.recorded-reason') as HTMLElement).hidden).toBe(true);
+  });
+
+  it('restored while submitting, without a choice from this view: the generic pending line, nothing loading, nothing to press', async () => {
+    const el = await approval({ status: 'submitting' });
+    expect(text($(el, '.pending'))).toBe('Submitting your decision…');
+    const buttons = $$(el, '[part="actions"] odd-button');
+    expect(buttons).toHaveLength(2);
+    expect(buttons.some((b) => b.hasAttribute('loading'))).toBe(false);
+    expect(buttons.every((b) => b.hasAttribute('disabled'))).toBe(true);
+  });
 });

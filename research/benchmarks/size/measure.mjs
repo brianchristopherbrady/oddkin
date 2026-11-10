@@ -154,7 +154,9 @@ export const BUDGETS = {
   // 64,256 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 64,206 (+1,606)
   // with Figma page 09's changes through the shared diff view (internal/diff-view.ts, 3.4 KB
   // minified, and the line diff, 0.9 KB, entering the chat bundle) and the risk badge.
-  'ai-chat': 64256,
+  // 64,512 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 64,503 (+297) with
+  // page 09's host-confirmed receipts: the approved scope from the record and the recorded reason.
+  'ai-chat': 64512,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

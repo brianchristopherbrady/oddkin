@@ -45,6 +45,11 @@ export const actionApprovalStyles = css`
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
+  .recorded-reason {
+    font-size: ${token('type.small.size')};
+    line-height: ${token('type.small.line-height')};
+    color: ${token('color.text.secondary')};
+  }
   /*
    * The reason is a native textarea drawn by the components' field sheets, with odd-textarea's
    * inset and resize, in body type (the disclosure around it sets UI type).

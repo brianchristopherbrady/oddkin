@@ -3,7 +3,7 @@ import { can } from '../contracts/normalize.js';
 import { decisionRow, type DecisionState } from '../internal/decision-row.js';
 import { diffPart } from '../internal/diff-view.js';
 import { expiryBadge } from '../internal/expiry.js';
-import { scopeChoice } from '../internal/scope-choice.js';
+import { scopeChoice, scopeReceipt } from '../internal/scope-choice.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
@@ -14,7 +14,8 @@ const RISK_TONES = { low: 'neutral', medium: 'warning', high: 'danger' } as cons
  * Anatomy (Figma page 09): a labelled `base` group with summary, target, the risk and expiry
  * badges, `changes` (each a Before block over an After block, from the shared diff view), `scope`,
  * the reason (a textarea in an `odd-disclosure`), and the decision row (Figma page 08): Approve,
- * Reject and Edit, or the outcome in their place.
+ * Reject and Edit, or the outcome in their place. Once decided, the scope and the reason are the
+ * host's record's: what it confirms, never the person's draft.
  */
 export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const t = host._strings;
@@ -32,6 +33,8 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const pending = status === 'submitting' || (actionable && decided !== undefined);
   // Page 09 shows when the request expires in every status; it reads as soon only while open.
   const expiry = expiryBadge(host, approval.expiresAt, t.expires, actionable || pending);
+  // Only the host's record says why a decision was made.
+  const recorded = (status === 'approved' || status === 'rejected') && !!approval.reason;
   const state: DecisionState = pending
     ? { loading: decided, pending: t.submitting }
     : actionable
@@ -99,17 +102,23 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
           </div>`
         : null
     }
-    ${scopeChoice(
-      {
-        scopes,
-        chosen: scope,
-        defaulted: host._scopeDefaulted(approval),
-        reset: host._scopeReset(approval),
-        disabled: blocked !== undefined,
-        onChange: host._onScope,
-      },
-      t,
-    )}
+    ${
+      actionable || pending
+        ? scopeChoice(
+            {
+              scopes,
+              chosen: scope,
+              defaulted: host._scopeDefaulted(approval),
+              reset: host._scopeReset(approval),
+              disabled: blocked !== undefined,
+              onChange: host._onScope,
+            },
+            t,
+          )
+        : status === 'approved'
+          ? scopeReceipt(approval, t)
+          : null
+    }
     <p class="state" ?hidden=${status !== 'requested' || pending}>${t.requested}</p>
     <odd-disclosure
       class="reason"
@@ -129,6 +138,9 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
         @input=${host._onReason}
       ></textarea>
     </odd-disclosure>
+    <p class="recorded-reason" ?hidden=${!recorded}>
+      ${recorded ? format(t.recordedReason, { reason: approval.reason ?? '' }) : ''}
+    </p>
     ${decisionRow(
       [
         {

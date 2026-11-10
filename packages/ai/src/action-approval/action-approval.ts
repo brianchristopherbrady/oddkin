@@ -42,6 +42,12 @@ export const APPROVAL_STRINGS = {
   scopeSelectHelp: 'Select a scope to enable Approve.',
   scopeInvalid: 'Its choices are not valid; it cannot be approved.',
   scopeUnavailable: 'Approving with these choices is not available here.',
+  scopeApproved: 'Approved scope: {scope}',
+  scopeActionOnly: 'This action only',
+  scopeActionOnlyHelp: 'No additional actions are authorized.',
+  scopeMissing: 'Scope details were not supplied.',
+  scopeMissingHelp: 'The approved scope cannot be inferred from this view.',
+  recordedReason: 'Reason: {reason}',
   requested: 'Waiting for your decision',
   submitting: 'Submitting your decision…',
   approved: 'Approved. The action runs separately; its result appears with the action.',
@@ -67,7 +73,7 @@ export const APPROVAL_STRINGS = {
  *
  * @csspart base - The approval surface.
  * @csspart changes - The proposed changes: each one's label over its Before and After blocks.
- * @csspart scope - What an approval covers: the one scope explained, or a choice among several.
+ * @csspart scope - What an approval covers: the one scope explained, or a choice among several; once approved, what the host confirms.
  * @csspart actions - Decision controls.
  * @a11y A labelled group. Decision buttons are `odd-button`s; while a decision is pending the chosen one shows it is loading, the others are disabled, and the pending line explains why. Each change reads as a Before block then an After block, each labelled, whose deletions and insertions carry visually hidden "deleted"/"inserted" labels; an absent value has no block, and a change of more than ten lines waits behind an `odd-disclosure` that says how many. The risk and the expiry are badges with their text. Two to four scopes are native radio buttons in a fieldset whose legend says what they choose and whose hint says to choose; more are a labelled native select with the chosen scope's description below it. Nothing is chosen because it comes first, and Approve stays disabled until a scope is chosen; a valid host default is chosen and says so. The optional reason is a native textarea in an `odd-disclosure`, named by the label the disclosure's summary shows: collapsed while empty, open once written, and empty again for a new revision.
  * @keyboard Tab to the controls; Enter or Space decides.

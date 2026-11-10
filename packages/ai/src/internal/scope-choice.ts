@@ -3,6 +3,7 @@ import { css } from '@oddkin/core/styles';
 import { html } from '@oddkin/core/template';
 import { token } from '@oddkin/tokens/refs';
 import type { ApprovalRecord } from '../contracts/types.js';
+import { format } from './strings.js';
 
 type ApprovalScope = NonNullable<ApprovalRecord['scopes']>[number];
 
@@ -109,6 +110,38 @@ export const scopeChoice = (setup: ScopeSetup, t: ScopeStrings) => {
         </div>`,
     )}
   </fieldset>`;
+};
+
+/** The scope receipt's words (the approval's strings). */
+export interface ScopeReceiptStrings {
+  readonly scope: string;
+  readonly scopeApproved: string;
+  readonly scopeActionOnly: string;
+  readonly scopeActionOnlyHelp: string;
+  readonly scopeMissing: string;
+  readonly scopeMissingHelp: string;
+}
+
+/**
+ * Figma page 08's ScopeChoice, Approved, as page 09 uses it: what the host confirms an approval
+ * covers, the record's `scope` matched to the scopes its revision offered, never the person's choice
+ * or the host's default. Without scopes, this action only; with offered scopes but none confirmed,
+ * it says so.
+ */
+export const scopeReceipt = (approval: ApprovalRecord, t: ScopeReceiptStrings) => {
+  const scopes = approval.scopes ?? [];
+  const confirmed = scopes.length
+    ? scopes.find((scope) => scope.id === approval.scope)
+    : { label: t.scopeActionOnly, description: t.scopeActionOnlyHelp };
+  return html`<div part="scope" class="scope-choice">
+    <p class="scope-legend">${t.scope}</p>
+    <p class="scope-label">
+      ${confirmed ? format(t.scopeApproved, { scope: confirmed.label }) : t.scopeMissing}
+    </p>
+    <p class="scope-description" ?hidden=${!!confirmed && !confirmed.description}>
+      ${confirmed ? (confirmed.description ?? '') : t.scopeMissingHelp}
+    </p>
+  </div>`;
 };
 
 /**
