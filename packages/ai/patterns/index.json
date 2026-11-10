@@ -55,8 +55,15 @@
     {
       "id": "approval-outside-a-tool-call",
       "title": "Approval outside a tool call",
-      "summary": "Ask for a decision on any action the application is about to take, on its own.",
+      "summary": "Ask for a decision on any action the application is about to take, on its own, and say what the host accepts it covers.",
       "elements": ["odd-action-approval"],
+      "recipes": []
+    },
+    {
+      "id": "agent-asks-then-acts",
+      "title": "Agent asks, then acts",
+      "summary": "Ask the question an action depends on, then propose the action the answer shaped, in order in the conversation.",
+      "elements": ["odd-conversation", "odd-message", "odd-question", "odd-action-approval"],
       "recipes": []
     }
   ]

@@ -62,6 +62,7 @@ async function example(id: string, edit: (script: string) => string = (s) => s) 
   );
   (globalThis as { __patternImports?: unknown }).__patternImports = {
     '@oddkin/ai/announce': await import('../src/announce.js'),
+    '@oddkin/ai/controllers': await import('../src/controllers/index.js'),
   };
   const url = URL.createObjectURL(new Blob([script], { type: 'text/javascript' }));
   try {
@@ -100,6 +101,7 @@ describe('the pattern list', () => {
       'chat-layout',
       'citations-with-sources',
       'approval-outside-a-tool-call',
+      'agent-asks-then-acts',
     ]);
     for (const { id, title, elements } of patterns) {
       const page = await commands.readFile(`packages/ai/patterns/${id}/README.md`);
@@ -332,7 +334,7 @@ describe('Citations with sources', () => {
 });
 
 describe('Approval outside a tool call', () => {
-  it('asks once for the shown revision, then shows the outcome and moves focus to it', async () => {
+  it('asks once for the shown revision and the chosen scope, then shows what the host accepted and moves focus to it', async () => {
     await import('../src/action-approval/action-approval.define.js');
     const root = await example('approval-outside-a-tool-call');
     const approval = $<HTMLElementTagNameMap['odd-action-approval']>(root, 'odd-action-approval');
@@ -343,6 +345,14 @@ describe('Approval outside a tool call', () => {
     approval.addEventListener('odd-approval-decide', (e) =>
       decisions.push((e as CustomEvent).detail),
     );
+    // The host's default is the narrower scope; the person chooses the wider one.
+    const scopes = [...approval.shadowRoot!.querySelectorAll<HTMLInputElement>('[name="scope"]')];
+    expect(scopes.map((input) => [input.value, input.checked])).toEqual([
+      ['once', true],
+      ['release', false],
+    ]);
+    await userEvent.click(scopes[1]!);
+    await settle(root);
     const approve = [...approval.shadowRoot!.querySelectorAll('odd-button')].find(
       (b) => text(b) === 'Approve',
     )!;
@@ -351,12 +361,54 @@ describe('Approval outside a tool call', () => {
     inner(approve, 'button').focus();
     await userEvent.keyboard('{Enter}');
     await settle(root);
-    expect(decisions).toEqual([expect.objectContaining({ decision: 'approve', revision: 1 })]);
+    expect(decisions).toEqual([
+      expect.objectContaining({ decision: 'approve', revision: 1, scope: 'release' }),
+    ]);
     expect(approval.approval?.status).toBe('approved');
     const shown = [...approval.shadowRoot!.querySelectorAll('odd-button')].filter((b) =>
       b.checkVisibility(),
     );
     expect(shown.map(text)).not.toContain('Approve');
     expect(text(focused())).toContain('Approved');
+    expect(text(inner(approval, '[part="scope"]'))).toContain(
+      'Approved scope: Release emails today',
+    );
+  });
+});
+
+describe('Agent asks, then acts', () => {
+  it('asks first, then proposes the action the answer shaped after the question; each response is bound to its revision', async () => {
+    await import('../src/conversation/conversation.define.js');
+    const root = await example('agent-asks-then-acts');
+    const conversation = $(root, 'odd-conversation');
+    const message = () =>
+      [...conversation.shadowRoot!.querySelectorAll('[part="feed"] > odd-message')].at(-1)!;
+    const question = inner(message(), 'odd-question');
+    expect(text(question.shadowRoot!.querySelector('legend'))).toBe('Where should I post it?');
+    expect(message().shadowRoot!.querySelector('odd-action-approval')).toBeNull();
+    const sent: [string, unknown][] = [];
+    for (const type of ['odd-question-answer', 'odd-approval-decide'])
+      root.addEventListener(type, (e) => sent.push([type, (e as CustomEvent).detail]));
+    question.shadowRoot!.querySelectorAll<HTMLInputElement>('input[name="choice"]')[0]!.click();
+    (question.shadowRoot!.querySelector('odd-button[type="submit"]') as HTMLElement).click();
+    await settle(root);
+    expect(text(question.shadowRoot!.querySelector('.outcome'))).toBe('Answered.');
+    const approval = inner(message(), 'odd-action-approval');
+    expect(question.compareDocumentPosition(approval) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(text(approval.shadowRoot!.querySelector('.title'))).toBe(
+      'Post the release summary to #releases',
+    );
+    (approval.shadowRoot!.querySelector('odd-button[appearance="primary"]') as HTMLElement).click();
+    await settle(root);
+    expect(sent).toEqual([
+      [
+        'odd-question-answer',
+        { questionId: 'channel', revision: 1, answer: { choice: 'releases' } },
+      ],
+      ['odd-approval-decide', expect.objectContaining({ approvalId: 'post', revision: 1 })],
+    ]);
+    expect(text(approval.shadowRoot!.querySelector('.outcome'))).toContain('Approved');
   });
 });

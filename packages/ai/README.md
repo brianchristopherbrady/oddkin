@@ -100,7 +100,7 @@ Full API (properties, attributes, events, slots, parts, CSS properties) is in `c
 
 ## Patterns
 
-Arrangements of these elements for common needs, with no element of their own, each with a page and a working example in plain HTML: [patterns/](patterns/index.json) (shipped in the package, and listed in its agent kit). Suggested prompts, branch navigation, reasoning disclosure, copy action, empty conversation, chat layout, citations with sources, and approval outside a tool call.
+Arrangements of these elements for common needs, with no element of their own, each with a page and a working example in plain HTML: [patterns/](patterns/index.json) (shipped in the package, and listed in its agent kit). Suggested prompts, branch navigation, reasoning disclosure, copy action, empty conversation, chat layout, citations with sources, approval outside a tool call, and agent asks, then acts.
 
 ## States you must report
 

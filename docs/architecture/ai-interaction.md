@@ -52,14 +52,14 @@ Existing primitives reused: `OddkinElement.with()` and `prop.*` (typed propertie
 
 ## 3. Data contracts
 
-All records are defined once with `@oddkin/core/model` in `packages/ai/src/contracts/models.ts`; TypeScript types are inferred, untrusted input is validated with the same definitions, and `scripts/build-ai-schemas.mjs` writes JSON Schema to `packages/ai/schemas/` (14 files, `--check` mode in CI).
+All records are defined once with `@oddkin/core/model` in `packages/ai/src/contracts/models.ts`; TypeScript types are inferred, untrusted input is validated with the same definitions, and `scripts/build-ai-schemas.mjs` writes JSON Schema to `packages/ai/schemas/` (13 files, `--check` mode in CI).
 
 | Record | Model | Key | Notes |
 | --- | --- | --- | --- |
 | Message | `oddkin.ai.message` | `id` | `role`, `parentId` (branch tree), ordered `parts`, `attemptId`, `provenance` |
 | Part | union on `type` | `id` | `text`, `reasoning`, `file`, `source`, `tool-call`, `approval`, `question`, `artifact`, `data` (`m.json`, renderer key), `unsupported` |
 | Tool call | `oddkin.ai.tool-call` | `toolCallId` | streamed `inputText` vs complete `input`; `status` separate from approval |
-| Approval | `oddkin.ai.approval` | `approvalId` + `revision` | target, changes, risk, `scopes` and `defaultScopeId`, expiry, decision with its `scope`, error |
+| Approval | `oddkin.ai.approval` | `approvalId` + `revision` | target, changes, risk, `scopes` and `defaultScopeId`, expiry, the decision with its `scope` and `reason`, error |
 | Artifact | `oddkin.ai.artifact` | `artifactId` | revisions with stable identity; `currentRevisionId` |
 | Usage | `oddkin.ai.usage` | — | `precision`: measured / estimated / unknown, supplied by the host |
 | Checkpoint | `oddkin.ai.checkpoint` | `checkpointId` | `restores` lists every replaced state; `outcome` host-confirmed |
@@ -123,7 +123,7 @@ A call that needs approval links it (`approvalId`) and keeps its own status: the
 
 `requested → submitting | approved | rejected | expired | superseded | cancelled`; `submitting → approved | rejected | failed | expired | superseded | cancelled`; `failed → submitting | approved | rejected | expired | superseded | cancelled`. Approvals, questions, and edit proposals share one vocabulary for decisions (ADR 0049 §5): `requested` waits for the person; `submitting` has the request in flight (`applying` or `undoing` for a proposal the host applies); `failed` lets the person decide again; `cancelled` is withdrawn (its run ended, the backend refused the call, or the protocol said so), with nothing left to decide. Decisions target one `approvalId` **and revision**. The element sends one decision per revision (double activation is ignored) and shows it as pending until the record changes; a new revision resets the guard and marks the old one `superseded`; the controller refuses decisions for stale, expired, withdrawn, or already decided revisions and maps transport outcomes `stale`/`expired`. When the record changed while a decision was on its way (resolved elsewhere first, or withdrawn), the record stands and the decision reports `stale`.
 
-**Scopes** (ADR 0049 §6 item 3): the host may offer `scopes`, `[{ id, label, description? }]` with opaque ids, and a `defaultScopeId`; its backend defines, validates, enforces, and persists what each means, and the element only collects intent. No scopes: the approval covers this action at this revision only. One scope: no choice, and the scope stays explained. Two or more: the person chooses, unless the host gives a valid default; nothing is chosen because it comes first. The chosen scope goes only with `approve` (`odd-approval-decide`'s `scope`, the controller's `decide(…, scope)`, and the transport's `ApprovalDecision.scope`), checked against the current revision; a rejection never carries one. A new revision resets the choice, so a decision on the old one ends `stale`. A transport without `approvalScopes` cannot carry a scope: the controller refuses the approval (`unavailable`) and `odd-action-approval` says so beside Approve, while Reject stays. **Approval is never shown as success of the action**: the tool's own status reports execution (A10).
+**Scopes** (ADR 0049 §6 item 3): the host may offer `scopes`, `[{ id, label, description? }]` with opaque ids, and a `defaultScopeId`; its backend defines, validates, enforces, and persists what each means, and the element only collects intent. No scopes: the approval covers this action at this revision only. One scope: no choice, and the scope stays explained. Two or more: the person chooses, unless the host gives a valid default; nothing is chosen because it comes first. The chosen scope goes only with `approve` (`odd-approval-decide`'s `scope`, the controller's `decide(…, scope)`, and the transport's `ApprovalDecision.scope`), checked against the current revision; a rejection never carries one. A new revision resets the choice, so a decision on the old one ends `stale`. A transport without `approvalScopes` cannot carry a scope: the controller refuses the approval (`unavailable`) and `odd-action-approval` says so beside Approve, while Reject stays. Once the record says `approved`, the element shows what the host confirms the approval covers: the record's `scope` among the revision's scopes, or "This action only" when none were offered, never the person's choice or the host's default; with scopes offered and none confirmed, it says that the scope was not supplied. An approved or rejected record's `reason` shows as the recorded reason (Figma page 09). **Approval is never shown as success of the action**: the tool's own status reports execution (A10).
 
 ### 4.6 Other mutations
 
@@ -205,6 +205,7 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-approval-edit` | `approvalId`, `revision` | no | Request |
 | `odd-tool-retry` | `toolCallId` | no | Request |
 | `odd-citation-open` | `sourceId`, `resolved` | yes (default reveals the source) | Local |
+| `odd-source-reveal` | `sourceId` | yes | The default of `odd-citation-open`: the nearest message reveals the source in its list; a host that lays out its own sources listens for it |
 | `odd-artifact-export` | `artifactId`, `revisionId`, `format` | yes (default downloads canonical source) | Local default |
 | `odd-artifact-revision-change` | `artifactId`, `revisionId` | no | Presentation state changed |
 | `odd-feedback-submit` | `messageId`, `rating`, `reasons`, `comment` | no | Request; confirmed by the feedback record |

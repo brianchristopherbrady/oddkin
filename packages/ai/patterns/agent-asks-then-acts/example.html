@@ -1,0 +1,113 @@
+<!-- Agent asks, then acts: the agent's question, then the action its answer shapes, in order in one message. Load @oddkin/tokens/css/default.css on the page. -->
+<odd-conversation label="Assistant"></odd-conversation>
+<script type="module">
+  import '@oddkin/ai/define/conversation';
+  import { bindIntents, createConversationView } from '@oddkin/ai/controllers';
+
+  // The application owns the records. The assistant's message keeps its parts in order: its text,
+  // its question, and, once the question is answered, the action it proposes.
+  let records = {
+    parts: [
+      { type: 'text', id: 'a1-text', text: 'The release summary is ready. One question first.' },
+      { type: 'question', id: 'a1-question', questionId: 'channel' },
+    ],
+    questions: [
+      {
+        questionId: 'channel',
+        revision: 1,
+        prompt: 'Where should I post it?',
+        kind: 'choice',
+        options: [
+          { id: 'releases', label: '#releases' },
+          { id: 'general', label: '#general' },
+        ],
+        status: 'requested',
+      },
+    ],
+    approvals: [],
+  };
+  const listeners = new Set();
+  let view;
+  const update = (change) => {
+    records = { ...records, ...change };
+    // Validated at the boundary: an invalid record is left out and reported.
+    view = createConversationView({
+      conversationId: 'release',
+      messages: [
+        {
+          id: 'u1',
+          role: 'user',
+          parts: [{ type: 'text', id: 'u1-text', text: 'Post the release summary.' }],
+        },
+        { id: 'a1', role: 'assistant', parentId: 'u1', parts: records.parts },
+      ],
+      questions: records.questions,
+      approvals: records.approvals,
+      capabilities: {
+        respondToQuestion: { available: true },
+        respondToApproval: { available: true },
+      },
+    });
+    for (const listener of listeners) listener();
+  };
+  update({});
+  const conversation = document.querySelector('odd-conversation');
+  conversation.store = {
+    getSnapshot: () => view,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+
+  // The host sends each answer and decision to its backend and shows the records it answers
+  // with. Here the page stands in for the backend: the answer shapes the action it proposes.
+  bindIntents(conversation, {
+    'odd-question-answer': ({ questionId, revision, answer }) => {
+      const [question] = records.questions;
+      if (question.questionId !== questionId || question.revision !== revision) return;
+      const channel = question.options.find((option) => option.id === answer.choice);
+      if (!channel) return;
+      update({
+        questions: [{ ...question, status: 'answered', answer }],
+        parts: [...records.parts, { type: 'approval', id: 'a1-approval', approvalId: 'post' }],
+        approvals: [
+          {
+            approvalId: 'post',
+            revision: 1,
+            title: `Post the release summary to ${channel.label}`,
+            summary: 'Posts the summary the assistant wrote, under your name.',
+            target: channel.label,
+            risk: 'low',
+            status: 'requested',
+          },
+        ],
+      });
+    },
+    'odd-question-skip': ({ questionId, revision }) => {
+      const [question] = records.questions;
+      if (question.questionId !== questionId || question.revision !== revision) return;
+      update({
+        questions: [{ ...question, status: 'skipped' }],
+        parts: [
+          ...records.parts,
+          { type: 'text', id: 'a1-skipped', text: 'Without a channel, I will not post it.' },
+        ],
+      });
+    },
+    'odd-approval-decide': ({ approvalId, revision, decision, reason }) => {
+      const [approval] = records.approvals;
+      if (approval?.approvalId !== approvalId || approval.revision !== revision) return;
+      update({
+        approvals: [
+          {
+            ...approval,
+            status: decision === 'approve' ? 'approved' : 'rejected',
+            decision,
+            reason,
+          },
+        ],
+      });
+    },
+  });
+</script>

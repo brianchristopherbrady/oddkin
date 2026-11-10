@@ -312,6 +312,10 @@ for (const site of SITES) {
 
         const question = page.locator('odd-question');
         await expect(question).toBeVisible();
+        // The attempt's wait names what the person is asked for (the plan's activity, not the
+        // run log's own).
+        const activity = page.getByRole('region', { name: 'Plan' }).locator('odd-activity');
+        await expect(activity).toContainText('1 question needs your response.');
         await question.getByRole('radio', { name: /Beta/ }).check();
         await question.getByRole('button', { name: 'Answer' }).click();
         await expect(question).toContainText('Answered.', { timeout: 5_000 });
@@ -319,6 +323,7 @@ for (const site of SITES) {
         const approval = page.locator('odd-action-approval');
         await expect(approval).toBeVisible({ timeout: 10_000 });
         await expect(approval).toContainText('3 of 3');
+        await expect(activity).toContainText('1 approval needs your response.');
         await page.getByText('Simulation controls').click();
         await page.getByRole('button', { name: /Change the pending proposal/ }).click();
         await expect(approval).toContainText('1 of 3 (canary first)');
@@ -362,6 +367,7 @@ for (const site of SITES) {
         const approval = page.locator('odd-action-approval');
         await expect(approval).toContainText('This request expired', { timeout: 15_000 });
         await expect(approval.getByRole('button', { name: 'Approve' })).toHaveCount(0);
+        await expect(page.locator('#run-log')).toContainText('nothing was deployed');
 
         const checkpoint = page.locator('odd-checkpoint').first();
         await checkpoint.getByRole('button', { name: 'Restore…' }).click();
@@ -370,13 +376,17 @@ for (const site of SITES) {
           timeout: 5_000,
         });
 
-        // A new run can be interrupted; running tools are cancelled.
+        // A new run can be stopped while it waits for the person: its open question is withdrawn.
         await page.getByLabel('Make one parallel tool fail').uncheck();
         await page.getByRole('button', { name: 'Start run' }).click();
+        await expect(question.getByRole('button', { name: 'Answer' })).toBeVisible({
+          timeout: 10_000,
+        });
         const stop = page.locator('odd-activity').getByRole('button', { name: 'Stop' });
-        await expect(stop).toBeVisible({ timeout: 5_000 });
         await stop.click();
         await expect(page.locator('#run-log')).toContainText('Stopped.', { timeout: 5_000 });
+        await expect(question).toContainText('This question was withdrawn; no answer is needed.');
+        await expect(question.getByRole('button', { name: 'Answer' })).toHaveCount(0);
         await check();
       });
     });

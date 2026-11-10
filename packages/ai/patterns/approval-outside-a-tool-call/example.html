@@ -1,4 +1,4 @@
-<!-- Approval outside a tool call: a decision on any action the application is about to take. Load @oddkin/tokens/css/default.css on the page. -->
+<!-- Approval outside a tool call: a decision on any action the application is about to take, and what it covers. Load @oddkin/tokens/css/default.css on the page. -->
 <div class="approval-panel">
   <odd-action-approval announce="important"></odd-action-approval>
 </div>
@@ -9,7 +9,11 @@
   // One announcer for the surface: the approval's outcome is spoken from its live regions.
   createAnnouncer(document.querySelector('.approval-panel'));
   const approval = document.querySelector('odd-action-approval');
-  approval.capabilities = { respondToApproval: { available: true } };
+  // approvalScopes: the host's backend carries the chosen scope, checks it, and enforces it.
+  approval.capabilities = {
+    respondToApproval: { available: true },
+    approvalScopes: { available: true },
+  };
   approval.approval = {
     approvalId: 'send-notes',
     revision: 1,
@@ -18,9 +22,24 @@
     target: 'team@example.com',
     changes: [{ label: 'Subject', before: 'Draft', after: 'Release 2.0' }],
     risk: 'medium',
+    scopes: [
+      {
+        id: 'once',
+        label: 'This email only',
+        description: 'Ask again before sending anything else.',
+      },
+      {
+        id: 'release',
+        label: 'Release emails today',
+        description: 'Send the other release emails today without asking.',
+      },
+    ],
+    // The narrowest scope, chosen for the person, who can choose another.
+    defaultScopeId: 'once',
     status: 'requested',
   };
-  // The host decides; a decision made on an older revision is ignored.
+  // The host decides: a decision made on an older revision is ignored. Its record says what the
+  // approval covers (the scope the backend accepted, never one the element inferred) and why.
   approval.addEventListener('odd-approval-decide', ({ detail }) => {
     const current = approval.approval;
     if (current.revision !== detail.revision) return;
@@ -28,6 +47,8 @@
       ...current,
       status: detail.decision === 'approve' ? 'approved' : 'rejected',
       decision: detail.decision,
+      scope: detail.scope,
+      reason: detail.reason,
     };
   });
 </script>

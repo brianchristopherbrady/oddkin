@@ -71,6 +71,21 @@ const initial = () => ({
 const store = createStore(initial());
 const controls = { failTool: false, expireApproval: false, restoreFails: false, delay: 600 };
 
+// The attempt's wait names the requests that need the person and those whose response is on its
+// way (ai-interaction.md section 4.1). The application's backend keeps it; here, the page.
+const OPEN = ['requested', 'submitting', 'failed'];
+function waitOf(s) {
+  const requests = [
+    s.question && { kind: 'question', id: s.question.questionId, status: s.question.status },
+    s.approval && { kind: 'approval', id: s.approval.approvalId, status: s.approval.status },
+  ].filter(Boolean);
+  const list = (statuses) =>
+    requests.filter((r) => statuses.includes(r.status)).map(({ kind, id }) => ({ kind, id }));
+  const action = list(['requested', 'failed']);
+  const submitting = list(['submitting']);
+  return action.length || submitting.length ? { action, submitting } : undefined;
+}
+
 // ---- Rendering: elements receive records; nothing is copied ----
 const toolsHost = $('#tools');
 const checkpointsHost = $('#checkpoints');
@@ -99,7 +114,7 @@ function sync(el, records, key, tag, assign) {
 function render() {
   const s = store.getSnapshot();
   planEl.plan = s.plan;
-  activity.attempt = s.attempt;
+  activity.attempt = s.attempt && { ...s.attempt, wait: waitOf(s) };
   activity.tools = s.tools;
   sync(toolsHost, s.tools, 'toolCallId', 'odd-tool-call', (el, tool) => {
     el.tool = tool;
@@ -299,15 +314,21 @@ function requestApproval(revision) {
   if (controls.expireApproval)
     later(4000 * (600 / controls.delay), () => {
       const a = store.getSnapshot().approval;
-      if (a?.status === 'requested')
-        store.update(() => ({ approval: { ...a, status: 'expired' } }));
+      if (a?.status !== 'requested') return;
+      // The request ended without a decision: the deploy does not run, and the run ends.
+      store.update((s) => ({
+        approval: { ...a, status: 'expired' },
+        plan: plan(['done', 'done', 'done', 'skipped'], s.plan.steps[1].tasks),
+      }));
+      setAttempt({ status: 'completed' });
+      say('The approval expired, so nothing was deployed.');
     });
 }
 
 // ---- Intents from the elements ----
 $('#app').addEventListener('odd-question-answer', (event) => {
   const q = store.getSnapshot().question;
-  if (!q || event.detail.revision !== q.revision) return;
+  if (!q || event.detail.revision !== q.revision || q.status !== 'requested') return;
   store.update(() => ({ question: { ...q, status: 'submitting' } }));
   later(500, () => {
     store.update((s) => ({
@@ -337,8 +358,14 @@ $('#app').addEventListener('odd-approval-decide', (event) => {
   const a = store.getSnapshot().approval;
   // The backend checks the revision: a decision for an older proposal is stale.
   if (!a || a.revision !== event.detail.revision || a.status !== 'requested') return;
+  // The record keeps the decision and its reason, which the approval shows once decided.
   store.update(() => ({
-    approval: { ...a, status: 'submitting', decision: event.detail.decision },
+    approval: {
+      ...a,
+      status: 'submitting',
+      decision: event.detail.decision,
+      reason: event.detail.reason,
+    },
   }));
   later(700, () => {
     const current = store.getSnapshot().approval;
@@ -385,6 +412,8 @@ $('#app').addEventListener('odd-prompt-stop', () => {
     for (const id of timers) clearTimeout(id);
     timers = [];
     const s = store.getSnapshot();
+    const withdraw = (request) =>
+      request && OPEN.includes(request.status) ? { ...request, status: 'cancelled' } : request;
     store.update(() => ({
       attempt: { ...s.attempt, status: 'cancelled', stop: 'confirmed' },
       tools: s.tools.map((t) =>
@@ -392,6 +421,9 @@ $('#app').addEventListener('odd-prompt-stop', () => {
           ? { ...t, status: 'cancelled' }
           : t,
       ),
+      // A run that ends withdraws its open requests: nothing is left to answer or decide.
+      question: withdraw(s.question),
+      approval: withdraw(s.approval),
     }));
     say('Stopped. Completed work is kept; restore a checkpoint or start again.');
   });
