@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 
@@ -999,6 +999,437 @@ describe('continuity', () => {
         expect(el.shadowRoot!.activeElement).toBe(cancel);
         expect(density(base, buttons())).toEqual(first);
         expectInside(base);
+      }
+    },
+  );
+
+  // The chat surface: the composer, the conversation, and a response (row 29).
+
+  it.each(SETUPS)('odd-prompt-input keeps a draft, then a send in flight (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('prompt-input');
+    const base = $(el, '.form');
+    const input = $(el, '#input') as Field;
+    const draft = 'Summarize the release notes for the design team';
+    await userEvent.fill(input, draft);
+    input.setSelectionRange(9, 9);
+    const send = $(el, 'odd-button.send');
+    const controls = () => el.shadowRoot!.querySelectorAll('.toolbar :is(button, odd-button)');
+    const first = density(base, controls());
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, '#input')).toBe(input);
+      expect(input.value).toBe(draft);
+      expect(el.shadowRoot!.activeElement).toBe(input);
+      expect([input.selectionStart, input.selectionEnd]).toEqual([9, 9]);
+      expect($(el, 'odd-button.send')).toBe(send);
+      expect(send.hasAttribute('disabled')).toBe(false);
+      expect(density(base, controls())).toEqual(first);
+      expectInside(base);
+    }
+    // Send from the keyboard; the host has not taken the message yet.
+    send.focus();
+    await userEvent.keyboard('{Enter}');
+    await settle(el);
+    expect(send.hasAttribute('loading')).toBe(true);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, 'odd-button.send')).toBe(send);
+      expect(send.hasAttribute('loading')).toBe(true);
+      expect(el.shadowRoot!.activeElement).toBe(send);
+      expectInside(base);
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-prompt-input keeps a focused Stop while its work runs (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('prompt-input', 'loading');
+      const base = $(el, '.form');
+      const stop = $(el, 'odd-button.stop');
+      stop.focus();
+      const first = density(base, [stop]);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, 'odd-button.stop')).toBe(stop);
+        expect(el.shadowRoot!.activeElement).toBe(stop);
+        expect(density(base, [stop])).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-conversation stays at the end while a reply streams, and keeps the message being read in place (%s)',
+    async (setup) => {
+      bound(setup);
+      const words = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ');
+      const messages = Array.from({ length: 10 }, (_, i) =>
+        text(`m${i}`, i % 2 ? 'assistant' : 'user', `Message ${i}: ${words(24)}`),
+      );
+      const el = await mount<Updating & { state: unknown }>(
+        'odd-conversation',
+        () => import('../src/conversation/conversation.define.js'),
+        (e) => {
+          e.state = conversation(messages);
+        },
+      );
+      const scroller = $(el, '.scroller');
+      const atEnd = () => scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight <= 2;
+      await settle(el);
+      expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight);
+      expect(atEnd()).toBe(true);
+      // A reply streams while the width changes: the end stays in view.
+      let reply = 'The answer begins';
+      for (const width of WIDTHS) {
+        reply += ` ${words(6)}`;
+        el.state = conversation([...messages, text('m10', 'assistant', reply)]);
+        await resize(width, el);
+        expect(atEnd()).toBe(true);
+        expectInside(scroller);
+      }
+      // Reading earlier content: the message at the top stays there while the width changes. The
+      // element keeps the place itself, as an engine without native scroll anchoring needs.
+      scroller.style.overflowAnchor = 'none';
+      const read = el.shadowRoot!.querySelector<HTMLElement>('[data-id="m4"]')!;
+      const offset = () => read.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      scroller.scrollTop += offset();
+      await frames();
+      await frames();
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(Math.abs(offset())).toBeLessThanOrEqual(2);
+        expect(atEnd()).toBe(false);
+        expectInside(scroller);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-response appends a stream in place and scrolls its code locally; the copy confirmation stays by its button (%s)',
+    async (setup) => {
+      bound(setup);
+      const head =
+        'Container queries respond to the **component**, not the viewport.\n\n' +
+        '```css\n@container sidebar (min-inline-size: 40rem) { .content { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); } }\n```\n\nThen';
+      const el = await example<Updating & { text: string; status: string }>(
+        'response',
+        'streaming',
+        (props) => ({ ...props, text: head }),
+      );
+      const content = $(el, '.content');
+      const [paragraph, code] = [content.querySelector('p'), content.querySelector('pre')];
+      expect(paragraph && code).toBeTruthy();
+      let streamed = head;
+      for (const width of WIDTHS) {
+        streamed += ' the layout follows its container';
+        el.text = streamed;
+        await resize(width, el);
+        // Earlier blocks keep their nodes; the code scrolls on its own, never the page.
+        expect(content.querySelector('p')).toBe(paragraph);
+        expect(content.querySelector('pre')).toBe(code);
+        expect(content.textContent).toContain('follows its container');
+        expectInside(content);
+      }
+      el.status = 'complete';
+      await settle(el);
+      const copy = $(el, 'odd-copy-button') as Updating;
+      await settle(copy);
+      const button = copy.shadowRoot!.querySelector('button')!;
+      const popup = copy.shadowRoot!.querySelector<HTMLElement>('.confirmation')!;
+      const write = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
+      try {
+        button.focus();
+        await userEvent.keyboard('{Enter}');
+        await expect.poll(() => popup.matches(':popover-open')).toBe(true);
+        // Above or below the button, across from it.
+        const beside = () => {
+          const [a, b] = [button.getBoundingClientRect(), popup.getBoundingClientRect()];
+          const gap = Math.min(Math.abs(a.top - b.bottom), Math.abs(b.top - a.bottom));
+          return gap <= 12 && b.left < a.right && a.left < b.right;
+        };
+        expect(beside()).toBe(true);
+        // Within the viewport, which the confirmation keeps to.
+        for (const width of [400, 260, 222, 400, 222]) {
+          await resize(width, el, copy);
+          expect(popup.matches(':popover-open')).toBe(true);
+          expect(beside()).toBe(true);
+          expect(copy.shadowRoot!.activeElement).toBe(button);
+        }
+      } finally {
+        write.mockRestore();
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-message keeps its reasoning open (%s)', async (setup) => {
+    bound(setup);
+    const el = await mount<Updating & { message: unknown }>(
+      'odd-message',
+      () => import('../src/message/message.define.js'),
+      (e) => {
+        e.message = {
+          id: 'm2',
+          role: 'assistant',
+          parts: [
+            {
+              type: 'reasoning',
+              id: 'r1',
+              text: 'The question is about layout, so container queries apply here.',
+            },
+            { type: 'text', id: 't1', text: 'Use a container query, sized by the card.' },
+          ],
+        };
+      },
+    );
+    const reasoning = await toggle(el, $(el, 'odd-disclosure.reasoning'));
+    const base = $(el, '.base');
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, 'odd-disclosure.reasoning')).toBe(reasoning);
+      expect(reasoning.open).toBe(true);
+      expectInside(base);
+    }
+  });
+
+  // The rest of the AI elements (row 29).
+
+  it.each(SETUPS)('odd-citation keeps its open preview by its marker (%s)', async (setup) => {
+    bound(setup);
+    const el = await mount<Updating & Record<string, unknown>>(
+      'odd-citation',
+      () => import('../src/citation/citation.define.js'),
+      (e) => {
+        Object.assign(e, {
+          sourceId: 'first',
+          index: 1,
+          source: {
+            type: 'source',
+            id: 's1',
+            sourceId: 'first',
+            title: 'First source',
+            url: 'https://example.com/source',
+            excerpt: 'Supporting information for this claim.',
+          },
+        });
+      },
+    );
+    // In a sentence, so the marker moves as the text around it wraps.
+    const paragraph = document.createElement('p');
+    paragraph.append('Container queries respond to the component, not the viewport, so a card ');
+    paragraph.append(el, ' rearranges itself wherever it is placed.');
+    container.append(paragraph);
+    await settle(el);
+    const trigger = $(el, '[part="trigger"]');
+    const popover = el.shadowRoot!.querySelector<HTMLElement>('odd-popover')!;
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect.poll(() => popover.matches(':popover-open')).toBe(true);
+    const beside = () => {
+      const [a, b] = [trigger.getBoundingClientRect(), popover.getBoundingClientRect()];
+      const gap = Math.min(Math.abs(a.top - b.bottom), Math.abs(b.top - a.bottom));
+      return gap <= 12 && b.left < a.right && a.left < b.right;
+    };
+    await expect.poll(beside).toBe(true);
+    for (const width of [400, 260, 222, 400, 222]) {
+      await resize(width, el);
+      await frames();
+      expect(popover.matches(':popover-open')).toBe(true);
+      expect(beside()).toBe(true);
+    }
+  });
+
+  it.each(SETUPS)('odd-sources keeps a focused source and wraps its titles (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('sources');
+    const list = $(el, '.list');
+    const link = $(el, '.item a.title');
+    link.focus();
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, '.item a.title')).toBe(link);
+      expect(el.shadowRoot!.activeElement).toBe(link);
+      expectInside(list);
+    }
+  });
+
+  it.each(SETUPS)('odd-usage-meter keeps its readings and wraps them (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('usage-meter');
+    const list = $(el, '.list');
+    const readings = [...el.shadowRoot!.querySelectorAll('dt, dd, meter')];
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      const now = [...el.shadowRoot!.querySelectorAll('dt, dd, meter')];
+      expect(now.length === readings.length && now.every((node, i) => node === readings[i])).toBe(
+        true,
+      );
+      expectInside(list);
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-voice-input keeps recording, the focus, and what it heard (%s)',
+    async (setup) => {
+      bound(setup);
+      const { createScriptedVoiceAdapter } = await import('../src/controllers/voice.js');
+      const el = await example('voice-input', 'default', (props) => ({
+        ...props,
+        adapter: createScriptedVoiceAdapter([
+          { after: 20, interim: 'Summarize the release notes' },
+          { after: 60_000, final: 'Summarize the release notes.' },
+        ]),
+      }));
+      const base = $(el, '.base');
+      const record = $(el, 'button.record');
+      record.focus();
+      await userEvent.keyboard('{Enter}');
+      const transcript = $(el, 'odd-transcript') as Updating;
+      const heard = () => transcript.shadowRoot?.querySelector('.interim')?.textContent ?? '';
+      await expect.poll(heard).toContain('Summarize the release notes');
+      const buttons = () => el.shadowRoot!.querySelectorAll('.actions button:not([hidden])');
+      const first = density(base, buttons());
+      for (const width of WIDTHS) {
+        await resize(width, el, transcript);
+        expect($(el, 'button.record')).toBe(record);
+        expect(record.getAttribute('aria-pressed')).toBe('true');
+        expect(el.shadowRoot!.activeElement).toBe(record);
+        expect(heard()).toContain('Summarize the release notes');
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-transcript keeps a correction being typed (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('transcript', 'editable');
+    const field = $(el, '.segment textarea[data-id="b"]') as Field;
+    await userEvent.fill(field, 'Invite the design team before Thursday.');
+    field.setSelectionRange(6, 6);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, '.segment textarea[data-id="b"]')).toBe(field);
+      expect(field.value).toBe('Invite the design team before Thursday.');
+      expect(el.shadowRoot!.activeElement).toBe(field);
+      expect([field.selectionStart, field.selectionEnd]).toEqual([6, 6]);
+      expectInside($(el, '.base'));
+    }
+  });
+
+  it.each(SETUPS)('odd-ai-label keeps its details open (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('ai-label');
+    const disclosure = await toggle(el, $(el, 'odd-disclosure.base'));
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, 'odd-disclosure.base')).toBe(disclosure);
+      expect(disclosure.open).toBe(true);
+      expectInside($(el, '.details'));
+    }
+  });
+
+  it.each(SETUPS)('odd-model-select keeps the chosen model and the focus (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('model-select');
+    const select = $(el, '#select') as HTMLSelectElement;
+    const choice = [...select.options].find((o) => !o.disabled && o.value !== select.value)!.value;
+    await userEvent.selectOptions(select, choice);
+    select.focus();
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, '#select')).toBe(select);
+      expect(select.value).toBe(choice);
+      expect(el.shadowRoot!.activeElement).toBe(select);
+      expectInside($(el, '.field'));
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-task-plan keeps a focused Respond and wraps its steps (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('task-plan');
+      const respond = $(el, 'button[data-step]');
+      respond.focus();
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, 'button[data-step]')).toBe(respond);
+        expect(el.shadowRoot!.activeElement).toBe(respond);
+        expectInside($(el, '.steps'));
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-inline-assist keeps the action in focus (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('inline-assist');
+    const actions = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.toolbar button')];
+    actions[1]!.focus();
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      const now = [...el.shadowRoot!.querySelectorAll('.toolbar button')];
+      expect(now.length === actions.length && now.every((b, i) => b === actions[i])).toBe(true);
+      expect(el.shadowRoot!.activeElement).toBe(actions[1]);
+      expectInside($(el, '.toolbar'));
+    }
+  });
+
+  it.each(SETUPS)('odd-inline-assist keeps the chosen language (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('inline-assist', 'translate');
+    const select = $(el, 'select') as HTMLSelectElement;
+    const choice = [...select.options].find((o) => o.value && o.value !== select.value)!.value;
+    await userEvent.selectOptions(select, choice);
+    select.focus();
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(select.value).toBe(choice);
+      expect(el.shadowRoot!.activeElement).toBe(select);
+      expectInside($(el, '.toolbar'));
+    }
+  });
+
+  it.each(SETUPS)('odd-artifact keeps its source view and the focus in it (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('artifact');
+    $(el, 'button[data-view="source"]').click();
+    await settle(el);
+    const source = $(el, 'pre.source');
+    source.focus();
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, 'pre.source')).toBe(source);
+      expect(source.hidden).toBe(false);
+      expect($(el, 'button[data-view="source"]').getAttribute('aria-pressed')).toBe('true');
+      expect(el.shadowRoot!.activeElement).toBe(source);
+      expectInside($(el, '.base'));
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-response-feedback keeps a reason and a comment being written (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('response-feedback');
+      $(el, 'button[data-rating="negative"]').click();
+      await settle(el);
+      const reason = $(el, '.form input[type="checkbox"]') as HTMLInputElement;
+      await userEvent.click(reason);
+      const comment = $(el, '.form textarea') as Field;
+      await userEvent.fill(comment, 'The figures are from last year.');
+      comment.setSelectionRange(4, 4);
+      const form = $(el, '.form');
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, '.form textarea')).toBe(comment);
+        expect(comment.value).toBe('The figures are from last year.');
+        expect(el.shadowRoot!.activeElement).toBe(comment);
+        expect([comment.selectionStart, comment.selectionEnd]).toEqual([4, 4]);
+        expect(reason.checked).toBe(true);
+        expect(form.hidden).toBe(false);
+        expectInside(form);
       }
     },
   );
