@@ -91,7 +91,10 @@ export const BUDGETS = {
   // and FocusRecovery instead of a private preview runtime. Measured 28,853 vs 24,570 at
   // de271436 (+4,283 B);
   // per-change BUDGET review in docs/verification.md. Smallest 64 B step; no blanket headroom.
-  'ai-response': 28864,
+  // 28,928 from 2026-11-11 (row 29; Agent 1, 01:15): measured 28,927 (+74) with odd-copy-button's
+  // confirmation following its button (a ResizeObserver on the button and the boxes around it,
+  // released with the element's scope).
+  'ai-response': 28928,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -163,7 +166,9 @@ export const BUDGETS = {
   // Same citation foundation reuse: 68,948 vs 64,481 at de271436 (+4,467 B), 2026-11-10.
   // Question's native fieldset minimum correction adds 6 B: final 68,954 (+4,473 B total).
   // Independent BUDGET review recorded with the responsiveness slice; release review remains.
-  'ai-chat': 68992,
+  // 69,056 from 2026-11-11 (row 29; Agent 1, 01:15): measured 69,031 (+79) with the copy
+  // confirmation following its button and the positioning controller observing the anchor's boxes.
+  'ai-chat': 69056,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

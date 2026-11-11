@@ -119,6 +119,52 @@ describe('odd-copy-button', () => {
     expect(box.top).toBeGreaterThanOrEqual(part(el, 'button')!.getBoundingClientRect().bottom);
   });
 
+  it('keeps the confirmation by the button when its parent narrows (responsiveness.md)', async () => {
+    // Text before the button wraps in a narrower parent: the button moves, its size stays.
+    const { el } = await mount(
+      'value="ws_83f2a9"',
+      '<span>The workspace identifier for the release review is</span>',
+    );
+    container.style.cssText = 'inline-size: 400px; margin-block-start: 6rem';
+    part(el, 'button')!.focus();
+    await el.copy();
+    await expect.poll(() => open(el)).toBe(true);
+    const gap = parseFloat(getComputedStyle(part(el, 'confirmation')!).rowGap);
+    for (const width of ['220px', '140px', '400px']) {
+      const before = part(el, 'button')!.getBoundingClientRect().toJSON();
+      container.style.inlineSize = width;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const anchor = part(el, 'button')!.getBoundingClientRect();
+      const box = part(el, 'confirmation')!.getBoundingClientRect();
+      // Centred on the button, kept inside the viewport.
+      const centred = anchor.left + (anchor.width - box.width) / 2;
+      const room = document.documentElement.clientWidth - box.width;
+      expect(anchor.toJSON()).not.toEqual(before);
+      expect(open(el)).toBe(true);
+      expect(box.bottom).toBeCloseTo(anchor.top - gap, 0);
+      expect(box.left).toBeCloseTo(Math.max(0, Math.min(centred, room)), 0);
+      expect(el.shadowRoot!.activeElement).toBe(part(el, 'button'));
+    }
+  });
+
+  it('stops following when the button is removed while the confirmation shows', async () => {
+    const { el } = await mount(
+      'value="ws_83f2a9"',
+      '<span>The workspace identifier for the release review is</span>',
+    );
+    container.style.cssText = 'inline-size: 400px; margin-block-start: 6rem';
+    await el.copy();
+    await expect.poll(() => open(el)).toBe(true);
+    const confirmation = part(el, 'confirmation')!;
+    el.remove();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    // A placement now would overwrite this mark.
+    confirmation.style.top = '-999px';
+    container.style.inlineSize = '140px';
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    expect(confirmation.style.top).toBe('-999px');
+  });
+
   it('takes the confirmation away on a scroll in any tree around it', async () => {
     // A scroller in the page holds a shadow tree with its own scroller around the button.
     container = document.createElement('div');

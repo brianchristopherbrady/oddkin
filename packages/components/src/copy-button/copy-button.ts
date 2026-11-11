@@ -189,21 +189,37 @@ export class OddkinCopyButton extends OddkinElement.with({
     } else this.#dismiss();
   }
 
-  /** Shows the confirmation above the button, or below it when there is no room above. */
+  /**
+   * Shows the confirmation above the button, or below it when there is no room above. While it
+   * shows, it follows the button when a box around it changes size (a parent that narrows, text
+   * above that grows); a scroll dismisses it.
+   */
   #confirm(): void {
     const popup = this.shadowRoot?.querySelector<HTMLElement>('.confirmation');
     const button = this.shadowRoot?.querySelector('button');
     if (!popup || !button || !this.isConnected || this._status.value !== 'copied') return;
     if (!popup.matches(':popover-open')) popup.showPopover();
-    const anchor = button.getBoundingClientRect();
-    const { width, height } = popup.getBoundingClientRect();
-    const gap = parseFloat(getComputedStyle(popup).rowGap) || 0;
-    const above = anchor.top - gap - height;
-    const room = document.documentElement.clientWidth - width;
-    popup.style.top = `${above >= 0 ? above : anchor.bottom + gap}px`;
-    popup.style.left = `${Math.max(0, Math.min(anchor.left + (anchor.width - width) / 2, room))}px`;
+    const place = () => {
+      const anchor = button.getBoundingClientRect();
+      const { width, height } = popup.getBoundingClientRect();
+      const gap = parseFloat(getComputedStyle(popup).rowGap) || 0;
+      const above = anchor.top - gap - height;
+      const room = document.documentElement.clientWidth - width;
+      popup.style.top = `${above >= 0 ? above : anchor.bottom + gap}px`;
+      popup.style.left = `${Math.max(0, Math.min(anchor.left + (anchor.width - width) / 2, room))}px`;
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    for (let el: Element | null = button; el;) {
+      observer.observe(el);
+      el =
+        el.assignedSlot ?? el.parentElement ?? (el.parentNode as ShadowRoot | null)?.host ?? null;
+    }
     // Scroll events stay in their tree: listen in every tree between the button and the page.
-    const releases: Release[] = [];
+    // The observer belongs to the scope too, so removing the button mid-confirmation ends it.
+    const releases: Release[] = [
+      this.#scope!.add(() => observer.disconnect(), 'copy confirmation'),
+    ];
     for (let node: Node = this; ; node = (node as ShadowRoot).host) {
       node = node.getRootNode();
       releases.push(this.#scope!.listen(node, 'scroll', () => this.#dismiss(), { capture: true }));
