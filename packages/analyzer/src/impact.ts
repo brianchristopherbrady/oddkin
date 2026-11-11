@@ -16,6 +16,7 @@ import { checkMetadata, type MetadataDiagnostic } from './metadata.js';
 
 export const SNAPSHOT_SCHEMA = 'https://oddkin.dev/schemas/comparison-snapshot/v1.json';
 export const IMPACT_SCHEMA = 'https://oddkin.dev/schemas/impact-report/v1.json';
+export const CHECK_RESULT_SCHEMA = 'https://oddkin.dev/schemas/check-result/v1.json';
 
 // ---- input shapes (only the fields read here) ----
 
@@ -1147,12 +1148,53 @@ export interface CheckResult {
   readonly message?: string;
   /** What ran: browser and version, configuration, input hashes. */
   readonly conditions: Readonly<Record<string, unknown>>;
+  /** The commit the run happened at, from its check-result.v1 document. */
+  readonly source?: SourceProvenance;
 }
 
 /**
- * Merge executed results into the report. A selected check passes only when every run of it
- * passed; any failure fails it; with no run it is `not-executed`. Conditions of every run are
- * listed. Reused checks keep their baseline state and conditions.
+ * A file of check results (check-result.v1): runs of the checks a report selected, which
+ * `mergeResults` folds in, or earlier runs to reuse (`baseline`). `source` is the commit every
+ * run in it happened at, and whether its working tree had uncommitted changes.
+ */
+export interface CheckResults {
+  readonly schema: typeof CHECK_RESULT_SCHEMA;
+  readonly source?: SourceProvenance;
+  readonly results: readonly Omit<CheckResult, 'source'>[];
+}
+
+const RESULT_STATES: readonly string[] = ['passed', 'failed', 'not-executed'];
+
+/**
+ * The runs of a check-result.v1 document, each with the document's `source`. Throws when it is not
+ * one, naming `from` (its file).
+ */
+export function readCheckResults(document: unknown, from = 'check results'): CheckResult[] {
+  const doc = document as Partial<CheckResults> | null;
+  if (doc?.schema !== CHECK_RESULT_SCHEMA || !Array.isArray(doc.results))
+    throw new Error(
+      `${from}: not a check-result.v1 document ({ "schema": "${CHECK_RESULT_SCHEMA}", "results": [...] })`,
+    );
+  return doc.results.map((result, i) => {
+    if (
+      typeof result?.check !== 'string' ||
+      !RESULT_STATES.includes(result.state) ||
+      typeof result.conditions !== 'object' ||
+      result.conditions === null
+    )
+      throw new Error(
+        `${from}: results[${i}] needs a check, a state (passed, failed, or not-executed), and conditions`,
+      );
+    return doc.source ? { ...result, source: doc.source } : { ...result };
+  });
+}
+
+/**
+ * Merge executed results into the report (the runs of check-result.v1 documents,
+ * `readCheckResults`). A selected check passes only when every run of it passed; any failure
+ * fails it; with no run it is `not-executed`. Conditions of every run are listed, with the commit
+ * it happened at when its document recorded one. Reused checks keep their baseline state and
+ * conditions.
  */
 export function mergeResults(report: ImpactReport, results: readonly CheckResult[]): ImpactReport {
   const runs = new Map<string, CheckResult[]>();
@@ -1176,7 +1218,9 @@ export function mergeResults(report: ImpactReport, results: readonly CheckResult
         reason: failed.length
           ? `${check.reason}; failed: ${failed.map((r) => r.message ?? 'no message').join('; ')}`
           : check.reason,
-        conditions: { runs: ran.map((r) => r.conditions) },
+        conditions: {
+          runs: ran.map((r) => (r.source ? { ...r.conditions, source: r.source } : r.conditions)),
+        },
       };
     }),
   };

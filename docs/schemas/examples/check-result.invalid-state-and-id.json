@@ -1,0 +1,7 @@
+{
+  "schema": "https://oddkin.dev/schemas/check-result/v1.json",
+  "results": [
+    { "check": "example:odd-button/default", "state": "skipped", "conditions": { "browser": "chromium" } },
+    { "check": "odd-button/default", "state": "passed", "conditions": { "browser": "chromium" } }
+  ]
+}

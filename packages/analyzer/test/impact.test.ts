@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
   compareSnapshots,
   createSnapshot,
+  readCheckResults,
   readPackage,
   renderImpactMarkdown,
   type BaselineResult,
@@ -542,6 +543,44 @@ describe('change impact states and fallbacks', () => {
     );
     // A revision that is not a full commit id fails the schemas.
     expect(validSnapshot({ ...base, source: { revision: 'main', dirty: false } })).toBe(false);
+  });
+});
+
+describe('check results (check-result.v1)', () => {
+  const example = JSON.parse(
+    readFileSync(
+      new URL('../../../docs/schemas/examples/check-result.valid.json', import.meta.url),
+      'utf8',
+    ),
+  ) as { source: SourceProvenance; results: object[] };
+  const validResults = ajv.compile(schema('check-result'));
+
+  it("reads a document's runs, each with the commit the document records", () => {
+    expect(validResults(example), JSON.stringify(validResults.errors)).toBe(true);
+    expect(
+      readCheckResults(example, 'example.json').map((r) => [r.check, r.state, r.source]),
+    ).toEqual([
+      ['example:odd-button/default', 'passed', example.source],
+      ['suite:oddkin.button#odd-button', 'failed', example.source],
+      ['example:odd-dialog/default', 'not-executed', example.source],
+    ]);
+    const { source: _source, ...unrecorded } = example;
+    expect(readCheckResults(unrecorded).every((r) => !('source' in r))).toBe(true);
+  });
+
+  it('refuses anything else, naming the file', () => {
+    expect(() => readCheckResults([], 'list.json')).toThrow(
+      'list.json: not a check-result.v1 document',
+    );
+    const conformance = 'https://oddkin.dev/schemas/conformance-result/v1.json';
+    expect(() => readCheckResults({ ...example, schema: conformance }, 'other.json')).toThrow(
+      'other.json: not a check-result.v1 document',
+    );
+    const skipped = { check: 'example:odd-button/default', state: 'skipped', conditions: {} };
+    expect(validResults({ ...example, results: [skipped] })).toBe(false);
+    expect(() => readCheckResults({ ...example, results: [skipped] }, 'run.json')).toThrow(
+      'run.json: results[0] needs a check, a state (passed, failed, or not-executed), and conditions',
+    );
   });
 });
 

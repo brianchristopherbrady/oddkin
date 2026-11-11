@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/check-result/v1.json",
+  "title": "Oddkin check results v1",
+  "description": "Runs of the checks change impact selects (change-impact-and-verification.md §2.4): one result per run of a check, for example per browser, and the commit the runs happened at. oddkin-impact compare reads them with --results (runs to merge into a report) and --baseline (earlier runs to reuse).",
+  "type": "object",
+  "required": ["schema", "results"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://oddkin.dev/schemas/check-result/v1.json" },
+    "source": {
+      "type": "object",
+      "description": "Where every run in the file happened: the commit, and whether the working tree had changes it does not hold. A baseline result is reused only from the base snapshot's own commit with neither side dirty. Absent when not recorded.",
+      "required": ["revision", "dirty"],
+      "additionalProperties": false,
+      "properties": {
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$" },
+        "dirty": { "type": "boolean" }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check", "state", "conditions"],
+        "additionalProperties": false,
+        "properties": {
+          "check": {
+            "type": "string",
+            "pattern": "^(example:[^/]+/.+|suite:[^#]+#.+)$",
+            "description": "The check's id in the impact report: example:<tag>/<name> or suite:<id>#<tag>."
+          },
+          "product": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The product the check ran in, when it ran in one."
+          },
+          "state": {
+            "enum": ["passed", "failed", "not-executed"],
+            "description": "not-executed: selected but not run (skipped, filtered, or the environment was unavailable)."
+          },
+          "message": { "type": "string", "description": "Why it failed or did not run." },
+          "conditions": {
+            "type": "object",
+            "description": "What ran: browser and version, configuration, input hashes."
+          }
+        }
+      }
+    }
+  }
+}

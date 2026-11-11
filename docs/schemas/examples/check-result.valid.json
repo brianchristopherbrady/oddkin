@@ -1,0 +1,24 @@
+{
+  "schema": "https://oddkin.dev/schemas/check-result/v1.json",
+  "source": { "revision": "0123456789abcdef0123456789abcdef01234567", "dirty": false },
+  "results": [
+    {
+      "check": "example:odd-button/default",
+      "product": "harbor",
+      "state": "passed",
+      "conditions": { "browser": "chromium", "userAgent": "Mozilla/5.0 (simulated)" }
+    },
+    {
+      "check": "suite:oddkin.button#odd-button",
+      "state": "failed",
+      "message": "focus-ring: expected an outline on :focus-visible",
+      "conditions": { "browser": "webkit" }
+    },
+    {
+      "check": "example:odd-dialog/default",
+      "state": "not-executed",
+      "message": "no such example",
+      "conditions": { "browser": "firefox" }
+    }
+  ]
+}

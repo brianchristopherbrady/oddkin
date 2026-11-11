@@ -41,7 +41,7 @@ describe('draft JSON Schemas', () => {
   // Copies the packages publish for editors and exported artifacts (scripts/sync-tool-schemas.mjs).
   it.each([
     ['workbench', ['docs-content', 'workbench-config']],
-    ['analyzer', ['comparison-snapshot', 'impact-report', 'product']],
+    ['analyzer', ['check-result', 'comparison-snapshot', 'impact-report', 'product']],
   ])('@oddkin/%s publishes its copies unchanged', (name, schemas) => {
     const pkg = fileURLToPath(new URL(`../../packages/${name}/`, import.meta.url));
     const manifest = read(join(pkg, 'package.json')) as {

@@ -7,11 +7,13 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { emitInspectJson, generate } from '@oddkin/tokens/generate';
 import { main } from '../src/impact-cli.js';
 import {
+  CHECK_RESULT_SCHEMA,
   compareSnapshots,
   createSnapshot,
   mergeResults,
   type CheckResult,
   type ComparisonSnapshot,
+  type ImpactReport,
 } from '../src/impact.js';
 import { clone, library } from './impact.fixture.js';
 
@@ -72,6 +74,17 @@ describe('mergeResults', () => {
       report.checks.find((c) => c.id === 'example:acme-field/default'),
     );
     expect(merged.checks.filter((c) => c.state === 'selected')).toEqual([]);
+  });
+
+  it('lists the commit each run happened at, when its document recorded one', () => {
+    const source = { revision: 'c'.repeat(40), dirty: false };
+    const merged = mergeResults(report, [
+      { check: 'example:acme-button/default', product: 'p1', ...run('chromium', 'passed'), source },
+    ]);
+    expect(
+      merged.checks.find((c) => c.id === 'example:acme-button/default' && c.product === 'p1')
+        ?.conditions,
+    ).toEqual({ runs: [{ browser: 'chromium', source }] });
   });
 });
 
@@ -136,10 +149,13 @@ describe('oddkin-impact', () => {
     );
     writeFileSync(
       path('results.json'),
-      JSON.stringify([
-        { check: 'example:odd-side-nav/default', ...run('chromium', 'failed', 'boom') },
-        { check: 'example:odd-side-nav/wide', ...run('chromium', 'passed') },
-      ]),
+      JSON.stringify({
+        schema: CHECK_RESULT_SCHEMA,
+        results: [
+          { check: 'example:odd-side-nav/default', ...run('chromium', 'failed', 'boom') },
+          { check: 'example:odd-side-nav/wide', ...run('chromium', 'passed') },
+        ],
+      }),
     );
     const { out, io: streams } = io();
     const code = main(
@@ -169,6 +185,40 @@ describe('oddkin-impact', () => {
       'example:odd-side-nav/wide': 'passed',
     });
     expect(readFileSync(path('report.md'), 'utf8')).toBe(out.join('\n'));
+    // A result file is a check-result.v1 document: a bare list of results is an input error.
+    writeFileSync(path('list.json'), JSON.stringify([]));
+    const { err, io: failing } = io();
+    expect(
+      main(
+        ['compare', path('base.json'), path('edited.json'), '--results', path('list.json')],
+        failing,
+      ),
+    ).toBe(2);
+    expect(err.join('\n')).toContain(`${path('list.json')}: not a check-result.v1 document`);
+  });
+
+  it('reuses the passed and failed runs of a --baseline document, not the ones that did not run', () => {
+    writeFileSync(
+      path('baseline.json'),
+      JSON.stringify({
+        schema: CHECK_RESULT_SCHEMA,
+        results: [
+          { check: 'example:odd-side-nav/default', ...run('chromium', 'passed') },
+          { check: 'example:odd-side-nav/wide', ...run('chromium', 'not-executed', 'skipped') },
+        ],
+      }),
+    );
+    const args = ['compare', path('base.json'), path('head.json')];
+    expect(
+      main([...args, '--baseline', path('baseline.json'), '--json', path('reuse.json')], io().io),
+    ).toBe(0);
+    const { checks } = JSON.parse(readFileSync(path('reuse.json'), 'utf8')) as ImpactReport;
+    const check = (id: string) => checks.find((c) => c.id === id);
+    expect(check('example:odd-side-nav/default')).toMatchObject({ state: 'reused' });
+    expect(check('example:odd-side-nav/wide')).toMatchObject({
+      state: 'selected',
+      reason: 'no baseline result',
+    });
   });
 
   it('reports usage errors with exit code 2', () => {

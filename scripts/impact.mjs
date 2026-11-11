@@ -219,17 +219,17 @@ async function snapshotRef(ref, out) {
  * `results` when that is not where the run writes them.
  */
 export function runSelected(root, report, results = join(root, '.oddkin/impact/results')) {
-  const selected = JSON.parse(readFileSync(report, 'utf8')).checks.filter(
-    (c) => c.state === 'selected',
-  );
+  const { checks, head } = JSON.parse(readFileSync(report, 'utf8'));
+  const selected = checks.filter((c) => c.state === 'selected');
   const own = join(root, '.oddkin/impact');
   const written = join(own, 'results');
   rmSync(written, { recursive: true, force: true });
   mkdirSync(own, { recursive: true });
   const selection = join(own, 'selection.json');
+  // The runs happen on the head's checkout, so their result files record the head's commit.
   writeFileSync(
     selection,
-    `${JSON.stringify({ checks: selected.map(({ id, product }) => ({ id, ...(product ? { product } : {}) })) }, null, 2)}\n`,
+    `${JSON.stringify({ checks: selected.map(({ id, product }) => ({ id, ...(product ? { product } : {}) })), ...(head?.source ? { source: head.source } : {}) }, null, 2)}\n`,
   );
   try {
     if (selected.length) {

@@ -6,8 +6,10 @@
  *       [--product <product.json>]... [--suite <id>@<version>:<tag>,<tag>]...
  *       [--migrations <migrations.json>] [--tool <name>=<version>]... [--source <repo-dir>]
  *   oddkin-impact compare <base.json> <head.json>
- *       [--baseline <results.json>] [--results <results.json>]...
+ *       [--baseline <check-results.json>] [--results <check-results.json>]...
  *       [--json <report.json>] [--markdown <report.md>]
+ *
+ * Result files are check-result.v1 documents.
  *
  * Exit codes: 0 success; 1 a merged check failed; 2 usage or input error.
  */
@@ -19,6 +21,7 @@ import {
   compareSnapshots,
   createSnapshot,
   mergeResults,
+  readCheckResults,
   readPackage,
   renderImpactMarkdown,
   type BaselineResult,
@@ -31,7 +34,8 @@ import {
 
 export const USAGE = `Usage:
   oddkin-impact snapshot <package-dir>... --out <snapshot.json> [--theme <config.json> --inspection <inspect.json>] [--product <product.json>]... [--suite <id>@<version>:<tag>,...]... [--migrations <file.json>] [--tool <name>=<version>]... [--source <repo-dir>]
-  oddkin-impact compare <base.json> <head.json> [--baseline <results.json>] [--results <results.json>]... [--json <report.json>] [--markdown <report.md>]`;
+  oddkin-impact compare <base.json> <head.json> [--baseline <check-results.json>] [--results <check-results.json>]... [--json <report.json>] [--markdown <report.md>]
+      Result files are check-result.v1 documents (https://oddkin.dev/schemas/check-result/v1.json).`;
 
 const readJson = <T>(path: string) => JSON.parse(readFileSync(path, 'utf8')) as T;
 const write = (path: string, text: string) => {
@@ -135,15 +139,21 @@ export function main(argv: readonly string[], io: Io): number {
         io.err(USAGE);
         return 2;
       }
+      // An earlier run that did not execute a check is no result to reuse.
+      const baseline = values.baseline
+        ? readCheckResults(readJson(values.baseline), values.baseline).filter(
+            (r): r is CheckResult & BaselineResult => r.state !== 'not-executed',
+          )
+        : undefined;
       let report = compareSnapshots(
         readJson<ComparisonSnapshot>(basePath),
         readJson<ComparisonSnapshot>(headPath),
-        values.baseline ? { baseline: readJson<BaselineResult[]>(values.baseline) } : {},
+        baseline ? { baseline } : {},
       );
       if (values.results)
         report = mergeResults(
           report,
-          values.results.flatMap((path) => readJson<CheckResult[]>(path)),
+          values.results.flatMap((path) => readCheckResults(readJson(path), path)),
         );
       if (values.json) write(values.json, `${JSON.stringify(report, null, 2)}\n`);
       const markdown = renderImpactMarkdown(report);

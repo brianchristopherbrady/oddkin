@@ -16,6 +16,8 @@ vi.setConfig({ testTimeout: 120_000 });
 const SELECTION = '.oddkin/impact/selection.json';
 interface Selection {
   readonly checks: readonly { readonly id: string; readonly product?: string }[];
+  /** The commit the checks run at: the head snapshot's, when it recorded one. */
+  readonly source?: { readonly revision: string; readonly dirty: boolean };
 }
 const selection = await commands
   .readFile(SELECTION)
@@ -112,9 +114,18 @@ describe.skipIf(!selection)('checks selected by change impact', () => {
         conditions,
       });
     }
+    // A check-result.v1 document, which oddkin-impact compare --results reads.
     await commands.writeFile(
       `.oddkin/impact/results/${server.browser}.json`,
-      `${JSON.stringify(results, null, 2)}\n`,
+      `${JSON.stringify(
+        {
+          schema: 'https://oddkin.dev/schemas/check-result/v1.json',
+          ...(selection!.source ? { source: selection!.source } : {}),
+          results,
+        },
+        null,
+        2,
+      )}\n`,
     );
     expect(results.length).toBe(selection!.checks.length);
   });
