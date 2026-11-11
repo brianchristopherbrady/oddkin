@@ -88,7 +88,9 @@ describe('mergeResults', () => {
   });
 });
 
-describe('oddkin-impact', () => {
+// The commands snapshot the built components package and spawn git: on a loaded machine one takes
+// over a minute, so the commands get two (Agent 1, 2026-11-10).
+describe('oddkin-impact', { timeout: 120_000 }, () => {
   const dir = mkdtempSync(join(tmpdir(), 'oddkin-impact-'));
   afterAll(() => rmSync(dir, { recursive: true, force: true }));
   const path = (name: string) => join(dir, name);
@@ -275,7 +277,7 @@ describe('oddkin-impact', () => {
     } finally {
       rmSync(outside, { recursive: true, force: true });
     }
-  }, 60_000);
+  });
 
   it("snapshots metadata only for the manifest's elements, and stops at a schema it does not read", () => {
     const pkg = path('stale-package');
