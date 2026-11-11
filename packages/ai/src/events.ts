@@ -295,6 +295,11 @@ export const assistRequestEvent = event<AssistRequestDetail>('odd-assist-request
   description: 'Request assistance for the captured selection.',
 });
 
+/** Where a browse request looks: a source's top level, or inside one of its containers. */
+export interface ContextLocation {
+  readonly sourceId: string;
+  readonly id?: string;
+}
 export interface ContextQueryDetail {
   /** Echo it in `results.requestId`; results for an older request are ignored. */
   readonly requestId: string;
@@ -302,6 +307,10 @@ export interface ContextQueryDetail {
   readonly query: string;
   /** The sources to search: all of them, or the one chosen in the scope. */
   readonly sourceIds: readonly string[];
+  /** Present when browsing: list what is here rather than searching. */
+  readonly location?: ContextLocation;
+  /** The `nextCursor` of the results shown: answer with the next page, which the picker appends. */
+  readonly cursor?: string;
   /** Aborted when a newer request replaces this one or the picker closes. */
   readonly signal: AbortSignal;
 }

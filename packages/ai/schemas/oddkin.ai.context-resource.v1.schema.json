@@ -34,6 +34,10 @@
     "unavailable": {
       "description": "Why it cannot be used now; absent when it can.",
       "type": "string"
+    },
+    "container": {
+      "description": "Opens to show what is inside it when activated; it is not chosen itself.",
+      "type": "boolean"
     }
   },
   "required": [

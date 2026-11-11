@@ -43,6 +43,10 @@
           "unavailable": {
             "description": "Why it cannot be used now; absent when it can.",
             "type": "string"
+          },
+          "container": {
+            "description": "Opens to show what is inside it when activated; it is not chosen itself.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -83,6 +87,10 @@
     "total": {
       "type": "integer",
       "minimum": 0
+    },
+    "nextCursor": {
+      "description": "Give it back in `cursor` to ask for the next page.",
+      "type": "string"
     }
   },
   "required": [

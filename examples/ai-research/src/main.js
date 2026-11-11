@@ -97,9 +97,48 @@ sync();
 // accepts each change by setting `value`, and shows the chosen resources as removable chips.
 const contextSources = [
   { id: 'notes', label: 'Notes' },
-  { id: 'papers', label: 'Papers' },
+  { id: 'papers', label: 'Papers', description: '2 collections', browse: true },
   { id: 'web', label: 'Saved pages' },
 ];
+// What a paper collection holds, by its id (a source's top level by the source's id).
+const collections = {
+  papers: [
+    {
+      sourceId: 'papers',
+      id: 'coral',
+      label: 'Coral',
+      type: 'collection',
+      description: 'Open collection',
+      container: true,
+    },
+    {
+      sourceId: 'papers',
+      id: 'seas',
+      label: 'Temperate seas',
+      type: 'collection',
+      description: 'Open collection',
+      container: true,
+    },
+  ],
+  coral: [
+    {
+      sourceId: 'papers',
+      id: 'reef-survey',
+      label: 'Reef survey 2024',
+      type: 'paper',
+      description: 'PDF · 12 pages',
+    },
+  ],
+  seas: [
+    {
+      sourceId: 'papers',
+      id: 'kelp-loss',
+      label: 'Kelp forest loss',
+      type: 'paper',
+      description: 'PDF · 8 pages',
+    },
+  ],
+};
 const library = [
   {
     sourceId: 'notes',
@@ -157,9 +196,12 @@ picker.addEventListener('odd-context-query', ({ detail }) => {
     if (detail.signal.aborted) return;
     picker.results = {
       requestId: detail.requestId,
-      items: library.filter(
-        (r) => detail.sourceIds.includes(r.sourceId) && r.label.toLocaleLowerCase().includes(query),
-      ),
+      items: detail.location
+        ? (collections[detail.location.id ?? detail.location.sourceId] ?? [])
+        : library.filter(
+            (r) =>
+              detail.sourceIds.includes(r.sourceId) && r.label.toLocaleLowerCase().includes(query),
+          ),
       sources: detail.sourceIds.map((sourceId) => ({ sourceId, status: 'complete' })),
     };
   }, 250);

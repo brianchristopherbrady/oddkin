@@ -13,6 +13,8 @@ export const contextPickerRecipe = defineLayoutRecipe({
     surface: stack({ gap: token('space.xs') }),
     header: row({ justify: 'space-between', gap: token('space.sm') }),
     'scope-row': row({ gap: token('space.xs'), wrap: true }),
+    browse: stack({ gap: token('space.2xs') }),
+    containers: stack({ gap: token('space.2xs') }),
     results: stack({ gap: token('space.none') }),
     feedback: stack({ gap: token('space.xs'), align: 'start' }),
     footer: row({ gap: token('space.xs'), wrap: true }),

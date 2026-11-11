@@ -14,7 +14,12 @@
       "pattern": "\\S"
     },
     "description": {
+      "description": "Shown beside the label when browsing sources.",
       "type": "string"
+    },
+    "browse": {
+      "description": "Whether the host can list what is inside it (Browse).",
+      "type": "boolean"
     }
   },
   "required": [

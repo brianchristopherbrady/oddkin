@@ -22,6 +22,7 @@ export const contextPickerStyles = css`
     display: flex;
     inline-size: min(26rem, max(20rem, var(--_overlay-max-inline-size, 26rem)));
     max-inline-size: min(28rem, var(--_overlay-max-inline-size, 28rem));
+    block-size: min(30rem, var(--_overlay-max-block-size, 30rem));
     max-block-size: min(30rem, var(--_overlay-max-block-size, 30rem));
     padding: ${token('space.sm')} ${token('space.sm')} 0;
     overflow: hidden;
@@ -48,6 +49,11 @@ export const contextPickerStyles = css`
   .status-line.danger,
   .feedback-title.danger {
     color: ${token('color.danger.foreground')};
+  }
+  .browse,
+  .containers,
+  .more {
+    flex: none;
   }
   .results {
     flex: 1 1 auto;
@@ -102,6 +108,7 @@ export const contextPickerStyles = css`
   }
   .footer {
     min-block-size: 3.5rem;
+    margin-block-start: auto;
     margin-inline: calc(-1 * ${token('space.sm')});
     padding-inline: ${token('space.sm')};
     border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};

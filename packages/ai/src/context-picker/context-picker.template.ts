@@ -30,11 +30,26 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const states = shown?.sources ?? [];
   const failed = states.filter((s) => s.status === 'failed');
   const allFailed = !!shown && !loading && failed.length > 0 && failed.length === states.length;
-  const items: readonly ContextResource[] = reviewing
+  const browse = host._browse.value;
+  const browsingRoot = !!browse && !browse.sourceId;
+  const here = browse?.sourceId ? host._path() : '';
+  const browsable = host.sources.filter((s) => s.browse);
+  const all: readonly ContextResource[] = reviewing
     ? chosen
-    : allFailed
+    : allFailed || browsingRoot
       ? []
       : (shown?.items ?? []);
+  const containers = reviewing ? [] : all.filter((r) => r.container);
+  const items = all.filter((r) => !r.container);
+  const more = !reviewing && !loading && !browsingRoot && shown?.nextCursor !== undefined;
+  const scopeValue = browse?.sourceId ?? host._scope.value;
+  const backTo = browse?.sourceId
+    ? browse.trail.length > 1
+      ? (browse.trail.at(-2) as ContextResource).label
+      : browse.trail.length === 1
+        ? host._sourceLabel(browse.sourceId)
+        : t.sources
+    : '';
   const sources = host._sourcesText(scopeIds);
   const confirm = host.commit === 'confirm';
   const count = n(chosen.length);
@@ -43,58 +58,66 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
     ? format(t.review, { count })
     : allFailed
       ? format(t.failedStatus, { sources: host._sourcesText(failed.map((s) => s.sourceId)) })
-      : loading
-        ? shown
-          ? format(t.searching, { sources })
-          : format(t.loading, { sources: format(t.connected, { count: n(scopeIds.length) }) })
-        : failed.length
-          ? format(t.partial, {
-              failed: host._sourcesText(failed.map((s) => s.sourceId)),
-              searched: n(states.length - failed.length),
-              total: n(states.length),
-            })
-          : host.multiple && host._atLimit.value
-            ? format(t.limit, { count, max: n(host.max) })
-            : query
-              ? shown?.items.length
-                ? format(t.matches, { count: n(shown.total ?? shown.items.length), sources })
-                : format(t.noMatchesStatus, { sources })
-              : confirm
-                ? format(t.confirmHint, { count })
-                : !host.multiple
-                  ? t.singleHint
-                  : format(t.recent, {
-                      sources: format(t.connected, { count: n(scopeIds.length) }),
-                    });
+      : browsingRoot
+        ? t.browseRoot
+        : loading
+          ? shown
+            ? format(t.searching, { sources })
+            : format(t.loading, { sources: format(t.connected, { count: n(scopeIds.length) }) })
+          : failed.length
+            ? format(t.partial, {
+                failed: host._sourcesText(failed.map((s) => s.sourceId)),
+                searched: n(states.length - failed.length),
+                total: n(states.length),
+              })
+            : host.multiple && host._atLimit.value
+              ? format(t.limit, { count, max: n(host.max) })
+              : here
+                ? format(t.browseIn, { path: here })
+                : shown?.nextCursor !== undefined && shown.total === undefined
+                  ? format(t.loaded, { count: n(shown.items.length) })
+                  : query
+                    ? shown?.items.length
+                      ? format(t.matches, { count: n(shown.total ?? shown.items.length), sources })
+                      : format(t.noMatchesStatus, { sources })
+                    : confirm
+                      ? format(t.confirmHint, { count })
+                      : !host.multiple
+                        ? t.singleHint
+                        : format(t.recent, {
+                            sources: format(t.connected, { count: n(scopeIds.length) }),
+                          });
 
   const feedback = reviewing
     ? chosen.length
       ? nothing
       : html`<p class="feedback-text">${t.noneSelected}</p>`
-    : allFailed
-      ? html`<p class="feedback-title danger">
-            ${format(t.failed, { sources: host._sourcesText(failed.map((s) => s.sourceId)) })}
-          </p>
-          <p class="feedback-text">${t.failedText}</p>
-          <button class="odd-button" data-size="sm" type="button" @click=${host._onRetry}>
-            ${t.retry}
-          </button>`
-      : loading && !shown
-        ? html`<p class="feedback-title">${t.loadingTitle}</p>
-            <p class="feedback-text">${format(t.loadingText, { sources })}</p>
-            <span class="placeholder" aria-hidden="true"></span>
-            <span class="placeholder" aria-hidden="true"></span>
-            <span class="placeholder" aria-hidden="true"></span>`
-        : shown && !loading && !shown.items.length
-          ? query
-            ? html`<p class="feedback-title">${format(t.noMatches, { sources })}</p>
-                <p class="feedback-text">${t.noMatchesText}</p>
-                <button class="odd-button" data-size="sm" type="button" @click=${host._onClear}>
-                  ${t.clearSearch}
-                </button>`
-            : html`<p class="feedback-title">${t.empty}</p>
-                <p class="feedback-text">${t.emptyText}</p>`
-          : nothing;
+    : browsingRoot
+      ? nothing
+      : allFailed
+        ? html`<p class="feedback-title danger">
+              ${format(t.failed, { sources: host._sourcesText(failed.map((s) => s.sourceId)) })}
+            </p>
+            <p class="feedback-text">${t.failedText}</p>
+            <button class="odd-button" data-size="sm" type="button" @click=${host._onRetry}>
+              ${t.retry}
+            </button>`
+        : loading && !shown
+          ? html`<p class="feedback-title">${t.loadingTitle}</p>
+              <p class="feedback-text">${format(t.loadingText, { sources })}</p>
+              <span class="placeholder" aria-hidden="true"></span>
+              <span class="placeholder" aria-hidden="true"></span>
+              <span class="placeholder" aria-hidden="true"></span>`
+          : shown && !loading && !all.length
+            ? query
+              ? html`<p class="feedback-title">${format(t.noMatches, { sources })}</p>
+                  <p class="feedback-text">${t.noMatchesText}</p>
+                  <button class="odd-button" data-size="sm" type="button" @click=${host._onClear}>
+                    ${t.clearSearch}
+                  </button>`
+              : html`<p class="feedback-title">${t.empty}</p>
+                  <p class="feedback-text">${t.emptyText}</p>`
+            : nothing;
 
   return html`<button
       part="trigger"
@@ -152,10 +175,10 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
           host.sources.length > 1
             ? html`<span class="control-box"
                 ><select class="control scope" aria-label=${t.scope} @change=${host._onScope}>
-                  <option value="" ?selected=${!host._scope.value}>${t.allSources}</option>
+                  <option value="" ?selected=${!scopeValue}>${t.allSources}</option>
                   ${host.sources.map(
                     (s) =>
-                      html`<option .value=${s.id} ?selected=${host._scope.value === s.id}>
+                      html`<option .value=${s.id} ?selected=${scopeValue === s.id}>
                         ${s.label}
                       </option>`,
                   )}
@@ -177,6 +200,56 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
       <p id="status" class=${`status-line${allFailed || failed.length ? ' danger' : ''}`}>
         ${status}
       </p>
+      ${
+        browse
+          ? html`<div part="browse" class="browse">
+              ${
+                browsingRoot
+                  ? browsable.map(
+                      (s) =>
+                        html`<button
+                          class="odd-button source"
+                          data-size="sm"
+                          data-appearance="ghost"
+                          type="button"
+                          data-id=${s.id}
+                          @click=${host._onSource}
+                        >
+                          ${s.description ? format(t.detail, { label: s.label, detail: s.description }) : s.label}
+                        </button>`,
+                    )
+                  : html`<button
+                      class="odd-button back"
+                      data-size="sm"
+                      data-appearance="ghost"
+                      type="button"
+                      @click=${host._onBack}
+                    >
+                      ${format(t.back, { where: backTo })}
+                    </button>`
+              }
+            </div>`
+          : nothing
+      }
+      ${
+        containers.length
+          ? html`<div class="containers">
+              ${containers.map(
+                (r) =>
+                  html`<button
+                    class="odd-button container"
+                    data-size="sm"
+                    data-appearance="ghost"
+                    type="button"
+                    data-key=${resourceKey(r)}
+                    @click=${host._onContainer}
+                  >
+                    ${format(t.detail, { label: r.label, detail: r.description ?? r.type })}
+                  </button>`,
+              )}
+            </div>`
+          : nothing
+      }
       <div
         part="results"
         id="results"
@@ -227,10 +300,36 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
           },
         )}
       </div>
+      ${
+        more
+          ? html`<button
+              class="odd-button more"
+              data-size="sm"
+              data-appearance="ghost"
+              type="button"
+              @click=${host._onLoadMore}
+            >
+              ${t.loadMore}
+            </button>`
+          : nothing
+      }
       <div class="feedback" ?hidden=${feedback === nothing}>${feedback}</div>
       <div part="footer" class="footer">
         <span class="count">${format(t.count, { count })}</span>
         <slot name="actions"></slot>
+        ${
+          browsable.length
+            ? html`<button
+                class="odd-button"
+                data-size="sm"
+                data-appearance="ghost"
+                type="button"
+                @click=${host._onBrowse}
+              >
+                ${t.browse}
+              </button>`
+            : nothing
+        }
         ${
           confirm
             ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._onCancel}>

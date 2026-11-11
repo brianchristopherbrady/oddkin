@@ -32,6 +32,34 @@ const notes: ContextResource = {
   unavailable: 'Unavailable',
 };
 
+const browsable: ContextSource[] = [
+  { id: 'drive', label: 'Drive', description: '240 resources', browse: true },
+  { id: 'wiki', label: 'Wiki', description: '86 pages', browse: true },
+  { id: 'records', label: 'Records' },
+];
+const launch: ContextResource = {
+  sourceId: 'drive',
+  id: 'launch',
+  label: 'Launch',
+  type: 'folder',
+  description: 'Open collection',
+  container: true,
+};
+const product: ContextResource = {
+  sourceId: 'drive',
+  id: 'product',
+  label: 'Product',
+  type: 'folder',
+  container: true,
+};
+const folderRef: ContextResource = {
+  sourceId: 'drive',
+  id: 'launch-folder',
+  label: 'Launch folder',
+  type: 'folder',
+  description: 'Folder reference · contents not selected',
+};
+
 let container: HTMLElement;
 beforeEach(() => {
   container = document.createElement('div');
@@ -61,7 +89,11 @@ interface Harness {
   el: Picker;
   queries: ContextQueryDetail[];
   /** Answer the latest query with these items (each source complete unless failed). */
-  answer(items: ContextResource[], failed?: string[]): Promise<void>;
+  answer(
+    items: ContextResource[],
+    failed?: string[],
+    extra?: { nextCursor?: string; total?: number },
+  ): Promise<void>;
 }
 
 /** A picker whose host records each query; with `accept`, it accepts every change. */
@@ -79,11 +111,12 @@ async function mount(setup: (el: Picker) => void = () => {}, accept = true): Pro
   return {
     el,
     queries,
-    async answer(items, failed = []) {
+    async answer(items, failed = [], extra = {}) {
       const q = queries.at(-1)!;
       el.results = {
         requestId: q.requestId,
         items,
+        ...extra,
         sources: q.sourceIds.map((sourceId) =>
           failed.includes(sourceId)
             ? { sourceId, status: 'failed' as const }
@@ -449,5 +482,246 @@ describe('odd-context-picker', () => {
     await open(h);
     expect(h.el.open).toBe(false);
     expect(h.queries).toHaveLength(0);
+  });
+});
+
+describe('odd-context-picker: browsing and paging', () => {
+  const text = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim();
+  const status = (h: Harness) => text($(h.el, '.status-line'));
+  const browse = (h: Harness) =>
+    $$(h.el, '[part="footer"] button').find((b) => text(b) === 'Browse…') as HTMLElement;
+  const mountBrowsable = (setup: (el: Picker) => void = () => {}) =>
+    mount((el) => {
+      el.sources = browsable;
+      setup(el);
+    });
+
+  it('offers Browse… only when a source can be browsed', async () => {
+    const plain = await mount();
+    await open(plain);
+    expect($$(plain.el, '[part="footer"] button').map(text)).toEqual(['Done']);
+    const h = await mountBrowsable();
+    await open(h);
+    expect($$(h.el, '[part="footer"] button').map(text)).toEqual(['Browse…', 'Done']);
+  });
+
+  it('lists the sources that can be browsed, keeps the scope explicit, and asks for nothing yet', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([brief], [], { nextCursor: 'p2' });
+    const search = $(h.el, '[part="search"]') as HTMLInputElement;
+    search.value = 'bri';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 260));
+    await h.answer([brief], [], { nextCursor: 'p2' });
+    expect($(h.el, '.more')).not.toBeNull();
+    const asked = h.queries.length;
+    browse(h).click();
+    await settle(h.el);
+    expect($$(h.el, '.browse .source').map(text)).toEqual([
+      'Drive · 240 resources',
+      'Wiki · 86 pages',
+    ]);
+    expect(status(h)).toBe('Browse · search scope stays explicit');
+    expect(($(h.el, '[part="results"]') as HTMLElement).hidden).toBe(true);
+    expect(h.queries).toHaveLength(asked);
+    expect(h.el.shadowRoot!.activeElement).toBe($(h.el, '.source'));
+    expect(search.value, 'the search is cleared').toBe('');
+    expect($(h.el, '.more'), 'no Load more on the sources').toBeNull();
+  });
+
+  it('browses a source, opens containers, selects a folder reference, and goes back', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([]);
+    browse(h).click();
+    await settle(h.el);
+    ($$(h.el, '.source')[0] as HTMLElement).click();
+    await settle(h.el);
+    expect(h.queries.at(-1)).toMatchObject({
+      query: '',
+      sourceIds: ['drive'],
+      location: { sourceId: 'drive' },
+    });
+    expect(h.queries.at(-1)!.location).not.toHaveProperty('id');
+    await h.answer([product, launch, folderRef]);
+    expect(status(h)).toBe('Drive · browse');
+    expect(text($(h.el, '.back'))).toBe('Back · Sources');
+    expect($$(h.el, '.containers .container').map(text)).toEqual([
+      'Product · folder',
+      'Launch · Open collection',
+    ]);
+    // A container opens; it is not an option. A folder reference is one.
+    expect(names(h.el)).toEqual(['Launch folder']);
+    ($$(h.el, '.container')[1] as HTMLElement).click();
+    await settle(h.el);
+    expect(h.queries.at(-1)).toMatchObject({ location: { sourceId: 'drive', id: 'launch' } });
+    await h.answer([folderRef]);
+    expect(h.el.shadowRoot!.activeElement).toBe($(h.el, '.back'));
+    expect(status(h)).toBe('Drive / Launch · browse');
+    expect(text($(h.el, '.back'))).toBe('Back · Drive');
+    options(h.el)[0]!.click();
+    await settle(h.el);
+    expect(h.el.value).toEqual([folderRef]);
+    // Up one container, then out to the sources.
+    ($(h.el, '.back') as HTMLElement).click();
+    await settle(h.el);
+    expect(h.queries.at(-1)!.location).toEqual({ sourceId: 'drive' });
+    await h.answer([product, launch]);
+    ($(h.el, '.back') as HTMLElement).click();
+    await settle(h.el);
+    expect($$(h.el, '.source')).toHaveLength(2);
+    expect(status(h)).toBe('Browse · search scope stays explicit');
+  });
+
+  it('shows the path in the Back label and the status, two containers deep', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([]);
+    browse(h).click();
+    await settle(h.el);
+    ($$(h.el, '.source')[0] as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([product]);
+    ($(h.el, '.container') as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([launch]);
+    ($(h.el, '.container') as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([folderRef]);
+    expect(status(h)).toBe('Drive / Product / Launch · browse');
+    expect(text($(h.el, '.back'))).toBe('Back · Product');
+    expect(($(h.el, 'select.scope') as HTMLSelectElement).value).toBe('drive');
+  });
+
+  it('leaves browsing when the person types, changes the scope, or presses Browse… again', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([]);
+    const reenter = async () => {
+      browse(h).click();
+      await settle(h.el);
+      ($$(h.el, '.source')[0] as HTMLElement).click();
+      await settle(h.el);
+      await h.answer([folderRef]);
+      expect($(h.el, '.back')).not.toBeNull();
+    };
+    await reenter();
+    const search = $(h.el, '[part="search"]') as HTMLInputElement;
+    search.value = 'launch';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await settle(h.el);
+    expect($(h.el, '.back')).toBeNull();
+    await new Promise((r) => setTimeout(r, 260));
+    expect(h.queries.at(-1)!).toMatchObject({ query: 'launch' });
+    expect(h.queries.at(-1)!).not.toHaveProperty('location');
+    await h.answer([brief]);
+    await reenter();
+    const scope = $(h.el, 'select.scope') as HTMLSelectElement;
+    scope.value = 'wiki';
+    scope.dispatchEvent(new Event('change', { bubbles: true }));
+    await settle(h.el);
+    expect($(h.el, '.back')).toBeNull();
+    expect(h.queries.at(-1)).toMatchObject({ sourceIds: ['wiki'] });
+    await h.answer([checklist]);
+    await reenter();
+    browse(h).click();
+    await settle(h.el);
+    expect($(h.el, '.back')).toBeNull();
+    expect($(h.el, '.browse'), 'the browse region is gone').toBeNull();
+  });
+
+  it('opens a container found in the results, starting a browse inside it', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    const search = $(h.el, '[part="search"]') as HTMLInputElement;
+    search.value = 'la';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 260));
+    await h.answer([launch, brief]);
+    expect(names(h.el)).toEqual(['Launch brief']);
+    ($(h.el, '.container') as HTMLElement).click();
+    await settle(h.el);
+    expect(h.queries.at(-1)).toMatchObject({
+      query: '',
+      sourceIds: ['drive'],
+      location: { sourceId: 'drive', id: 'launch' },
+    });
+    expect(search.value).toBe('');
+  });
+
+  it('announces the number of items of a browsed location', async () => {
+    const h = await mountBrowsable();
+    const heard: string[] = [];
+    container.addEventListener('odd-announce', (e) => {
+      heard.push((e as CustomEvent<{ text: string }>).detail.text);
+      e.preventDefault();
+    });
+    await open(h);
+    await h.answer([]);
+    browse(h).click();
+    await settle(h.el);
+    ($$(h.el, '.source')[0] as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([product, launch, folderRef]);
+    expect(heard).toEqual(['Drive: 3 items.']);
+  });
+
+  it('closing leaves browsing; reopening starts at the results', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([]);
+    browse(h).click();
+    await settle(h.el);
+    h.el.open = false;
+    await settle(h.el);
+    await open(h);
+    expect($(h.el, '.browse')).toBeNull();
+    expect(h.queries.at(-1)).not.toHaveProperty('location');
+  });
+
+  it('pages: Load more asks for the next page, appends it, and keeps the choice and the status honest', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    await h.answer([brief], [], { nextCursor: 'p2' });
+    expect(status(h)).toBe('1 loaded');
+    expect(text($(h.el, '.more'))).toBe('Load more');
+    options(h.el)[0]!.click();
+    await settle(h.el);
+    expect(h.el.value).toEqual([brief]);
+    ($(h.el, '.more') as HTMLElement).click();
+    await settle(h.el);
+    expect(h.queries.at(-1)).toMatchObject({ cursor: 'p2', query: '' });
+    expect($(h.el, '.more')).toBeNull();
+    await h.answer([checklist], [], { nextCursor: 'p3' });
+    expect(names(h.el)).toEqual(['Launch brief', 'Release checklist']);
+    expect(options(h.el)[0]!.getAttribute('aria-selected')).toBe('true');
+    expect(status(h)).toBe('2 loaded');
+    ($(h.el, '.more') as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([notes]);
+    expect(names(h.el)).toEqual(['Launch brief', 'Release checklist', 'Pricing notes']);
+    expect($(h.el, '.more')).toBeNull();
+  });
+
+  it('a known total replaces "N loaded" with the matches; a new search forgets the pages', async () => {
+    const h = await mountBrowsable();
+    await open(h);
+    const search = $(h.el, '[part="search"]') as HTMLInputElement;
+    search.value = 'l';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 260));
+    await h.answer([brief], [], { nextCursor: 'p2', total: 30 });
+    expect(status(h)).toBe('30 matches · Drive, Wiki and Records');
+    ($(h.el, '.more') as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([checklist], [], { total: 30 });
+    expect(names(h.el)).toEqual(['Launch brief', 'Release checklist']);
+    search.value = 'la';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 260));
+    expect(h.queries.at(-1)).not.toHaveProperty('cursor');
+    await h.answer([notes]);
+    expect(names(h.el)).toEqual(['Pricing notes']);
   });
 });

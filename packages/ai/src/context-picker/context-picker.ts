@@ -30,6 +30,15 @@ export const CONTEXT_PICKER_STRINGS = {
   noMatches: 'No matches in {sources}',
   noMatchesText: 'Try another name, or choose All sources.',
   clearSearch: 'Clear search',
+  browse: 'Browse…',
+  browseRoot: 'Browse · search scope stays explicit',
+  browseIn: '{path} · browse',
+  back: 'Back · {where}',
+  sources: 'Sources',
+  detail: '{label} · {detail}',
+  loadMore: 'Load more',
+  loaded: '{count} loaded',
+  browsedAnnouncement: '{path}: {count} items.',
   empty: 'No resources available',
   emptyText: 'This source has no resources to show.',
   failedStatus: '{sources} search failed · results unknown',
@@ -80,6 +89,7 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  * @csspart trigger - The button that opens the surface.
  * @csspart surface - The non-modal dialog, anchored to the trigger in the top layer.
  * @csspart search - The search field.
+ * @csspart browse - The sources list, or Back and where it goes, while browsing.
  * @csspart results - The listbox of results, or of the chosen resources in review.
  * @csspart option - Each result.
  * @csspart footer - The count, host actions, and Done (or Cancel and Add N).
@@ -136,6 +146,10 @@ export class OddkinContextPicker extends OddkinElement.with({
   readonly _shown = signal<ContextResults | undefined>(undefined);
   /** @internal The active option's index. */
   readonly _active = signal(-1);
+  /** @internal Browsing: the list of sources, or a source and the containers entered in it. */
+  readonly _browse = signal<
+    { readonly sourceId?: string; readonly trail: readonly ContextResource[] } | undefined
+  >(undefined);
 
   /** @internal The choice being edited: the draft, else the committed value. */
   readonly _chosen = computed(() => this._draft.value ?? this.value);
@@ -154,6 +168,8 @@ export class OddkinContextPicker extends OddkinElement.with({
   #announcer: LiveAnnouncer | undefined;
   #returnFocus = false;
   #byPerson = false;
+  /** The items already shown, while the next page of the same search loads. */
+  #append: readonly ContextResource[] | undefined;
   readonly #listbox = new ActiveDescendant({
     target: () => this._results(),
     items: () => [...(this._results()?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])],
@@ -191,10 +207,18 @@ export class OddkinContextPicker extends OddkinElement.with({
       last: labels[labels.length - 1] as string,
     });
   }
-  /** @internal The sources the scope searches. */
+  /** @internal The sources the scope searches, or the one being browsed. */
   _scopeIds(): string[] {
+    const browsing = this._browse.value?.sourceId;
+    if (browsing) return [browsing];
     const scope = this._scope.value;
     return scope ? [scope] : this.sources.map((s) => s.id);
+  }
+  /** @internal "Drive / Product / Launch": the source and the containers entered. */
+  _path(): string {
+    const browse = this._browse.value;
+    if (!browse?.sourceId) return '';
+    return [this._sourceLabel(browse.sourceId), ...browse.trail.map((r) => r.label)].join(' / ');
   }
 
   /** @internal Why a resource cannot be chosen now, or ''. */
@@ -248,6 +272,8 @@ export class OddkinContextPicker extends OddkinElement.with({
     this.#abort = undefined;
     this._pending.value = undefined;
     this._draft.value = undefined;
+    this._browse.value = undefined;
+    this.#append = undefined;
     this.#listbox.setActive(-1);
     const surface = this._surface();
     if (surface?.matches(':popover-open')) surface.hidePopover();
@@ -261,6 +287,7 @@ export class OddkinContextPicker extends OddkinElement.with({
   readonly _onInput = (event: Event): void => {
     this._query.value = (event.target as HTMLInputElement).value;
     this._view.value = 'results';
+    this._browse.value = undefined;
     clearTimeout(this.#timer);
     this.#timer = setTimeout(() => this.#request(this._query.peek()), 200);
   };
@@ -268,6 +295,7 @@ export class OddkinContextPicker extends OddkinElement.with({
   readonly _onScope = (event: Event): void => {
     this._scope.value = (event.target as HTMLSelectElement).value;
     this._view.value = 'results';
+    this._browse.value = undefined;
     this.#request(this._query.peek());
   };
   /** @internal */
@@ -279,26 +307,41 @@ export class OddkinContextPicker extends OddkinElement.with({
     this.shadowRoot?.querySelector<HTMLInputElement>('[part="search"]')?.focus();
   };
 
-  #request(query: string): void {
+  #request(query: string, cursor?: string): void {
     clearTimeout(this.#timer);
     this.#abort?.abort();
     const abort = (this.#abort = new AbortController());
     const requestId = createId('context');
     this._pending.value = requestId;
+    this.#append = cursor === undefined ? undefined : this._shown.peek()?.items;
     const sourceIds = this._scopeIds();
+    const browse = this._browse.peek();
+    const here = browse?.trail.at(-1);
+    const location = browse?.sourceId
+      ? { sourceId: browse.sourceId, ...(here ? { id: here.id } : {}) }
+      : undefined;
     if (query)
       this.#say({
         text: format(this._strings.searchingAnnouncement, {
           sources: this._sourcesText(sourceIds),
         }),
       });
-    this.emit(contextQueryEvent, { requestId, query, sourceIds, signal: abort.signal });
+    this.emit(contextQueryEvent, {
+      requestId,
+      query,
+      sourceIds,
+      ...(location ? { location } : {}),
+      ...(cursor === undefined ? {} : { cursor }),
+      signal: abort.signal,
+    });
   }
 
   /** @internal Results arrived: show them if they answer the latest request. */
   _receive(results: ContextResults | undefined): void {
     if (!results || results.requestId !== this._pending.peek()) return;
-    this._shown.value = results;
+    const base = this.#append;
+    this.#append = undefined;
+    this._shown.value = base ? { ...results, items: [...base, ...results.items] } : results;
     this.#listbox.sync();
     const failed = (results.sources ?? []).filter((s) => s.status === 'failed');
     if (failed.length)
@@ -308,6 +351,14 @@ export class OddkinContextPicker extends OddkinElement.with({
         }),
         priority: 'assertive',
         key: `failed:${results.requestId}`,
+      });
+    if (this._browse.peek()?.sourceId && !failed.length)
+      this.#say({
+        text: format(this._strings.browsedAnnouncement, {
+          path: this._path(),
+          count: formatNumber(results.items.length, langOf(this)),
+        }),
+        key: `browse:${results.requestId}`,
       });
     if (this._query.peek() && failed.length < (results.sources?.length ?? 1))
       this.#say({
@@ -319,6 +370,82 @@ export class OddkinContextPicker extends OddkinElement.with({
         key: `results:${results.requestId}`,
       });
   }
+
+  // ---- Browsing ----
+
+  #focusNavigation(): void {
+    void this.updateComplete.then(() => {
+      const root = this.shadowRoot;
+      (
+        root?.querySelector<HTMLElement>('.back') ??
+        root?.querySelector<HTMLElement>('.source') ??
+        root?.querySelector<HTMLElement>('[part="search"]')
+      )?.focus();
+    });
+  }
+  #stopRequest(): void {
+    clearTimeout(this.#timer);
+    this.#abort?.abort();
+    this.#abort = undefined;
+    this._pending.value = undefined;
+    this.#listbox.setActive(-1);
+  }
+
+  /** @internal Browse…: the sources to look into; again, back to the results. */
+  readonly _onBrowse = (): void => {
+    if (this._browse.peek()) {
+      this._browse.value = undefined;
+      this.#request(this._query.peek());
+      return;
+    }
+    this.#stopRequest();
+    this._query.value = '';
+    this._view.value = 'results';
+    this._browse.value = { trail: [] };
+    this.#focusNavigation();
+  };
+  /** @internal A source to browse. */
+  readonly _onSource = (event: Event): void => {
+    this._browse.value = {
+      sourceId: (event.currentTarget as HTMLElement).dataset['id'] as string,
+      trail: [],
+    };
+    this.#request('');
+    this.#focusNavigation();
+  };
+  /** @internal A container: open it, from the results or from browsing. */
+  readonly _onContainer = (event: Event): void => {
+    const key = (event.currentTarget as HTMLElement).dataset['key'];
+    const resource = this._shown.peek()?.items.find((r) => resourceKey(r) === key);
+    if (!resource) return;
+    const browse = this._browse.peek();
+    this._browse.value = {
+      sourceId: resource.sourceId,
+      trail: [...(browse?.trail ?? []), resource],
+    };
+    this._query.value = '';
+    this._view.value = 'results';
+    this.#request('');
+    this.#focusNavigation();
+  };
+  /** @internal Up one container, or out of the source to the sources. */
+  readonly _onBack = (): void => {
+    const browse = this._browse.peek();
+    if (!browse?.sourceId) return;
+    if (browse.trail.length) {
+      this._browse.value = { sourceId: browse.sourceId, trail: browse.trail.slice(0, -1) };
+      this.#request('');
+    } else {
+      this.#stopRequest();
+      this._browse.value = { trail: [] };
+    }
+    this.#focusNavigation();
+  };
+  /** @internal The next page of what is shown, appended to it. */
+  readonly _onLoadMore = (): void => {
+    const cursor = this._shown.peek()?.nextCursor;
+    if (cursor !== undefined) this.#request(this._query.peek(), cursor);
+  };
 
   // ---- Choosing ----
 

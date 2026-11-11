@@ -341,7 +341,10 @@ export const ContextSourceModel = defineModel('oddkin.ai.context-source', {
   schema: m.object({
     id: m.id(),
     label: m.label(),
-    description: m.optional(m.string()),
+    description: m.optional(
+      m.string({ description: 'Shown beside the label when browsing sources.' }),
+    ),
+    browse: m.optional(m.boolean('Whether the host can list what is inside it (Browse).')),
   }),
 });
 
@@ -358,6 +361,9 @@ const contextResourceSchema = m.object(
     description: m.optional(m.string({ description: 'Useful metadata, e.g. "2h ago".' })),
     unavailable: m.optional(
       m.string({ description: 'Why it cannot be used now; absent when it can.' }),
+    ),
+    container: m.optional(
+      m.boolean('Opens to show what is inside it when activated; it is not chosen itself.'),
     ),
   },
   'A resource a person can add as context. Identity is `sourceId` with `id`.',
@@ -385,6 +391,9 @@ export const ContextResultsModel = defineModel('oddkin.ai.context-results', {
       ),
     ),
     total: m.optional(m.number({ integer: true, minimum: 0 })),
+    nextCursor: m.optional(
+      m.string({ description: 'Give it back in `cursor` to ask for the next page.' }),
+    ),
   }),
 });
 

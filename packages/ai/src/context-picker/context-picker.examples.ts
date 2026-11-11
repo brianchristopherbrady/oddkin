@@ -70,6 +70,62 @@ const library: ContextResource[] = [
 
 type Picker = HTMLElementTagNameMap['odd-context-picker'];
 
+/** What each container holds, by the container's id (a source's top level by the source's id). */
+const folders: Record<string, ContextResource[]> = {
+  drive: [
+    {
+      sourceId: 'drive',
+      id: 'product',
+      label: 'Product',
+      type: 'folder',
+      description: 'Open collection',
+      container: true,
+    },
+    {
+      sourceId: 'drive',
+      id: 'research',
+      label: 'Research',
+      type: 'folder',
+      description: 'Open collection',
+      container: true,
+    },
+  ],
+  product: [
+    {
+      sourceId: 'drive',
+      id: 'launch',
+      label: 'Launch',
+      type: 'folder',
+      description: 'Open collection',
+      container: true,
+    },
+  ],
+  launch: [
+    {
+      sourceId: 'drive',
+      id: 'launch-folder',
+      label: 'Launch folder',
+      type: 'folder',
+      description: 'Folder reference · contents not selected',
+    },
+    {
+      sourceId: 'drive',
+      id: 'launch-brief',
+      label: 'Launch brief',
+      type: 'document',
+      description: '2h ago',
+    },
+  ],
+  research: [
+    {
+      sourceId: 'drive',
+      id: 'customer-interviews',
+      label: 'Customer interviews',
+      type: 'document',
+      description: '3 days ago',
+    },
+  ],
+};
 /** The host: answers each search from `library` after a short delay, and accepts every change. */
 function host(scope: Scope, element: Picker): void {
   scope.listen<GlobalEventHandlersEventMap['odd-context-query']>(
@@ -81,10 +137,13 @@ function host(scope: Scope, element: Picker): void {
         if (detail.signal.aborted) return;
         element.results = {
           requestId: detail.requestId,
-          items: library.filter(
-            (r) =>
-              detail.sourceIds.includes(r.sourceId) && r.label.toLocaleLowerCase().includes(query),
-          ),
+          items: detail.location
+            ? (folders[detail.location.id ?? detail.location.sourceId] ?? [])
+            : library.filter(
+                (r) =>
+                  detail.sourceIds.includes(r.sourceId) &&
+                  r.label.toLocaleLowerCase().includes(query),
+              ),
           sources: detail.sourceIds.map((sourceId) => ({ sourceId, status: 'complete' as const })),
         };
       }, 300);
@@ -152,6 +211,24 @@ export default defineExamples('odd-context-picker', {
       'With `commit="confirm"` choices stay a draft until Add N; Cancel, Close, Escape, or leaving the surface discards them. Without `multiple`, choosing replaces the choice.',
     fixture({ scope, element }) {
       host(scope, element);
+    },
+  },
+  browse: {
+    label: 'Browse the sources',
+    props: {
+      sources: [
+        { id: 'drive', label: 'Drive', description: '240 resources', browse: true },
+        { id: 'wiki', label: 'Wiki', description: '86 pages', browse: true },
+      ],
+      multiple: true,
+      open: true,
+    },
+    guidance:
+      'A source with `browse` can be opened with Browse…: the picker asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person opens the browser; this example presses Browse… as one would.',
+    async fixture({ scope, element }) {
+      host(scope, element);
+      await element.updateComplete;
+      element.shadowRoot!.querySelector<HTMLButtonElement>('[part~="footer"] button')!.click();
     },
   },
 });
