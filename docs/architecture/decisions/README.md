@@ -62,4 +62,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0047](./0047-m8-checkpoint-candidate-v1-contracts.md) | M8 checkpoint: candidate v1 contracts, assurance and comprehension reviews | Proposed | Process / Contracts |
 | [0048](./0048-libraries-not-built-with-oddkin.md) | Libraries not built with Oddkin: the standard-CEM baseline, enrichment, and metadata adapters | Accepted | Metadata / Workbench / Agent |
 | [0049](./0049-agent-workflow-components.md) | Agent workflow elements: one owner per fact, composed around the records | Accepted | AI |
-| [0050](./0050-citation-preview-presentation.md) | Citation previews: anchored by default, inline by allocation | Accepted implementation decision; citation-presentation portion of 0049 superseded | AI / Layout |
+| [0050](./0050-citation-preview-presentation.md) | Citation previews: anchored by default, inline by allocation | Accepted by owner; citation-presentation portion of 0049 superseded | AI / Layout |

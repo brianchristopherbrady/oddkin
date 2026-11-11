@@ -1,6 +1,6 @@
 # 0050. Citation previews: anchored by default, inline by allocation
 
-- **Status:** Accepted implementation decision within the owner's 2026-11-10 authorization to build responsive behavior into production components. The specific enum and default are engineering judgment; explicit owner confirmation of that preference remains pending.
+- **Status:** Accepted. On 2026-11-10 the owner explicitly confirmed popover by default, with inline available for a dedicated details area.
 - **Date:** 2026-11-10
 - **Area:** Components / AI / Layout
 - **Detailed contract:** [ai-interaction.md §7.6](../ai-interaction.md#76-citation-preview-presentation), [responsiveness.md](../responsiveness.md)
@@ -11,7 +11,7 @@
 
 An inline citation marker belongs in reading flow. Its expanded source details have a different space requirement: inserting them into that flow can move a following working note or interrupt scanning. A parent may instead allocate a growing details region where that movement is intentional.
 
-The earlier accepted decision retained an inline preview. On 2026-11-10 the owner expanded the work from an isolated behavior lab to responsive functionality in production components, including the citation behavior demonstrated in the lab. That authorizes implementation work. It does not mean the owner explicitly selected the new enum or its default. This record makes that engineering choice reviewable and records how a different owner preference would reopen it.
+The earlier accepted decision retained an inline preview. On 2026-11-10 the owner expanded the work from an isolated behavior lab to responsive functionality in production components, including the citation behavior demonstrated in the lab. The owner then explicitly selected popover by default, with inline available for a dedicated details area. That confirms the implemented default and allocated inline option; the public `presentation` name remains the implementation's API choice.
 
 Oddkin already has a named, non-modal anchored surface with native popover invocation, collision handling, dismissal, focus return, and inherited scopes. A citation-specific overlay runtime or a global component negotiation engine would duplicate that primitive and exceed this need.
 
@@ -61,7 +61,7 @@ The isolated lab motivated the production change and remains an experiment bound
 
 ## Revisit when
 
-- The owner answers the pending preference question with a different enum or default.
+- The owner changes the preview preference or product requirements.
 - A host needs a supported allocation choice for generated Markdown markers that the current public surface cannot express.
 - Browser or assistive-technology evidence finds focus, reading-order, dismissal, or available-space problems that the existing primitive cannot resolve.
 - Size evidence makes the dependency unacceptable, or repeated independent production needs justify a broader composition contract.

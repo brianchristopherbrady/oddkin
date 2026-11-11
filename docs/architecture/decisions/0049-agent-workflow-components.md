@@ -6,7 +6,7 @@
 - **Builds on:** [ai-interaction.md](../ai-interaction.md) §1 (records are host-owned; elements own presentation only), §4.4 to §4.6 (lifecycles); [the component architecture audit](../../research/component-architecture-audit.md) (approved 2026-11-06)
 - **Checked against:** `main` at `2a46230` (2026-11-08); the inventory below against `e0e2e97` (2026-11-09)
 
-**Presentation update, 2026-11-10:** [ADR 0050](./0050-citation-preview-presentation.md) supersedes only the citation's inline-only preview presentation in item 3 below: the current default is an anchored popover, with explicit `presentation="inline"` for an allocated details region. The original owner decision is preserved as history. The later enum and default are an implementation decision under the authorized responsive production work, with explicit owner preference confirmation still pending; this is not a retroactive change to what the owner approved on 2026-11-09.
+**Presentation update, 2026-11-10:** [ADR 0050](./0050-citation-preview-presentation.md) supersedes only the citation's inline-only preview presentation in item 3 below: the owner explicitly confirmed popover by default, with inline available for a dedicated details area. The implementation exposes that choice through `presentation="popover"` (default) and `presentation="inline"`. The original 2026-11-09 owner decision is preserved as history.
 
 ## The owner's decisions (2026-11-09)
 
