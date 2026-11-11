@@ -210,6 +210,12 @@ export async function checkBoundaries(root, options = {}) {
         rule.typeOnly && rel(file).startsWith(rel(join(pkg.dir, rule.typeOnly.sources)))
           ? new Set(await lexImports(stripTypeScriptTypes(code, { mode: 'strip' }), `${file}.js`))
           : undefined;
+      // What the file imports at runtime, once its types are stripped (read only when needed).
+      let values;
+      const valueImports = async () =>
+        (values ??= new Set(
+          await lexImports(stripTypeScriptTypes(code, { mode: 'strip' }), `${file}.js`),
+        ));
       for (const spec of specifiers) {
         const where = { file: rel(file) };
         if (isRelative(spec)) {
@@ -278,7 +284,11 @@ export async function checkBoundaries(root, options = {}) {
           const targetRule = config.packages[target];
           const nodeOnly =
             targetRule?.kind === 'node' || (rule.nodeOnlyDependencies ?? []).includes(target);
-          if (nodeOnly && !isNodeSource(file)) {
+          // A Node package's browser types: `import type` only, which leaves nothing at runtime.
+          const typesOnly =
+            (targetRule?.browserTypes ?? []).includes(subpathOf(spec)) &&
+            !(await valueImports()).has(spec);
+          if (nodeOnly && !isNodeSource(file) && !typesOnly) {
             report(
               'boundary.import.nodeOnly',
               `${target} is Node-only tooling and cannot be imported by browser code.`,
@@ -338,6 +348,7 @@ export async function checkBoundaries(root, options = {}) {
 async function checkArtifacts(packages, byName, config, report, rel) {
   for (const pkg of packages) {
     const rule = config.packages[pkg.name];
+    if (rule) await checkBrowserTypes(pkg, rule, report, rel);
     if (!rule || rule.kind === 'node' || !pkg.manifest.exports) continue;
     if (rule.devSources) {
       for (const file of await listFiles(join(pkg.dir, 'dist'), ['.js', '.d.ts'])) {
@@ -413,6 +424,9 @@ async function walkArtifact(file, chain, seen, byName, config, report, rel, type
       const targetPkg = byName.get(target);
       const targetRule = config.packages[target];
       if (targetRule?.kind === 'node') {
+        // A Node package's browser types, from a declaration: checkArtifacts keeps them import-free.
+        if (file.endsWith('.d.ts') && (targetRule.browserTypes ?? []).includes(subpathOf(spec)))
+          continue;
         report('boundary.artifact.nodeOnly', `Browser entry reaches Node-only package: ${path}.`, {
           file: rel(file),
         });
@@ -445,6 +459,40 @@ async function walkArtifact(file, chain, seen, byName, config, report, rel, type
       report('boundary.artifact.thirdParty', `Browser entry reaches third-party module: ${path}.`, {
         file: rel(file),
       });
+    }
+  }
+}
+
+/**
+ * A Node package's browser types (`browserTypes`): a `types` target only, no JavaScript, and a
+ * declaration file that imports and references nothing, so browser declarations that import it
+ * reach no Node, compiler, or tooling types through it.
+ */
+async function checkBrowserTypes(pkg, rule, report, rel) {
+  for (const key of rule.browserTypes ?? []) {
+    const entry = `${pkg.name}${key.slice(1)}`;
+    if (exportTarget(pkg.manifest, key, 'default')) {
+      report(
+        'boundary.browserTypes.runtime',
+        `${entry} is browser types and may not have a JavaScript target.`,
+        { fix: 'Give it only a "types" condition.' },
+      );
+    }
+    const target = exportTarget(pkg.manifest, key, 'types');
+    if (!target || !(await exists(join(pkg.dir, target)))) {
+      report('boundary.artifact.missing', `${entry} (types) points to missing ${target}.`, {
+        fix: 'Run npm run build before checking artifacts.',
+      });
+      continue;
+    }
+    const code = await readFile(join(pkg.dir, target), 'utf8');
+    const imports = await lexImports(code, join(pkg.dir, target));
+    if (imports.length || /^\s*\/\/\/\s*<reference\s/m.test(code) || /\bimport\s*\(/.test(code)) {
+      report(
+        'boundary.browserTypes.imports',
+        `${entry} is browser types and must import nothing (found ${imports.join(', ') || 'a reference or import type'}).`,
+        { file: rel(join(pkg.dir, target)), fix: 'Generate it from the schema alone.' },
+      );
     }
   }
 }
@@ -497,9 +545,14 @@ const DEFAULT_LIB = /[\\/](?:@typescript[\\/][^\\/]+|typescript)[\\/]lib[\\/]lib
 async function checkDeclarations(packages, config, report, rel) {
   const roots = [];
   const nodeAreas = [];
+  const browserTypes = new Set();
   for (const pkg of packages) {
     const rule = config.packages[pkg.name];
     if (!rule) continue;
+    for (const key of rule.browserTypes ?? []) {
+      const target = exportTarget(pkg.manifest, key, 'types');
+      if (target) browserTypes.add(join(pkg.dir, target));
+    }
     if (rule.kind === 'node') {
       nodeAreas.push({ dir: pkg.dir + sep, why: `${pkg.name}, a Node-only package` });
       continue;
@@ -578,7 +631,7 @@ async function checkDeclarations(packages, config, report, rel) {
   if (result.status !== 0 && !files.size)
     report('boundary.declarations.error', `tsc failed: ${`${result.stderr}`.trim().slice(0, 500)}`);
   const forbidden = (file) => {
-    if (DEFAULT_LIB.test(file)) return undefined;
+    if (DEFAULT_LIB.test(file) || browserTypes.has(file)) return undefined;
     const area = nodeAreas.find((a) => (a.file ? a.file === file : file.startsWith(a.dir)));
     if (area) return { code: 'boundary.declarations.nodeOnly', why: area.why };
     const modules = file.lastIndexOf(`${sep}node_modules${sep}`);

@@ -1,4 +1,16 @@
 /** Page registry contracts (`page-registry.v1`, ADR 0023, workbench-pages.md §2). */
+// Types only: generated from the canonical oddkin-metadata v1 schema, they import nothing
+// (packages.md, dependency rules).
+import type {
+  Category,
+  Component,
+  DocMeta,
+  ExampleRef,
+  Fact,
+  Foundation,
+  OddkinMetadata,
+  ProductRef,
+} from '@oddkin/analyzer/metadata/types';
 
 export const PAGE_REGISTRY_SCHEMA = 'https://oddkin.dev/schemas/page-registry/v1.json';
 
@@ -98,62 +110,42 @@ export interface CemPackage {
   }[];
 }
 
-export interface FactLike<T> {
+// The oddkin-metadata v1 views Workbench reads: the fields it uses of the types generated from the
+// canonical schema (`@oddkin/analyzer/metadata/types`). Merged views of several packages leave
+// per-package fields out, so every field is optional here.
+
+export interface FactLike<T> extends Pick<Fact, 'known' | 'provenance'> {
   readonly value?: T;
-  readonly known?: boolean;
-  readonly provenance: 'extracted' | 'authored' | 'observed' | 'verified';
 }
 
-export interface FoundationMetaLike {
+export interface FoundationMetaLike extends Pick<Foundation, 'sections' | 'tokens'> {
+  /** A foundation id (`Foundation['id']`); a library's own foundations may add others. */
   readonly id: string;
-  readonly sections: readonly {
-    readonly id: string;
-    readonly available: boolean;
-    readonly reason?: string;
-  }[];
-  readonly tokens: readonly string[];
 }
 
-export interface DocMetaLike {
-  readonly title?: FactLike<string>;
-  readonly summary?: FactLike<string>;
-  readonly tags?: readonly string[];
-  readonly updated?: FactLike<string>;
-  readonly order?: number;
-  readonly visible?: boolean;
-}
+export type DocMetaLike = DocMeta;
 
 /** The oddkin-metadata v1 fields the registry reads. */
 export interface OddkinMetadataLike {
-  readonly library?: { readonly name?: string; readonly prefix?: string };
+  readonly library?: Partial<Pick<OddkinMetadata['library'], 'name' | 'prefix'>>;
   readonly components?: Readonly<
     Record<
       string,
-      {
-        readonly tag: string;
-        readonly category?: string;
-        readonly tokenReads?: readonly unknown[];
-        readonly styleMappings?: readonly unknown[];
-        readonly a11y?: unknown;
-        readonly keyboard?: unknown;
-        readonly limitations?: readonly unknown[];
-      }
+      Pick<Component, 'tag'> &
+        Partial<
+          Pick<
+            Component,
+            'category' | 'tokenReads' | 'styleMappings' | 'a11y' | 'keyboard' | 'limitations'
+          >
+        >
     >
   >;
-  readonly tokens?: unknown;
+  readonly tokens?: OddkinMetadata['tokens'];
   readonly examples?: Readonly<
-    Record<
-      string,
-      { readonly component: string; readonly name: string; readonly incorrect?: object }
-    >
+    Record<string, Pick<ExampleRef, 'component' | 'name'> & Partial<Pick<ExampleRef, 'incorrect'>>>
   >;
   readonly foundations?: Readonly<Record<string, FoundationMetaLike>>;
-  readonly categories?: Readonly<
-    Record<
-      string,
-      { readonly label: string; readonly description?: string; readonly order?: number }
-    >
-  >;
-  readonly products?: Readonly<Record<string, { readonly id: string; readonly source: string }>>;
+  readonly categories?: Readonly<Record<string, Category>>;
+  readonly products?: Readonly<Record<string, Pick<ProductRef, 'id' | 'source'>>>;
   readonly docs?: Readonly<Record<string, DocMetaLike>>;
 }

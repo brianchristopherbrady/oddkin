@@ -19,6 +19,11 @@ export interface PackageRule {
    * and `entries` must be types-only exports (no JavaScript).
    */
   typeOnly?: { sources: string; entries: string[]; allow: string[] };
+  /**
+   * Types-only exports of a Node package that browser code may import with `import type` only:
+   * no JavaScript, and a declaration file that imports nothing.
+   */
+  browserTypes?: string[];
 }
 
 export interface BoundaryConfig {

@@ -92,7 +92,13 @@ export default {
         './highlight',
       ],
     },
-    '@oddkin/analyzer': { kind: 'node', allow: ['@oddkin/tokens', '@oddkin/core'] },
+    '@oddkin/analyzer': {
+      kind: 'node',
+      allow: ['@oddkin/tokens', '@oddkin/core'],
+      // The metadata types generated from the canonical schema (P1.6): import-free and types-only,
+      // the one analyzer file browser code may import, with `import type` only.
+      browserTypes: ['./metadata/types'],
+    },
     '@oddkin/workbench': {
       kind: 'mixed',
       allow: [

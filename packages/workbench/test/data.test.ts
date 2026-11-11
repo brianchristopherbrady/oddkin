@@ -178,10 +178,9 @@ describe('Workbench data from published outputs', () => {
       definition: { label: 'Not in metadata yet' },
     });
 
-    const reads = (
-      (components.metadata as OddkinMetadataLike).components?.['component:odd-button']
-        ?.tokenReads as { token: string }[]
-    ).map((r) => r.token);
+    const reads = (components.metadata as OddkinMetadataLike).components?.[
+      'component:odd-button'
+    ]?.tokenReads!.map((r) => r.token);
     expect(page.tokens?.map((t) => t.name)).toEqual([...new Set(reads)]);
     const gap = inspection.tokens.find((t) => t.name === 'control.gap');
     expect(page.tokens?.find((t) => t.name === 'control.gap')).toEqual(gap);

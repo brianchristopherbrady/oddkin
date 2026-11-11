@@ -64,6 +64,12 @@ A library not built with Oddkin gets a kit from its standard Custom Elements Man
 
 `@oddkin/analyzer/schemas/*.json` holds the JSON Schemas of the files the analyzer and change impact write and read: `oddkin-metadata.v1.schema.json` (the `oddkin.metadata.json` that `oddkin-analyze` writes beside a library's manifest), `product.v1.schema.json` (`oddkin-impact snapshot --product`), `comparison-snapshot.v1.schema.json` and `impact-report.v1.schema.json` (what `snapshot` and `compare --json` write), and `check-result.v1.schema.json` (the runs `compare --results` merges and `--baseline` reuses, with the commit they happened at), so an editor or a CI step can validate them.
 
+`@oddkin/analyzer/metadata/types` holds TypeScript types generated from `oddkin-metadata.v1`: `OddkinMetadata` for the document and a type for each of its definitions (`Component`, `ExampleRef`, `Foundation`, `Fact`, …). The entry is types only and imports nothing, so browser code may read metadata with these types, with `import type` only:
+
+```ts
+import type { OddkinMetadata } from '@oddkin/analyzer/metadata/types';
+```
+
 ## Editors
 
 Editors read the standard manifest; Oddkin writes no editor format of its own ([metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §4). For VS Code, the community generator `custom-element-vs-code-integration` turns it into HTML custom data. Give it a `referencesTemplate`, and each tag's hover links to the reference the installed package ships in its agent kit, which describes the version you have:

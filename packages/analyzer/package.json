@@ -46,6 +46,9 @@
       "types": "./dist/metadata.d.ts",
       "default": "./dist/metadata.js"
     },
+    "./metadata/types": {
+      "types": "./dist/metadata-types.d.ts"
+    },
     "./kit": {
       "types": "./dist/kit/index.d.ts",
       "default": "./dist/kit/index.js"

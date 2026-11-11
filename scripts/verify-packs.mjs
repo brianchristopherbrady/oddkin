@@ -326,6 +326,11 @@ try {
       "export const refs: string[] = [token('color.action.default'), tokenVariable('space.md')];",
       '// @ts-expect-error -- not a token of the default theme',
       "export const unknownRef = token('color.action.nope');",
+      // The browser-safe metadata types resolve from the installed analyzer, as Workbench's
+      // declarations import them (P1.6), with the DOM library alone.
+      "import type { OddkinMetadata } from '@oddkin/analyzer/metadata/types';",
+      "import type { OddkinMetadataLike } from '@oddkin/workbench/pages';",
+      "export const metadataKind: OddkinMetadata['library']['name'] | OddkinMetadataLike['library'] = 'x';",
       '',
     ].join('\n'),
   );

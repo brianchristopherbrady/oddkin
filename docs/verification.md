@@ -6537,3 +6537,17 @@ Records and guidance only; no component code changed.
 | Probes | `mutate.mjs`, 5 mutants: Node's types read as any third-party package; Node-only areas not forbidden; type errors not reported; TypeScript's default libraries counted as compiler types (killed once the test asked for a `/// <reference lib>`); the check not run | 5 of 5 killed |
 | Schema | `node scripts/sync-tool-schemas.mjs --check`, `tests/schemas/schemas.test.ts`: `@oddkin/analyzer/schemas/oddkin-metadata.v1.schema.json` equals `docs/schemas` | 7 copies checked; 32 passed |
 | Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |
+
+## 2026-11-11 — Browser-safe metadata types generated from the canonical schema (round 11, Agent 2; row 33, landing 2 of 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Generated types | `node scripts/build-metadata-types.mjs --check`; `tests/schemas/schemas.test.ts` (`metadata types`): `packages/analyzer/src/metadata-types.ts` equals what the generator writes from `docs/schemas/oddkin-metadata.v1.schema.json` and imports nothing; a fixture schema gives each form (`enum`, `const`, `$ref`, maps, `oneOf`, `allOf`, enums inside arrays) and an unknown keyword or a non-local `$ref` stops the generator | Current; 34 passed |
+| Exception | `tests/architecture/boundaries.test.ts` (`a Node package's browser types`): browser code imports `@oddkin/analyzer/metadata/types` with `import type`, and its declarations reach it; a value import of it, or a type import of another analyzer entry, is `boundary.import.nodeOnly`; a JavaScript target is `boundary.browserTypes.runtime`; an import, a `/// <reference>`, or an `import()` type in its file is `boundary.browserTypes.imports` | 22 passed |
+| Repository | `node scripts/architecture/check-boundaries.mjs --artifacts` (in `npm run lint`) with Workbench's metadata views derived from the generated types (`@oddkin/workbench/pages`) | Boundaries OK; the declaration program reaches the analyzer's types file and nothing else of the analyzer |
+| Packed | `node scripts/verify-packs.mjs`: a consumer outside the workspace, DOM library only, `skipLibCheck: false`, imports `OddkinMetadata` from the installed analyzer and `OddkinMetadataLike` from the installed Workbench | Packed-consumer verification OK |
+| Probes | `mutate.mjs`, 6 mutants: a value import allowed; JavaScript allowed; imports and references allowed in the types file; declarations forbidden to reach it; unknown keywords read silently; enums in arrays without parentheses | 6 of 6 killed |
+| Workbench | Workbench's node tests, schemas, and architecture tests; `shell.browser.test.ts` and `coverage.browser.test.ts` in Chromium | 221 passed; 11 passed |
+| Metadata | `npm run build` (its reference check reads the analyzer README's example), `npm run verify:metadata` | Exit 0; 2,222 components and 459 AI facts verified |
+| Size | `npm run size` | Exit 0: no bundle moved (types only) |
+| Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |

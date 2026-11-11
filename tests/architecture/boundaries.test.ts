@@ -454,4 +454,102 @@ describe('checkBoundaries', () => {
       expect(nodeEntry[0]?.message).toContain('@oddkin/tokens/node, a Node entry');
     }, 60_000);
   });
+
+  describe("a Node package's browser types", () => {
+    const config = {
+      packages: {
+        '@oddkin/core': { kind: 'browser' as const, allow: ['@oddkin/analyzer'] },
+        '@oddkin/analyzer': {
+          kind: 'node' as const,
+          allow: [],
+          browserTypes: ['./metadata/types'],
+        },
+      },
+    };
+    const analyzer = (types: string, exports: Record<string, unknown> = {}) => ({
+      'packages/analyzer/package.json': JSON.stringify({
+        name: '@oddkin/analyzer',
+        version: '0.0.0',
+        type: 'module',
+        exports: {
+          '.': { types: './dist/index.d.ts', default: './dist/index.js' },
+          './metadata/types': { types: './dist/metadata-types.d.ts' },
+          ...exports,
+        },
+      }),
+      'packages/analyzer/src/index.ts': "import 'node:fs';\nexport const analyze = 1;\n",
+      'packages/analyzer/dist/index.js': "import 'node:fs';\nexport const analyze = 1;\n",
+      'packages/analyzer/dist/index.d.ts': 'export declare const analyze: number;\n',
+      'packages/analyzer/dist/metadata-types.d.ts': types,
+    });
+    const core = (source: string, declarations = 'export {};\n') => ({
+      'packages/core/package.json': manifest('@oddkin/core', {
+        dependencies: { '@oddkin/analyzer': '0.0.0' },
+      }),
+      'packages/core/src/index.ts': source,
+      'packages/core/dist/index.js': 'export {};\n',
+      'packages/core/dist/index.d.ts': declarations,
+    });
+    const run = async (files: Files, artifacts = false) => {
+      const root = await workspace(files);
+      const link = join(root, 'node_modules', '@oddkin', 'analyzer');
+      await mkdir(dirname(link), { recursive: true });
+      await symlink(join(root, 'packages', 'analyzer'), link, 'junction');
+      return (await checkBoundaries(root, { artifacts, config })).diagnostics.map((d) => [
+        d.code,
+        d.file,
+      ]);
+    };
+    const types = 'export interface Metadata {\n  readonly name: string;\n}\n';
+
+    it('lets browser code import them with import type only, and nothing else of the package', async () => {
+      const typeImport =
+        "import type { Metadata } from '@oddkin/analyzer/metadata/types';\nexport type M = Metadata;\n";
+      expect(await run({ ...analyzer(types), ...core(typeImport) })).toEqual([]);
+      // A value import of the same entry, or a type import of another entry, is Node-only.
+      expect(
+        await run({
+          ...analyzer(types),
+          ...core("import { Metadata } from '@oddkin/analyzer/metadata/types';\nMetadata;\n"),
+        }),
+      ).toEqual([['boundary.import.nodeOnly', 'packages/core/src/index.ts']]);
+      expect(
+        await run({
+          ...analyzer(types),
+          ...core(
+            "import type { analyze } from '@oddkin/analyzer';\nexport type A = typeof analyze;\n",
+          ),
+        }),
+      ).toEqual([['boundary.import.nodeOnly', 'packages/core/src/index.ts']]);
+    });
+
+    it('lets browser declarations reach them, and requires them types-only and import-free', async () => {
+      const declarations =
+        "import type { Metadata } from '@oddkin/analyzer/metadata/types';\nexport type M = Metadata;\n";
+      expect(
+        await run({ ...analyzer(types), ...core('export {};\n', declarations) }, true),
+      ).toEqual([]);
+      const codes = async (files: Files) => (await run(files, true)).map(([code]) => code);
+      expect(
+        await codes({
+          ...analyzer(types, {
+            './metadata/types': {
+              types: './dist/metadata-types.d.ts',
+              default: './dist/metadata-types.js',
+            },
+          }),
+          'packages/analyzer/dist/metadata-types.js': 'export {};\n',
+          ...core('export {};\n', declarations),
+        }),
+      ).toEqual(['boundary.browserTypes.runtime']);
+      for (const leak of [
+        "import type { Stats } from 'node:fs';\nexport type S = Stats;\n",
+        '/// <reference types="node" />\nexport {};\n',
+        "export type S = import('node:fs').Stats;\n",
+      ])
+        expect(await codes({ ...analyzer(leak), ...core('export {};\n', declarations) })).toContain(
+          'boundary.browserTypes.imports',
+        );
+    }, 60_000);
+  });
 });
