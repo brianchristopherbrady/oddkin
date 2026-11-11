@@ -437,3 +437,278 @@ describe('overlays and pickers keep their place and the work in them (row 30)', 
     },
   );
 });
+
+describe('editors keep the value, the caret, and the focus (row 30)', () => {
+  const control = (el: Element, selector: string) =>
+    el.shadowRoot!.querySelector<HTMLInputElement>(selector)!;
+
+  it.each(SETUPS)(
+    'odd-input keeps a search being typed and its clear button (%s)',
+    async (setup) => {
+      const el = await mount(
+        setup,
+        `<odd-input label="Search the release notes of every project in the workspace" type="search"></odd-input>`,
+        'odd-input',
+      );
+      const input = control(el, 'input');
+      await userEvent.fill(input, 'container queries');
+      input.setSelectionRange(3, 3);
+      await settle(el);
+      const clear = part(el, 'clear');
+      expect(clear.hidden).toBe(false);
+      const unchanged = sameLook(input, clear);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(control(el, 'input')).toBe(input);
+        expect([input.value, input.selectionStart]).toEqual(['container queries', 3]);
+        expect(focused()).toBe(input);
+        const [box, button] = [input.getBoundingClientRect(), clear.getBoundingClientRect()];
+        expect(button.left >= box.left - 1 || button.right <= box.right + 1).toBe(true);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-textarea keeps a draft, its caret, and its count (%s)', async (setup) => {
+    const el = await mount(
+      setup,
+      `<odd-textarea label="Release notes" maxlength="200"></odd-textarea>`,
+      'odd-textarea',
+    );
+    const textarea = control(el, 'textarea') as unknown as HTMLTextAreaElement;
+    const draft = 'Builds are faster.\nThe side navigation gained project kinds.';
+    await userEvent.fill(textarea, draft);
+    textarea.setSelectionRange(10, 10);
+    await settle(el);
+    const count = part(el, 'count').textContent;
+    const unchanged = sameLook(textarea);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(control(el, 'textarea')).toBe(textarea);
+      expect([textarea.value, textarea.selectionStart]).toEqual([draft, 10]);
+      expect(focused()).toBe(textarea);
+      expect(part(el, 'count').textContent).toBe(count);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-slider keeps its value, its focused thumb, and the thumb’s place on the track (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { value: string }>(
+        setup,
+        `<odd-slider label="Preview scale" min="25" max="100" step="5" value="60"></odd-slider>`,
+        'odd-slider',
+      );
+      const thumb = part(el, 'thumb');
+      thumb.focus();
+      // One step up: ArrowLeft in right-to-left text, as the track is mirrored.
+      await userEvent.keyboard(setup === 'right to left' ? '{ArrowLeft}' : '{ArrowRight}');
+      await settle(el);
+      expect(el.value).toBe('65');
+      const track = part(el, 'track');
+      // The thumb's centre along the track, from its start edge: (65 - 25) / (100 - 25).
+      const fraction = () => {
+        const [t, h] = [track.getBoundingClientRect(), thumb.getBoundingClientRect()];
+        const centre = h.left + h.width / 2;
+        const along = (centre - t.left - h.width / 2) / (t.width - h.width);
+        return setup === 'right to left' ? 1 - along : along;
+      };
+      const unchanged = sameLook(thumb);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(el.value).toBe('65');
+        expect(focused()).toBe(thumb);
+        expect(fraction()).toBeCloseTo(40 / 75, 1);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-rating keeps the chosen star and the focus (%s)', async (setup) => {
+    const el = await mount<HTMLElement & { value: string }>(
+      setup,
+      `<odd-rating label="How useful were these release notes for your team?" value="3"></odd-rating>`,
+      'odd-rating',
+    );
+    const radios = [...el.shadowRoot!.querySelectorAll<HTMLInputElement>('input:not(.flag)')];
+    await userEvent.click(radios[3]!);
+    await settle(el);
+    radios[3]!.focus();
+    expect(el.value).toBe('4');
+    const unchanged = sameLook(...radios);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(el.value).toBe('4');
+      expect(focused()).toBe(radios[3]);
+      expect(part(el, 'value').textContent?.trim()).toBe('4 of 5');
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-file-input keeps the chosen files and a focused Remove (%s)',
+    async (setup) => {
+      const el = await mount(
+        setup,
+        `<odd-file-input label="Project attachments" multiple></odd-file-input>`,
+        'odd-file-input',
+      );
+      const input = control(el, 'input');
+      const data = new DataTransfer();
+      for (const name of ['release-notes-for-the-design-review-2026.pdf', 'summary.txt'])
+        data.items.add(new File(['x'.repeat(2048)], name, { type: 'application/pdf' }));
+      input.files = data.files;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      await settle(el);
+      const rows = [...el.shadowRoot!.querySelectorAll('[part~="file"]')];
+      expect(rows).toHaveLength(2);
+      const remove = rows[0]!.querySelector<HTMLElement>('[part~="remove"]')!;
+      remove.focus();
+      const unchanged = sameLook(part(el, 'surface'), remove);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        const now = [...el.shadowRoot!.querySelectorAll('[part~="file"]')];
+        expect(now.length === rows.length && now.every((row, i) => row === rows[i])).toBe(true);
+        expect(focused()).toBe(remove);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-checkbox-group keeps its choices and the focus while its options wrap (%s)',
+    async (setup) => {
+      const el = await mount(
+        setup,
+        `<odd-checkbox-group label="Notifications" orientation="horizontal"><odd-checkbox value="email">Email</odd-checkbox><odd-checkbox value="desktop">Desktop notifications</odd-checkbox><odd-checkbox value="summary">Weekly summary</odd-checkbox></odd-checkbox-group>`,
+        'odd-checkbox-group',
+      );
+      const choices = [...el.querySelectorAll<HTMLElement & { checked: boolean }>('odd-checkbox')];
+      await userEvent.click(part(choices[1]!, 'label'));
+      await settle(choices[1]!);
+      const box = part(choices[1]!, 'control');
+      box.focus();
+      const unchanged = sameLook(...choices.map((c) => part(c, 'control')));
+      for (const width of WIDTHS) {
+        await resize(width, el, ...choices);
+        expect(choices.map((c) => c.checked)).toEqual([false, true, false]);
+        expect(focused()).toBe(box);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-radio-group keeps its choice and the focus while its options wrap (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { value: string }>(
+        setup,
+        `<odd-radio-group label="Workspace visibility" orientation="horizontal"><option value="private">Private</option><option value="team">Anyone in your workspace</option><option value="public">Public</option></odd-radio-group>`,
+        'odd-radio-group',
+      );
+      const radios = [...el.shadowRoot!.querySelectorAll<HTMLInputElement>('input:not(.flag)')];
+      await userEvent.click(radios[1]!);
+      await settle(el);
+      radios[1]!.focus();
+      const unchanged = sameLook(...radios);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(el.value).toBe('team');
+        expect(focused()).toBe(radios[1]);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-segmented-control keeps its choice and the focus in equal segments (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { value: string }>(
+        setup,
+        `<odd-segmented-control label="Preview size"><option value="sm">Small</option><option value="md" selected>Medium</option><option value="lg">Large, for print</option></odd-segmented-control>`,
+        'odd-segmented-control',
+      );
+      const radios = [...el.shadowRoot!.querySelectorAll<HTMLInputElement>('input:not(.flag)')];
+      await userEvent.click(radios[2]!);
+      await settle(el);
+      radios[2]!.focus();
+      // Its documented minimum: equal columns, each as wide as its option's longest word, which
+      // never breaks. A parent that grants less must grow or scroll (responsiveness.md).
+      const segments = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.segment')];
+      const extent = () => {
+        const boxes = segments.map((segment) => segment.getBoundingClientRect());
+        return Math.max(...boxes.map((b) => b.right)) - Math.min(...boxes.map((b) => b.left));
+      };
+      el.style.inlineSize = 'min-content';
+      const minimum = extent();
+      el.style.inlineSize = '';
+      const labels = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.segment-label')];
+      const unchanged = sameLook(...el.shadowRoot!.querySelectorAll('[part~="option"]'));
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(el.value).toBe('lg');
+        expect(focused()).toBe(radios[2]);
+        expect(extent()).toBeGreaterThanOrEqual(minimum - 1);
+        for (const label of labels)
+          expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+        if (container.clientWidth - 20 >= minimum) expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-switch keeps its state, its thumb, and the focus (%s)', async (setup) => {
+    const el = await mount<HTMLElement & { checked: boolean }>(
+      setup,
+      `<odd-switch>Send me a weekly summary of the activity in this workspace</odd-switch>`,
+      'odd-switch',
+    );
+    const switchControl = part(el, 'control');
+    await userEvent.click(switchControl);
+    await settle(el);
+    expect(el.checked).toBe(true);
+    switchControl.focus();
+    const thumb = part(el, 'thumb');
+    // Measured once the thumb has moved (it is animated to the on side).
+    await Promise.all(thumb.getAnimations().map((animation) => animation.finished));
+    const offset = () =>
+      Math.abs(thumb.getBoundingClientRect().left - switchControl.getBoundingClientRect().left);
+    const on = offset();
+    const unchanged = sameLook(switchControl, thumb);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(el.checked).toBe(true);
+      expect(focused()).toBe(switchControl);
+      expect(offset()).toBeCloseTo(on, 0);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)('odd-chip keeps a focused Remove while the chips wrap (%s)', async (setup) => {
+    const el = await mount(
+      setup,
+      `<p><odd-chip removable>Design systems and research</odd-chip> <odd-chip removable selected>Research</odd-chip> <odd-chip removable>Accessibility reviews</odd-chip></p>`,
+      'odd-chip',
+    );
+    const remove = part(el, 'remove');
+    remove.focus();
+    const unchanged = sameLook(part(el, 'base'), remove);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(part(el, 'remove')).toBe(remove);
+      expect(focused()).toBe(remove);
+      expectInside();
+      unchanged();
+    }
+  });
+});
