@@ -566,6 +566,7 @@ Status: **approved** (2026-10-24). 296 references; controller 18, deferred 68, e
 | `odd-change-review` | `odd-button`, `odd-disclosure` | Accept, reject, and undo are complete buttons (Figma: button/sm ×2); the diff view's context and a long line diff open from complete odd-disclosures (Figma page 08, DiffView). |
 | `odd-checkbox-group` | `odd-checkbox` | The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule. |
 | `odd-checkpoint` | `odd-button` | Restore and confirm are complete buttons (Figma: button/sm ×1). |
+| `odd-citation` | `odd-popover` | The source preview is a complete odd-popover widget the marker opens, anchored to it; the marker and its working note stay in the citation's own tree. |
 | `odd-combobox` | `odd-avatar` | Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options). The avatars view nests odd-avatar, a complete widget with no ID relationship across the boundary. |
 | `odd-command-palette` | `odd-icon` | Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them). |
 | `odd-conversation` | `odd-activity`, `odd-message` | Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness. |
@@ -585,7 +586,7 @@ Status: **approved** (2026-10-24). 296 references; controller 18, deferred 68, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (52) has no element dependency.
+Every other element (51) has no element dependency.
 
 #### Shared homes
 

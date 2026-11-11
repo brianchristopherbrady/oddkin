@@ -6359,6 +6359,7 @@ Read-only export through the Figma MCP (session `67c816ae`), as for items 6 to 8
 | The wait | `packages/ai/test/elements.browser.test.ts`, "reads the attempt's wait": one response on its way and two requests open read "1 response is being recorded. 2 requests still need your input."; two on their way and one open, "2 responses are being recorded. 1 request still needs your input."; once the host has confirmed them all, "Responses recorded. The paused run has not resumed yet." as before | 332 passed and 4 skipped in each of Chromium, Firefox, and WebKit (`browser-set.mjs` on the AI contract, conversation, elements, layout, Figma parity, frameworks, patterns, and reflow files) |
 | Probes | `mutate.mjs`, 3 mutants: the plural back to "recorded", the singular back to "recorded", one form for every count | 3 of 3 killed |
 | Repository | `npm run build`, `npm run typecheck`, `npx vitest run --project node`, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write` | Each exit 0, but the node project under load: 1,734 passed, and 14 tests in 6 files (the analyzer, the Workbench CLI, the release evidence) timed out, which pass alone: 59 passed, 1 skipped. `ai-chat` 64,489 B gzip of 64,512 (+8). No e2e: no demo shows a wait with responses on their way |
+
 ## 2026-11-10 — Production responsiveness and native behavior lab
 
 **Scope and source:** owner's request to move the approved behavior demo into production components and the documentation site, under Foundations → Responsiveness. Isolated branch `codex/behavior-lab-docs`, based on `de271436`; the existing detached checkout and its unfinished design edits were preserved. The route remains `/foundations/responsive`. The authored contract is `docs/architecture/responsiveness.md`; the configuration/evidence matrix is `docs/research/responsiveness-behavior-matrix.md`. Citation's changed default and migration are recorded in ADR 0050, preserving ADR 0049's historical decision.
@@ -6391,3 +6392,18 @@ Read-only export through the Figma MCP (session `67c816ae`), as for items 6 to 8
 ## 2026-11-10 — Citation preview preference confirmed
 
 The owner selected **Popover by default**, with inline available for a dedicated details area. ADR 0050's status, context and revisit condition now record that explicit decision; its index, ADR 0049's historical update note and the current interaction guide agree. The shipped default and `presentation="inline"` option already match, so no component, generated contract, package guidance or runtime change is required. Earlier responsiveness verification remains applicable. Documentation consistency and whitespace were checked for this record update; browser suites were not rerun for this prose-only change.
+
+## 2026-11-10 — Landing check of `codex/behavior-lab-docs` (owner request, Agent 3)
+
+The branch (two commits by the owner's Codex session: the responsiveness behavior lab, and the citation popover default) rebased onto main `03c591ea` with no conflicts. It touches `packages/core` (the position controller), components, the AI citation, the analyzer's kit, the docs site, and the packed-consumer check; those lanes were not posted to (the owner asked for the landing).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build, types, lint | `npm run build`, `npm run typecheck`, `npm run lint` | Exit 0 (after a clean `tsc -b packages/ai --force`: a stale `dist` held removed modules and hid real results) |
+| Node tests | `npx vitest run --project node --testTimeout=120000` | Four failures at first, all in the branch and fixed: `ai-stream import map` (no popover or position controller), `ai-stream CSP` (the import map's hash), `@oddkin/ai examples ... listed in the published metadata` (the citation fixture's `odd-sources` was hidden in a helper), `figma-reuse` (`odd-citation` depends on `odd-popover`). Then 1,748 passed, 2 skipped |
+| Three engines | `browser-set.mjs` on the AI contract, elements, layout, and Figma parity tests, the components contract, combobox and one-time-code tests, and core's position test | Chromium 1,197 passed, WebKit 1,195, Firefox 1,138 plus the Figma parity file, whose hook (and once a 15 s case) timed out at 85 to 99 % CPU and passed alone (57 of 57) |
+| e2e | `e2e-when-free.mjs 3 ... e2e/docs-responsiveness.spec.ts e2e/ai-demos.spec.ts:139 :189 :400 :429 --workers=1` | 60 passed in three engines |
+| Metadata, vocabulary, kits | `npm run verify:metadata` | Exit 0; vocabulary 0 findings; kits current |
+| Packed consumers | `node scripts/verify-packs.mjs` | OK for all eight packages, with `RESPONSIVENESS.md` matching `docs/architecture/responsiveness.md` |
+| Size | `node scripts/check-size.mjs` | Within every budget on a clean build |
+| Not done | — | Mutation probes on the branch's source (not mine to write), and the lanes posts to Agents 1 and 2 about core, AI, and design/figma files |

@@ -11,14 +11,10 @@ const source: SourceRecord = {
   excerpt: 'Content can be presented without loss of information at 320 CSS pixels.',
 };
 
-function revealSources({
-  scope,
-  element,
-  mount,
-}: ExampleFixtureContext<HTMLElementTagNameMap['odd-citation']>) {
-  const list = mount(
-    html`<odd-sources label="Sources"></odd-sources>`,
-  ) as HTMLElementTagNameMap['odd-sources'];
+function revealIn(
+  { scope, element }: ExampleFixtureContext<HTMLElementTagNameMap['odd-citation']>,
+  list: HTMLElementTagNameMap['odd-sources'],
+) {
   list.sources = element.source ? [element.source] : [];
   scope.listen<GlobalEventHandlersEventMap['odd-source-reveal']>(
     element,
@@ -39,7 +35,14 @@ export default defineExamples('odd-citation', {
     guidance:
       'The marker opens a named, anchored popover without moving the following content. Escape or Close source preview returns to the marker; pressing outside keeps focus at that destination. Show in sources sends `odd-citation-open` and, unless cancelled, `odd-source-reveal`; the host owns the source list and reveals the source there. Here it is an `odd-sources` list after the citation.',
     // The host: the answer's source list, which reveals the source the citation asks for.
-    fixture: revealSources,
+    fixture(context) {
+      revealIn(
+        context,
+        context.mount(
+          html`<odd-sources label="Sources"></odd-sources>`,
+        ) as HTMLElementTagNameMap['odd-sources'],
+      );
+    },
   },
   inlineAllocated: {
     label: 'Inline in an allocated details region',
@@ -57,7 +60,12 @@ export default defineExamples('odd-citation', {
         </section>`,
       );
       region.querySelector('div')!.append(context.element);
-      revealSources(context);
+      revealIn(
+        context,
+        context.mount(
+          html`<odd-sources label="Sources"></odd-sources>`,
+        ) as HTMLElementTagNameMap['odd-sources'],
+      );
     },
   },
   unresolved: {

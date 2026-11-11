@@ -2735,7 +2735,10 @@
       "reason": "Restore and confirm are complete buttons (Figma: button/sm ×1)."
     },
     "odd-chip": { "dependencies": [] },
-    "odd-citation": { "dependencies": [] },
+    "odd-citation": {
+      "dependencies": ["odd-popover"],
+      "reason": "The source preview is a complete odd-popover widget the marker opens, anchored to it; the marker and its working note stay in the citation's own tree."
+    },
     "odd-color-picker": { "dependencies": [] },
     "odd-combobox": {
       "dependencies": ["odd-avatar"],
