@@ -1856,6 +1856,188 @@ describe('selection, review, and controls', () => {
     expect(requests).toEqual(['accept', 'accept']);
   });
 
+  describe('odd-change-review (Figma page 11)', () => {
+    const proposal = (extra: Partial<EditProposal> = {}): EditProposal => ({
+      proposalId: 'p1',
+      baseRevision: 'r7',
+      range: { start: 0, end: 5 },
+      original: 'Hello',
+      replacement: 'Hi',
+      status: 'requested',
+      ...extra,
+    });
+    const review = (proposals: EditProposal[], setup: (e: HTMLElement) => void = () => {}) =>
+      mount(
+        'odd-change-review',
+        () => import('../src/change-review/change-review.define.js'),
+        (e) => {
+          e.proposals = proposals;
+          setup(e);
+        },
+      );
+    const update = async (el: HTMLElementTagNameMap['odd-change-review'], p: EditProposal[]) => {
+      el.proposals = p;
+      await settle(el);
+    };
+    const buttons = (el: Element) =>
+      $$(el, '[part="actions"] odd-button').map((b) =>
+        [
+          text(b),
+          b.hasAttribute('loading') ? 'loading' : b.hasAttribute('disabled') ? 'locked' : '',
+        ]
+          .filter(Boolean)
+          .join(' '),
+      );
+    const shown = (el: Element, selector: string) => {
+      const line = $(el, selector) as HTMLElement | null;
+      return line && !line.hidden ? text(line) : null;
+    };
+
+    it('titles the review, asks for review while a proposal awaits it, and names each revision', async () => {
+      const el = await review([
+        proposal({ label: 'Clarify the launch date' }),
+        proposal({ proposalId: 'p-retry', status: 'stale' }),
+      ]);
+      const group = $(el, '.base')!;
+      expect(group.getAttribute('role')).toBe('group');
+      expect(text(el.shadowRoot!.getElementById(group.getAttribute('aria-labelledby')!))).toBe(
+        'Proposed changes',
+      );
+      const badge = $(el, '.status-badge')!;
+      expect([badge.localName, badge.getAttribute('tone'), text(badge)]).toEqual([
+        'odd-badge',
+        'warning',
+        'Review requested',
+      ]);
+      expect($$(el, '.revision').map(text)).toEqual([
+        'Revision r7 · proposal p1',
+        'Revision r7 · proposal p-retry',
+      ]);
+      // No proposal awaits review once the host applied it; with none, the title stays.
+      await update(el, [
+        proposal({ status: 'applied' }),
+        proposal({ proposalId: 'p-retry', status: 'stale' }),
+      ]);
+      expect($(el, '.status-badge')).toBeNull();
+      await update(el, []);
+      expect([text($(el, '.title')), shown(el, '.muted')]).toEqual([
+        'Proposed changes',
+        'No proposed changes.',
+      ]);
+    });
+
+    it('says what the host is doing: Applying… and Undoing…, the buttons locked', async () => {
+      const requests: string[] = [];
+      const el = await review([proposal()], (e) =>
+        e.addEventListener('odd-change-accept', () => requests.push('accept')),
+      );
+      // The host started applying it: a click that lands before the view updates asks nothing.
+      el.proposals = [proposal({ status: 'applying' })];
+      ($(el, '[data-action="accept"]') as HTMLElement).click();
+      expect(requests).toEqual([]);
+      await settle(el);
+      expect(shown(el, '[part="status"]')).toBe('Applying…');
+      expect(buttons(el)).toEqual(['Accept loading', 'Reject locked']);
+      expect(shown(el, '.pending')).toBe('Applying…');
+      await update(el, [proposal({ status: 'undoing', appliedRevision: 'r8' })]);
+      expect(shown(el, '[part="status"]')).toBe('Undoing…');
+      expect(buttons(el)).toEqual(['Undo loading']);
+      expect(shown(el, '.pending')).toBe('Undoing…');
+    });
+
+    it('names what failed from the record and keeps its buttons, so trying again is the same request (ADR 0049)', async () => {
+      const requests: string[] = [];
+      const el = await review(
+        [
+          proposal({
+            status: 'failed',
+            error: { code: 'x', message: 'The document is unavailable.' },
+          }),
+        ],
+        (e) => {
+          for (const type of ['odd-change-accept', 'odd-change-reject', 'odd-change-undo'])
+            e.addEventListener(type, () => requests.push(type.slice(11)));
+        },
+      );
+      const click = async (action: string) => {
+        ($(el, `[data-action="${action}"]`) as HTMLElement).click();
+        await settle(el);
+      };
+      // Applying failed: the error above Accept and Reject, and no status line or Retry.
+      expect(shown(el, '.decision-error')).toBe('Could not apply: The document is unavailable.');
+      expect(shown(el, '[part="status"]')).toBeNull();
+      expect(buttons(el)).toEqual(['Accept', 'Reject']);
+      await click('accept');
+      expect(requests).toEqual(['accept']);
+      expect(buttons(el)).toEqual(['Accept loading', 'Reject locked']);
+      expect([shown(el, '.decision-error'), shown(el, '.pending')]).toEqual([null, 'Applying…']);
+      await click('accept');
+      expect(requests).toEqual(['accept']);
+      // The host answers with the record failed again: the request is over, and Accept asks again.
+      await update(el, [
+        proposal({ status: 'failed', error: { code: 'x', message: 'Still unavailable.' } }),
+      ]);
+      expect(buttons(el)).toEqual(['Accept', 'Reject']);
+      expect(shown(el, '.decision-error')).toBe('Could not apply: Still unavailable.');
+      await click('accept');
+      expect(requests).toEqual(['accept', 'accept']);
+      // Undoing failed: the host had applied it. Undo stays, unless the host says it cannot.
+      const undoFailed = {
+        status: 'failed',
+        appliedRevision: 'r8',
+        error: { code: 'x', message: 'The document changed after application.' },
+      } as const;
+      await update(el, [proposal({ ...undoFailed, proposalId: 'p2' })]);
+      expect(shown(el, '.decision-error')).toBe(
+        'Undo failed: The document changed after application.',
+      );
+      expect(buttons(el)).toEqual(['Undo']);
+      await click('undo');
+      expect(requests).toEqual(['accept', 'accept', 'undo']);
+      await update(el, [proposal({ ...undoFailed, proposalId: 'p3', undoable: false })]);
+      expect($(el, '[part="actions"]')).toBeNull();
+      expect(shown(el, '[part="status"]')).toBe(
+        'Undo failed: The document changed after application.',
+      );
+      expect($(el, '[part="status"]')!.dataset['tone']).toBe('danger');
+      // This view's Reject or Dismiss that failed: not recorded, with the same buttons.
+      await update(el, [
+        proposal({ proposalId: 'p4' }),
+        proposal({ proposalId: 'p5', status: 'stale' }),
+      ]);
+      ($(el, '[data-id="p4"][data-action="reject"]') as HTMLElement).click();
+      ($(el, '[data-id="p5"][data-action="dismiss"]') as HTMLElement).click();
+      await update(el, [
+        proposal({ proposalId: 'p4', status: 'failed' }),
+        proposal({ proposalId: 'p5', status: 'failed' }),
+      ]);
+      expect($$(el, '.decision-error').map(text)).toEqual([
+        'The request could not be recorded.',
+        'The request could not be recorded.',
+      ]);
+      expect(buttons(el)).toEqual(['Accept', 'Reject', 'Dismiss']);
+      expect(el.shadowRoot!.textContent).not.toContain('Retry');
+    });
+
+    it('announces a failure once, naming what failed, when it announces outcomes', async () => {
+      const said: string[] = [];
+      const el = await review(
+        [proposal(), proposal({ proposalId: 'p2', status: 'applied' })],
+        (e) => {
+          e.setAttribute('announce', '');
+          e.addEventListener('odd-announce', (event) =>
+            said.push((event as CustomEvent<{ text: string }>).detail.text),
+          );
+        },
+      );
+      await update(el, [
+        proposal({ status: 'failed' }),
+        proposal({ proposalId: 'p2', status: 'failed', appliedRevision: 'r8' }),
+      ]);
+      expect(said).toEqual(['A change could not be applied.', 'A change could not be undone.']);
+    });
+  });
+
   it("odd-change-review: its default example plays the host, so the reader sees each request's outcome", async () => {
     await import('../src/change-review/change-review.define.js');
     await import('@oddkin/components/define/textarea');

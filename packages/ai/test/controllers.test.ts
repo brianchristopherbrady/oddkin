@@ -279,6 +279,32 @@ describe('DocumentSession and text ranges', () => {
     ).toBe('failed');
   });
 
+  it('takes a proposal that failed to apply again, checked from the start, or its rejection', () => {
+    const doc = new DocumentSession('The quick fox.');
+    const proposal = (proposalId: string) => ({
+      proposalId,
+      baseRevision: doc.getSnapshot().revision,
+      range: { start: 4, end: 9 },
+      original: 'slow',
+      replacement: 'swift',
+    });
+    const record = (id: string) => doc.getSnapshot().proposals.find((p) => p.proposalId === id)!;
+    const failed = doc.propose(proposal('p1'));
+    expect(failed.status).toBe('failed');
+    // Accepted again, it still does not match: failed again, as a new record with its error.
+    expect(doc.accept('p1')).toEqual({ ok: false, reason: 'conflict' });
+    expect(record('p1')).not.toBe(failed);
+    expect(record('p1')).toMatchObject({ status: 'failed', error: failed.error });
+    expect(doc.getSnapshot().text).toBe('The quick fox.');
+    // After an edit it is out of date instead; a failed one can be rejected.
+    doc.propose(proposal('p2'));
+    doc.setText('The quick fox!');
+    expect(doc.accept('p1')).toEqual({ ok: false, reason: 'stale' });
+    expect(record('p1').status).toBe('stale');
+    expect(doc.reject('p2')).toMatchObject({ ok: true });
+    expect(record('p2').status).toBe('rejected');
+  });
+
   it('gives a proposal the text around its range on its line, cut at a word boundary', () => {
     const line =
       'One two three four five six seven eight nine ten eleven twelve thirteen fourteen.';

@@ -143,9 +143,20 @@ export default defineExamples('odd-change-review', {
           range: { start: 0, end: 9 },
           original: 'The build',
           replacement: 'Our build',
-          label: 'Failed: the host could not apply it',
+          label: 'Failed: the host could not apply it, so Accept tries again',
           status: 'failed',
           error: { code: 'ai.edit.range', message: 'The proposal does not match the text.' },
+        },
+        {
+          proposalId: 'p7',
+          baseRevision: 'v1',
+          range: { start: 10, end: 12 },
+          original: 'is',
+          replacement: 'was',
+          label: 'Failed to undo: the host had applied it, so Undo tries again',
+          status: 'failed',
+          appliedRevision: 'v2',
+          error: { code: 'ai.edit.undo', message: 'The document changed after the change.' },
         },
         {
           proposalId: 'p5',
@@ -160,6 +171,6 @@ export default defineExamples('odd-change-review', {
     },
     preset: true,
     guidance:
-      'Every status comes from the proposals the host passes in. `applying` and `undoing` are for a host that applies asynchronously; a `DocumentSession` applies at once. An applied proposal offers Undo unless its `undoable` is `false`, as `DocumentSession` sets it on every change but the latest. An out-of-date proposal offers Dismiss.',
+      'Every status comes from the proposals the host passes in. `applying` and `undoing` are for a host that applies asynchronously; a `DocumentSession` applies at once. An applied proposal offers Undo unless its `undoable` is `false`, as `DocumentSession` sets it on every change but the latest. An out-of-date proposal offers Dismiss. A failed proposal says what failed, Undo when it has an `appliedRevision`, and keeps the buttons to try it again.',
   },
 });

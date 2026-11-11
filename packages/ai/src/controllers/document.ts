@@ -104,7 +104,10 @@ export interface EditProposal {
    * while nothing has changed since.
    */
   readonly undoable?: boolean | undefined;
-  /** Revision produced by applying this proposal. */
+  /**
+   * Revision produced by applying this proposal. A `failed` proposal that has it failed to be
+   * undone; one without it failed to be applied (`odd-change-review` names which).
+   */
   readonly appliedRevision?: string | undefined;
   readonly error?: PublicError | undefined;
 }
@@ -163,6 +166,7 @@ export type ApplyResult =
  * document is still at the proposal's base revision; otherwise it becomes `stale` and the newer
  * content is never overwritten. Undo reverts only the most recent applied change when the
  * document has not changed since; each applied proposal's `undoable` says whether it is that one.
+ * A proposal that failed to apply can be accepted again, checked again from the start, or rejected.
  * A proposal gets the text around its range as `context` unless the host gives its own.
  */
 export class DocumentSession {
@@ -236,12 +240,12 @@ export class DocumentSession {
     return this.#state.peek().proposals.find((p) => p.proposalId === record.proposalId)!;
   }
 
-  /** Accept and apply a proposal to its base revision. */
+  /** Accept and apply a proposal to its base revision; again after it failed to apply. */
   accept(proposalId: string): ApplyResult {
     const now = this.#state.peek();
     const proposal = now.proposals.find((p) => p.proposalId === proposalId);
     if (!proposal) return { ok: false, reason: 'not-found' };
-    if (proposal.status !== 'requested')
+    if (proposal.status !== 'requested' && proposal.status !== 'failed')
       return { ok: false, reason: proposal.status === 'stale' ? 'stale' : 'invalid' };
     if (proposal.baseRevision !== now.revision) {
       this.#setStatus(proposalId, 'stale');
@@ -279,7 +283,11 @@ export class DocumentSession {
   reject(proposalId: string): ApplyResult {
     const proposal = this.#state.peek().proposals.find((p) => p.proposalId === proposalId);
     if (!proposal) return { ok: false, reason: 'not-found' };
-    if (proposal.status !== 'requested' && proposal.status !== 'stale')
+    if (
+      proposal.status !== 'requested' &&
+      proposal.status !== 'stale' &&
+      proposal.status !== 'failed'
+    )
       return { ok: false, reason: 'invalid' };
     this.#setStatus(proposalId, 'rejected');
     return { ok: true, revision: this.#state.peek().revision };

@@ -31,7 +31,7 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1224` |
 | `ai.question.stale` | — | Ignored an older question revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1230` |
 | `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1301` |
-| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:224` |
+| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:228` |
 | `ai.attachment.type` | — | {name} is not an accepted file type. Choose another file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:35` |
 | `ai.attachment.size` | — | {name} is larger than {limit}. Choose a smaller file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:36` |
 | `ai.attachment.count` | — | You can attach up to {limit} files. Remove one to add another. | yes | `packages/ai/src/prompt-input/prompt-input.ts:37` |
@@ -110,7 +110,7 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `analyzer.examples.unknownComponent` | warning | Example "{example.name}" is for <{example.component}>, which {manifestFile} does not declare; fix the example's tag, or declare the element. | yes | `packages/analyzer/src/index.ts:414` |
 | `agent.context.workspacePattern` | warning | Workspace pattern "{pattern}" is not read (only "dir" and "dir/*"), so its packages are missing from the context; list their directories, or use "dir/*". | yes | `packages/analyzer/src/kit/context.ts:264` |
 | `agent.context.notInstalled` | warning | {name} is declared but not installed; run the package manager's install. | yes | `packages/analyzer/src/kit/context.ts:405` |
-| `agent.context.themes` | warning | Foundations reference {sources.length} token inspections; the first ({first.package} {first.export}) describes the theme. Keep one in the foundations if another is meant. | yes | `packages/analyzer/src/kit/context.ts:525` |
+| `agent.context.themes` | warning | Foundations reference {sources.length} token inspections; the first ({first.package} {first.export}) describes the theme. Keep one in the foundations if another is meant. | yes | `packages/analyzer/src/kit/context.ts:528` |
 | `metadata.schema.unsupported` | error | {file} has schema {typeof schema === 'string' ? `"${schema}"` : 'none'}, and this version reads only {METADATA_SCHEMA}: it is not read. Install the @oddkin/analyzer version that wrote it, or run oddkin-analyze again. | yes | `packages/analyzer/src/metadata.ts:56` |
 | `metadata.component.undeclared` | warning | {file} describes <{name}>, which the package's Custom Elements Manifest does not declare: its enrichment is not read. Run oddkin-analyze again if the element was removed or renamed. | yes | `packages/analyzer/src/metadata.ts:86` |
 | `metadata.example.undeclared` | warning | {file} lists example {id} for <{name}>, which the package's Custom Elements Manifest does not declare: it is not read. Run oddkin-analyze again if the element was removed or renamed. | yes | `packages/analyzer/src/metadata.ts:92` |

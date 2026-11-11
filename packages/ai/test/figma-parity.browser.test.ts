@@ -1199,11 +1199,11 @@ describe('Figma parity: the reason field (page 08)', () => {
 // state (`native button · Approve · Loading`), and the row shows those and no others, nor any line
 // the state does not draw. Full density (the approval in a 40rem container): the approval's
 // compact row binds the same tokens, its buttons stacked full width at 48 px (the elements tests
-// measure that). Not compared: the change review's Failed and Unavailable, and the dismissal's
-// and undo's Unavailable (the review has no capabilities, and a failed proposal is final in its
-// records: propose it again), and the confirmation's Failed and Unavailable (a restore request has
-// no failure of its own before the record says `restore-failed`, and Restore… does not open the
-// confirmation while restoring is unavailable).
+// measure that). Not compared: the change review's, the dismissal's, and the undo's Unavailable
+// (the review has no capabilities), and the confirmation's Failed and Unavailable (a restore
+// request has no failure of its own before the record says `restore-failed`, and Restore… does
+// not open the confirmation while restoring is unavailable). A failed proposal keeps the buttons
+// of what failed (ADR 0049, "Pages 10 to 14"), so the review's three rows compare their Failed.
 describe('Figma parity: the decision row (page 08)', () => {
   const LINES: [RegExp, string][] = [
     [/error/, '.decision-error'],
@@ -1389,11 +1389,21 @@ describe('Figma parity: the decision row (page 08)', () => {
       await expectState(review, 'Resolved', item());
       await show('rejected');
       await expectState(review, 'ResolvedSecondary', item());
+      // A failure keeps the buttons of what failed, with its error (ADR 0049, "Pages 10 to 14").
+      const error = { code: 'x', message: 'The document is unavailable.' };
+      await show('failed', { error });
+      await expectState(review, 'Failed', item());
       const dismiss = 'Oddkin/AI/Internal/DecisionRow/ReviewDismiss';
       await show('stale');
       await expectState(dismiss, 'Ready', row());
       await click(el, 'dismiss');
       await expectState(dismiss, 'Submitting', row());
+      el.proposals = [{ ...el.proposals[0]!, status: 'failed', error }];
+      await settle(el);
+      await expectState(dismiss, 'Failed', row());
+      el.proposals = [{ ...el.proposals[0]!, status: 'stale' }];
+      await settle(el);
+      await click(el, 'dismiss');
       el.proposals = [{ ...el.proposals[0]!, status: 'rejected' }];
       await settle(el);
       await expectState(dismiss, 'Resolved', item());
@@ -1405,6 +1415,8 @@ describe('Figma parity: the decision row (page 08)', () => {
       el.proposals = [{ ...el.proposals[0]!, status: 'undone' }];
       await settle(el);
       await expectState(undo, 'Resolved', item());
+      await show('failed', { appliedRevision: 'v2', error });
+      await expectState(undo, 'Failed', row());
     });
 
     it(`Checkpoint and its confirmation (${mode})`, async () => {

@@ -13,12 +13,12 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 122,
+    "style": 131,
     "slot": 54,
-    "deferred": 68,
+    "deferred": 58,
     "controller": 18,
     "native": 7,
-    "element": 26,
+    "element": 27,
     "independent": 1
   },
   "references": [
@@ -28,8 +28,8 @@
       "source": "Oddkin/AI/Internal/BadgePresentation",
       "sourceId": "837:2455",
       "count": 30,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The approval's risk and expiry (packages/ai/src/action-approval, packages/ai/src/internal/expiry.ts) are complete odd-badges; BadgePresentation is their Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -37,8 +37,8 @@
       "source": "Oddkin/AI/Internal/DecisionRow/Approval",
       "sourceId": "807:427",
       "count": 20,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The approval draws page 08's decision row from the shared module packages/ai/src/internal/decision-row.ts, configured with Approve and Reject; its buttons are complete odd-buttons (the DecisionRow family's own reference)."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -46,8 +46,8 @@
       "source": "Oddkin/AI/Internal/DiffView",
       "sourceId": "809:671",
       "count": 32,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The approval draws its changes as Before and After blocks with the shared diff view (packages/ai/src/internal/diff-view.ts, diffPart and diffViewStyles)."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -73,8 +73,8 @@
       "source": "Oddkin/AI/Internal/ScopeChoice",
       "sourceId": "808:514",
       "count": 24,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The approval draws its scopes, and the approved scope, from the shared module packages/ai/src/internal/scope-choice.ts."
     },
     {
       "consumer": "Oddkin/AI/ActionApproval/Proposal",
@@ -82,8 +82,8 @@
       "source": "Oddkin/AI/Internal/Status",
       "sourceId": "806:181",
       "count": 10,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The approval's outcomes (approved, rejected, expired, superseded, cancelled) are the status part's outcome form, the shared decision row's outcome line (packages/ai/src/internal/decision-row.ts)."
     },
     {
       "consumer": "Oddkin/AI/ChangeReview/Proposal",
@@ -91,8 +91,8 @@
       "source": "Oddkin/AI/Internal/DecisionRow/ChangeReview",
       "sourceId": "807:820",
       "count": 10,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+      "class": "style",
+      "reason": "The change review (packages/ai/src/change-review) draws page 08's decision row from the shared module packages/ai/src/internal/decision-row.ts, Accept and Reject configured per proposal, the buttons of what failed kept with its error; its buttons are complete odd-buttons (the DecisionRow family's own reference)."
     },
     {
       "consumer": "Oddkin/AI/ChangeReview/Proposal",
@@ -100,8 +100,8 @@
       "source": "Oddkin/AI/Internal/DecisionRow/ReviewDismiss",
       "sourceId": "826:1691",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+      "class": "style",
+      "reason": "The change review draws an out-of-date proposal's Dismiss with the same shared decision row (packages/ai/src/internal/decision-row.ts)."
     },
     {
       "consumer": "Oddkin/AI/ChangeReview/Proposal",
@@ -109,8 +109,8 @@
       "source": "Oddkin/AI/Internal/DecisionRow/ReviewUndo",
       "sourceId": "826:1596",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+      "class": "style",
+      "reason": "The change review draws an applied proposal's Undo with the same shared decision row (packages/ai/src/internal/decision-row.ts)."
     },
     {
       "consumer": "Oddkin/AI/ChangeReview/Proposal",
@@ -118,8 +118,8 @@
       "source": "Oddkin/AI/Internal/DiffView",
       "sourceId": "809:671",
       "count": 21,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+      "class": "style",
+      "reason": "The change review draws each proposal's change with the shared diff view (packages/ai/src/internal/diff-view.ts, diffPart and diffViewStyles), whose context and long line diff open from complete odd-disclosures (the DiffView family's own reference)."
     },
     {
       "consumer": "Oddkin/AI/ChangeReview/Proposal",
@@ -127,8 +127,8 @@
       "source": "Oddkin/AI/Internal/Status",
       "sourceId": "806:181",
       "count": 8,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+      "class": "style",
+      "reason": "Review requested, under the title while a proposal awaits review, is the status part's compact form from the shared module packages/ai/src/internal/status.ts (statusBadge): a complete odd-badge (the Status family's own reference)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker",
@@ -2722,8 +2722,8 @@
       "reason": "Previous and next are native buttons drawn with the small button look, and the slide buttons are its own; the slides are author content."
     },
     "odd-change-review": {
-      "dependencies": ["odd-button", "odd-disclosure"],
-      "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2); the diff view's context and a long line diff open from complete odd-disclosures (Figma page 08, DiffView)."
+      "dependencies": ["odd-badge", "odd-button", "odd-disclosure"],
+      "reason": "Review requested is a complete odd-badge, the status part of Figma page 08 (Oddkin/AI/Internal/Status); accept, reject, dismiss, and undo are complete buttons (Figma: button/sm ×2); the diff view's context and a long line diff open from complete odd-disclosures (Figma page 08, DiffView)."
     },
     "odd-checkbox": { "dependencies": [] },
     "odd-checkbox-group": {
