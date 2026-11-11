@@ -2,6 +2,10 @@
  * Styles for panel content (catalog, component and foundation details). Every rule is scoped to
  * `.wb-content`, so the same sheet works inside a panel's shadow root and in the shell's light DOM.
  * Values come from Oddkin tokens, inherited from the host document.
+ *
+ * Each panel follows its own container, never the window (responsiveness.md): a path in a sentence
+ * or a button's label wraps rather than widening the page, a field group shrinks with its column,
+ * and Theme Studio sets Generate and the ramps beside the live preview and contrast from 52rem.
  */
 import { css } from '@oddkin/core/styles';
 
@@ -31,6 +35,10 @@ export const contentStyles = css`
   .wb-content pre {
     font-family: var(--odd-font-family-mono);
     font-size: 0.9em;
+  }
+  .wb-content :is(p, li),
+  .wb-content button {
+    overflow-wrap: anywhere;
   }
   .wb-content input,
   .wb-content select,
@@ -225,7 +233,22 @@ export const contentStyles = css`
   }
 
   /* Theme Studio */
+  .wb-content .wb-studio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--odd-space-2xl);
+  }
+  .wb-content .wb-studio > * > section ~ section,
+  .wb-content > .wb-studio ~ section {
+    margin-block-start: var(--odd-space-2xl);
+  }
+  @container wb-content (width >= 52rem) {
+    .wb-content .wb-studio {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+  }
   .wb-content fieldset.wb-group {
+    min-inline-size: 0;
     border: var(--odd-border-width-default) solid var(--odd-color-border-default);
     border-radius: var(--odd-radius-sm);
     padding: var(--odd-space-md);

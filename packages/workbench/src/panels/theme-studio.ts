@@ -779,146 +779,157 @@ export class ThemeStudioElement extends OddkinElement.with({
     // The file edited: one of a theme's files on a base, else the theme file.
     const source = studio.files ? this.#file.value : studio.source;
     return html`<div class="wb-content">
-      <section id="generate" aria-labelledby="generate-title">
-        <h2 id="generate-title">Generate</h2>
-        ${this.#products.value?.render() ?? nothing}
-        ${
-          source
-            ? html`<p class="wb-muted">
-                Draft of
-                <code>${source}</code>${product ? html`, product <code>${product}</code>` : ''}.
-                Edits stay in this page until exported.
-              </p>`
-            : nothing
-        }
-        ${repeat(
-          groups,
-          (group) => group.id,
-          (group) =>
-            html`<fieldset class="wb-group" data-group=${group.id}>
-              <legend>${group.title}</legend>
-              ${group.note ? html`<p class="wb-muted">${group.note}</p>` : nothing}
-              ${repeat(
-                group.fields,
-                (field) => pathText(field.path),
-                (field) => this.#field(field),
-              )}
-              ${
-                group.rows?.length
-                  ? html`<div class="wb-table-wrap">
-                      <table>
-                        <caption class="wb-visually-hidden">
-                          ${group.title}, one column per mode
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th scope="col">Token</th>
-                            ${(group.modes ?? []).map((mode) => html`<th scope="col">${mode}</th>`)}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${repeat(
-                            group.rows,
-                            (row) => row.token,
-                            (row) =>
-                              html`<tr>
-                                <th scope="row">
-                                  <code>${row.token}</code>${
-                                    row.inherited
-                                      ? html` <span class="wb-muted">from ${row.inherited}</span>`
-                                      : nothing
-                                  }
-                                </th>
-                                ${row.cells.map(
-                                  (cell) =>
-                                    html`<td>
-                                      <input
-                                        aria-label=${cell.label}
-                                        .value=${cell.value === undefined ? '' : String(cell.value)}
-                                        placeholder=${cell.inherited ? this.#placeholder(cell) : ''}
-                                        data-path=${pathText(cell.path)}
-                                        @change=${(event: Event) =>
-                                          this.#change(
-                                            cell,
-                                            (event.target as HTMLInputElement).value,
-                                          )}
-                                      />
-                                    </td>`,
-                                )}
-                              </tr>`,
-                          )}
-                        </tbody>
-                      </table>
-                    </div>`
-                  : nothing
-              }
-            </fieldset>`,
-        )}
-        ${
-          draft === undefined
-            ? nothing
-            : html`<div class="wb-field wb-json">
-                <label for="ts-json">Configuration (JSON)</label>
-                <textarea
-                  id="ts-json"
-                  class="wb-code"
-                  rows="16"
-                  spellcheck="false"
-                  aria-describedby="ts-json-error"
-                  .value=${this.#json.value}
-                  @input=${(event: Event) => {
-                    const text = (event.target as HTMLTextAreaElement).value;
-                    this.#json.value = text;
-                    const parsed = parseDraft(text);
-                    this.#jsonError.value = parsed.ok ? '' : (parsed.message ?? '');
-                    if (parsed.ok) this.#setDraft(parsed.value, true);
-                  }}
-                ></textarea>
-                <p id="ts-json-error" class="wb-error" ?hidden=${!this.#jsonError.value}>
+      <div class="wb-studio">
+        <div>
+          <section id="generate" aria-labelledby="generate-title">
+            <h2 id="generate-title">Generate</h2>
+            ${this.#products.value?.render() ?? nothing}
+            ${
+              source
+                ? html`<p class="wb-muted">
+                    Draft of
+                    <code>${source}</code>${product ? html`, product <code>${product}</code>` : ''}.
+                    Edits stay in this page until exported.
+                  </p>`
+                : nothing
+            }
+            ${repeat(
+              groups,
+              (group) => group.id,
+              (group) =>
+                html`<fieldset class="wb-group" data-group=${group.id}>
+                  <legend>${group.title}</legend>
+                  ${group.note ? html`<p class="wb-muted">${group.note}</p>` : nothing}
+                  ${repeat(
+                    group.fields,
+                    (field) => pathText(field.path),
+                    (field) => this.#field(field),
+                  )}
                   ${
-                    this.#jsonError.value
-                      ? `Not applied: ${this.#jsonError.value} The preview keeps the last valid draft.`
-                      : ''
+                    group.rows?.length
+                      ? html`<div class="wb-table-wrap">
+                          <table>
+                            <caption class="wb-visually-hidden">
+                              ${group.title}, one column per mode
+                            </caption>
+                            <thead>
+                              <tr>
+                                <th scope="col">Token</th>
+                                ${(group.modes ?? []).map((mode) => html`<th scope="col">${mode}</th>`)}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${repeat(
+                                group.rows,
+                                (row) => row.token,
+                                (row) =>
+                                  html`<tr>
+                                    <th scope="row">
+                                      <code>${row.token}</code>${
+                                        row.inherited
+                                          ? html` <span class="wb-muted"
+                                              >from ${row.inherited}</span
+                                            >`
+                                          : nothing
+                                      }
+                                    </th>
+                                    ${row.cells.map(
+                                      (cell) =>
+                                        html`<td>
+                                          <input
+                                            aria-label=${cell.label}
+                                            .value=${cell.value === undefined ? '' : String(cell.value)}
+                                            placeholder=${cell.inherited ? this.#placeholder(cell) : ''}
+                                            data-path=${pathText(cell.path)}
+                                            @change=${(event: Event) =>
+                                              this.#change(
+                                                cell,
+                                                (event.target as HTMLInputElement).value,
+                                              )}
+                                          />
+                                        </td>`,
+                                    )}
+                                  </tr>`,
+                              )}
+                            </tbody>
+                          </table>
+                        </div>`
+                      : nothing
                   }
-                </p>
-              </div>`
-        }
-      </section>
-      ${shown && views ? views.rampsView(shown.views, shown.label) : nothing}
-      <section id="live-preview" aria-labelledby="live-preview-title">
-        <h2 id="live-preview-title">Live preview</h2>
-        ${this.#screens(studio)}
-        <p class="wb-status" role=${status.alert || (result && !result.ok) ? 'alert' : 'status'}>
-          ${
-            status.text ||
-            (result
-              ? result.ok
-                ? `Generated in ${Math.round(result.ms)} ms.`
-                : 'This draft is invalid: the preview keeps the last valid theme.'
-              : '')
-          }
-        </p>
-        ${problemList('Generator diagnostics', problems)}
-        <div class="wb-previews wb-pair">
-          ${MODES.map(
-            (mode, i) =>
-              html`<div class="wb-preview">
-                <p>${mode === 'light' ? 'Light' : 'Dark'}</p>
-                ${this.#hosts[i]}
-              </div>`,
-          )}
+                </fieldset>`,
+            )}
+            ${
+              draft === undefined
+                ? nothing
+                : html`<div class="wb-field wb-json">
+                    <label for="ts-json">Configuration (JSON)</label>
+                    <textarea
+                      id="ts-json"
+                      class="wb-code"
+                      rows="16"
+                      spellcheck="false"
+                      aria-describedby="ts-json-error"
+                      .value=${this.#json.value}
+                      @input=${(event: Event) => {
+                        const text = (event.target as HTMLTextAreaElement).value;
+                        this.#json.value = text;
+                        const parsed = parseDraft(text);
+                        this.#jsonError.value = parsed.ok ? '' : (parsed.message ?? '');
+                        if (parsed.ok) this.#setDraft(parsed.value, true);
+                      }}
+                    ></textarea>
+                    <p id="ts-json-error" class="wb-error" ?hidden=${!this.#jsonError.value}>
+                      ${
+                        this.#jsonError.value
+                          ? `Not applied: ${this.#jsonError.value} The preview keeps the last valid draft.`
+                          : ''
+                      }
+                    </p>
+                  </div>`
+            }
+          </section>
+          ${shown && views ? views.rampsView(shown.views, shown.label) : nothing}
         </div>
-        ${this.#products.value?.compare() ?? nothing} ${this.#app.value?.render() ?? nothing}
-        ${
-          studio.roles.length && this.#screen.value === 'specimens'
-            ? html`<p class="wb-muted">
-                Roles:
-                ${studio.roles.map((r) => `${r.label} (<${r.tag}>, ${r.source === 'config' ? 'configured' : 'claimed by its example'})`).join(' · ')}.
-              </p>`
-            : nothing
-        }
-      </section>
-      ${shown && views ? views.contrastView(shown.views, shown.label) : nothing}
+        <div>
+          <section id="live-preview" aria-labelledby="live-preview-title">
+            <h2 id="live-preview-title">Live preview</h2>
+            ${this.#screens(studio)}
+            <p
+              class="wb-status"
+              role=${status.alert || (result && !result.ok) ? 'alert' : 'status'}
+            >
+              ${
+                status.text ||
+                (result
+                  ? result.ok
+                    ? `Generated in ${Math.round(result.ms)} ms.`
+                    : 'This draft is invalid: the preview keeps the last valid theme.'
+                  : '')
+              }
+            </p>
+            ${problemList('Generator diagnostics', problems)}
+            <div class="wb-previews wb-pair">
+              ${MODES.map(
+                (mode, i) =>
+                  html`<div class="wb-preview">
+                    <p>${mode === 'light' ? 'Light' : 'Dark'}</p>
+                    ${this.#hosts[i]}
+                  </div>`,
+              )}
+            </div>
+            ${this.#products.value?.compare() ?? nothing} ${this.#app.value?.render() ?? nothing}
+            ${
+              studio.roles.length && this.#screen.value === 'specimens'
+                ? html`<p class="wb-muted">
+                    Roles:
+                    ${studio.roles.map((r) => `${r.label} (<${r.tag}>, ${r.source === 'config' ? 'configured' : 'claimed by its example'})`).join(' · ')}.
+                  </p>`
+                : nothing
+            }
+          </section>
+          ${shown && views ? views.contrastView(shown.views, shown.label) : nothing}
+        </div>
+      </div>
       ${draft === undefined ? nothing : this.#exportSection(source)}
       <section id="method" aria-labelledby="method-title">
         <h2 id="method-title">Method and limits</h2>

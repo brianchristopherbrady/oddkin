@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { settled } from '@oddkin/core/reactive';
 import { createScope, scopeStats } from '@oddkin/core/scope';
 import { render } from '@oddkin/core/template';
@@ -191,6 +192,24 @@ afterEach(async () => {
   await settled();
   history.replaceState(null, '', location.pathname + location.search);
 });
+
+/** The default theme, as a host page links it, so spacing and controls have their sizes. */
+async function linkTheme(): Promise<HTMLLinkElement> {
+  const theme = document.createElement('link');
+  theme.rel = 'stylesheet';
+  theme.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
+  await new Promise((resolve, reject) => {
+    theme.onload = resolve;
+    theme.onerror = reject;
+    document.head.append(theme);
+  });
+  mounted.push(theme);
+  return theme;
+}
+
+/** Two frames: the layout a width change starts has been done. */
+const painted = () =>
+  new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
 interface Probe extends HTMLElement {
   readonly writes: string[];
@@ -736,6 +755,41 @@ describe('<oddkin-component-panel>', () => {
     expect(row('count').querySelector('[role="alert"]')).toBeNull();
   });
 
+  // Continuity (responsiveness.md): a change of the panel's width keeps the field being edited, its
+  // caret and the focus, and the preview frame and its element, which do not reload.
+  it('keeps the field being edited, its focus, and the preview while the panel changes width', async () => {
+    await linkTheme();
+    const { panel, root, frames, probe, row } = componentPanel();
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    const field = row('label').querySelector<HTMLInputElement>('input[type="text"]')!;
+    await userEvent.fill(field, 'Hello there');
+    field.setSelectionRange(5, 5);
+    await until(() => probe()!.getAttribute('label') === 'Hello there', 'the typed label');
+    const [frame] = frames();
+    const [doc, element] = [frame!.contentDocument, probe()];
+    const density = () => {
+      const style = getComputedStyle(field);
+      return [style.paddingInlineStart, style.paddingBlockStart, style.fontSize];
+    };
+    const first = density();
+    for (const width of [1000, 600, 360, 1000, 360]) {
+      panel.style.inlineSize = `${width}px`;
+      await settled();
+      await painted();
+      expect(row('label').querySelector('input[type="text"]')).toBe(field);
+      expect(field.value).toBe('Hello there');
+      expect(root.activeElement).toBe(field);
+      expect([field.selectionStart, field.selectionEnd]).toEqual([5, 5]);
+      expect(frames()[0]).toBe(frame);
+      expect(frame!.contentDocument).toBe(doc);
+      expect(probe()).toBe(element);
+      expect(density()).toEqual(first);
+      expect(panel.scrollWidth).toBeLessThanOrEqual(panel.clientWidth + 1);
+    }
+    await userEvent.keyboard('!');
+    await until(() => probe()!.getAttribute('label') === 'Hello! there', 'typing at the caret');
+  });
+
   it('applies presets, logs declared events safely, syncs declared pairs, and resets in a fresh frame', async () => {
     const { panel, root, probe, row, change } = componentPanel();
     await until(() => !!probe()?.isConnected, 'the probe preview');
@@ -1159,8 +1213,9 @@ describe('<oddkin-theme-studio-panel>', () => {
         cell.textContent?.replace(/\s+/g, ' ').trim(),
       );
     await until(() => !!root.querySelector('#ramps') && !!root.querySelector('#contrast'), 'views');
-    // The reference's order: Generate, Ramps, Live preview, Contrast, then Export.
-    expect([...root.querySelectorAll('.wb-content > section')].map((s) => s.id)).toEqual([
+    // The reference's order: Generate, Ramps, Live preview, Contrast, then Export; a wide panel
+    // sets the first two beside the other two.
+    expect([...root.querySelectorAll('.wb-content section[id]')].map((s) => s.id)).toEqual([
       'generate',
       'ramps',
       'live-preview',
@@ -2097,6 +2152,140 @@ describe('<oddkin-theme-studio-panel>', () => {
     expect(panel.draft).toEqual({ brand: { primary: '#999999' } });
     expect(panel.previews).not.toBe(frames);
   });
+
+  // Continuity (responsiveness.md; component-contracts.md §2.11): the panel arranges by its own
+  // container, Generate beside the screens when wide and above them when narrow, and a change of
+  // width keeps the reader's work: a value typed and not yet applied (its caret and the focus), the
+  // file and product edited, the screen, an open diff, and the frames, which do not reload.
+  it('keeps the draft, focus, product, screen, open diff, and frames while its parent changes width', async () => {
+    await linkTheme();
+    // A path as long as the dev server's: it wraps rather than widening the panel.
+    const portalFile = '../../../packages/tokens/themes/portal.theme.json';
+    const fetchOriginal = globalThis.fetch;
+    const lines = ['@@ -1,3 +1,3 @@', `-${'"#aa0000" '.repeat(12)}`, `+${'"#bb0000" '.repeat(12)}`];
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) =>
+      String(input) === '/save-portal'
+        ? new Response(JSON.stringify({ file: portalFile, version: 'v1', lines }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          })
+        : fetchOriginal(input, init),
+    );
+    const host = document.createElement('div');
+    host.style.boxSizing = 'border-box';
+    host.style.padding = '10px';
+    try {
+      const page = studioPage();
+      const base = {
+        brand: { primary: '#123456' },
+        overrides: { 'color.canvas': { light: '#ffffff', dark: '#000000' } },
+      };
+      const portal = {
+        extends: './base.theme.json',
+        products: { kiosk: { brand: { primary: '#aa0000' } } },
+      };
+      const files = [
+        { file: 'base.theme.json', config: base },
+        {
+          file: portalFile,
+          config: portal,
+          base: 'base.theme.json',
+          save: '/save-portal',
+        },
+      ];
+      const panel = document.createElement('oddkin-theme-studio-panel');
+      panel.frameUrl = frameUrl;
+      panel.page = {
+        ...page,
+        studio: { ...page.studio, files, themes: [{ file: portalFile, name: 'portal' }] },
+      };
+      host.append(panel);
+      mounted.push(host);
+      document.body.append(host);
+      const root = panel.shadowRoot!;
+      const $ = <E extends Element>(selector: string) => root.querySelector<E>(selector)!;
+      const change = (select: HTMLSelectElement, value: string) => {
+        select.value = value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const button = (text: string) =>
+        [...root.querySelectorAll('button')].find((b) => b.textContent?.includes(text));
+      const productOf = (iframe: HTMLIFrameElement) =>
+        iframe.contentDocument?.querySelector<HTMLElement>('[data-oddkin-preview]')?.dataset[
+          'oddProduct'
+        ];
+      await until(() => panel.previews.length === 2 && !!$('#ts-file'), 'the frames and picker');
+
+      // The reader picks a product and a screen, asks for the diff, and types a value.
+      change($('#ts-file'), `${portalFile}#kiosk`);
+      await until(() => panel.previews.every((p) => productOf(p.iframe) === 'kiosk'), 'kiosk');
+      change($('#ts-screen'), 'component:fixture-button');
+      await until(
+        () =>
+          panel.previews.every(
+            (p) => !!p.iframe.contentDocument?.querySelector('[data-role="quiet"]'),
+          ),
+        'the component screen',
+      );
+      await until(() => button(`Save to ${portalFile}`)?.disabled === false, 'saving');
+      button(`Save to ${portalFile}`)!.click();
+      await until(() => !!$(`[aria-label="Changes to ${portalFile}"]`), 'the diff');
+      const diff = $(`[aria-label="Changes to ${portalFile}"]`);
+      const field = $<HTMLInputElement>('#ts-brand-primary');
+      await userEvent.fill(field, '#bb0000');
+      field.setSelectionRange(3, 3);
+      const frames = panel.previews.map((p) => [p.iframe, p.iframe.contentDocument]);
+      for (const [, doc] of frames) (doc as Document & { probe?: true }).probe = true;
+      const density = () =>
+        [field, $('#ts-screen'), $('fieldset.wb-group'), button(`Write ${portalFile}`)!].map(
+          (el) => {
+            const style = getComputedStyle(el);
+            return [style.paddingInlineStart, style.paddingBlockStart, style.fontSize];
+          },
+        );
+      const first = density();
+
+      for (const width of [1400, 800, 420, 1400, 360]) {
+        host.style.inlineSize = `${width}px`;
+        await settled();
+        await painted();
+        expect($('#ts-brand-primary')).toBe(field);
+        expect(field.value).toBe('#bb0000');
+        expect(root.activeElement).toBe(field);
+        expect([field.selectionStart, field.selectionEnd]).toEqual([3, 3]);
+        expect([
+          $<HTMLSelectElement>('#ts-file').value,
+          $<HTMLSelectElement>('#ts-screen').value,
+        ]).toEqual([`${portalFile}#kiosk`, 'component:fixture-button']);
+        expect($(`[aria-label="Changes to ${portalFile}"]`)).toBe(diff);
+        // The same frames and documents: nothing reloaded them.
+        panel.previews.forEach((p, i) => {
+          expect(p.iframe).toBe(frames[i]![0]);
+          expect(p.iframe.contentDocument).toBe(frames[i]![1]);
+        });
+        expect(
+          panel.previews.every(
+            (p) => (p.iframe.contentDocument as Document & { probe?: true }).probe,
+          ),
+        ).toBe(true);
+        expect(density()).toEqual(first);
+        // Nothing overflows the parent; the table and the diff scroll on their own.
+        expect(host.scrollWidth).toBeLessThanOrEqual(host.clientWidth + 1);
+        const content = $('.wb-content');
+        expect(content.scrollWidth).toBeLessThanOrEqual(content.clientWidth + 1);
+        // Generate beside the screens in a wide container (52rem), above them in a narrow one.
+        const generate = $('#generate').getBoundingClientRect();
+        const screens = $('#live-preview').getBoundingClientRect();
+        if (width >= 900) expect(screens.left).toBeGreaterThanOrEqual(generate.right);
+        else expect(screens.top).toBeGreaterThanOrEqual(generate.bottom);
+      }
+      // The typed value applies when the reader leaves the field, as before.
+      await userEvent.keyboard('{Tab}');
+      await until(() => JSON.stringify(panel.draft).includes('#bb0000'), 'the applied value');
+    } finally {
+      spy.mockRestore();
+    }
+  });
 });
 
 describe('<oddkin-catalog-panel>', () => {
@@ -2152,6 +2341,40 @@ describe('<oddkin-catalog-panel>', () => {
     expect(Math.abs(from.right - row.right)).toBeLessThan(1);
     expect(from.left).toBeGreaterThan(tag.right);
     expect(from.top < tag.bottom && tag.top < from.bottom).toBe(true);
+  });
+
+  // Continuity (responsiveness.md): the cards change columns with the panel's width; the query,
+  // its caret and the focus, and the cards themselves stay.
+  it('keeps the query, its focus, and the cards while the panel changes width', async () => {
+    await linkTheme();
+    const panel = document.createElement('oddkin-catalog-panel');
+    panel.index = probeData().index;
+    panel.href = (route) => `/docs${route}`;
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    await until(() => !!root.querySelector('odd-card a'), 'the cards');
+    const search = root.querySelector<HTMLInputElement>('.wb-catalog-filters input')!;
+    await userEvent.fill(search, 'probe');
+    search.setSelectionRange(2, 2);
+    await until(() => panel.query === 'probe', 'the query');
+    await settled();
+    const cards = [...root.querySelectorAll('odd-card')];
+    expect(cards.length).toBeGreaterThan(0);
+    for (const width of [1000, 600, 360, 1000, 360]) {
+      panel.style.inlineSize = `${width}px`;
+      await settled();
+      await painted();
+      expect(root.querySelector('.wb-catalog-filters input')).toBe(search);
+      expect(search.value).toBe('probe');
+      expect(root.activeElement).toBe(search);
+      expect([search.selectionStart, search.selectionEnd]).toEqual([2, 2]);
+      const shown = [...root.querySelectorAll('odd-card')];
+      expect(shown.length === cards.length && shown.every((card, i) => card === cards[i])).toBe(
+        true,
+      );
+      expect(panel.scrollWidth).toBeLessThanOrEqual(panel.clientWidth + 1);
+    }
   });
 
   it('shows host previews in the cards and lists only the given categories', async () => {

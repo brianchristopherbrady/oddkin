@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // Theme Studio on the Workbench dev server (port 4175; tests/fixtures/workbench-oddkin sets
 // themeStudio.themeConfig to the default theme). Specimens are the real components, mapped to
@@ -248,6 +248,80 @@ test.describe('Theme Studio', () => {
     await expect(css).toBeDisabled();
     await expect(page.locator('#ts-export-note')).toContainText('The JSON has an error');
   });
+
+  // The baseline flow (P1.5) by keyboard alone, from the top of the page: Tab and Enter only, no
+  // pointer and no programmatic focus; wide (Generate beside the screens) and narrow (stacked).
+  for (const [width, height] of [
+    [1280, 720],
+    [390, 844],
+  ] as const)
+    test(`runs the baseline flow by keyboard alone, ${width} px wide: edit, both modes, export`, async ({
+      page,
+      browserName,
+    }) => {
+      await page.setViewportSize({ width, height });
+      const tabTo = async (target: Locator) => {
+        for (let i = 0; i < 200; i++) {
+          if (await target.evaluate((el) => el === document.activeElement)) return;
+          await page.keyboard.press('Tab');
+        }
+        throw new Error('Tab never reached the control');
+      };
+      const [, before] = [await primary(page, 0), await primary(page, 1)];
+      // The skip link first. WebKit, like Safari, leaves links out of the Tab order.
+      if (browserName !== 'webkit') {
+        await page.keyboard.press('Tab');
+        await expect(page.locator('.wb-skip')).toBeFocused();
+        await page.keyboard.press('Enter');
+        await expect(page.locator('main')).toBeFocused();
+      }
+
+      // Edit the primary action's colour in each mode; each value applies as its field loses the
+      // focus, which shows.
+      const cell = (mode: string) =>
+        page.locator(`input[data-path="/overrides/color.action.default/${mode}"]`);
+      await tabTo(cell('light'));
+      expect(await cell('light').evaluate((el) => getComputedStyle(el).outlineStyle)).not.toBe(
+        'none',
+      );
+      await page.keyboard.press('ControlOrMeta+a');
+      await page.keyboard.type('#0a7d33');
+      await page.keyboard.press('Tab');
+      await expect.poll(async () => (await primary(page, 0)).background).toBe('rgb(10, 125, 51)');
+      expect(await primary(page, 1)).toEqual({ same: true, background: before.background });
+      await expect(cell('dark')).toBeFocused();
+      await page.keyboard.press('ControlOrMeta+a');
+      await page.keyboard.type('#7ad69a');
+      await page.keyboard.press('Tab');
+      // Each mode's frame shows its own value, on the same elements.
+      await expect.poll(async () => (await primary(page, 1)).background).toBe('rgb(122, 214, 154)');
+      expect(await primary(page, 0)).toEqual({ same: true, background: 'rgb(10, 125, 51)' });
+
+      // Export: the configuration, then the CSS.
+      const config = page.getByRole('button', { name: 'Download default.theme.json' });
+      await tabTo(config);
+      await expect(config).toBeEnabled();
+      const [file] = await Promise.all([
+        page.waitForEvent('download'),
+        page.keyboard.press('Enter'),
+      ]);
+      expect(JSON.parse(readFileSync(await file.path(), 'utf8'))).toMatchObject({
+        overrides: { 'color.action.default': { light: '#0a7d33', dark: '#7ad69a' } },
+      });
+      await page.keyboard.press('Tab');
+      await expect(page.getByRole('button', { name: 'Download default.theme.css' })).toBeFocused();
+      const [sheet] = await Promise.all([
+        page.waitForEvent('download'),
+        page.keyboard.press('Enter'),
+      ]);
+      expect(sheet.suggestedFilename()).toBe('default.theme.css');
+      // Nothing overflows the page sideways at either width.
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        ),
+      ).toBe(true);
+    });
 
   const frames = (page: Page) =>
     [0, 1].map((i) => page.frameLocator('oddkin-workbench-theme-studio iframe').nth(i));

@@ -276,8 +276,10 @@ export const BUDGETS = {
   // themes on base files (P1.5 item 4), as the panel above. 7.5 KiB from 2026-11-04 (Agent 2):
   // measured 7,459 with the products of a file, as the panel above. 8 KiB from 2026-11-04 (Agent
   // 2; requested in the lanes): measured 7,949 with the shape, motion, type, and gamut inputs, as
-  // the panel above.
-  'workbench-theme-studio': 8192,
+  // the panel above. 8,256 B from 2026-11-11 (Agent 2; approved by Agent 1 in the lanes): measured
+  // 8,234 with the arrangement by container (responsiveness.md; row 28): the two column wrappers
+  // that set Generate and the ramps beside the live preview and contrast from 52rem.
+  'workbench-theme-studio': 8256,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme). Measured 7,472 on 2026-11-02 with the composition request.
