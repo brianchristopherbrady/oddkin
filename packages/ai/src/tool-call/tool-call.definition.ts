@@ -1,3 +1,4 @@
+import { disclosureDefinition } from '@oddkin/components/disclosure';
 import { compose } from '@oddkin/core/element';
 import { actionApprovalDefinition } from '../action-approval/action-approval.definition.js';
 import { aiBaseStyles } from '../internal/base.styles.js';
@@ -10,5 +11,5 @@ export const toolCallDefinition = compose({
   element: OddkinToolCall,
   template: toolCallTemplate,
   styles: [aiBaseStyles, toolCallStyles],
-  dependencies: { approval: actionApprovalDefinition },
+  dependencies: { approval: actionApprovalDefinition, disclosure: disclosureDefinition },
 });

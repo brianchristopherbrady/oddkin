@@ -391,7 +391,7 @@ Round 9 (converted 2026-10-28 by Agent 1, which took over the rows Agent 2 and A
 | ai/response-feedback/response-feedback.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.form` stack({ gap: space.xs }); `fieldset` stack({ gap: space.2xs }); `.check` row({ gap: space.xs }); `.field` stack({ gap: space.2xs }) | — |
 | ai/sources/sources.styles.ts | Agent 2 | `.list` stack({ gap: space.xs }); `.item` stack({ gap: 0.125rem }) | — |
 | ai/task-plan/task-plan.styles.ts | Agent 2 | `.base` stack({ gap: space.sm }); `.progress` row({ gap: space.xs, wrap: true }); `.steps, .tasks` stack({ gap: space.xs }); `.step, .task` row({ gap: space.xs, align: 'stretch' }); `.body` stack({ gap: 0.125rem }) | — |
-| ai/tool-call/tool-call.styles.ts | Agent 2 | `:host` stack({ gap: space.xs }); `.summary` row({ gap: space.xs, wrap: true }); `.body` stack({ gap: space.xs }); `.failure` row({ gap: space.xs, wrap: true }) | — |
+| ai/tool-call/tool-call.styles.ts | Agent 2 | `.base`, `.summary`, `.body` stack({ gap: space.md }); `.section` stack({ gap: space.xs }); `.failure` stack({ gap: space.md, align: 'start' }) (Figma page 10, 2026-11-10) | — |
 | ai/transcript/transcript.styles.ts | Agent 2 | `.list` stack({ gap: space.2xs }) | — |
 | ai/usage-meter/usage-meter.styles.ts | Agent 2 | `.list` stack({ gap: space.xs }); `dd` stack({ gap: space.2xs }) | `.entry`: cell grid: named or sized columns |
 | ai/voice-input/voice-input.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }) | `.record`: inline box: glyph and label inside the element box |

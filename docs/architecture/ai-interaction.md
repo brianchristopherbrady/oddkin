@@ -29,7 +29,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C02 | Conversation/messages | `odd-conversation`, `odd-message` | `ConversationController`, `createConversationView` | `repeat()`, `Scope`, signals, `odd-copy-button` |
 | C03 | Streaming response | `odd-response` | `MarkdownView` | DOM-only rendering, `@oddkin/ai/highlight`, `odd-copy-button` |
 | C04 | Citations/sources | `odd-citation`, `odd-sources` | — | `odd-popover`; native `button`/links |
-| C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | native `details` |
+| C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | `odd-disclosure` (Details) |
 | C06 | Action approval | `odd-action-approval` | `ConversationController.decide` | `odd-button` |
 | C07 | Context selection | `odd-context-picker` | host records (`ContextItemModel`) | native file/URL inputs |
 | C08 | Agent activity/plans | `odd-activity`, `odd-task-plan` | `isActive`, attempt records | native lists |

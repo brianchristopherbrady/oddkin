@@ -570,24 +570,33 @@ describe('odd-tool-call and odd-action-approval', () => {
         e.tool = tool('input-streaming', { inputText: '{"q":"wea' });
       },
     );
-    expect(text($(el, '.status'))).toBe('Preparing arguments…');
-    // The summary shows a disclosure marker that turns with the open state;
-    // its empty alternative keeps it out of the summary's accessible name.
-    const marker = () => getComputedStyle($(el, '.name')!, '::before').content;
-    expect(marker()).toBe('"\u25B8" / ""');
-    ($(el, 'details') as HTMLDetailsElement).open = true;
-    expect(marker()).toBe('"\u25BE" / ""');
-    ($(el, 'details') as HTMLDetailsElement).open = false;
+    expect(text($(el, '.state'))).toBe('Preparing arguments…');
+    // Figma page 10: the name, status, and purpose stay in view; Details (an odd-disclosure,
+    // closed until opened) holds the arguments and the result.
+    const details = $(el, 'odd-disclosure.details') as HTMLElementTagNameMap['odd-disclosure'];
+    expect([details.label, details.open]).toEqual(['Details', false]);
+    expect(details.contains($(el, '[part="arguments"]'))).toBe(true);
+    expect(details.contains($(el, '[part="summary"]'))).toBe(false);
+    expect($(el, '[part="base"]')!.getAttribute('aria-labelledby')).toBe('name');
+    expect(text($(el, '#name'))).toBe('Web search');
     el.tool = tool('input-available', { input: { q: 'weather' } });
     await settle(el);
-    expect(text($(el, '.status'))).toBe('Arguments ready; not run yet');
+    expect(text($(el, '.state'))).toBe('Arguments ready; not run yet');
     expect($(el, '[part="arguments"] pre')?.textContent).toContain('"q": "weather"');
     el.tool = tool('output-error', { error: { code: 'e', message: 'Timeout' }, retryable: true });
     await settle(el);
+    // The failure and Retry are outside Details, in view while it is closed.
+    expect(details.open).toBe(false);
+    expect(details.contains($(el, '.failure'))).toBe(false);
+    expect(text($(el, '.failure .error'))).toBe('Timeout');
     const retries: unknown[] = [];
     el.addEventListener('odd-tool-retry', (e) => retries.push((e as CustomEvent).detail));
     $(el, '.failure button')!.click();
     expect(retries).toEqual([{ toolCallId: 't1' }]);
+    // Neither arguments nor a result: no Details.
+    el.tool = tool('executing');
+    await settle(el);
+    expect(details.hidden).toBe(true);
   });
 
   it('words the gate from the approval until the call runs (ADR 0049)', async () => {
@@ -606,23 +615,27 @@ describe('odd-tool-call and odd-action-approval', () => {
         e.approval = approval('requested');
       },
     );
-    const status = () => [text($(el, '.status')), $(el, '.status')!.dataset['tone']];
+    const status = () => text($(el, '.state'));
     const show = async (call: ToolCallRecord['status'], gate: ApprovalRecord['status']) => {
       el.tool = tool(call, { approvalId: 'ap' });
       el.approval = approval(gate);
       await settle(el);
       return status();
     };
-    expect(status()).toEqual(['Waiting for approval', 'active']);
-    expect(await show('input-available', 'submitting')).toEqual(['Waiting for approval', 'active']);
-    expect(await show('input-available', 'failed')).toEqual(['Waiting for approval', 'active']);
+    expect(status()).toBe('Waiting for approval');
+    expect(await show('input-available', 'submitting')).toBe('Waiting for approval');
+    expect(await show('input-available', 'failed')).toBe('Waiting for approval');
     for (const gate of ['rejected', 'expired', 'superseded', 'cancelled'] as const)
-      expect(await show('input-available', gate)).toEqual(['Not run', '']);
+      expect(await show('input-available', gate)).toBe('Not run');
     // Approval is not execution: an approved call is ready until it runs.
-    expect(await show('input-available', 'approved')).toEqual(['Arguments ready; not run yet', '']);
+    expect(await show('input-available', 'approved')).toBe('Arguments ready; not run yet');
     // Once the call runs or settles, it speaks for itself.
-    expect(await show('executing', 'approved')).toEqual(['Running…', 'active']);
-    expect(await show('denied', 'rejected')).toEqual(['Not run: denied', 'danger']);
+    expect(await show('executing', 'approved')).toBe('Running…');
+    expect(await show('denied', 'rejected')).toBe('Not run: denied');
+    // The approval is in the call's card, in view with Details closed (Figma page 10).
+    const approvalEl = $(el, 'odd-action-approval')!;
+    expect($(el, '[part="base"]')!.contains(approvalEl)).toBe(true);
+    expect(($(el, 'odd-disclosure') as Element).contains(approvalEl)).toBe(false);
   });
 
   it('a withdrawn approval says so and offers no decision (ADR 0049 §5)', async () => {
@@ -781,7 +794,7 @@ describe('odd-tool-call and odd-action-approval', () => {
     });
   });
 
-  it('status labels take their colours from the shared tone styles', async () => {
+  it("the tool call's status is words in the secondary text colour, never a coloured badge (Figma page 10)", async () => {
     const theme = document.createElement('link');
     theme.rel = 'stylesheet';
     theme.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
@@ -806,32 +819,22 @@ describe('odd-tool-call and odd-action-approval', () => {
       const look = async (status: ToolCallRecord['status']) => {
         el.tool = tool(status);
         await settle(el);
-        const style = getComputedStyle($(el, '.status')!);
-        return [style.color, style.backgroundColor, style.borderTopColor];
+        const style = getComputedStyle($(el, '.state')!);
+        return [style.color, style.backgroundColor, style.borderTopStyle];
       };
-      const colours = (foreground: string, surface: string, border: string) => [
-        resolved('color', `var(--odd-color-${foreground})`),
-        resolved(
-          'background-color',
-          surface === 'none' ? 'transparent' : `var(--odd-color-${surface})`,
-        ),
-        resolved('border-top-color', `var(--odd-color-${border})`),
+      // Figma page 10: the status is words in the secondary text colour whatever it says, never a
+      // coloured badge; the failure below it carries the danger colour.
+      const words = [
+        resolved('color', 'var(--odd-color-text-secondary)'),
+        'rgba(0, 0, 0, 0)',
+        'none',
       ];
-      // Neutral (no tone) as the Figma specimen draws it, the same as active; success and danger
-      // (filled, with a currentColor border).
-      expect(await look('input-available')).toEqual(
-        colours('text-primary', 'none', 'border-strong'),
+      for (const status of ['input-available', 'executing', 'output-available'] as const)
+        expect(await look(status)).toEqual(words);
+      expect(await look('output-error')).toEqual(words);
+      expect(getComputedStyle($(el, '.failure .error')!).color).toBe(
+        resolved('color', 'var(--odd-color-danger-foreground)'),
       );
-      expect(await look('output-available')).toEqual(
-        colours('success-foreground', 'success-surface', 'success-foreground'),
-      );
-      expect(await look('output-error')).toEqual(
-        colours('danger-foreground', 'danger-surface', 'danger-foreground'),
-      );
-      expect(await look('executing')).toEqual(colours('text-primary', 'none', 'border-strong'));
-      expect(
-        new Set([await look('input-available'), await look('output-available')].map(String)).size,
-      ).toBe(2);
     } finally {
       theme.remove();
     }
@@ -897,10 +900,10 @@ describe('odd-tool-call and odd-action-approval', () => {
     const failed = await mountExample(tools, 'failed', container);
     try {
       const el = failed.element;
-      expect(text($(el, '.status'))).toBe('Failed');
+      expect(text($(el, '.state'))).toBe('Failed');
       $(el, '.failure button')!.click();
       await settle(el);
-      expect(text($(el, '.status'))).toBe('Finished');
+      expect(text($(el, '.state'))).toBe('Finished');
       expect($(el, '[part="result"] pre')?.textContent).toContain('"results": 3');
       expect($(el, '.failure')).toBeNull();
     } finally {
@@ -948,12 +951,12 @@ describe('odd-tool-call and odd-action-approval', () => {
     }
   });
 
-  it('their examples play the host: an approved call runs, a rejected one is denied; Edit brings the next revision', async () => {
+  it('their examples play the host: an approved call runs, a rejected one does not run; Edit brings the next revision', async () => {
     await import('../src/tool-call/tool-call.define.js');
     const { default: tools } = await import('../src/tool-call/tool-call.examples.js');
     const status = (el: Element) => {
       flush();
-      return text($(el, '.status'));
+      return text($(el, '.state'));
     };
     const decide = async (button: number) => {
       const mounted = await mountExample(tools, 'approval', container);
@@ -975,13 +978,15 @@ describe('odd-tool-call and odd-action-approval', () => {
     } finally {
       approved.mounted.dispose();
     }
-    const denied = await decide(1);
+    const rejected = await decide(1);
     try {
-      expect(denied.first).toBe('Not run: denied');
-      expect(status(denied.mounted.element)).toBe('Not run: denied');
-      expect(denied.mounted.element.approval?.status).toBe('rejected');
+      // A person's rejection is not a backend denial: the call simply does not run (page 10).
+      expect(rejected.first).toBe('Not run');
+      expect(status(rejected.mounted.element)).toBe('Not run');
+      expect(rejected.mounted.element.tool?.status).toBe('input-available');
+      expect(rejected.mounted.element.approval?.status).toBe('rejected');
     } finally {
-      denied.mounted.dispose();
+      rejected.mounted.dispose();
     }
     const { default: approvals } =
       await import('../src/action-approval/action-approval.examples.js');

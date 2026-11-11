@@ -2,61 +2,65 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { toolCallRecipeStyles } from './tool-call.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `tool-call.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `tool-call.recipe.ts`. Figma page 10, lightly until its
+ * visual pass: the card `space.lg` in, with the large radius and the default border and surface;
+ * the call's name in the AI title type (`font.size.md`, semibold), its status and purpose in the
+ * small type and the secondary text colour (the status is words, not a coloured badge); Details'
+ * content in the primary text colour, not the disclosure's; each section a sunken box `space.md`
+ * in with the small radius, its label in the UI type over its code in the code type, which
+ * scrolls within 16rem; the failure in the body type and the danger colour.
+ */
 export const toolCallStyles = css`
   ${toolCallRecipeStyles}
-  :host {
-    display: grid;
-    gap: ${token('space.xs')};
-  }
   .base {
-    padding: ${token('space.sm')};
+    padding: ${token('space.lg')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
-    border-radius: ${token('radius.md')};
+    border-radius: ${token('radius.lg')};
     background: ${token('color.surface.default')};
   }
-  .summary {
-    min-block-size: ${token('target.min')};
-    cursor: pointer;
-  }
-  .name::before {
-    content: '\\25B8' / '';
-    margin-inline-end: ${token('space.2xs')};
-  }
-  [open] > .summary > .name::before {
-    content: '\\25BE' / '';
+  p {
+    margin: 0;
   }
   .name {
-    flex-basis: 100%;
-    font-family: ${token('font.family.mono')};
-    font-size: ${token('font.size.sm')};
+    font-size: ${token('font.size.md')};
+    font-weight: ${token('font.weight.semibold')};
+    letter-spacing: ${token('letter-spacing.normal')};
   }
+  .state,
   .purpose {
-    flex-basis: 100%;
+    color: ${token('color.text.secondary')};
+    font-size: ${token('type.small.size')};
+    font-weight: ${token('type.small.weight')};
+    letter-spacing: ${token('type.small.letter-spacing')};
+    line-height: ${token('type.small.line-height')};
   }
   .body {
-    padding-block-start: ${token('space.xs')};
+    color: ${token('color.text.primary')};
+  }
+  .section {
+    padding: ${token('space.md')};
+    border-radius: ${token('radius.sm')};
+    background: ${token('color.surface.sunken')};
   }
   .label {
-    margin: 0;
-    font-size: ${token('font.size.sm')};
-    color: ${token('color.text.secondary')};
+    font-size: ${token('type.ui.size')};
+    font-weight: ${token('type.ui.weight')};
+    letter-spacing: ${token('type.ui.letter-spacing')};
+    line-height: ${token('type.ui.line-height')};
   }
   .code {
     margin: 0;
     max-block-size: 16rem;
-    padding: ${token('space.xs')};
     overflow: auto;
-    border: ${token('border.width.default')} solid ${token('color.border.default')};
-    border-radius: ${token('radius.lg')};
-    background: ${token('color.surface.sunken')};
-    font-family: ${token('font.family.mono')};
-    font-size: ${token('font.size.sm')};
+    font-family: ${token('type.code.family')};
+    font-size: ${token('type.code.size')};
+    font-weight: ${token('type.code.weight')};
+    line-height: ${token('type.code.line-height')};
     white-space: pre-wrap;
   }
-  .failure {
-    margin-block-start: ${token('space.xs')};
-    padding-block-start: ${token('space.xs')};
-    border-block-start: ${token('border.width.default')} solid ${token('color.danger.foreground')};
+  .failure .error {
+    font-size: ${token('type.body.size')};
+    line-height: ${token('type.body.line-height')};
   }
 `;

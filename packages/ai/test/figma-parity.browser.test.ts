@@ -878,43 +878,84 @@ describe('Figma parity: odd-artifact', () => {
     });
 });
 
-describe('Figma parity: odd-tool-call', () => {
+describe('Figma parity: odd-tool-call (page 10)', () => {
   for (const mode of MODES)
-    it(`Arguments ready, not executed (${mode})`, async () => {
+    it(`Arguments ready, not run yet, Details open (${mode})`, async () => {
       await import('../src/tool-call/tool-call.define.js');
       inMode(mode);
       const el = mount('<odd-tool-call></odd-tool-call>') as HTMLElementTagNameMap['odd-tool-call'];
       el.tool = {
-        toolCallId: 't1',
-        toolName: 'example_tool',
+        toolCallId: 'write-release-notes',
+        toolName: 'write_file',
+        title: 'Update release notes',
+        purpose: 'Write the reviewed draft to docs/release-notes.md.',
         status: 'input-available',
-        input: { document: 'example.txt' },
+        input: { path: 'docs/release-notes.md', content: 'Add the launch-readiness checklist.' },
       };
       await settle(el);
-      (shadow(el, 'details') as HTMLDetailsElement).open = true;
+      (shadow(el, 'odd-disclosure') as HTMLElementTagNameMap['odd-disclosure']).open = true;
       await settle(el);
-      const family = `odd-tool-call/Arguments ready · not executed/${mode}`;
+      const family = 'Oddkin/AI/ToolCall/Proposal';
+      const section = shadow(el, '[part="arguments"]');
       const code = shadow(el, '[part="arguments"] .code');
       const targets: Target[] = [
-        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame' },
-        { layer: ['▾ example_tool'], el: shadow(el, '.name'), kind: 'text' },
-        { layer: ['Status'], el: shadow(el, '.status'), kind: 'frame', gap: 'column-gap' },
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['tool.title'], el: shadow(el, '.name'), kind: 'text' },
+        { layer: ['tool.status'], el: shadow(el, '.state'), kind: 'text' },
+        { layer: ['tool.purpose'], el: shadow(el, '.purpose'), kind: 'text' },
+        { layer: ['Arguments'], el: section, kind: 'frame', gap: 'row-gap' },
         {
-          layer: ['Status', 'Arguments ready; not run yet'],
-          el: shadow(el, '.status'),
+          layer: ['Arguments', 'Arguments'],
+          el: shadow(el, '[part="arguments"] .label'),
           kind: 'text',
         },
-        { layer: ['Arguments'], el: shadow(el, '[part="arguments"] .label'), kind: 'text' },
-        { layer: ['Arguments [2]'], el: code, kind: 'frame' },
-        { layer: layer(family, '{ "document"'), el: code, kind: 'text' },
+        { layer: layer(family, 'code viewport'), el: code, kind: 'frame' },
+        // The complete arguments' code (the streaming variants name a shorter one).
+        {
+          layer: layer(family, '{\n  "path": "docs/release-notes.md",\n  "mode"'),
+          el: code,
+          kind: 'text',
+        },
       ];
       await transitions(targets);
-      expectNone(compare(family, {}, targets));
-      // Figma's column: the name, then the status on its own line, then the arguments, xs apart.
-      const top = (selector: string) => shadow(el, selector).getBoundingClientRect().top;
-      expect(top('.status')).toBeGreaterThan(shadow(el, '.name').getBoundingClientRect().bottom);
-      expect(top('[part="arguments"] .label')).toBeGreaterThan(
-        shadow(el, '.status').getBoundingClientRect().bottom,
+      expectNone(
+        compare(
+          family,
+          { Status: 'input-available', Content: 'Typical', Density: 'Full' },
+          targets,
+        ),
+      );
+    });
+
+  for (const mode of MODES)
+    it(`Failed, retryable, Details closed (${mode})`, async () => {
+      await import('../src/tool-call/tool-call.define.js');
+      inMode(mode);
+      const el = mount('<odd-tool-call></odd-tool-call>') as HTMLElementTagNameMap['odd-tool-call'];
+      const message = 'The file changed after this proposal was prepared.';
+      el.tool = {
+        toolCallId: 'write-release-notes',
+        toolName: 'write_file',
+        title: 'Update release notes',
+        purpose: 'Write the reviewed draft to docs/release-notes.md.',
+        status: 'output-error',
+        input: { path: 'docs/release-notes.md' },
+        error: { code: 'conflict', message },
+        retryable: true,
+      };
+      await settle(el);
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['tool.status'], el: shadow(el, '.state'), kind: 'text' },
+        { layer: [message], el: shadow(el, '.failure .error'), kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(
+        compare(
+          'Oddkin/AI/ToolCall/Proposal',
+          { Status: 'output-error', Content: 'Retryable', Density: 'Full' },
+          targets,
+        ),
       );
     });
 });

@@ -328,8 +328,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 25 |
 | `packages/ai/dist/task-plan/task-plan.recipe.styles.js (taskPlanRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/task-plan/task-plan.styles.js (taskPlanStyles)` | yes | 32 |
-| `packages/ai/dist/tool-call/tool-call.recipe.styles.js (toolCallRecipeStyles)` | yes | 12 |
-| `packages/ai/dist/tool-call/tool-call.styles.js (toolCallStyles)` | yes | 40 |
+| `packages/ai/dist/tool-call/tool-call.recipe.styles.js (toolCallRecipeStyles)` | yes | 9 |
+| `packages/ai/dist/tool-call/tool-call.styles.js (toolCallStyles)` | yes | 27 |
 | `packages/ai/dist/transcript/transcript.recipe.styles.js (transcriptRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/transcript/transcript.styles.js (transcriptStyles)` | yes | 19 |
 | `packages/ai/dist/usage-meter/usage-meter.recipe.styles.js (usageMeterRecipeStyles)` | yes | 7 |

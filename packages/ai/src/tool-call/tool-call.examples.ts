@@ -80,8 +80,8 @@ export default defineExamples('odd-tool-call', {
       capabilities: { respondToApproval: { available: true } },
     },
     guidance:
-      'A call that needs approval links it and shows it after the call; until the call runs, the approval words its status. The decision is a request: the host records it, then runs the call (Running…, then Finished) or reports it denied (Not run: denied).',
-    // The host: records the decision, then runs the call, or does not.
+      'A call that needs approval links it and shows it in the call, visible while Details is closed; until the call runs, the approval words its status. The decision is a request: the host records it, then runs the call (Running…, then Finished); a rejected call does not run (Not run), which is not a denial.',
+    // The host: records the decision, then runs the call, or leaves it not run.
     fixture({ scope, element }) {
       scope.listen<GlobalEventHandlersEventMap['odd-approval-decide']>(
         element,
@@ -95,11 +95,11 @@ export default defineExamples('odd-tool-call', {
             status: approved ? 'approved' : 'rejected',
             decision: detail.decision,
           };
-          element.tool = { ...tool, status: approved ? 'executing' : 'denied' };
-          if (approved)
-            scope.timeout(() => {
-              element.tool = { ...tool, status: 'output-available', output: { sent: 1 } };
-            }, 600);
+          if (!approved) return;
+          element.tool = { ...tool, status: 'executing' };
+          scope.timeout(() => {
+            element.tool = { ...tool, status: 'output-available', output: { sent: 1 } };
+          }, 600);
         },
       );
     },

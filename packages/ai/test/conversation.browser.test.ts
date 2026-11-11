@@ -326,7 +326,7 @@ describe('odd-conversation', () => {
       once: true,
     });
     const call = articles().at(-1)!.shadowRoot!.querySelector('odd-tool-call')!;
-    const gate = () => call.shadowRoot!.querySelector('.status')?.textContent;
+    const gate = () => call.shadowRoot!.querySelector('.state')?.textContent;
     // The call's own status stays; its approval words the gate.
     expect(gate()).toBe('Waiting for approval');
     const approval = call.shadowRoot!.querySelector('odd-action-approval')!;

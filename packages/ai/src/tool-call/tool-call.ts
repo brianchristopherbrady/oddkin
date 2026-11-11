@@ -29,13 +29,16 @@ export type ToolOutputRenderer = (tool: ToolCallRecord) => Node | undefined;
  * the recovery actions the host supports. Argument generation, approval, and execution are
  * shown as distinct states; complete arguments never read as success. Until the call runs, its
  * approval words the gate: waiting while undecided, not run once rejected, expired, or superseded.
+ * Figma page 10: the call's name, status, and purpose stay in view; its arguments and result
+ * open from Details; a failure and Retry, and an approval with its open request, stay visible
+ * while Details is closed.
  *
- * @csspart base - The tool call surface.
- * @csspart summary - Name, purpose, and status (a native disclosure summary).
+ * @csspart base - The tool call surface, a group named by the call.
+ * @csspart summary - Name, status, and purpose.
  * @csspart arguments - Streamed or complete arguments.
  * @csspart result - Result or error.
- * @a11y Status is text, not colour alone. Details use a native disclosure; its open state is local presentation state the element never overrides.
- * @keyboard Enter or Space toggles the details.
+ * @a11y Status is words, not colour. Details is an `odd-disclosure` (a native disclosure); its open state is local presentation state the element never overrides. The failure and Retry, and any approval, are outside it.
+ * @keyboard Enter or Space on Details opens or closes the arguments and the result; Tab reaches Retry and the approval's controls.
  * @useFor Showing what an agent or model asked a tool to do, and what happened.
  * @notFor Arbitrary log output.
  * @limitation Results render as formatted JSON text unless the host's `renderers.toolOutput` returns a node.

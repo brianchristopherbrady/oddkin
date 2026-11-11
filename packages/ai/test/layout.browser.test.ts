@@ -694,19 +694,25 @@ describe('odd-task-plan', () => {
 });
 
 describe('odd-tool-call', () => {
-  it('puts the summary’s name over its status; the failure is a centred row that wraps', async () => {
+  it('stacks its card space.md apart, the failure’s message over Retry (Figma page 10)', async () => {
     const el = await example('tool-call', 'failed');
-    // As the Figma specimen: the name on a line of its own, the status space.xs under it.
-    expectColumn($(el, '.summary'), space('xs'));
-    expectRow($(el, '.failure'), space('xs'));
-    await expectWraps($(el, '.failure'), '8rem');
+    // The name, status, and purpose; then Details, the failure, and any approval.
+    expectColumn($(el, '.summary'), space('md'));
+    expectColumn($(el, '[part="base"]'), space('md'));
+    expectColumn($(el, '.failure'), space('md'));
+    // Retry keeps its own width under the message.
+    const retry = $(el, '.failure button')!.getBoundingClientRect();
+    expect(retry.width).toBeLessThan($(el, '.failure')!.getBoundingClientRect().width);
   });
 
-  it('stacks the arguments and the result', async () => {
+  it('stacks the arguments and the result in Details', async () => {
     const el = await example('tool-call');
-    el.shadowRoot!.querySelector('details')!.open = true;
+    (
+      el.shadowRoot!.querySelector('odd-disclosure') as HTMLElementTagNameMap['odd-disclosure']
+    ).open = true;
     await settle(el);
-    expectColumn($(el, '.body'), space('xs'));
+    expectColumn($(el, '.body'), space('md'));
+    expectColumn($(el, '[part="arguments"]'), space('xs'));
   });
 });
 

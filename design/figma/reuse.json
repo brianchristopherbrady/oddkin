@@ -13,12 +13,12 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 131,
+    "style": 132,
     "slot": 54,
-    "deferred": 58,
+    "deferred": 55,
     "controller": 18,
     "native": 7,
-    "element": 27,
+    "element": 29,
     "independent": 1
   },
   "references": [
@@ -685,8 +685,8 @@
       "source": "Oddkin/AI/ActionApproval/Proposal",
       "sourceId": "813:436",
       "count": 20,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
+      "class": "element",
+      "reason": "A call that needs approval renders the complete odd-action-approval (Figma page 09) in its card, after its failure, where an open request stays in view while Details is closed."
     },
     {
       "consumer": "Oddkin/AI/ToolCall/Proposal",
@@ -694,8 +694,8 @@
       "source": "Oddkin/AI/Internal/DisclosureTrigger",
       "sourceId": "812:627",
       "count": 33,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
+      "class": "element",
+      "reason": "Details, which holds the arguments and the result, is a complete odd-disclosure whose summary is this trigger; DisclosureTrigger is its Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/AI/ToolCall/Proposal",
@@ -703,8 +703,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 5,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
+      "class": "style",
+      "reason": "Retry is a native button drawn by the components' shared native button sheet (nativeButtonStyles, the secondary appearance at the medium size), as the AI elements draw their own buttons."
     },
     {
       "consumer": "Oddkin/Common/CheckboxOption",
@@ -2860,8 +2860,8 @@
       "reason": "The action is the author's button in the end slot; the close button is the shared overlay control."
     },
     "odd-tool-call": {
-      "dependencies": ["odd-action-approval"],
-      "reason": "A tool call that needs approval renders the complete odd-action-approval widget."
+      "dependencies": ["odd-action-approval", "odd-disclosure"],
+      "reason": "A tool call that needs approval renders the complete odd-action-approval widget in its card; Details, its arguments and result, is a complete odd-disclosure (Figma page 10, DisclosureTrigger)."
     },
     "odd-toolbar": { "dependencies": [] },
     "odd-tooltip": {
