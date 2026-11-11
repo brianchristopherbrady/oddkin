@@ -2,8 +2,9 @@
 // Enforces Oddkin package boundaries on manifests, sources, and built artifacts.
 // Rules and rationale: docs/architecture/packages.md. Configuration: ./boundaries.config.mjs.
 import { spawnSync } from 'node:child_process';
-import { readdir, readFile, stat } from 'node:fs/promises';
-import { builtinModules, stripTypeScriptTypes } from 'node:module';
+import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { builtinModules, createRequire, stripTypeScriptTypes } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { init, parse } from 'es-module-lexer';
@@ -390,6 +391,7 @@ async function checkArtifacts(packages, byName, config, report, rel) {
     }
     if ((rule.domFree ?? []).length) await checkDomFree(pkg, rule, report, rel);
   }
+  await checkDeclarations(packages, config, report, rel);
 }
 
 async function walkArtifact(file, chain, seen, byName, config, report, rel, typeImports = []) {
@@ -477,6 +479,132 @@ async function checkDomFree(pkg, rule, report, rel) {
         },
       );
     }
+  }
+}
+
+const requireHere = createRequire(import.meta.url);
+/** TypeScript's default libraries (`lib.dom.d.ts`, …), wherever the installed compiler keeps them. */
+const DEFAULT_LIB = /[\\/](?:@typescript[\\/][^\\/]+|typescript)[\\/]lib[\\/]lib\.[\w.]+\.d\.ts$/;
+
+/**
+ * Browser declarations stand alone (packages.md): every `types` target of a browser entry is read
+ * in one program with the DOM library and no ambient types (`types: []`), as a browser project
+ * without `@types/node` reads them. An error fails, and so does reaching Node's types, the
+ * TypeScript compiler's own types, a Node-only package, a Node entry or Node source of a mixed
+ * package, or a third-party package. Framework typings (types-only entries) are left to
+ * `verify:packs`, which type-checks them with their framework.
+ */
+async function checkDeclarations(packages, config, report, rel) {
+  const roots = [];
+  const nodeAreas = [];
+  for (const pkg of packages) {
+    const rule = config.packages[pkg.name];
+    if (!rule) continue;
+    if (rule.kind === 'node') {
+      nodeAreas.push({ dir: pkg.dir + sep, why: `${pkg.name}, a Node-only package` });
+      continue;
+    }
+    for (const source of rule.nodeSources ?? [])
+      nodeAreas.push({
+        dir: join(pkg.dir, source.replace(/^src\//, 'dist/')) + sep,
+        why: `the Node sources of ${pkg.name}`,
+      });
+    if (!pkg.manifest.exports) continue;
+    for (const key of exportKeys(pkg.manifest)) {
+      if (key === './package.json' || key.includes('*')) continue;
+      if ((rule.typeOnly?.entries ?? []).includes(key)) continue;
+      const target = exportTarget(pkg.manifest, key, 'types');
+      if (!target || !/\.d\.[cm]?ts$/.test(target)) continue;
+      const file = join(pkg.dir, target);
+      if ((rule.nodeEntries ?? []).includes(key)) {
+        nodeAreas.push({ file, why: `${pkg.name}${key.slice(1)}, a Node entry` });
+        continue;
+      }
+      if (await exists(file)) roots.push(file);
+    }
+  }
+  if (!roots.length) return;
+  const dir = await mkdtemp(join(tmpdir(), 'oddkin-declarations-'));
+  let result;
+  try {
+    await writeFile(
+      join(dir, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: {
+          target: 'ES2024',
+          module: 'NodeNext',
+          moduleResolution: 'NodeNext',
+          lib: ['ES2024', 'DOM', 'DOM.Iterable'],
+          types: [],
+          strict: true,
+          skipLibCheck: false,
+          noEmit: true,
+        },
+        files: roots,
+      }),
+    );
+    const tsc = join(dirname(requireHere.resolve('typescript/package.json')), 'bin', 'tsc');
+    result = spawnSync(
+      process.execPath,
+      [tsc, '-p', join(dir, 'tsconfig.json'), '--explainFiles', '--pretty', 'false'],
+      { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 },
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+  // `--explainFiles` prints each file the program reads, then the reasons it was read, indented.
+  const files = new Map();
+  let current;
+  for (const line of `${result.stdout}`.split(/\r?\n/)) {
+    const error = /^(?:(.+)\((\d+),(\d+)\): )?error (TS\d+): (.*)$/.exec(line);
+    if (error) {
+      const [, file, row, column, code, message] = error;
+      report(
+        'boundary.declarations.error',
+        `Browser declarations do not type-check without Node types: ${code} ${message}`,
+        {
+          ...(file ? { file: `${rel(resolve(file))}:${row}:${column}` } : {}),
+          fix: 'Declare only what a browser project can read: no Node, compiler, or tooling types.',
+        },
+      );
+    } else if (/^\s/.test(line) && current) {
+      const from = /from file '([^']+)'/.exec(line);
+      if (from) current.from.push(resolve(from[1]));
+    } else if (line.trim()) {
+      current = { from: [] };
+      files.set(resolve(line.trim()), current);
+    }
+  }
+  if (result.status !== 0 && !files.size)
+    report('boundary.declarations.error', `tsc failed: ${`${result.stderr}`.trim().slice(0, 500)}`);
+  const forbidden = (file) => {
+    if (DEFAULT_LIB.test(file)) return undefined;
+    const area = nodeAreas.find((a) => (a.file ? a.file === file : file.startsWith(a.dir)));
+    if (area) return { code: 'boundary.declarations.nodeOnly', why: area.why };
+    const modules = file.lastIndexOf(`${sep}node_modules${sep}`);
+    if (modules < 0) return undefined;
+    const name = packageNameOf(
+      file
+        .slice(modules + 14)
+        .split(sep)
+        .join('/'),
+    );
+    if (name === '@types/node' || name === 'undici-types')
+      return { code: 'boundary.declarations.node', why: "Node's types" };
+    if (name === 'typescript' || name.startsWith('@typescript/'))
+      return { code: 'boundary.declarations.compiler', why: "the TypeScript compiler's types" };
+    return { code: 'boundary.declarations.thirdParty', why: `the third-party package ${name}` };
+  };
+  // Report where each forbidden area is entered, not every file inside it.
+  for (const [file, { from }] of files) {
+    const leak = forbidden(file);
+    if (!leak) continue;
+    const entry = from.find((importer) => files.has(importer) && !forbidden(importer));
+    if (!entry) continue;
+    report(leak.code, `Browser declarations reach ${leak.why}: ${rel(entry)} -> ${rel(file)}.`, {
+      file: rel(entry),
+      fix: 'Keep Node and tooling types out of browser entries; publish browser-safe types instead.',
+    });
   }
 }
 

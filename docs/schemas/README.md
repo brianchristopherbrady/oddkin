@@ -4,7 +4,7 @@ Status: **draft v1 schemas** (JSON Schema 2020-12). They make the contracts in t
 
 | Schema | Contract | Owner (from M1) |
 | --- | --- | --- |
-| [oddkin-metadata.v1.schema.json](./oddkin-metadata.v1.schema.json) | `oddkin.metadata.json` enrichment, including foundations, categories, docs, products | `@oddkin/analyzer` |
+| [oddkin-metadata.v1.schema.json](./oddkin-metadata.v1.schema.json) | `oddkin.metadata.json` enrichment, including foundations, categories, docs, products | `@oddkin/analyzer`, which publishes it as `@oddkin/analyzer/schemas/oddkin-metadata.v1.schema.json` (2026-11-11) |
 | [page-registry.v1.schema.json](./page-registry.v1.schema.json) | Workbench page registry (ADR 0023) | `@oddkin/workbench/pages` |
 | [workbench-config.v1.schema.json](./workbench-config.v1.schema.json) | JSON-compatible `defineWorkbenchConfig` | `@oddkin/workbench/config` |
 | [docs-content.v1.schema.json](./docs-content.v1.schema.json) | Authored content: `oddkin.docs.ts`, Markdown front matter (ADR 0024) | `@oddkin/workbench/config` |

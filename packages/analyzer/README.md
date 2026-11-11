@@ -62,7 +62,7 @@ A library not built with Oddkin gets a kit from its standard Custom Elements Man
 
 ## Schemas
 
-`@oddkin/analyzer/schemas/*.json` holds the JSON Schemas of the files change impact reads and writes: `product.v1.schema.json` (`oddkin-impact snapshot --product`), `comparison-snapshot.v1.schema.json` and `impact-report.v1.schema.json` (what `snapshot` and `compare --json` write), and `check-result.v1.schema.json` (the runs `compare --results` merges and `--baseline` reuses, with the commit they happened at), so an editor or a CI step can validate them.
+`@oddkin/analyzer/schemas/*.json` holds the JSON Schemas of the files the analyzer and change impact write and read: `oddkin-metadata.v1.schema.json` (the `oddkin.metadata.json` that `oddkin-analyze` writes beside a library's manifest), `product.v1.schema.json` (`oddkin-impact snapshot --product`), `comparison-snapshot.v1.schema.json` and `impact-report.v1.schema.json` (what `snapshot` and `compare --json` write), and `check-result.v1.schema.json` (the runs `compare --results` merges and `--baseline` reuses, with the commit they happened at), so an editor or a CI step can validate them.
 
 ## Editors
 

@@ -54,6 +54,7 @@ apps/docs         → core, state, app, tokens, components, ai (working examples
 - Data models and collections are generic in core (`./model`, `./collections`); component models, validators, schemas, and the optional composition renderer live in components. Model metadata and JSON Schemas are produced at build time by `@oddkin/analyzer` (using `core/model/schema`), not by a runtime package. See [data-composition.md](./data-composition.md).
 - Minimal consumers must not contain `components/models`, `core/model/schema`, the data-composition renderer `components/composition`, `core/inspect`, conformance or testing helpers, or unused recipe presets. The component-definition composer `compose()` (`@oddkin/core/element`) is ordinary authoring API and allowed.
 - No private deep imports, no cycles. Enforced by `scripts/architecture/check-boundaries.mjs`.
+- Browser declarations stand alone (P1.6, 2026-11-11). Every `types` target of a browser entry (Node entries and framework typings aside) type-checks in one program with the DOM library and no ambient types, as a browser project without `@types/node` reads it, and reaches no Node types, no TypeScript compiler types, no Node-only package, no Node entry or Node source of a mixed package, and no third-party package. `npm run lint:boundaries` enforces it after the build (`boundary.declarations.*`, with the file that enters the forbidden area); `verify:packs` also type-checks the packed declarations with the DOM library alone.
 
 ## Entry points (proposed)
 
@@ -182,7 +183,7 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./schemas/*.json`, `./custom-elements.json`, `./oddkin.metadata.json` | Generated record schemas and metadata | data | — |
 
 ### `@oddkin/analyzer` (dev-only)
-`.` (Node API `analyze`, `compare`), `./schema/oddkin-metadata-v1.json`, proposed `./impact` (comparison snapshots, impact traversal, verification selection, `impact-report.v1`; [change-impact-and-verification.md](./change-impact-and-verification.md) §2), bin delegated through `oddkin analyze` and `oddkin impact`. Node only.
+`.` (Node API `analyze`, `compare`), `./schemas/*.json` (the canonical `oddkin-metadata.v1` schema since 2026-11-11, and the change impact formats), `./impact` (comparison snapshots, impact traversal, verification selection, `impact-report.v1`; [change-impact-and-verification.md](./change-impact-and-verification.md) §2), bin delegated through `oddkin analyze` and `oddkin impact`. Node only.
 
 ### `@oddkin/workbench`
 | Export | Contents | Environment |

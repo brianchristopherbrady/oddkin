@@ -1,0 +1,1396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
+  "title": "Oddkin enrichment metadata (oddkin.metadata.json) v1",
+  "description": "DRAFT. Normalized Oddkin metadata that enriches a standard Custom Elements Manifest (custom-elements-manifest@2.1.0). See docs/architecture/metadata-and-analyzer.md and ADR 0016/0017.",
+  "type": "object",
+  "required": [
+    "schema",
+    "oddkinVersion",
+    "library",
+    "components",
+    "diagnostics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "https://oddkin.dev/schemas/oddkin-metadata/v1.json"
+    },
+    "oddkinVersion": {
+      "type": "string"
+    },
+    "library": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "packages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*-$"
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "version"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "customElements": {
+                "type": "string",
+                "description": "Path from package.json customElements"
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^component:[a-z][a-z0-9]*(-[a-z0-9]+)+$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "recipes": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^recipe:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/recipe"
+      }
+    },
+    "stylesheets": {
+      "type": "object",
+      "description": "Opt-in document stylesheets (reset, base, layout classes, and recipes for native elements; component-contracts.md §2.1): what to import, the classes each defines, the tokens it reads, and the variables an author may set.",
+      "propertyNames": {
+        "pattern": "^stylesheet:[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/stylesheet"
+      }
+    },
+    "models": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^model:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/model"
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": [
+        "inspection"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "inspection": {
+          "type": "string",
+          "description": "Path or export of the @oddkin/tokens inspection JSON; values are never duplicated here"
+        }
+      }
+    },
+    "examples": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^example:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/exampleRef"
+      }
+    },
+    "templates": {
+      "type": "object",
+      "description": "Exported templates used by definitions, keyed by module#name: the slots and parts each renders, so packages that recompose a definition can tell which facts come from its template.",
+      "propertyNames": {
+        "pattern": "^[^#]+#[^#]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "module",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "styles": {
+      "type": "object",
+      "description": "Exported style sources, keyed by module#name: the CSS custom properties and tokens each reads, so packages that reuse or replace them get exact facts.",
+      "propertyNames": {
+        "pattern": "^[^#]+#[^#]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "module",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cssProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "css": {
+            "type": "string",
+            "description": "The source's CSS with each token reference written as token(<name>) and any other substitution as unknown(), so packages that reuse it can read style mappings"
+          }
+        }
+      }
+    },
+    "previewRoles": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^role:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/previewRole"
+      }
+    },
+    "foundations": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^foundation:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/foundation"
+      }
+    },
+    "categories": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^category:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/category"
+      }
+    },
+    "products": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^product:"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/productRef"
+      }
+    },
+    "docs": {
+      "type": "object",
+      "description": "Keyed by stable page id",
+      "additionalProperties": {
+        "$ref": "#/$defs/docMeta"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "Contracts the components reference, keyed by stable id. Each section is read offline from the installed package's file at its anchor (`@oddkin/core/CONTRACTS.md#scope`).",
+      "propertyNames": {
+        "$ref": "#/$defs/contractId"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "package",
+          "file",
+          "title",
+          "anchor",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "anchor": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "contractId": {
+      "type": "string",
+      "pattern": "^contract:[a-z][a-z0-9-]*/[a-z0-9-]+$"
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "file",
+            "line"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "line": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "column": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "test",
+            "run"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "test": {
+              "type": "string"
+            },
+            "run": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "commit"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "commit": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "enum": [
+        "extracted",
+        "authored",
+        "observed",
+        "verified"
+      ]
+    },
+    "fact": {
+      "type": "object",
+      "required": [
+        "provenance"
+      ],
+      "properties": {
+        "value": {},
+        "known": {
+          "type": "boolean",
+          "description": "false when the value cannot be determined; value must then be absent"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "if": {
+        "properties": {
+          "known": {
+            "const": false
+          }
+        },
+        "required": [
+          "known"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "value"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "value"
+        ]
+      }
+    },
+    "stringFact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/fact"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "dateFact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/fact"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "format": "date"
+            },
+            "provenance": {
+              "enum": [
+                "authored",
+                "extracted"
+              ]
+            }
+          }
+        }
+      ],
+      "description": "Updated dates: authored metadata or source history only (ADR 0027). Never build time."
+    },
+    "cemRef": {
+      "type": "object",
+      "required": [
+        "module",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "package": {
+          "type": "string",
+          "description": "Package that publishes the module, when it is not this one (module is then that package's module path)."
+        },
+        "module": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": [
+        "tag",
+        "cem"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "cem": {
+          "$ref": "#/$defs/cemRef"
+        },
+        "registration": {
+          "type": "string",
+          "description": "Package export that registers the element, e.g. @acme/ui/define/button"
+        },
+        "definition": {
+          "type": "object",
+          "description": "The compose() definition registered for this element (ADR 0036): where it is exported, the definition it was recomposed from, its external template and styles, and named dependencies.",
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "$ref": "#/$defs/cemRef" },
+            "extends": { "type": "string", "pattern": "^component:" },
+            "template": { "$ref": "#/$defs/cemRef" },
+            "styles": { "type": "array", "items": { "$ref": "#/$defs/cemRef" } },
+            "dependencies": {
+              "type": "object",
+              "additionalProperties": { "type": "string", "pattern": "^component:" }
+            }
+          }
+        },
+        "category": {
+          "type": "string",
+          "pattern": "^category:"
+        },
+        "useFor": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringFact"
+          }
+        },
+        "notFor": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringFact"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringFact"
+          }
+        },
+        "syncPairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "property",
+              "event"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "property": {
+                "type": "string"
+              },
+              "event": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "since": {
+          "$ref": "#/$defs/stringFact",
+          "description": "Version the component was introduced in (authored @since)."
+        },
+        "deprecations": {
+          "type": "array",
+          "description": "Authored @deprecated facts for the component, its properties, and its events, with the @replacement (normalized to a stable id) and @migration record named in source. Replacements are never inferred from prose.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "provenance"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^(component|property|event):"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "replacement": {
+                "type": "string",
+                "pattern": "^[a-z]+:"
+              },
+              "migration": {
+                "type": "string"
+              },
+              "provenance": {
+                "$ref": "#/$defs/provenance"
+              },
+              "source": {
+                "$ref": "#/$defs/source"
+              }
+            }
+          }
+        },
+        "customization": {
+          "type": "object",
+          "description": "Customization paths (multi-product.md §6): the supported ladder levels (authored @customization, unknown otherwise) and the documented component variables, parts, and slots that level 2 works through.",
+          "required": [
+            "levels",
+            "variables",
+            "parts",
+            "slots"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "levels": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/$defs/fact"
+                }
+              ],
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              }
+            },
+            "variables": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^cssprop:"
+              }
+            },
+            "parts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^part:"
+              }
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^slot:"
+              }
+            }
+          }
+        },
+        "contracts": {
+          "type": "array",
+          "description": "Contracts this component relies on, by stable id; see the top-level `contracts`.",
+          "items": {
+            "$ref": "#/$defs/contractId"
+          }
+        },
+        "propertyOnly": {
+          "type": "array",
+          "description": "Public writable properties without an attribute (rich objects, arrays, functions, accessors): assign them as properties. Attribute strings are not parsed and values are not reflected.",
+          "items": {
+            "type": "object",
+            "required": [
+              "property",
+              "provenance"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "property": {
+                "type": "string",
+                "pattern": "^property:"
+              },
+              "provenance": {
+                "$ref": "#/$defs/provenance"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "description": "Agent-facing event facts. intent 'user': reports user interaction and is never emitted by property writes (checked by the contract suite as event:<tag>#<name>/not-programmatic); 'notification': reports a state change from any source; known: false when the definition does not say.",
+          "items": {
+            "type": "object",
+            "required": [
+              "event",
+              "intent"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "event": {
+                "type": "string",
+                "pattern": "^event:"
+              },
+              "intent": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/fact"
+                  }
+                ],
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "user",
+                      "notification"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "previewRoles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^role:"
+          }
+        },
+        "styleMappings": {
+          "type": "array",
+          "description": "property/state -> CSS property -> token traces where statically determinable",
+          "items": {
+            "type": "object",
+            "required": [
+              "when",
+              "cssProperty",
+              "token",
+              "provenance"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "when": {
+                "type": "string",
+                "examples": [
+                  "default",
+                  "appearance=\"primary\"",
+                  "appearance=\"primary\" (active, enabled)",
+                  "appearance=\"primary\" (enabled, hover) @media (hover: hover)",
+                  "(disabled)"
+                ]
+              },
+              "part": {
+                "type": "string",
+                "description": "The part the declaration styles; absent for the host"
+              },
+              "cssProperty": {
+                "type": "string"
+              },
+              "token": {
+                "type": "string"
+              },
+              "provenance": {
+                "$ref": "#/$defs/provenance"
+              }
+            }
+          }
+        },
+        "tokenReads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "token",
+              "kind"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "token": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "declared",
+                  "potential"
+                ],
+                "description": "observed references are recorded at runtime by Workbench, not here"
+              },
+              "readThrough": {
+                "enum": [
+                  "stylesheet",
+                  "recipe",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "recipe": {
+          "type": "string",
+          "pattern": "^recipe:"
+        },
+        "model": {
+          "type": "string",
+          "pattern": "^model:"
+        },
+        "a11y": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringFact"
+          }
+        },
+        "keyboard": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stringFact"
+          }
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^component:"
+          }
+        },
+        "authored": {
+          "type": "array",
+          "description": "Contract members supplied by explicit metadata files (@oddkin-metadata), merged over extracted facts.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "provenance",
+              "source"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^(property|event|slot|part|cssprop|state):[a-z][a-z0-9]*(-[a-z0-9]+)+#.*$"
+              },
+              "provenance": {
+                "const": "authored"
+              },
+              "source": {
+                "$ref": "#/$defs/source"
+              }
+            }
+          }
+        },
+        "verification": {
+          "type": "array",
+          "description": "Facts verified by test runs, one entry per suite, with the conditions they ran under: every listed browser passed every listed fact against the inputs named by hash. Facts not listed are unverified.",
+          "items": {
+            "type": "object",
+            "required": [
+              "suite",
+              "provenance",
+              "source",
+              "conditions",
+              "facts"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "suite": {
+                "type": "string",
+                "pattern": "^[^@]+@[^@]+$",
+                "description": "Suite id and version, e.g. oddkin.cem-contract@1.0.0"
+              },
+              "provenance": {
+                "const": "verified"
+              },
+              "source": {
+                "$ref": "#/$defs/source"
+              },
+              "conditions": {
+                "type": "object",
+                "required": [
+                  "browsers",
+                  "inputs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "browsers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "version"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package and version tested, name@version"
+                  },
+                  "inputs": {
+                    "type": "object",
+                    "description": "Hashes of the exact inputs tested (published manifest, implementation sources)",
+                    "additionalProperties": {
+                      "type": "string",
+                      "pattern": "^sha256-[0-9a-f]{64}$"
+                    }
+                  }
+                }
+              },
+              "facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "pattern": "^(property|event|slot|part|cssprop|state|component):[a-z][a-z0-9]*(-[a-z0-9]+)+(#[^/]*)?/[a-z-]+$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "required": [
+        "name",
+        "regions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "container": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "selector": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "regions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "helper"
+            ],
+            "properties": {
+              "helper": {
+                "enum": [
+                  "stack",
+                  "row",
+                  "grid",
+                  "autoGrid",
+                  "split",
+                  "custom"
+                ]
+              }
+            }
+          }
+        },
+        "variants": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "stylesheet": {
+      "type": "object",
+      "required": [
+        "name",
+        "import",
+        "layer",
+        "classes",
+        "tokens",
+        "variables"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "File name without .css"
+        },
+        "import": {
+          "type": "string",
+          "description": "The package export that loads it, e.g. @oddkin/components/css/typography.css"
+        },
+        "layer": {
+          "type": "string",
+          "description": "The cascade layer its rules are in"
+        },
+        "description": {
+          "type": "string"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Prefixed classes it defines, without the dot"
+        },
+        "tokens": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Theme tokens it reads, by name"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^--"
+          },
+          "description": "Prefixed custom properties it reads that are not theme tokens: hooks an author may set"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "schema"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "schema": {
+          "type": "string",
+          "description": "Path to the generated JSON Schema for the portable subset"
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regionSources": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "property",
+              "slot",
+              "property-or-children"
+            ]
+          }
+        },
+        "deprecations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "exampleRef": {
+      "type": "object",
+      "required": [
+        "component",
+        "name",
+        "file"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "type": "string",
+          "pattern": "^component:"
+        },
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "hasFixture": {
+          "type": "boolean"
+        },
+        "previewRoles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "incorrect": {
+          "type": "object",
+          "description": "A common mistake, never a recommendation: the diagnostic it demonstrates and the correct example to use instead.",
+          "required": [
+            "diagnostic",
+            "correct"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "diagnostic": {
+              "type": "string"
+            },
+            "correct": {
+              "type": "string",
+              "pattern": "^example:"
+            }
+          }
+        },
+        "uses": {
+          "type": "array",
+          "description": "Other components the example's fixture renders, read from literal markup and createElement() calls (extracted); computed tags are not seen.",
+          "items": {
+            "type": "string",
+            "pattern": "^component:"
+          }
+        },
+        "definition": {
+          "type": "object",
+          "description": "The example's values as toExamplesJSON() serializes them (examples.v1: label, props, attributes, slots, preset, recommended, guidance, previewRoles, incorrect, and hasFixture for a fixture). Extracted when the source spells out every value (literals, or module-level constants of literals), so a published package carries its examples' values without their source; a fixture is code and stays in the source. Absent when a value is computed."
+        }
+      }
+    },
+    "previewRole": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "label",
+              "text-slot",
+              "value",
+              "checked",
+              "disabled",
+              "href"
+            ]
+          }
+        }
+      }
+    },
+    "foundation": {
+      "type": "object",
+      "required": [
+        "id",
+        "sections",
+        "tokens"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            "tokens",
+            "color",
+            "typography",
+            "spacing",
+            "borders-and-radii",
+            "elevation",
+            "motion",
+            "themes",
+            "responsive"
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "available"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "generation": {
+          "$ref": "#/$defs/fact"
+        },
+        "tokens": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "vocabularies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "entries"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "entries": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "token"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "publicValue": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "variations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "theme",
+              "mode",
+              "product",
+              "density",
+              "profile"
+            ]
+          }
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fact"
+          }
+        },
+        "related": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "recipes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "specimens": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^example:"
+          }
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": [
+        "label"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer"
+        }
+      }
+    },
+    "productRef": {
+      "type": "object",
+      "required": [
+        "id",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "description": "Resolved product source (local theme, package, or snapshotted manifest path)"
+        },
+        "schemaVersion": {
+          "type": "integer"
+        }
+      }
+    },
+    "docMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/stringFact"
+        },
+        "summary": {
+          "$ref": "#/$defs/stringFact"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updated": {
+          "$ref": "#/$defs/dateFact"
+        },
+        "order": {
+          "type": "integer"
+        },
+        "visible": {
+          "type": "boolean"
+        }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z]+(\\.[a-zA-Z]+)+$"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "suggestion": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

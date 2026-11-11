@@ -9,7 +9,13 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 /** Package directory → the schemas it publishes (names in docs/schemas, without `.v1.schema.json`). */
 const PUBLISHED = {
   'packages/workbench': ['workbench-config', 'docs-content'],
-  'packages/analyzer': ['product', 'comparison-snapshot', 'impact-report', 'check-result'],
+  'packages/analyzer': [
+    'oddkin-metadata',
+    'product',
+    'comparison-snapshot',
+    'impact-report',
+    'check-result',
+  ],
 };
 
 const check = process.argv.includes('--check');

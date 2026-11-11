@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -345,5 +345,113 @@ describe('checkBoundaries', () => {
       files(typesOnly, "import type { App } from 'vue';\nexport type X = App;\n"),
     );
     expect(await check(other)).toEqual(['boundary.import.thirdParty']);
+  });
+
+  describe('browser declarations', () => {
+    const config = {
+      packages: {
+        '@oddkin/core': { kind: 'browser' as const, allow: [] },
+        '@oddkin/analyzer': { kind: 'node' as const, allow: [] },
+        '@oddkin/tokens': {
+          kind: 'mixed' as const,
+          allow: [],
+          nodeEntries: ['./node'],
+          nodeSources: ['src/node/'],
+        },
+      },
+    };
+    const typesOnly = (name: string, exports: Record<string, string>) =>
+      JSON.stringify({
+        name,
+        version: '0.0.0',
+        type: 'module',
+        exports: Object.fromEntries(
+          Object.entries(exports).map(([key, types]) => [key, { types }]),
+        ),
+      });
+    // Stand-ins for installed packages, and the workspace links npm makes for Oddkin's own.
+    const installed = {
+      'node_modules/@types/node/package.json': JSON.stringify({
+        name: '@types/node',
+        types: 'index.d.ts',
+      }),
+      'node_modules/@types/node/index.d.ts': 'declare var Buffer: { from(s: string): unknown };\n',
+      'node_modules/typescript/package.json': JSON.stringify({
+        name: 'typescript',
+        types: 'lib/typescript.d.ts',
+      }),
+      'node_modules/typescript/lib/typescript.d.ts':
+        'export interface Node {\n  kind: number;\n}\n',
+      'node_modules/pad/package.json': JSON.stringify({ name: 'pad', types: 'index.d.ts' }),
+      'node_modules/pad/index.d.ts': 'export declare function pad(s: string): string;\n',
+      'packages/analyzer/package.json': typesOnly('@oddkin/analyzer', {
+        '.': './dist/index.d.ts',
+      }),
+      'packages/analyzer/dist/index.d.ts': 'export interface Analysis {\n  ok: boolean;\n}\n',
+      'packages/tokens/package.json': typesOnly('@oddkin/tokens', {
+        '.': './dist/index.d.ts',
+        './node': './dist/node/index.d.ts',
+      }),
+      'packages/tokens/dist/index.d.ts': 'export declare const tokens: string[];\n',
+      'packages/tokens/dist/node/index.d.ts': 'export interface ThemeFile {\n  path: string;\n}\n',
+    };
+    /** The `boundary.declarations.*` diagnostics for a browser entry declaring `declarations`. */
+    const check = async (declarations: string) => {
+      const root = await workspace({
+        ...installed,
+        'packages/core/package.json': typesOnly('@oddkin/core', { '.': './dist/index.d.ts' }),
+        'packages/core/dist/index.d.ts': declarations,
+      });
+      for (const name of ['analyzer', 'tokens']) {
+        const link = join(root, 'node_modules', '@oddkin', name);
+        await mkdir(dirname(link), { recursive: true });
+        await symlink(join(root, 'packages', name), link, 'junction');
+      }
+      const { diagnostics } = await checkBoundaries(root, { artifacts: true, config });
+      return diagnostics.filter((d) => d.code.startsWith('boundary.declarations.'));
+    };
+
+    it('accepts declarations a browser project reads with the DOM library alone', async () => {
+      expect(
+        await check(
+          "export declare const host: HTMLElement;\nexport declare const tokens: typeof import('@oddkin/tokens').tokens;\n",
+        ),
+      ).toEqual([]);
+      // A standard library a declaration asks for is TypeScript's, not the compiler's API.
+      expect(
+        await check('/// <reference lib="esnext" />\nexport declare const host: HTMLElement;\n'),
+      ).toEqual([]);
+    }, 30_000);
+
+    it("rejects Node's types, by reference or by global", async () => {
+      const referenced = await check(
+        '/// <reference types="node" />\nexport declare const data: typeof Buffer;\n',
+      );
+      expect(referenced.map((d) => [d.code, d.file])).toEqual([
+        ['boundary.declarations.node', 'packages/core/dist/index.d.ts'],
+      ]);
+      expect(referenced[0]?.message).toContain('node_modules/@types/node/index.d.ts');
+      const global = await check('export declare const data: Buffer;\n');
+      expect(global.map((d) => d.code)).toEqual(['boundary.declarations.error']);
+      expect(global[0]?.message).toContain("Cannot find name 'Buffer'");
+    }, 30_000);
+
+    it("rejects the TypeScript compiler's types, a Node-only package, a Node entry, and third-party types", async () => {
+      const cases = {
+        'boundary.declarations.compiler':
+          "import type { Node } from 'typescript';\nexport type Leak = Node;\n",
+        'boundary.declarations.nodeOnly':
+          "import type { Analysis } from '@oddkin/analyzer';\nexport type Leak = Analysis;\n",
+        'boundary.declarations.thirdParty':
+          "import type { pad } from 'pad';\nexport type Leak = typeof pad;\n",
+      };
+      for (const [code, declarations] of Object.entries(cases))
+        expect((await check(declarations)).map((d) => d.code)).toEqual([code]);
+      const nodeEntry = await check(
+        "import type { ThemeFile } from '@oddkin/tokens/node';\nexport type Leak = ThemeFile;\n",
+      );
+      expect(nodeEntry.map((d) => d.code)).toEqual(['boundary.declarations.nodeOnly']);
+      expect(nodeEntry[0]?.message).toContain('@oddkin/tokens/node, a Node entry');
+    }, 60_000);
   });
 });

@@ -6527,3 +6527,13 @@ Records and guidance only; no component code changed.
 | Size | `npm run size`, with `ai-chat` raised to 69,312 (Agent 1, 03:38) | Exit 0: `ai-chat` 69,299 of 69,312 B gzip; `ai:styles` 5,307 of 5,376 |
 | E2E | `e2e/ai-demos.spec.ts`, `e2e/docs-responsiveness.spec.ts`, `e2e/presentation.spec.ts` | 198 passed in Chromium, Firefox, and WebKit |
 | Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |
+
+## 2026-11-11 — Browser declarations stand alone, and the analyzer publishes the canonical metadata schema (round 11, Agent 2; row 33, landing 1 of 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Declarations | `node scripts/architecture/check-boundaries.mjs --artifacts` (in `npm run lint:boundaries`) on the current build: every `types` target of a browser entry, Node entries and framework typings aside, in one program with the DOM library, `types: []`, and `skipLibCheck: false`, through the root `tsc --explainFiles` | 290 entries and 836 files in about 0.7 s; no error and nothing reached outside `packages/*/dist` and TypeScript's default libraries |
+| Leaks | `tests/architecture/boundaries.test.ts` (`browser declarations`): `/// <reference types="node" />` (`boundary.declarations.node`, naming the declaration that entered `@types/node`), a Node global without it (an error, `Cannot find name 'Buffer'`), `typescript`'s types (`compiler`), `@oddkin/analyzer` and a Node entry (`nodeOnly`), and a third-party package (`thirdParty`); a `/// <reference lib>` and a browser entry's own types pass | 20 passed |
+| Probes | `mutate.mjs`, 5 mutants: Node's types read as any third-party package; Node-only areas not forbidden; type errors not reported; TypeScript's default libraries counted as compiler types (killed once the test asked for a `/// <reference lib>`); the check not run | 5 of 5 killed |
+| Schema | `node scripts/sync-tool-schemas.mjs --check`, `tests/schemas/schemas.test.ts`: `@oddkin/analyzer/schemas/oddkin-metadata.v1.schema.json` equals `docs/schemas` | 7 copies checked; 32 passed |
+| Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |
