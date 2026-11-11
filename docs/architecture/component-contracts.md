@@ -139,7 +139,19 @@ Each element meets the M10 per-component definition of done (IMPLEMENTATION_PLAN
 generated metadata, examples (default, key variants, incorrect usages), Workbench and docs pages, browser tests in
 Chromium, Firefox, and WebKit driven by the examples, axe in light and dark mode, keyboard and Tab-order comparison
 with native markup where one exists, Figma parity of bound tokens, mutants, a lifetime scenario, framework typings,
-the vocabulary check, and a size budget.
+the vocabulary check, and a size budget, and it follows the responsiveness contract (§2.11).
+
+### 2.11 Available space
+
+Each element follows [responsiveness.md](./responsiveness.md), the host contract between content and its parent
+(owner, 2026-11-10). The element arranges its own content inside the space its parent grants: intrinsic CSS layout
+first (shrinkable tracks, a shrinkable child, no unintended intrinsic minimum), and a container query only for a
+meaningful change of arrangement. The parent owns capacity, scrolling, and sibling order; the host owns records and
+product flows. While space changes, labels, status, actions, focus, selection, and the person's work stay; resizing
+never opens an overlay, moves focus, or changes an interaction's mode, and density stays a separate theme choice. An
+unintended minimum is fixed in the element, not worked around by its host. The catalog-wide check
+(`e2e/docs-responsiveness.spec.ts`) reads its components from the published catalog, so a new element is covered once
+it has examples.
 
 ## 3. Element contracts
 

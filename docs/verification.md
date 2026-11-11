@@ -6407,3 +6407,16 @@ The branch (two commits by the owner's Codex session: the responsiveness behavio
 | Packed consumers | `node scripts/verify-packs.mjs` | OK for all eight packages, with `RESPONSIVENESS.md` matching `docs/architecture/responsiveness.md` |
 | Size | `node scripts/check-size.mjs` | Within every budget on a clean build |
 | Not done | — | Mutation probes on the branch's source (not mine to write), and the lanes posts to Agents 1 and 2 about core, AI, and design/figma files |
+
+## 2026-11-10 — The responsiveness contract in every component's guidance (round 11, Agent 1)
+
+Records and guidance only; no component code changed.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The slice on main | `git log`; the light gate on `b67b9e20` (typecheck, lint with build, `tests/agent-kit/responsiveness.test.ts`, `package-kits.test.ts`, `kit.test.ts`, size) | Passed: 29 tests; `ai-chat` and `ai-response` within the budgets the slice recorded |
+| Future components covered | `git grep catalog e2e/docs-responsiveness.spec.ts`; `.github/workflows/ci.yml` | The spec derives its components from the published catalog; CI runs `npm run test:e2e` on every push |
+| Guidance that pointed to the contract before this change | `git grep responsiveness.md main` | Agent kits and both packages (`RESPONSIVENESS.md`), agent-tooling.md, ai-interaction.md, the AI README (citations), ADR 0050, the docs site |
+| Guidance that did not | the same | `AGENTS.md`, `CONTRIBUTING.md`, component-contracts.md, the components README, the plan's definition of done: now updated |
+
+**Not verified here:** each existing component against the contract beyond the slice's own matrix ([responsiveness-behavior-matrix.md](./research/responsiveness-behavior-matrix.md)).

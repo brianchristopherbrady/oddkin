@@ -123,3 +123,5 @@ Elements show what records say. Report loading, empty, interrupted, denied, stal
 ## Host responsibilities
 
 Transport, persistence, authorization and execution of approved actions, uploads, transcription, telemetry, sanitizer choice for raw HTML, `data`/artifact renderers, localization (`strings` on every element), and truthful usage precision and provenance. See [ai-interaction.md §12](../../docs/architecture/ai-interaction.md#12-host-application-responsibilities).
+
+The region around each element is the host's too: its capacity, scrolling, and sibling order. Each element arranges itself inside the space it is given and keeps its record, draft, and focus while that space changes; the [responsiveness guide](RESPONSIVENESS.md), shipped in this package, states the contract.

@@ -18,3 +18,7 @@
 - Order of work, scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (the priority plan first, then the milestones and §11 continuation), `docs/progress-log.md` (one row per slice), and `docs/verification.md` (record only observed results).
 
 <!-- oddkin:agents:end -->
+
+## Responsiveness
+
+Components respond to the space their parent grants, not to the window. Before building or composing a view, read [docs/architecture/responsiveness.md](docs/architecture/responsiveness.md) (shipped as `RESPONSIVENESS.md` in `@oddkin/components` and `@oddkin/ai` and in their agent kits) and [component-contracts.md](docs/architecture/component-contracts.md) §2.11. Edit only that source; the build regenerates the package copies and kits.
