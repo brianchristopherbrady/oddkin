@@ -10,6 +10,7 @@ import type {
   ApprovalRecord,
   AttemptRecord,
   CheckpointRecord,
+  QuestionRecord,
   ToolCallRecord,
 } from '../src/contracts/types.js';
 import type { ArtifactRenderer } from '../src/artifact/artifact.js';
@@ -1395,6 +1396,115 @@ describe('odd-checkpoint', () => {
     await update(record('restored', { outcome: 'Back to step 3.' }));
     expect($(el, '.confirm')).toBeNull();
     expect(text($(el, '.outcome'))).toBe('Restored. Back to step 3.');
+  });
+
+  it('closes the confirmation when the checkpoint or what it replaces changes, says why, and gives focus back to Restore… (ADR 0049, page 14)', async () => {
+    const record = (extra: Partial<CheckpointRecord> = {}): CheckpointRecord => ({
+      checkpointId: 'cp',
+      label: 'Before refactor',
+      description: 'Files and plan as of step 3.',
+      restores: ['src/ (12 files)', 'Plan steps 4–7'],
+      status: 'available',
+      ...extra,
+    });
+    const el = await mount(
+      'odd-checkpoint',
+      () => import('../src/checkpoint/checkpoint.define.js'),
+      (e) => {
+        e.checkpoint = record();
+        e.capabilities = { restoreCheckpoint: { available: true } };
+        e.announce = 'important';
+      },
+    );
+    const requests: unknown[] = [];
+    const said: string[] = [];
+    el.addEventListener('odd-checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
+    el.addEventListener('odd-announce', (e) => said.push((e as CustomEvent).detail.text));
+    const restore = () => $(el, '[data-action="restore"]') as HTMLElement;
+    const changed = () => $(el, '.changed') as HTMLElement;
+    const open = async () => {
+      restore().focus();
+      restore().click();
+      await settle(el);
+      await frames(2);
+      expect(el.shadowRoot!.activeElement).toBe($(el, '[data-action="cancel"]'));
+    };
+    expect(changed().hidden).toBe(true);
+    // The host finds one more file to replace while the confirmation is open.
+    await open();
+    el.checkpoint = record({ restores: ['src/ (13 files)', 'Plan steps 4–7'] });
+    await settle(el);
+    await frames(2);
+    expect($(el, '.confirm')).toBeNull();
+    expect(changed().hidden).toBe(false);
+    expect(text(changed())).toBe(
+      'This checkpoint changed. Review what it replaces before restoring.',
+    );
+    expect(el.shadowRoot!.activeElement).toBe(restore());
+    expect(said).toEqual(['Checkpoint changed: Before refactor']);
+    // Restore… opens a fresh confirmation; the same items in a new array change nothing.
+    await open();
+    expect(changed().hidden).toBe(true);
+    el.checkpoint = record({ restores: ['src/ (13 files)', 'Plan steps 4–7'] });
+    await settle(el);
+    expect($(el, '.confirm')).not.toBeNull();
+    // Another checkpoint in its place closes it too.
+    el.checkpoint = record({
+      checkpointId: 'cp2',
+      label: 'Before rename',
+      restores: ['src/ (13 files)', 'Plan steps 4–7'],
+    });
+    await settle(el);
+    await frames(2);
+    expect($(el, '.confirm')).toBeNull();
+    expect(changed().hidden).toBe(false);
+    expect(el.shadowRoot!.activeElement).toBe(restore());
+    expect(said.at(-1)).toBe('Checkpoint changed: Before rename');
+    expect(requests).toEqual([]);
+    // Confirmed afresh, the restore asks for the checkpoint shown.
+    await open();
+    $(el, '[data-action="confirm"]')!.click();
+    await settle(el);
+    expect(requests).toEqual([{ checkpointId: 'cp2' }]);
+  });
+
+  it('a confirmation the record moved past stays closed, and a change with none open says nothing', async () => {
+    const record = (extra: Partial<CheckpointRecord> = {}): CheckpointRecord => ({
+      checkpointId: 'cp',
+      label: 'Before refactor',
+      description: 'Files as of step 3.',
+      restores: ['src/'],
+      status: 'available',
+      ...extra,
+    });
+    const el = await mount(
+      'odd-checkpoint',
+      () => import('../src/checkpoint/checkpoint.define.js'),
+      (e) => {
+        e.checkpoint = record();
+        e.capabilities = { restoreCheckpoint: { available: true } };
+      },
+    );
+    // Another view restores while this one confirms; the host then makes it available again.
+    $(el, '[data-action="restore"]')!.click();
+    await settle(el);
+    expect($(el, '.confirm')).not.toBeNull();
+    el.checkpoint = record({ status: 'restore-pending' });
+    await settle(el);
+    expect($(el, '.confirm')).toBeNull();
+    el.checkpoint = record({ status: 'available' });
+    await settle(el);
+    expect($(el, '.confirm')).toBeNull();
+    expect(($(el, '.changed') as HTMLElement).hidden).toBe(true);
+    // With nothing open, a new scope changes the list, not the focus.
+    const elsewhere = document.createElement('button');
+    container.append(elsewhere);
+    elsewhere.focus();
+    el.checkpoint = record({ restores: ['src/', 'docs/'] });
+    await settle(el);
+    await frames(2);
+    expect(($(el, '.changed') as HTMLElement).hidden).toBe(true);
+    expect(document.activeElement).toBe(elsewhere);
   });
 
   it('its default example plays the host: a confirmed restore comes back restored', async () => {
@@ -3029,6 +3139,161 @@ describe('odd-message fallbacks and provenance', () => {
   });
 });
 
+describe('odd-question drafts (ADR 0049, page 13)', () => {
+  const ask = (question: Partial<QuestionRecord>) =>
+    mount(
+      'odd-question',
+      () => import('../src/question/question.define.js'),
+      (e) => {
+        e.question = {
+          questionId: 'q',
+          revision: 1,
+          prompt: 'Which formats should the export include?',
+          kind: 'multi-choice',
+          options: [
+            { id: 'pdf', label: 'PDF' },
+            { id: 'docx', label: 'Word' },
+          ],
+          allowCustom: true,
+          status: 'requested',
+          ...question,
+        };
+      },
+    );
+  const answers = (el: Element) => {
+    const out: unknown[] = [];
+    el.addEventListener('odd-question-answer', (e) => out.push((e as CustomEvent).detail.answer));
+    return out;
+  };
+  const submit = (el: Element) => $(el, 'odd-button[type="submit"]')!.click();
+  const audience: Partial<QuestionRecord> = {
+    kind: 'choice',
+    prompt: 'Which audience?',
+    options: [
+      { id: 'exec', label: 'Executives' },
+      { id: 'eng', label: 'Engineers' },
+    ],
+  };
+
+  it("shows Other's field only while Other is chosen: focus stays on Other, Tab moves to the field, and its text is kept", async () => {
+    const el = await ask(audience);
+    const sent = answers(el);
+    const field = $(el, 'input[name="custom"]') as HTMLInputElement;
+    const other = $(el, 'input[value="__other"]') as HTMLInputElement;
+    expect(field.checkVisibility()).toBe(false);
+    other.focus();
+    await userEvent.keyboard(' ');
+    expect(other.checked).toBe(true);
+    expect(el.shadowRoot!.activeElement).toBe(other);
+    expect(field.checkVisibility()).toBe(true);
+    await userEvent.keyboard('{Tab}');
+    expect(el.shadowRoot!.activeElement).toBe(field);
+    await userEvent.keyboard('Designers');
+    // Another option hides the field and keeps its text, which is not sent.
+    const engineers = $$(el, 'input[name="choice"]')[1]!;
+    engineers.click();
+    expect(field.checkVisibility()).toBe(false);
+    expect(field.value).toBe('Designers');
+    other.click();
+    expect(field.checkVisibility()).toBe(true);
+    expect(field.value).toBe('Designers');
+    engineers.click();
+    submit(el);
+    await settle(el);
+    expect(sent).toEqual([{ choice: 'eng' }]);
+  });
+
+  it('a chosen Other without text is an error even beside other choices: nothing is sent, nothing is cleared, and its field takes focus', async () => {
+    const el = await ask({});
+    const sent = answers(el);
+    const field = $(el, 'input[name="custom"]') as HTMLInputElement;
+    const [, word, other] = $$(el, 'input[name="choice"]') as HTMLInputElement[];
+    word!.click();
+    other!.click();
+    field.value = '   ';
+    submit(el);
+    await settle(el);
+    expect(sent).toEqual([]);
+    const error = $(el, '.error')!;
+    expect(error.hidden).toBe(false);
+    expect(text(error)).toBe('Enter your answer for Other.');
+    expect(el.shadowRoot!.activeElement).toBe(field);
+    expect(field.getAttribute('aria-invalid')).toBe('true');
+    expect(field.getAttribute('aria-describedby')).toBe(error.id);
+    expect([word!.checked, other!.checked, field.value]).toEqual([true, true, '   ']);
+    await userEvent.fill(field, 'HTML');
+    submit(el);
+    await settle(el);
+    expect(sent).toEqual([{ choices: ['docx'], custom: 'HTML' }]);
+    expect(error.hidden).toBe(true);
+    expect(field.hasAttribute('aria-invalid')).toBe(false);
+  });
+
+  it('says what is wrong, one message for each problem, describing and focusing the control that corrects it', async () => {
+    const el = await ask(audience);
+    const error = () => $(el, '.error')!;
+    submit(el);
+    await settle(el);
+    expect(text(error())).toBe('Choose an option.');
+    expect(el.shadowRoot!.activeElement).toBe($$(el, 'input[name="choice"]')[0]);
+    expect($(el, 'fieldset')!.getAttribute('aria-describedby')).toBe(error().id);
+    $(el, 'input[value="__other"]')!.click();
+    submit(el);
+    await settle(el);
+    expect(text(error())).toBe('Enter your answer for Other.');
+    expect($(el, 'fieldset')!.hasAttribute('aria-describedby')).toBe(false);
+    // A new revision of the question starts without the old message.
+    el.question = { ...el.question!, revision: 2 };
+    await settle(el);
+    expect(error().hidden).toBe(true);
+    // Free text: spaces alone are not an answer, and they stay as typed.
+    el.question = {
+      questionId: 't',
+      revision: 1,
+      prompt: 'What should the summary stress?',
+      kind: 'text',
+      status: 'requested',
+    };
+    await settle(el);
+    const area = $(el, 'textarea[name="text"]') as HTMLTextAreaElement;
+    area.value = '   ';
+    submit(el);
+    await settle(el);
+    expect(text(error())).toBe('Enter an answer.');
+    expect(el.shadowRoot!.activeElement).toBe(area);
+    expect(area.getAttribute('aria-describedby')).toBe(error().id);
+    expect(area.value).toBe('   ');
+  });
+
+  it("keeps the draft when the host's answer fails, ready to send again", async () => {
+    const el = await ask(audience);
+    const sent = answers(el);
+    const field = $(el, 'input[name="custom"]') as HTMLInputElement;
+    const other = $(el, 'input[value="__other"]') as HTMLInputElement;
+    other.click();
+    await userEvent.fill(field, 'Designers');
+    submit(el);
+    await settle(el);
+    el.question = { ...el.question!, status: 'submitting' };
+    await settle(el);
+    el.question = {
+      ...el.question!,
+      status: 'failed',
+      error: { code: 'offline', message: 'Offline.' },
+    };
+    await settle(el);
+    expect(text($(el, '.decision-error'))).toBe('Your answer was not sent: Offline.');
+    expect([other.checked, field.value, field.checkVisibility()]).toEqual([
+      true,
+      'Designers',
+      true,
+    ]);
+    submit(el);
+    await settle(el);
+    expect(sent).toEqual([{ custom: 'Designers' }, { custom: 'Designers' }]);
+  });
+});
+
 describe('odd-question and odd-task-plan examples', () => {
   it('odd-question takes answers only where the capabilities given allow them; alone, its host answers', async () => {
     const el = await mount(
@@ -3086,17 +3351,17 @@ describe('odd-question and odd-task-plan examples', () => {
     } finally {
       skipped.dispose();
     }
-    // An answer of one's own, under a visible label: typing it chooses Other.
+    // An answer of one's own, under a visible label: its field shows while Other is chosen.
     const own = await mountExample(set, 'default', container);
     try {
       const el = own.element;
       const field = $(el, 'input[name="custom"]') as HTMLInputElement;
       expect(field.labels?.[0]?.querySelector('.visually-hidden')).toBeNull();
       expect(text(field.labels?.[0])).toBe('Your answer');
-      $$(el, 'input[name="choice"]')[0]!.click();
+      expect(field.checkVisibility()).toBe(false);
+      $(el, 'input[value="__other"]')!.click();
+      expect(field.checkVisibility()).toBe(true);
       field.value = 'Designers';
-      field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
-      expect(($(el, 'input[value="__other"]') as HTMLInputElement).checked).toBe(true);
       $(el, 'odd-button[type="submit"]')!.click();
       await settle(el);
       expect(el.question).toMatchObject({ status: 'answered', answer: { custom: 'Designers' } });

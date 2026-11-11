@@ -410,7 +410,7 @@ describe('odd-conversation', () => {
     // Nothing chosen: the form says so and nothing is sent.
     submit().click();
     await settle(question);
-    expect(inner.querySelector('.error')?.textContent).toBe('Choose an option or enter an answer.');
+    expect(inner.querySelector('.error')?.textContent).toBe('Choose an option.');
     expect(controller.getSnapshot().questions['q1']?.status).toBe('requested');
     inner.querySelectorAll<HTMLInputElement>('input[name="choice"]')[1]!.click();
     submit().focus();

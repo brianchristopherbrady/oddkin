@@ -18,8 +18,12 @@ export const questionTemplate = (host: OddkinQuestion) => {
   const inFlight = asked || q.status === 'submitting';
   const choice = q.kind === 'choice' || q.kind === 'multi-choice';
   const inputType = q.kind === 'choice' ? 'radio' : 'checkbox';
+  // The problem with the draft, if any: the alert describes the control that corrects it.
+  const invalid = host._invalid.value;
+  const describe = (control: 'choice' | 'custom' | 'text') =>
+    invalid?.control === control ? 'error' : null;
   return html`<form part="form" class="form" @submit=${host._submit} novalidate>
-    <fieldset ?disabled=${locked}>
+    <fieldset ?disabled=${locked} aria-describedby=${describe('choice')}>
       <legend class="prompt">${q.prompt}</legend>
       ${open || inFlight ? expiryBadge(host, q.expiresAt, t.expires) : null}
       ${
@@ -44,7 +48,11 @@ export const questionTemplate = (host: OddkinQuestion) => {
                       </label>
                       <label class="field"
                         ><span>${t.otherLabel}</span
-                        ><input type="text" name="custom" @input=${host._onCustom}
+                        ><input
+                          type="text"
+                          name="custom"
+                          aria-invalid=${describe('custom') ? 'true' : null}
+                          aria-describedby=${describe('custom')}
                       /></label>`
                   : null
               }
@@ -55,7 +63,13 @@ export const questionTemplate = (host: OddkinQuestion) => {
         q.kind === 'text'
           ? html`<label class="field"
               ><span class="visually-hidden">${t.otherLabel}</span
-              ><textarea name="text" rows="3" required></textarea>
+              ><textarea
+                name="text"
+                rows="3"
+                required
+                aria-invalid=${describe('text') ? 'true' : null}
+                aria-describedby=${describe('text')}
+              ></textarea>
             </label>`
           : null
       }
@@ -84,7 +98,7 @@ export const questionTemplate = (host: OddkinQuestion) => {
             )
           : null
       }
-      <p class="error" role="alert" ?hidden=${!host._invalid.value}>${host._invalid.value}</p>
+      <p id="error" class="error" role="alert" ?hidden=${!invalid}>${invalid?.text ?? ''}</p>
     </fieldset>
     ${decisionRow(
       [

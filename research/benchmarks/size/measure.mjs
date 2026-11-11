@@ -168,7 +168,11 @@ export const BUDGETS = {
   // Independent BUDGET review recorded with the responsiveness slice; release review remains.
   // 69,056 from 2026-11-11 (row 29; Agent 1, 01:15): measured 69,031 (+79) with the copy
   // confirmation following its button and the positioning controller observing the anchor's boxes.
-  'ai-chat': 69056,
+  // 69,312 from 2026-11-11 (rows 31 and 32; Agent 1, 03:38), the smallest 64 B step: measured
+  // 69,299 (+268) with pages 13 and 14's behaviour: the question's validation (a blank Other beside
+  // other choices, one message per problem, focus and description on the control to correct,
+  // Other's field shown only while chosen) and the checkpoint's changed confirmation.
+  'ai-chat': 69312,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

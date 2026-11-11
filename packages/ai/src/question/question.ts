@@ -7,6 +7,16 @@ import { announceEvent, questionAnswerEvent, questionSkipEvent } from '../events
 import { DecisionController } from '../internal/decision.js';
 import { format, strings } from '../internal/strings.js';
 
+/** The value of the Other option, whose answer is the text in its field. */
+const OTHER = '__other';
+
+/** The control that corrects each problem with a draft, which takes focus. */
+const CONTROLS = {
+  choice: 'input[name="choice"]',
+  custom: 'input[name="custom"]',
+  text: 'textarea[name="text"]',
+} as const;
+
 export const QUESTION_STRINGS = {
   other: 'Other',
   otherLabel: 'Your answer',
@@ -21,7 +31,9 @@ export const QUESTION_STRINGS = {
   cancelled: 'This question was withdrawn; no answer is needed.',
   failed: 'Your answer was not sent: {message}',
   unavailable: 'Answers are not available here.',
-  required: 'Choose an option or enter an answer.',
+  required: 'Choose an option.',
+  otherRequired: 'Enter your answer for Other.',
+  textRequired: 'Enter an answer.',
   expires: 'Answer by {time}',
   yes: 'Yes',
   announceAsked: 'Question: {prompt}',
@@ -34,8 +46,8 @@ export const QUESTION_STRINGS = {
  *
  * @csspart form - The native form.
  * @csspart actions - Answer and skip.
- * @a11y A native form with a fieldset and legend; required fields use native constraint validation.
- * @keyboard Native form controls; Enter in a single-line field submits.
+ * @a11y A native form with a fieldset and legend; required fields use native constraint validation. Other's labelled field shows only while Other is chosen and keeps its text when hidden. An answer that cannot be sent says why, one message for each problem (nothing chosen, Other without text, empty text), in an alert that describes the control to correct; that control takes focus and nothing is cleared.
+ * @keyboard Native form controls; Enter in a single-line field submits. Choosing Other keeps focus on it; Tab then moves to its field.
  * @useFor Asking the user for missing information before continuing.
  * @notFor General-purpose forms unrelated to an agent's request.
  * @customization 1 2
@@ -67,8 +79,13 @@ export class OddkinQuestion extends OddkinElement.with({
   readonly _decisions = new DecisionController(this, () =>
     this.shadowRoot?.querySelector<HTMLElement>('.outcome'),
   );
-  /** @internal Validation message for choice questions. */
-  readonly _invalid = signal('');
+  /**
+   * @internal Why the draft could not be sent, and the control that corrects it, until it is sent
+   * or the question changes.
+   */
+  readonly _invalid = signal<
+    { readonly text: string; readonly control: 'choice' | 'custom' | 'text' } | undefined
+  >(undefined);
 
   /** @internal */
   get _strings(): typeof QUESTION_STRINGS {
@@ -99,14 +116,20 @@ export class OddkinQuestion extends OddkinElement.with({
     const form = this.shadowRoot?.querySelector('form');
     if (!q || !form || this._locked) return;
     if (!form.reportValidity()) return;
-    const answer = this.#answer(q, new FormData(form));
-    if (answer === undefined) {
-      this._invalid.value = this._strings.required;
+    const read = this.#read(q, new FormData(form));
+    if ('invalid' in read) {
+      // The draft stays as it is; focus goes to the control that corrects it.
+      this._invalid.value = read.invalid;
+      form.querySelector<HTMLElement>(CONTROLS[read.invalid.control])?.focus();
       return;
     }
-    this._invalid.value = '';
+    this._invalid.value = undefined;
     this._decisions.request(`${q.questionId}:${q.revision}`, 'answer');
-    this.emit(questionAnswerEvent, { questionId: q.questionId, revision: q.revision, answer });
+    this.emit(questionAnswerEvent, {
+      questionId: q.questionId,
+      revision: q.revision,
+      answer: read.answer,
+    });
   };
 
   /** @internal */
@@ -117,32 +140,32 @@ export class OddkinQuestion extends OddkinElement.with({
     this.emit(questionSkipEvent, { questionId: q.questionId, revision: q.revision });
   };
 
-  /** @internal Typing an answer of one's own chooses Other, so what was typed is sent. */
-  readonly _onCustom = (event: Event): void => {
-    if (!(event.target as HTMLInputElement).value) return;
-    const other = this.shadowRoot?.querySelector<HTMLInputElement>('input[value="__other"]');
-    if (other) other.checked = true;
-  };
-
-  #answer(q: QuestionRecord, data: FormData): JsonValue | undefined {
+  /**
+   * The answer, or why it cannot be sent. Other's text counts only while Other is chosen, and a
+   * chosen Other needs it, even beside other choices (ADR 0049, page 13).
+   */
+  #read(
+    q: QuestionRecord,
+    data: FormData,
+  ):
+    | { readonly answer: JsonValue }
+    | { readonly invalid: NonNullable<OddkinQuestion['_invalid']['value']> } {
+    const t = this._strings;
     const custom = String(data.get('custom') ?? '').trim();
     switch (q.kind) {
-      case 'choice': {
-        const choice = data.get('choice');
-        if (choice === '__other') return custom ? { custom } : undefined;
-        return choice ? { choice: String(choice) } : undefined;
-      }
+      case 'choice':
       case 'multi-choice': {
-        const choices = data
-          .getAll('choice')
-          .map(String)
-          .filter((c) => c !== '__other');
-        if (data.getAll('choice').includes('__other') && custom) return { choices, custom };
-        return choices.length ? { choices } : undefined;
+        const chosen = data.getAll('choice').map(String);
+        const other = chosen.includes(OTHER);
+        if (other && !custom) return { invalid: { text: t.otherRequired, control: 'custom' } };
+        if (!chosen.length) return { invalid: { text: t.required, control: 'choice' } };
+        const choices = chosen.filter((c) => c !== OTHER);
+        if (q.kind === 'choice') return { answer: other ? { custom } : { choice: choices[0]! } };
+        return { answer: other ? { choices, custom } : { choices } };
       }
       case 'text': {
         const text = String(data.get('text') ?? '').trim();
-        return text ? { text } : undefined;
+        return text ? { answer: { text } } : { invalid: { text: t.textRequired, control: 'text' } };
       }
       case 'form': {
         const fields: Record<string, JsonValue> = {};
@@ -153,7 +176,7 @@ export class OddkinQuestion extends OddkinElement.with({
             if (raw !== null && raw !== '') fields[field.id] = Number(raw);
           } else if (raw !== null && raw !== '') fields[field.id] = String(raw);
         }
-        return { fields };
+        return { answer: { fields } };
       }
     }
   }
@@ -166,6 +189,7 @@ export class OddkinQuestion extends OddkinElement.with({
         const q = this.question;
         if (!q) return;
         const key = `${q.questionId}:${q.revision}`;
+        if (seen !== key) this._invalid.value = undefined;
         this._decisions.settle(key, q.status === 'failed');
         if (this.announce !== 'none' && seen !== key && q.status === 'requested')
           this.emit(announceEvent, {

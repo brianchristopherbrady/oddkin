@@ -109,6 +109,8 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 | `odd-change-review` to page 11 (approved by the owner, 2026-11-09), and its family in the snapshot | Agent 2, item 24; Agent 1, item 7 |
 | `odd-tool-call` to page 10 (approved by the owner, 2026-11-10), and its family in the snapshot | Agent 2, item 25; Agent 1, item 8 |
 | `odd-activity`'s wording for responses on their way (page 12's answered question) | Agent 2, item 26 |
+| `odd-question`'s drafts: a blank Other, one message per problem, Other's field revealed (page 13's answered question) | Agent 2, item 31 |
+| `odd-checkpoint`'s confirmation closing when the checkpoint or its scope changes (page 14's answered question) | Agent 2, item 32 |
 | Agent 3's visual refinements of item 9 | Wait for their pages (20, 21, and 26 to 28); the `odd-citation` and `odd-transcript` tests go ahead |
 | Pages 12 to 30 | The owner's design session, then one implementation row per approved page |
 

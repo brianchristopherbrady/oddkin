@@ -91,6 +91,8 @@ Not changed by this review: the kinds, the answer shapes (`{ choice }`, `{ choic
 
 **Decisions and changes** (Agent 2, 2026-11-05). 1: the field's label ("Your answer") shows, and typing in the field chooses Other, so what was typed is sent. 2: examples for several choices, free text, and an answer that was not sent.
 
+**Since** (Agent 2, 2026-11-11, row 31; ADR 0049, page 13). 1 took the proposal's other branch: the field shows only while Other is chosen and keeps its text when hidden, so typing no longer chooses Other; a chosen Other without text is an error, also beside other choices.
+
 ## `odd-task-plan` (2026-11-05)
 
 **What a user sees today.** "Prepare the release", a progress bar with "1 of 4 steps done", then each step with a symbol, its title, and its status below it: Collect changes, Done; Run checks, In progress, "Running in parallel" with Unit tests (Done) and Browser tests (In progress); Choose a version, Needs input, "Needs your input: Major or minor?" and Respond; Publish, "Blocked: Waiting for the version." Since C1, Respond shows the step's question, and the answer completes the step.

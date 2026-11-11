@@ -619,6 +619,8 @@ describe('odd-question', () => {
             ? 'input[name="title"]'
             : 'textarea[name="text"]';
       const field = $(el, selector) as HTMLInputElement | HTMLTextAreaElement;
+      // Other's field shows once Other is chosen.
+      if (key === 'default') $(el, 'input[value="__other"]').click();
       await userEvent.fill(field, 'Draft response');
       field.setSelectionRange(5, 5);
 

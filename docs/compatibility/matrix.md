@@ -320,7 +320,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/prompt-input/prompt-input.recipe.styles.js (promptInputRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 62 |
 | `packages/ai/dist/question/question.recipe.styles.js (questionRecipeStyles)` | yes | 12 |
-| `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 24 |
+| `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 27 |
 | `packages/ai/dist/response/response.styles.js (responseStyles)` | yes | 61 |
 | `packages/ai/dist/response-feedback/response-feedback.recipe.styles.js (responseFeedbackRecipeStyles)` | yes | 12 |
 | `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 22 |

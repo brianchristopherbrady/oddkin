@@ -4,9 +4,10 @@ import { format } from '../internal/strings.js';
 import type { OddkinCheckpoint } from './checkpoint.js';
 
 /**
- * Anatomy: labelled `base` with description and `restores` list, then the decision row (Figma page
- * 08): Restore… with its pending line, failure, reason or outcome, or in its place the
- * confirmation, whose Restore this checkpoint loads while the request is in flight.
+ * Anatomy: labelled `base` with description and `restores` list, the line that says the checkpoint
+ * changed while it was being confirmed, then the decision row (Figma page 08): Restore… with its
+ * pending line, failure, reason or outcome, or in its place the confirmation, whose Restore this
+ * checkpoint loads while the request is in flight.
  */
 export const checkpointTemplate = (host: OddkinCheckpoint) => {
   const t = host._strings;
@@ -14,9 +15,15 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
   if (!c) return html``;
   const asked = host._decisions.asked(c.checkpointId);
   const pending = c.status === 'restore-pending' || asked;
-  // Open while the record keeps the status it was opened at; confirmed, while its request is out.
+  // Open while the record is as it was when opened; confirmed, while its request is out.
   const open = host._confirming.value;
-  const confirming = asked || (open?.id === c.checkpointId && open.status === c.status);
+  const confirming = asked || (open !== undefined && host._matches(open, c));
+  // It closed because the checkpoint or what it replaces changed: said while Restore… is offered.
+  const changed =
+    host._changed.value === c.checkpointId &&
+    !pending &&
+    c.status !== 'restored' &&
+    host._unavailable === undefined;
   const created = host._created();
   const state: DecisionState =
     c.status === 'restored'
@@ -44,6 +51,7 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
     <ul part="restores" class="restores" ?hidden=${!c.restores.length}>
       ${c.restores.map((item) => html`<li>${item}</li>`)}
     </ul>
+    <p class="muted changed" ?hidden=${!changed}>${t.changed}</p>
     ${
       confirming
         ? html`<div class="confirm" role="group" aria-labelledby="confirm-text">
