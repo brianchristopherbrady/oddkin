@@ -746,3 +746,260 @@ describe('buttons', () => {
       expect(button.getBoundingClientRect().width).toBeGreaterThanOrEqual(target);
   });
 });
+
+// Continuity (responsiveness.md; component-contracts.md §2.11): a change of width keeps the
+// person's work. A bounded parent, set as the question's probe above sets one, narrows and widens
+// across the 30rem narrow arrangement while a decision is pending, a reason is drafted, a scope is
+// chosen, or Details is open: the same nodes keep their value, focus, selection, and open state,
+// nothing overflows sideways, and the density (padding, control sizes) does not follow the width.
+// Each probe runs in the default and the compact density, and right to left.
+describe('continuity', () => {
+  const WIDTHS = [680, 242, 222, 680, 222];
+  const SETUPS = ['default density', 'compact density', 'right to left'] as const;
+  const bound = (setup: (typeof SETUPS)[number]) => {
+    Object.assign(container.style, {
+      boxSizing: 'border-box',
+      padding: '10px',
+      blockSize: '20rem',
+      overflow: 'auto',
+      scrollbarGutter: 'stable',
+    });
+    if (setup === 'compact density') container.dataset['oddDensity'] = 'compact';
+    if (setup === 'right to left') container.dir = 'rtl';
+  };
+  const resize = async (width: number, ...els: Updating[]) => {
+    container.style.inlineSize = `${width}px`;
+    for (const el of els) await settle(el);
+  };
+  /** Neither the parent nor the element's base overflows sideways. */
+  const expectInside = (base: HTMLElement) => {
+    expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth + 1);
+    expect(base.scrollWidth).toBeLessThanOrEqual(base.clientWidth + 1);
+  };
+  /**
+   * The density no width changes: the base's padding, and each control's padding, minimum block
+   * size, and font size. A label may still wrap and make its button taller: that is the content.
+   */
+  const density = (base: HTMLElement, controls: Iterable<Element>) => [
+    getComputedStyle(base).paddingInlineStart,
+    getComputedStyle(base).paddingBlockStart,
+    [...controls].map((control) => {
+      const box = control.shadowRoot?.querySelector('[part="control"]') ?? control;
+      const style = getComputedStyle(box);
+      return [
+        style.paddingInlineStart,
+        style.paddingBlockStart,
+        style.minBlockSize,
+        style.fontSize,
+      ];
+    }),
+  ];
+  type Disclosure = HTMLElement & { open: boolean };
+  /** Opens a disclosure as the person does, once it reports the toggle. */
+  const toggle = async (host: Updating, disclosure: HTMLElement) => {
+    const toggled = new Promise((resolve) =>
+      disclosure.addEventListener('toggle', resolve, { once: true }),
+    );
+    disclosure.shadowRoot!.querySelector('summary')!.click();
+    await toggled;
+    await settle(host);
+    return disclosure as Disclosure;
+  };
+  type Field = HTMLTextAreaElement;
+
+  it.each(SETUPS)(
+    'odd-action-approval keeps a drafted reason and a chosen scope, then a pending decision (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('action-approval', 'scopes');
+      const base = $(el, '.base');
+      const disclosure = await toggle(el, $(el, 'odd-disclosure.reason'));
+      const radios = [...el.shadowRoot!.querySelectorAll<HTMLInputElement>('input[name="scope"]')];
+      await userEvent.click(radios[1]!);
+      await settle(el);
+      const reason = $(el, '.reason textarea') as Field;
+      await userEvent.fill(reason, 'Ship before noon.');
+      reason.setSelectionRange(4, 4);
+      const buttons = () => el.shadowRoot!.querySelectorAll('.actions odd-button');
+      const first = density(base, buttons());
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(disclosure.open).toBe(true);
+        expect($(el, '.reason textarea')).toBe(reason);
+        expect(reason.value).toBe('Ship before noon.');
+        expect(el.shadowRoot!.activeElement).toBe(reason);
+        expect([reason.selectionStart, reason.selectionEnd]).toEqual([4, 4]);
+        expect(radios.map((radio) => radio.checked)).toEqual([false, true]);
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+      await userEvent.keyboard('!');
+      expect(reason.value).toBe('Ship! before noon.');
+      // Approve from the keyboard (WebKit does not focus a clicked button), and the host has not
+      // answered yet: the decision stays in flight at every width.
+      const approve = $(el, '.actions odd-button[data-action="approve"]');
+      approve.focus();
+      await userEvent.keyboard('{Enter}');
+      await settle(el);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, '.actions odd-button[data-action="approve"]')).toBe(approve);
+        expect(approve.hasAttribute('loading')).toBe(true);
+        expect(el.shadowRoot!.activeElement).toBe(approve);
+        expect($(el, '.pending').hidden).toBe(false);
+        expect(radios.map((radio) => radio.checked)).toEqual([false, true]);
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-change-review keeps an open context, its sides, and an accept in flight; the sides stack when narrow (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('change-review', 'split', (props) => {
+        const [first, ...rest] = props['proposals'] as Record<string, unknown>[];
+        const context = { before: 'Release notes: ', after: ' Contact the team.' };
+        return { ...props, proposals: [{ ...first, context }, ...rest] };
+      });
+      const base = $(el, '.base');
+      const disclosure = await toggle(el, $(el, '.context-toggle'));
+      const accept = $(el, '.proposal odd-button[data-action="accept"]');
+      accept.focus();
+      await userEvent.keyboard('{Enter}');
+      await settle(el);
+      const sides = [...el.shadowRoot!.querySelectorAll('.side')];
+      const buttons = () => el.shadowRoot!.querySelectorAll('.actions odd-button');
+      const first = density(base, buttons());
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(disclosure.open).toBe(true);
+        expect([...el.shadowRoot!.querySelectorAll('.side')]).toEqual(sides);
+        const [before, after] = sides.slice(0, 2).map((side) => side.getBoundingClientRect());
+        // Side by side when wide; stacked, the same nodes, below 30rem.
+        if (width > 600) expect(after!.top).toBe(before!.top);
+        else expect(after!.top).toBeGreaterThanOrEqual(before!.bottom);
+        expect(accept.hasAttribute('loading')).toBe(true);
+        expect(el.shadowRoot!.activeElement).toBe(accept);
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-tool-call keeps Details open and its approval’s drafted reason (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('tool-call', 'approval');
+      const base = $(el, '.base');
+      const details = await toggle(el, $(el, 'odd-disclosure.details'));
+      const approval = $(el, 'odd-action-approval') as Updating;
+      await settle(approval);
+      await toggle(approval, $(approval, 'odd-disclosure.reason'));
+      const reason = $(approval, '.reason textarea') as Field;
+      await userEvent.fill(reason, 'Only the release list.');
+      reason.setSelectionRange(4, 4);
+      const buttons = () => approval.shadowRoot!.querySelectorAll('.actions odd-button');
+      const first = density(base, buttons());
+      for (const width of WIDTHS) {
+        await resize(width, el, approval);
+        expect(details.open).toBe(true);
+        expect($(approval, '.reason textarea')).toBe(reason);
+        expect(reason.value).toBe('Only the release list.');
+        expect(el.shadowRoot!.activeElement).toBe(approval);
+        expect(approval.shadowRoot!.activeElement).toBe(reason);
+        expect([reason.selectionStart, reason.selectionEnd]).toEqual([4, 4]);
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-tool-call keeps its failure and a focused Retry (%s)', async (setup) => {
+    bound(setup);
+    const el = await example('tool-call', 'failed');
+    const base = $(el, '.base');
+    const retry = $(el, '.failure button');
+    retry.focus();
+    const first = density(base, [retry]);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect($(el, '.failure button')).toBe(retry);
+      expect(el.shadowRoot!.activeElement).toBe(retry);
+      expect(density(base, [retry])).toEqual(first);
+      expectInside(base);
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-activity keeps the wait, its counts, and a focused Stop (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await mount<Updating & { attempt: unknown; capabilities: unknown }>(
+        'odd-activity',
+        () => import('../src/activity/activity.define.js'),
+        (e) => {
+          e.attempt = {
+            attemptId: 'at1',
+            runId: 'run1',
+            conversationId: 'c1',
+            messageId: 'm2',
+            promptId: 'm1',
+            relation: 'new',
+            connection: 'open',
+            stop: 'none',
+            status: 'awaiting-input',
+            wait: {
+              action: [
+                { kind: 'question', id: 'q1' },
+                { kind: 'question', id: 'q2' },
+              ],
+              submitting: [{ kind: 'approval', id: 'a1' }],
+            },
+          };
+          e.capabilities = { stop: { available: true } };
+        },
+      );
+      const base = $(el, '.base');
+      const badge = $(el, '.waiting odd-badge');
+      const stop = $(el, '[data-action="stop"]');
+      stop.focus();
+      const first = density(base, [stop]);
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, '.waiting odd-badge')).toBe(badge);
+        expect($(el, '.waiting .detail').textContent).toBe(
+          '1 response is being recorded. 2 requests still need your input.',
+        );
+        expect(el.shadowRoot!.activeElement).toBe(stop);
+        expect(density(base, [stop])).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-checkpoint keeps its restore confirmation and the focus in it (%s)',
+    async (setup) => {
+      bound(setup);
+      const el = await example('checkpoint');
+      await userEvent.click($(el, '.actions odd-button[data-action="restore"]'));
+      await settle(el);
+      const base = $(el, '.base');
+      const confirm = $(el, '.confirm');
+      const cancel = $(el, '.confirm odd-button[data-action="cancel"]');
+      cancel.focus();
+      const buttons = () => el.shadowRoot!.querySelectorAll('.confirm odd-button');
+      const first = density(base, buttons());
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect($(el, '.confirm')).toBe(confirm);
+        expect(el.shadowRoot!.activeElement).toBe(cancel);
+        expect(density(base, buttons())).toEqual(first);
+        expectInside(base);
+      }
+    },
+  );
+});
