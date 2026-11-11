@@ -15,7 +15,7 @@
   "counts": {
     "style": 122,
     "slot": 54,
-    "deferred": 24,
+    "deferred": 68,
     "controller": 18,
     "native": 7,
     "element": 26,
@@ -129,6 +129,402 @@
       "count": 8,
       "class": "deferred",
       "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the change review, Figma page 11)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker",
+      "consumerId": "778:2101",
+      "source": "Oddkin/AI/ContextPicker/Surface",
+      "sourceId": "776:1338",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker",
+      "consumerId": "778:2101",
+      "source": "Oddkin/AI/ContextPicker/Trigger",
+      "sourceId": "770:162",
+      "count": 6,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Breadcrumb",
+      "consumerId": "771:350",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/CommandExploration",
+      "consumerId": "782:3845",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/CommandExploration",
+      "consumerId": "782:3845",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
+      "consumerId": "781:3630",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 6,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
+      "consumerId": "781:3630",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 12,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
+      "consumerId": "781:3630",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
+      "consumerId": "781:3630",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Examples",
+      "consumerId": "778:2258",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 15,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Examples",
+      "consumerId": "778:2258",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 20,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Examples",
+      "consumerId": "778:2258",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 4,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Examples",
+      "consumerId": "778:2258",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 4,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
+      "consumerId": "777:1837",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 6,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
+      "consumerId": "777:1837",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 19,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
+      "consumerId": "777:1837",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
+      "consumerId": "777:1837",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Feedback",
+      "consumerId": "771:353",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Footer",
+      "consumerId": "771:354",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 5,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
+      "consumerId": "779:2665",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
+      "consumerId": "779:2665",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 5,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
+      "consumerId": "779:2665",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Navigation",
+      "consumerId": "771:349",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 9,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
+      "consumerId": "784:4345",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
+      "consumerId": "784:4345",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 11,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
+      "consumerId": "784:4345",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
+      "consumerId": "784:4345",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
+      "consumerId": "770:161",
+      "source": "Oddkin/Common/checkbox",
+      "sourceId": "159:1181",
+      "count": 9,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
+      "consumerId": "770:161",
+      "source": "Oddkin/Common/radio",
+      "sourceId": "159:1209",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
+      "consumerId": "770:161",
+      "source": "Oddkin/Icon/file",
+      "sourceId": "159:312",
+      "count": 11,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/ResourceType",
+      "consumerId": "769:333",
+      "source": "Oddkin/Icon/file",
+      "sourceId": "159:312",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Search",
+      "consumerId": "771:348",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 4,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/SelectedAttachment",
+      "consumerId": "782:4283",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/SelectedAttachment",
+      "consumerId": "782:4283",
+      "source": "Oddkin/Icon/file",
+      "sourceId": "159:312",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/SelectedChip",
+      "consumerId": "771:351",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/SelectedOverflow",
+      "consumerId": "771:352",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/SelectedOverflow",
+      "consumerId": "771:352",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 3,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/AI/ContextPicker/Feedback",
+      "sourceId": "771:353",
+      "count": 4,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/AI/ContextPicker/ResourceRow",
+      "sourceId": "770:161",
+      "count": 24,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/AI/ContextPicker/Search",
+      "sourceId": "771:348",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 77,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 14,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Surface",
+      "consumerId": "776:1338",
+      "source": "Oddkin/Common/search",
+      "sourceId": "159:1144",
+      "count": 13,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+    },
+    {
+      "consumer": "Oddkin/AI/ContextPicker/Trigger",
+      "consumerId": "770:162",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 10,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
     },
     {
       "consumer": "Oddkin/AI/Internal/BadgePresentation",

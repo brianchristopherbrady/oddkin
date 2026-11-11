@@ -6328,3 +6328,17 @@ Read-only export through the Figma MCP (session `67c816ae`), as for items 6 and 
 | The built waiting wording | `git grep recorded main -- packages/ai/src/activity/activity.ts` | "{count} response recorded." is shown for responses still on their way: Agent 2's item 26 |
 
 **Not verified here:** the answers with users or assistive technology, and the products' behaviour beyond their published documentation.
+
+## 2026-11-10 — The context picker's C07 design in the Figma snapshot (round 11, Agent 1, item 9)
+
+Read-only export through the Figma MCP (session `67c816ae`), as for items 6 to 8.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Families on page 06 | `use_figma`, read-only: component sets of `767:2` | 19, from `Oddkin/AI/ContextPicker` (6 variants) and its parts to `Oddkin/AI/ContextPicker/ResearchBrowserExample` |
+| Transfer | Five `use_figma` slices, each saved verbatim and checked by its own length and FNV-1a (Figma's values) | All OK; joined to 108,863 characters, the export's length |
+| Snapshot and map | `.tmp/add-p06-families.mjs`; `npx prettier --write`; `node design/figma/reuse.render.mjs --write` | The families and their page appended; their references deferred |
+| Node tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/figma-component-export.test.ts` | 3 files, 9 tests passed |
+| Agent 3's item 10 in its worktree | `git -C oddkin-a3 log` and `diff --stat` | Two unlanded commits (`b75abb01`, `136d7c56`): the picker on C07 with browse and paging, new context schemas and events, its browser tests; its old page 0:1 parity check removed |
+
+**Not verified here:** the picker against C07 (Agent 3's item 10 adds that parity test against these families).
