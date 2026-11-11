@@ -2749,7 +2749,18 @@ describe('odd-activity', () => {
     ).toEqual([
       'warning',
       'Waiting for your input',
-      '1 response recorded. 2 requests still need your input.',
+      '1 response is being recorded. 2 requests still need your input.',
+    ]);
+    // A response on its way is not yet recorded: only the host's confirmation says so (page 12).
+    expect(
+      await waiting({
+        status: 'awaiting-input',
+        wait: { action: [q('q3')], submitting: [ap('a1'), q('q1')] },
+      }),
+    ).toEqual([
+      'warning',
+      'Waiting for your input',
+      '2 responses are being recorded. 1 request still needs your input.',
     ]);
     expect(await waiting({ wait: { action: [], submitting: [ap('a1')] } })).toEqual([
       'info',

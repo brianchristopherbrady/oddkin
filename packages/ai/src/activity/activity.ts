@@ -21,8 +21,8 @@ export const ACTIVITY_STRINGS = {
   questionsOne: '{count} question',
   needResponse: '{requests} need your response.',
   needResponseOne: '{requests} needs your response.',
-  recorded: '{count} responses recorded.',
-  recordedOne: '{count} response recorded.',
+  recording: '{count} responses are being recorded.',
+  recordingOne: '{count} response is being recorded.',
   stillNeed: '{count} requests still need your input.',
   stillNeedOne: '{count} request still needs your input.',
   sendingDetail: 'Your response is being recorded. No further action is needed yet.',
@@ -94,7 +94,8 @@ export class OddkinActivity extends OddkinElement.with({
 
   /**
    * @internal The attempt's wait as page 08's Waiting part: who acts next (the status badge) and
-   * the counts. Requests for the person come first, then responses on their way.
+   * the counts. Requests for the person come first, then responses on their way, which are
+   * "being recorded" until the host confirms them (page 12; ADR 0049, "Pages 10 to 14").
    */
   _wait(): { status: string; label: string; detail: string } | undefined {
     const t = this._strings;
@@ -110,7 +111,7 @@ export class OddkinActivity extends OddkinElement.with({
       return {
         status: 'needs-input',
         label: t['awaiting-input'],
-        detail: `${count(submitting.length, t.recordedOne, t.recorded)} ${count(action.length, t.stillNeedOne, t.stillNeed)}`,
+        detail: `${count(submitting.length, t.recordingOne, t.recording)} ${count(action.length, t.stillNeedOne, t.stillNeed)}`,
       };
     if (action.length) {
       const approvals = action.filter((r) => r.kind === 'approval').length;
