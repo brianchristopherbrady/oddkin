@@ -261,6 +261,80 @@ describe('checkBoundaries', () => {
     expect(await codes(root)).toEqual(['boundary.package.unknown']);
   });
 
+  it('requires a project to reach, through its references, the project that builds each workspace entry it imports', async () => {
+    const tsconfig = (references: string[], extra: Record<string, unknown> = {}) =>
+      JSON.stringify({
+        include: ['src'],
+        ...extra,
+        references: references.map((path) => ({ path })),
+      });
+    const files = (stateRefs: string[], nodeRefs: string[] = ['./tsconfig.json']) => ({
+      'packages/core/tsconfig.json': tsconfig([]),
+      'packages/tokens/package.json': manifest('@oddkin/tokens', {
+        exports: {
+          '.': { types: './dist/index.d.ts', default: './dist/index.js' },
+          './node': { types: './dist/node/index.d.ts', default: './dist/node/index.js' },
+        },
+      }),
+      'packages/tokens/src/index.ts': 'export const tokens = 1;\n',
+      'packages/tokens/src/node/index.ts': 'export const load = 1;\n',
+      'packages/tokens/tsconfig.json': tsconfig([], { exclude: ['src/node'] }),
+      'packages/tokens/tsconfig.node.json': tsconfig(['./tsconfig.json'], {
+        include: ['src/node'],
+      }),
+      'packages/state/package.json': manifest('@oddkin/state', {
+        dependencies: { '@oddkin/core': '0.0.0', '@oddkin/tokens': '0.0.0' },
+      }),
+      'packages/state/src/index.ts':
+        "import type { core } from '@oddkin/core';\nexport type C = typeof core;\n",
+      'packages/state/src/node/load.ts':
+        "import type { core } from '@oddkin/core';\nimport { load } from '@oddkin/tokens/node';\nexport const loaded = load;\nexport type C = typeof core;\n",
+      'packages/state/tsconfig.json': tsconfig(stateRefs, { exclude: ['src/node'] }),
+      'packages/state/tsconfig.node.json': tsconfig(nodeRefs, { include: ['src/node'] }),
+    });
+    const config = {
+      packages: {
+        '@oddkin/core': { kind: 'browser' as const, allow: [] },
+        '@oddkin/tokens': {
+          kind: 'mixed' as const,
+          allow: [],
+          nodeEntries: ['./node'],
+          nodeSources: ['src/node/'],
+        },
+        '@oddkin/state': {
+          kind: 'mixed' as const,
+          allow: ['@oddkin/core', '@oddkin/tokens'],
+          nodeSources: ['src/node/'],
+        },
+      },
+    };
+    const found = async (stateRefs: string[], nodeRefs?: string[]) =>
+      (await checkBoundaries(await workspace(files(stateRefs, nodeRefs)), { config })).diagnostics
+        .filter((d) => d.code === 'boundary.tsconfig.reference')
+        .map((d) => [d.file, d.fix]);
+
+    // The node project reaches core through the browser project it references; the import of
+    // @oddkin/tokens/node needs the project that builds that entry, tokens' tsconfig.node.json.
+    expect(await found(['../core'], ['./tsconfig.json', '../tokens/tsconfig.node.json'])).toEqual(
+      [],
+    );
+    expect(await found([])).toEqual([
+      ['packages/state/tsconfig.json', 'Add { "path": "../core" } to its references.'],
+      ['packages/state/tsconfig.node.json', 'Add { "path": "../core" } to its references.'],
+      [
+        'packages/state/tsconfig.node.json',
+        'Add { "path": "../tokens/tsconfig.node.json" } to its references.',
+      ],
+    ]);
+    // The browser project of tokens does not build its Node entry.
+    expect(await found(['../core'], ['./tsconfig.json', '../tokens'])).toEqual([
+      [
+        'packages/state/tsconfig.node.json',
+        'Add { "path": "../tokens/tsconfig.node.json" } to its references.',
+      ],
+    ]);
+  });
+
   it('checks built artifacts for Node reachability and DOM-free entries', async () => {
     const root = await workspace({
       'packages/core/dist/index.js': "import './internal.js';\nexport const core = 1;\n",

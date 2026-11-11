@@ -53,6 +53,100 @@ function exportTarget(manifest, subpath, condition = 'default') {
   return subpath === '.' ? manifest.main : undefined;
 }
 
+/** A tsconfig `include` or `exclude` pattern (`src`, `src/node`, `src/**\/*.examples.ts`). */
+const globPattern = (pattern) =>
+  new RegExp(
+    `^${pattern
+      .replace(/^\.\//, '')
+      .replace(/\/+$/, '')
+      .replace(/[.+^${}()|[\]\\*?]/g, '\\$&')
+      .replace(/\\\*\\\*\//g, '(?:.*/)?')
+      .replace(/\\\*\\\*/g, '.*')
+      .replace(/\\\*/g, '[^/]*')
+      .replace(/\\\?/g, '[^/]')}(?:/.*)?$`,
+  );
+
+/** A package's TypeScript projects: which of its files each compiles, and the projects it references. */
+async function projectsOf(pkg) {
+  const projects = [];
+  for (const name of (await readdir(pkg.dir)).filter((f) =>
+    /^tsconfig(?:\.[\w-]+)?\.json$/.test(f),
+  )) {
+    const file = join(pkg.dir, name);
+    let config;
+    try {
+      config = JSON.parse(await readFile(file, 'utf8'));
+    } catch {
+      continue;
+    }
+    const include = (config.include ?? (config.files ? [] : ['**/*'])).map(globPattern);
+    const exclude = (config.exclude ?? []).map(globPattern);
+    projects.push({
+      file,
+      covers: (path) => include.some((r) => r.test(path)) && !exclude.some((r) => r.test(path)),
+      references: (config.references ?? []).map(({ path }) => {
+        const target = resolve(pkg.dir, path);
+        return target.endsWith('.json') ? target : join(target, 'tsconfig.json');
+      }),
+    });
+  }
+  return projects;
+}
+
+/** The project of `pkg` that compiles the source of an export (`./dist/x.d.ts` from `src/x.ts`). */
+function projectFor(pkg, subpath, projects) {
+  const target =
+    exportTarget(pkg.manifest, subpath, 'types') ?? exportTarget(pkg.manifest, subpath);
+  if (!target || !/\.(?:d\.[cm]?ts|[cm]?js)$/.test(target)) return undefined;
+  const source = target
+    .replace(/^\.\//, '')
+    .replace(/^dist\//, 'src/')
+    .replace(/\.d\.([cm]?)ts$|\.([cm]?)js$/, (_, d = '', j = '') => `.${d || j}ts`);
+  return projects.find((project) => project.covers(source));
+}
+
+/**
+ * Project references follow imports: each TypeScript project of a package must reach, through its
+ * references, the project that builds every workspace entry its files import. TypeScript 7's
+ * `tsc -b` builds projects without a path of references between them in parallel, so a missing one
+ * may check a file before the declarations it imports exist.
+ */
+function checkReferences(pkg, sources, byName, projects, report, rel) {
+  const byFile = new Map([...projects.values()].flat().map((p) => [p.file, p]));
+  const reaches = (from, to, seen = new Set()) => {
+    if (from === to) return true;
+    if (seen.has(from)) return false;
+    seen.add(from);
+    return (byFile.get(from)?.references ?? []).some((next) => reaches(next, to, seen));
+  };
+  const missing = new Map();
+  for (const project of projects.get(pkg.name) ?? []) {
+    for (const { file, specifiers } of sources) {
+      if (!project.covers(relative(pkg.dir, file).split(sep).join('/'))) continue;
+      for (const spec of specifiers) {
+        if (!spec.startsWith('@oddkin/')) continue;
+        const target = byName.get(packageNameOf(spec));
+        if (!target) continue;
+        const needed = projectFor(target, subpathOf(spec), projects.get(target.name) ?? []);
+        if (!needed || reaches(project.file, needed.file)) continue;
+        const key = `${project.file}\u0000${needed.file}`;
+        if (!missing.has(key)) missing.set(key, { project, needed, file, spec });
+      }
+    }
+  }
+  for (const { project, needed, file, spec } of missing.values()) {
+    const path = relative(dirname(project.file), needed.file).split(sep).join('/');
+    report(
+      'boundary.tsconfig.reference',
+      `${rel(project.file)} builds ${rel(file)}, which imports ${spec}, but does not reference ${rel(needed.file)}: tsc -b may check it before those declarations exist.`,
+      {
+        file: rel(project.file),
+        fix: `Add { "path": "${path.replace(/\/tsconfig\.json$/, '')}" } to its references.`,
+      },
+    );
+  }
+}
+
 async function exists(path) {
   try {
     await stat(path);
@@ -153,6 +247,7 @@ export async function checkBoundaries(root, options = {}) {
   const packages = await findWorkspacePackages(root);
   const byName = new Map(packages.map((pkg) => [pkg.name, pkg]));
   const graph = new Map();
+  const scanned = new Map();
   let sourceFiles = 0;
   let importsScanned = 0;
 
@@ -204,6 +299,8 @@ export async function checkBoundaries(root, options = {}) {
       sourceFiles++;
       const specifiers = await lexImports(code, file);
       importsScanned += specifiers.length;
+      if (!scanned.has(pkg.name)) scanned.set(pkg.name, []);
+      scanned.get(pkg.name).push({ file, specifiers });
       const dev = isDevSource(rule, file);
       // Framework typings may import their framework for types only; a value import still fails.
       const typings =
@@ -323,6 +420,11 @@ export async function checkBoundaries(root, options = {}) {
       fix: 'Remove one edge; see the dependency map in docs/architecture/packages.md.',
     });
   }
+
+  const projects = new Map();
+  for (const pkg of packages) projects.set(pkg.name, await projectsOf(pkg));
+  for (const pkg of packages)
+    checkReferences(pkg, scanned.get(pkg.name) ?? [], byName, projects, report, rel);
 
   const examplesDir = join(root, 'examples');
   const exampleSources = (await exists(examplesDir))

@@ -6551,3 +6551,14 @@ Records and guidance only; no component code changed.
 | Metadata | `npm run build` (its reference check reads the analyzer README's example), `npm run verify:metadata` | Exit 0; 2,222 components and 459 AI facts verified |
 | Size | `npm run size` | Exit 0: no bundle moved (types only) |
 | Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |
+
+## 2026-11-11 — Project references follow imports (round 11, Agent 2; row 33, Agent 1's changes on 6aa018b0)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The fault | Agent 1: a clean typecheck of `6aa018b0` failed, `TS2307` in `packages/workbench/src/pages/types.ts:13`; reproduced here by removing `packages/workbench/tsconfig.json`'s new `../analyzer` reference, the analyzer's `dist/metadata-types.*`, and its `tsconfig.tsbuildinfo`, then `npx tsc -b` | Exit 2, the same `TS2307`; with the reference, exit 0 |
+| The check | `node scripts/architecture/check-boundaries.mjs` before the fix | Two `boundary.tsconfig.reference`: `packages/workbench/tsconfig.json` (the metadata types) and `packages/workbench/tsconfig.node.json` (`@oddkin/analyzer/composition`, missing since it was added, built in time only by the order of the root references) |
+| Fixture | `tests/architecture/boundaries.test.ts`: a project that imports a workspace entry needs a path of references to the project that builds it; a Node project reaches core through the browser project it references; `@oddkin/tokens/node` needs the tokens' `tsconfig.node.json`, not its browser project | 23 passed |
+| Probes | `mutate.mjs`, 4 mutants: references not followed transitively (killed once the Node file also imported core); an entry mapped to a package's first project; every import counted as referenced; the check not run | 4 of 4 killed |
+| Clean build | All 11 `*.tsbuildinfo` of packages and apps and the analyzer's `dist/metadata-types.*` removed, then `npx tsc -b` | Exit 0 |
+| Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |

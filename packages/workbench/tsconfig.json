@@ -7,5 +7,10 @@
   },
   "include": ["src"],
   "exclude": ["src/node"],
-  "references": [{ "path": "../core" }, { "path": "../app" }, { "path": "../components" }]
+  "references": [
+    { "path": "../core" },
+    { "path": "../app" },
+    { "path": "../components" },
+    { "path": "../analyzer" }
+  ]
 }
