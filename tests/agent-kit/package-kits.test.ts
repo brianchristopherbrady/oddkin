@@ -63,6 +63,22 @@ describe('packaged agent kits', () => {
     expect(manifest.entries.some((e) => e.kind === 'composition')).toBe(false);
   });
 
+  it('include the same authored host contract in both installed-package kits', async () => {
+    for (const name of ['components', 'ai']) {
+      const asset = readFileSync(join(repo, `packages/${name}/RESPONSIVENESS.md`), 'utf8');
+      const { files, manifest } = await packageKit(project, library(`@oddkin/${name}`));
+      expect(files.get('references/responsiveness.md')).toBe(asset);
+      expect(files.get('GUIDE.md')).toContain('references/responsiveness.md');
+      expect(files.get('llms.txt')).toContain('- [responsiveness](references/responsiveness.md)');
+      expect(manifest.entries).toContainEqual({
+        id: 'responsiveness',
+        path: 'references/responsiveness.md',
+        kind: 'task',
+        provenance: 'authored',
+      });
+    }
+  });
+
   it("list a package's patterns beside its components (component-architecture-audit.md section 7)", async () => {
     const { files, manifest } = await packageKit(project, library('@oddkin/ai'));
     expect(manifest.entries.filter((e) => e.kind === 'pattern')).toEqual([

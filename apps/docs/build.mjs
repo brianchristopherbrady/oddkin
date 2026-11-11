@@ -183,13 +183,17 @@ async function main() {
   files += await copyTree(join(root, 'apps/docs/dist'), join(out, 'apps/docs/dist'), (name) =>
     name.endsWith('.js'),
   );
-  for (const name of ['styles.css', 'mode.js', 'frame.css']) {
+  for (const name of ['styles.css', 'mode.js', 'frame.css', 'behavior-frame.css']) {
     await copyFile(join(root, 'apps/docs', name), join(out, 'apps/docs', name));
     files++;
   }
   await writeFile(
     join(out, 'apps/docs/frame.html'),
     withPolicy(await readFile(join(root, 'apps/docs/frame.html'), 'utf8')),
+  );
+  await writeFile(
+    join(out, 'apps/docs/behavior-frame.html'),
+    withPolicy(await readFile(join(root, 'apps/docs/behavior-frame.html'), 'utf8')),
   );
   files += 1 + referenceFiles.length;
   await writeLlms(root, out, siteUrl);

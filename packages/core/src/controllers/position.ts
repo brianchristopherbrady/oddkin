@@ -107,7 +107,21 @@ export class PositionController implements Controller {
     const anchor = this.#options.anchor();
     const surface = this.#options.surface();
     if (!anchor || !surface) return;
+    const view = surface.ownerDocument.defaultView;
+    if (!view) return;
     const place = () => this.#place();
+    let live = true;
+    let resizeFrame: number | undefined;
+    // onPlace may size the observed surface from the anchor. Doing that during
+    // ResizeObserver delivery resizes another observed target in the same loop.
+    // Coalesce resize-driven work in its owner window; measure fresh when it runs.
+    const resized = () => {
+      if (!live || resizeFrame !== undefined) return;
+      resizeFrame = view.requestAnimationFrame(() => {
+        resizeFrame = undefined;
+        if (live) this.#place();
+      });
+    };
     const targets: EventTarget[] = [window];
     for (let el = parentOf(anchor); el; el = parentOf(el)) {
       const style = getComputedStyle(el);
@@ -118,10 +132,13 @@ export class PositionController implements Controller {
       target.addEventListener('scroll', place, { passive: true });
       target.addEventListener('resize', place, { passive: true });
     }
-    const resize = new ResizeObserver(place);
+    const resize = new ResizeObserver(resized);
     resize.observe(anchor);
     resize.observe(surface);
     this.#stop = () => {
+      live = false;
+      if (resizeFrame !== undefined) view.cancelAnimationFrame(resizeFrame);
+      resizeFrame = undefined;
       resize.disconnect();
       for (const target of targets) {
         target.removeEventListener('scroll', place);

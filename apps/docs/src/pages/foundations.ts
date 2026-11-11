@@ -1,8 +1,10 @@
 import { repository, type Card, type Page } from './model.js';
 
-/** The Foundations section: the default theme's tokens, generated values only (`foundation-facts.mjs`). */
+/** Foundations guidance and the default theme's generated values (`foundation-facts.mjs`). */
 const theming = `${repository}docs/architecture/theming-and-styling.md`;
 const cssArchitecture = `${repository}docs/architecture/css-architecture.md`;
+const responsiveness = `${repository}docs/architecture/responsiveness.md`;
+const behaviorMatrix = `${repository}docs/research/responsiveness-behavior-matrix.md`;
 
 const child = (page: Omit<Page, 'group' | 'parent' | 'eyebrow'>): Page => ({
   ...page,
@@ -450,15 +452,119 @@ export const foundationThemes = child({
       ],
     },
   ],
-  next: { label: 'Responsive behavior', href: '/foundations/responsive' },
+  next: { label: 'Responsiveness', href: '/foundations/responsive' },
 });
 
 export const foundationResponsive = child({
   path: 'foundations/responsive',
-  title: 'Responsive behavior',
+  title: 'Responsiveness',
   summary:
-    'Layout recipes change arrangement with named conditions and profiles. A narrow container changes how things are arranged; it never shrinks text or targets.',
+    'Responsive composition gives content a clear place to grow, keeps actions reachable, and preserves active work as the available space changes. The same principles apply to every component.',
   sections: [
+    {
+      id: 'behavior-lab',
+      title: 'Explore component behavior',
+      blocks: [
+        {
+          p: [
+            'Choose a component and one of its authored examples, then vary the available width, space policy, direction, mode, and density. Use the example while it changes: type a draft, open a detail, or choose an action.',
+          ],
+        },
+        {
+          note: [
+            'The interactive lab requires JavaScript. It uses the current component catalog and example fixtures; an example that mounts successfully has not thereby passed every interaction or accessibility check.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'composition-contract',
+      title: 'Define the composition contract',
+      blocks: [
+        {
+          p: [
+            'A parent owns the space it provides. A component adapts within that allocation while keeping its required content and controls available. Container queries describe capacity; the surrounding experience supplies purpose and the permitted way to show more content.',
+          ],
+        },
+        {
+          table: {
+            caption: 'Responsibilities in a responsive composition',
+            head: ['Owner', 'Decides', 'Protects'],
+            rows: [
+              [
+                ['Parent'],
+                ['Available space, permitted growth, scrolling regions, and larger destinations.'],
+                ['The relationship between the component and its neighboring content.'],
+              ],
+              [
+                ['Component'],
+                ['Arrangement and supported presentation within the supplied space.'],
+                ['Required information, labels, controls, and its current state.'],
+              ],
+              [
+                ['Active interaction'],
+                ['When an in-progress task can safely change presentation or destination.'],
+                ['Focus, drafts, selection, scroll position, and record identity.'],
+              ],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      id: 'space-policy',
+      title: 'Choose where content may grow',
+      blocks: [
+        {
+          list: [
+            [
+              { strong: 'Natural flow. ' },
+              'A revealed detail or a growing conversation may increase document height. Neighboring content can move because the parent has granted that growth.',
+            ],
+            [
+              { strong: 'Reserved region. ' },
+              'The parent provides a bounded area. Longer content scrolls inside it, with a name and keyboard access when the region needs to scroll.',
+            ],
+            [
+              { strong: 'Explicit destination. ' },
+              'Optional detail can open in a popover without adding document height. A larger view or modal task opens through a deliberate action supplied by the host.',
+            ],
+          ],
+        },
+        {
+          p: [
+            'Account for insets, borders, reserved scrollbars, and text size when measuring usable space. A nominally wide parent may still provide too little room for a component’s minimum usable presentation.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'interaction-continuity',
+      title: 'Preserve active work',
+      blocks: [
+        {
+          list: [
+            [
+              'Keep the focused control mounted while changing its surrounding layout. Preserve unfinished input and selection.',
+            ],
+            [
+              'Let resizing change geometry. Change destination or modality through an explicit action or a defined interaction handoff.',
+            ],
+            [
+              'Keep an open interaction usable while its parent changes. Defer a change that would interrupt it until a suitable boundary, such as closing the preview.',
+            ],
+            [
+              'Keep intent separate from outcome. An action requests work; the host’s updated record establishes whether it succeeded.',
+            ],
+          ],
+        },
+        {
+          p: [
+            'These composition rules apply to menus, forms, disclosures, tool results, citations, and other controls together. A component’s package does not determine the space it may consume.',
+          ],
+        },
+      ],
+    },
     {
       id: 'conditions',
       title: 'Named conditions',
@@ -508,6 +614,38 @@ export const foundationResponsive = child({
       title: 'Keep concerns separate',
       blocks: [{ fact: 'layout-concerns' }],
     },
+    {
+      id: 'observations',
+      title: 'Read observations in context',
+      blocks: [
+        {
+          p: [
+            'Compare movement within the same settled allocation. A deliberate width, typography, or space-policy change establishes a new baseline. Growth permitted by the parent is different from unexpected movement after a component update.',
+          ],
+        },
+        {
+          p: [
+            'Review visible shortening and overflow against the content’s purpose. A picker may intentionally shorten a selected value while keeping it available in its popup; a code-entry field still needs room for the complete code. A table may need its own horizontal scrolling region while the surrounding page reflows.',
+          ],
+        },
+        {
+          p: [
+            'Check the ',
+            { link: 'component reference', href: '/components' },
+            ' for supported states, keyboard behavior, and customization. The ',
+            { link: 'responsiveness contract and verification guidance', href: responsiveness },
+            ' describes how to record findings and distinguish fixture behavior from production integration.',
+          ],
+        },
+        {
+          p: [
+            'The ',
+            { link: 'behavior matrix', href: behaviorMatrix },
+            ' records the checked configurations, interaction evidence, and remaining limits.',
+          ],
+        },
+      ],
+    },
   ],
   next: { label: 'Components', href: '/components' },
 });
@@ -537,7 +675,7 @@ export const foundations: Page = {
   eyebrow: 'Foundations',
   title: 'Foundations',
   summary:
-    'The default theme’s tokens, from reference values to the roles components read, with every value generated by @oddkin/tokens.',
+    'The foundations behind Oddkin’s interfaces: generated tokens, shared visual roles, and responsive composition.',
   sections: [
     { id: 'topics', title: 'Topics', blocks: [{ cards }] },
     {

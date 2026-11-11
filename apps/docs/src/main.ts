@@ -1,4 +1,5 @@
 import { createApp } from '@oddkin/app/app';
+import type { Scope } from '@oddkin/core/scope';
 import { createRouter, route, type AnyRoute, type RouterState } from '@oddkin/app/router';
 import type {
   ComponentPageData,
@@ -602,6 +603,8 @@ function renderCaseStudy(main: HTMLElement): void {
 // The server renders authored pages: one reached in the client loads its document; the document
 // it loads says so to its first route, so a path never loads in a loop.
 const RELOAD = 'oddkin-docs-reload';
+let disposeBehaviorLab: (() => void) | undefined;
+let behaviorHost: HTMLElement | undefined;
 let reloadedFor = sessionStorage.getItem(RELOAD);
 sessionStorage.removeItem(RELOAD);
 
@@ -616,7 +619,7 @@ function reload(path: string): void {
   location.reload();
 }
 
-function renderRoute(state: RouterState): void {
+function renderRoute(state: RouterState, owner: Scope): void {
   const main = document.querySelector<HTMLElement>('#main');
   const column = document.querySelector<HTMLElement>('#content');
   const status = document.querySelector<HTMLElement>('#route-status');
@@ -631,13 +634,41 @@ function renderRoute(state: RouterState): void {
 
   const last = state.matches.at(-1);
   const page = last && pageRoutes.get(last.route);
+  if (!state.navigating && page?.path !== 'foundations/responsive') {
+    disposeBehaviorLab?.();
+    disposeBehaviorLab = undefined;
+    behaviorHost = undefined;
+  }
   if (page) {
     // The authored page stays as it is while the next route loads.
     if (state.navigating) return;
     // The server renders authored pages; a page reached in the client loads its document, once.
     const again = loadedFor(page.path);
     if (main.dataset['page'] !== page.path && !again) reload(page.path);
-    else main.setAttribute('aria-busy', 'false');
+    else {
+      main.setAttribute('aria-busy', 'false');
+      if (page.path === 'foundations/responsive') {
+        const host = column.querySelector<HTMLElement>('#behavior-lab');
+        if (host && host !== behaviorHost) {
+          disposeBehaviorLab?.();
+          behaviorHost = host;
+          const lifetime = owner.child({ name: 'responsiveness-route' });
+          disposeBehaviorLab = () => lifetime.dispose();
+          void import('./behavior-lab.js')
+            .then(({ mountBehaviorLab }) => {
+              if (!lifetime.disposed && host.isConnected) mountBehaviorLab(host, lifetime);
+            })
+            .catch((error: unknown) => {
+              if (!lifetime.disposed) {
+                const message = document.createElement('p');
+                message.setAttribute('role', 'alert');
+                message.textContent = `The behavior lab could not load: ${displayError(error)}`;
+                host.append(message);
+              }
+            });
+        }
+      }
+    }
     return;
   }
   delete main.dataset['page'];
@@ -740,7 +771,7 @@ createApp({
   setup({ use, scope }) {
     use(router);
     startShell(scope, (path) => void router.navigate(path));
-    scope.effect(() => renderRoute(router.state.value));
+    scope.effect(() => renderRoute(router.state.value, scope));
   },
 }).start();
 

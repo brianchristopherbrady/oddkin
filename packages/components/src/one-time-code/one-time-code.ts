@@ -20,6 +20,8 @@ const CARET_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '
  * keyboard (the global `inputmode` attribute, `numeric` unless the host sets it) behind the drawn
  * cells, so the platform's autofill, paste, and form value
  * work as on any field: digits only, typed or pasted, the caret always after the last digit.
+ * The cells keep their themed width when there is room and narrow within a smaller container,
+ * without changing the number of digits or replacing the input.
  * `status` reports the verification the page runs: `pending` keeps the code read-only with a
  * busy line, `complete` confirms it; a failure is `error`.
  *
@@ -37,6 +39,7 @@ const CARET_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '
  * @useFor A short code the user copies from a message to confirm a sign-in, an address, or a payment.
  * @notFor Passwords and PINs the user chooses (use odd-input type="password"); long reference numbers (use odd-input).
  * @limitation Digits only. A digit in the middle cannot be selected alone: Backspace back to it.
+ * @limitation The row keeps each digit's intrinsic minimum width and the theme's gaps; an allocation smaller than that minimum still needs more room.
  * @category Forms
  * @customization 1 2 3
  */

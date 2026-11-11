@@ -40,7 +40,7 @@ All browser packages, the Workbench browser bundle, and the docs app have zero t
                     reusable panels never force consumers to create an app root or router
                     node CLI/dev server: @oddkin/analyzer, @oddkin/tokens/node
 @oddkin/agent       → @oddkin/analyzer (API), @oddkin/tokens (Node/DOM-free entries); reads published metadata
-apps/docs         → core, state, app, tokens, components, workbench (browser panels) — public exports only
+apps/docs         → core, state, app, tokens, components, ai (working examples), workbench (browser panels) — public exports only
                     (never @oddkin/analyzer or @oddkin/agent at runtime)
 ```
 
@@ -50,6 +50,7 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 - Components never import state or app, never require a provider, global store, or bootstrap.
 - The generic layout-recipe mechanism lives in core and is unbranded; Oddkin defaults and presets live in `@oddkin/components/layout`; tokens stay unaware of recipes. See [layout-recipes.md](./layout-recipes.md).
 - No browser package, minimal consumer, or the docs app's runtime graph may reach `@oddkin/agent` or `@oddkin/analyzer`. Ordinary component consumers never receive `@oddkin/workbench` either; components never depend on it.
+- The docs application's Responsiveness compositions consume public `@oddkin/ai` exports alongside ordinary components. This application-only dependency does not add AI to general-purpose runtime packages; the playground and its composition fixtures load on demand.
 - Data models and collections are generic in core (`./model`, `./collections`); component models, validators, schemas, and the optional composition renderer live in components. Model metadata and JSON Schemas are produced at build time by `@oddkin/analyzer` (using `core/model/schema`), not by a runtime package. See [data-composition.md](./data-composition.md).
 - Minimal consumers must not contain `components/models`, `core/model/schema`, the data-composition renderer `components/composition`, `core/inspect`, conformance or testing helpers, or unused recipe presets. The component-definition composer `compose()` (`@oddkin/core/element`) is ordinary authoring API and allowed.
 - No private deep imports, no cycles. Enforced by `scripts/architecture/check-boundaries.mjs`.

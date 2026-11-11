@@ -6,6 +6,7 @@
   "description": "Oddkin product documentation application (private). Consumes public package exports only.",
   "type": "module",
   "dependencies": {
+    "@oddkin/ai": "^1.0.0-beta.2",
     "@oddkin/app": "^1.0.0-beta.2",
     "@oddkin/components": "^1.0.0-beta.2",
     "@oddkin/core": "^1.0.0-beta.2",

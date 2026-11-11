@@ -166,6 +166,79 @@ describe('odd-one-time-code', () => {
     expect(getComputedStyle(cells()[5]!).outlineStyle).toBe('solid');
   });
 
+  it.each(['default', 'compact'])(
+    'fits narrow allocations at %s density without replacing the input, digits, or caret',
+    async (density) => {
+      container.dataset['oddDensity'] = density;
+      container.style.inlineSize = '400px';
+      const { code, input, cells, digits, part } = await mount(
+        '<odd-one-time-code label="Verification code" value="4928"></odd-one-time-code>',
+      );
+      const originalCells = cells();
+      const preferredWidth = originalCells[0]!.getBoundingClientRect().width;
+      input.focus();
+      input.setSelectionRange(4, 4);
+
+      for (const width of [265, 211, 400, 211]) {
+        container.style.inlineSize = `${width}px`;
+        await settle(code);
+        expect(code.shadowRoot!.querySelector('input')).toBe(input);
+        cells().forEach((cell, index) => expect(cell).toBe(originalCells[index]));
+        expect([input.maxLength, input.value, code.value, digits()]).toEqual([
+          6,
+          '4928',
+          '4928',
+          ['4', '9', '2', '8', '', ''],
+        ]);
+        expect(code.shadowRoot!.activeElement).toBe(input);
+        expect([input.selectionStart, input.selectionEnd]).toEqual([4, 4]);
+        const field = part('field').getBoundingClientRect();
+        const control = input.getBoundingClientRect();
+        const cellBounds = cells().map((cell) => cell.getBoundingClientRect());
+        expect(control.left).toBeGreaterThanOrEqual(field.left - 1);
+        expect(control.right).toBeLessThanOrEqual(field.right + 1);
+        for (const bounds of cellBounds) {
+          expect(bounds.left).toBeGreaterThanOrEqual(control.left - 1);
+          expect(bounds.right).toBeLessThanOrEqual(control.right + 1);
+          expect(bounds.width).toBeLessThanOrEqual(preferredWidth + 1);
+          expect(control.top).toBeLessThanOrEqual(bounds.top + 1);
+          expect(control.bottom).toBeGreaterThanOrEqual(bounds.bottom - 1);
+        }
+        expect(Math.abs(control.left - cellBounds[0]!.left)).toBeLessThanOrEqual(1);
+        expect(Math.abs(control.right - cellBounds.at(-1)!.right)).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(control.width - (cellBounds.at(-1)!.right - cellBounds[0]!.left)),
+        ).toBeLessThanOrEqual(1);
+        expect(code.scrollWidth).toBeLessThanOrEqual(code.clientWidth + 1);
+        expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth + 1);
+        if (width === 400) expect(cellBounds[0]!.width).toBeCloseTo(preferredWidth, 1);
+        await userEvent.click(input, {
+          position: { x: control.width - 2, y: control.height / 2 },
+        });
+        expect([input.selectionStart, input.selectionEnd]).toEqual([4, 4]);
+      }
+
+      // The native input remains over the narrowed row: pointer position does not
+      // select an individual drawn digit or change the existing focus-to-end rule.
+      await userEvent.click(input, { position: { x: 2, y: 8 } });
+      expect([input.selectionStart, input.selectionEnd]).toEqual([4, 4]);
+      await userEvent.keyboard('1');
+      await settle(code);
+      expect([code.value, digits()]).toEqual(['49281', ['4', '9', '2', '8', '1', '']]);
+      code.error = 'The code has expired. Request another code and try again.';
+      await settle(code);
+      expect(code.shadowRoot!.querySelector('input')).toBe(input);
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect([input.selectionStart, input.selectionEnd]).toEqual([5, 5]);
+      expect(code.scrollWidth).toBeLessThanOrEqual(code.clientWidth + 1);
+      code.disabled = true;
+      await settle(code);
+      expect(input.disabled).toBe(true);
+      expect([input.value, cells().length]).toEqual(['49281', 6]);
+      expect(code.scrollWidth).toBeLessThanOrEqual(code.clientWidth + 1);
+    },
+  );
+
   it('pending: read-only, sunken cells, a busy line; complete: the success border and a check', async () => {
     const { code, input, cells, part } = await mount(
       '<odd-one-time-code label="Verification code" value="492816"></odd-one-time-code>',

@@ -3,8 +3,9 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * Oddkin's default one-time code (Figma `oneTimeCode`, `oneTimeCode/Cell`): `space.sm` between
- * the field's rows; `control.height.md` by `control.height.lg` cells, `space.xs` apart, with the
- * control radius and the strong border on the default surface, the digit in the body type role;
+ * the field's rows; cells prefer `control.height.md` by `control.height.lg`, `space.xs` apart,
+ * narrowing to fit the allocation while keeping their digit readable, with the control radius
+ * and the strong border on the default surface, the digit in the body type role;
  * the focus ring on the active cell while focused, and the caret in the primary text colour.
  * The danger border marks an invalid code, the success border a `complete` one; a disabled or
  * `pending` code takes the sunken surface and the disabled text colour. The status line is in

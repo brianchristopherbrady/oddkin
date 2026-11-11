@@ -229,6 +229,63 @@ describe('PositionController', () => {
     expect(rect(surface).top).toBe(140);
   });
 
+  it('sizes a surface from resize placements without observer-loop errors and cancels queued work on close', async () => {
+    const loopErrors: string[] = [];
+    const recordError = (event: ErrorEvent) => {
+      if (event.message.includes('ResizeObserver')) loopErrors.push(event.message);
+    };
+    window.addEventListener('error', recordError);
+    try {
+      const { anchor, surface } = fixture(100, 100);
+      const placements: Placement[] = [];
+      position(anchor, surface, {
+        shift: false,
+        onPlace(placement) {
+          placements.push(placement);
+          // A supported onPlace callback sizes a listbox-like surface to its
+          // anchor, so both observed elements change size during this sequence.
+          surface.style.width = `${placement.anchor.width}px`;
+        },
+      });
+      surface.showPopover();
+      await frames(3);
+      for (const width of [265, 211, 400, 211]) {
+        anchor.style.width = `${width}px`;
+        await frames(3);
+        expect(surface.getBoundingClientRect().width).toBe(width);
+        expect(rect(surface).left).toBe(rect(anchor).left);
+        expect(placements.at(-1)?.anchor.width).toBe(width);
+      }
+
+      // Close in the same observer delivery that queued a new placement. Its
+      // pending frame must be canceled instead of placing the closed surface.
+      await new Promise<void>((resolve) => {
+        const closeOnResize = new ResizeObserver(() => {
+          closeOnResize.disconnect();
+          surface.hidePopover();
+          resolve();
+        });
+        scope.add(() => closeOnResize.disconnect(), 'test close on resize');
+        closeOnResize.observe(anchor);
+        anchor.style.width = '120px';
+      });
+      const closedCount = placements.length;
+      await frames(3);
+      expect(surface.matches(':popover-open')).toBe(false);
+      expect(placements).toHaveLength(closedCount);
+      expect(surface.style.width).toBe('211px');
+
+      scope.dispose();
+      anchor.style.width = '160px';
+      window.dispatchEvent(new Event('resize'));
+      await frames(3);
+      expect(placements).toHaveLength(closedCount);
+      expect(loopErrors).toEqual([]);
+    } finally {
+      window.removeEventListener('error', recordError);
+    }
+  });
+
   it('stops listening when its scope is disposed', async () => {
     const { anchor, surface } = fixture(100, 100);
     position(anchor, surface);

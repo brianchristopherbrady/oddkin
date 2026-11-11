@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import boundaries from './architecture/boundaries.config.mjs';
+import { RESPONSIVENESS_ASSET, RESPONSIVENESS_SOURCE } from './agent-kit/responsiveness.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 // Run npm through its CLI script with the current Node binary: no shell, so paths
@@ -28,6 +29,7 @@ const npm = (args, cwd) => node([npmCli, ...args], cwd);
 const REPOSITORY_URL = 'git+https://github.com/brianchristopherbrady/oddkin.git';
 const HOMEPAGE = 'https://www.oddkin.dev';
 const ISSUES_URL = 'https://github.com/brianchristopherbrady/oddkin/issues';
+const RESPONSIVENESS_PACKAGES = ['@oddkin/components', '@oddkin/ai'];
 
 const packagesDir = join(root, 'packages');
 const names = [];
@@ -79,6 +81,15 @@ try {
     // Release hygiene (docs/release-process.md §3).
     for (const file of ['LICENSE', 'README.md'])
       if (!files.includes(file)) failures.push(`${name}: tarball has no ${file}`);
+    // The generated guidance is gitignored, so each component package must name
+    // it explicitly in `files`; its installed bytes are checked against the
+    // authored contract below, not merely against another generated copy.
+    if (RESPONSIVENESS_PACKAGES.includes(name)) {
+      if (!manifest.files?.includes(RESPONSIVENESS_ASSET))
+        failures.push(`${name}: files must explicitly include ${RESPONSIVENESS_ASSET}`);
+      if (!files.includes(RESPONSIVENESS_ASSET))
+        failures.push(`${name}: tarball has no ${RESPONSIVENESS_ASSET} (run npm run build)`);
+    }
     const directory = relative(root, dir).split(sep).join('/');
     if (manifest.license !== 'MIT') failures.push(`${name}: license is ${manifest.license}`);
     if (!manifest.description) failures.push(`${name}: no description`);
@@ -125,6 +136,21 @@ try {
     JSON.stringify({ name: 'consumer', private: true, type: 'module' }),
   );
   npm(['install', '--no-audit', '--no-fund', '--ignore-scripts', ...tarballs], consumer);
+
+  // An installed package is self-contained: its responsiveness guidance must
+  // carry the current authored contract, including the generated-source marker.
+  const responsiveness = `<!-- Generated from ${RESPONSIVENESS_SOURCE}; edit that source. -->\n\n${await readFile(join(root, RESPONSIVENESS_SOURCE), 'utf8')}`;
+  for (const name of RESPONSIVENESS_PACKAGES) {
+    const file = join(consumer, 'node_modules', ...name.split('/'), RESPONSIVENESS_ASSET);
+    if (!existsSync(file)) {
+      failures.push(`${name}: installed package has no ${RESPONSIVENESS_ASSET}`);
+      continue;
+    }
+    if ((await readFile(file, 'utf8')) !== responsiveness)
+      failures.push(
+        `${name}: installed ${RESPONSIVENESS_ASSET} does not match ${RESPONSIVENESS_SOURCE} (run npm run build)`,
+      );
+  }
 
   const installed = JSON.parse(npm(['ls', '--all', '--json'], consumer));
   // Third-party packages may appear only beneath Node-only tooling packages (e.g. the analyzer's
@@ -392,5 +418,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, keywords, repository URL and directory, homepage, issues URL, module type, sideEffects, and types for every JavaScript export; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, keywords, repository URL and directory, homepage, issues URL, module type, sideEffects, and types for every JavaScript export; ${RESPONSIVENESS_PACKAGES.join(' and ')} explicitly pack ${RESPONSIVENESS_ASSET} matching ${RESPONSIVENESS_SOURCE}; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
 );

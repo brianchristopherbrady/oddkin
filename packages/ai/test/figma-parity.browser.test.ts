@@ -561,10 +561,13 @@ describe('Figma parity: odd-voice-input', () => {
 
 describe('Figma parity: odd-citation', () => {
   for (const mode of MODES)
-    it(`Resolved, expanded (${mode})`, async () => {
+    it(`Resolved, expanded inline (${mode})`, async () => {
       await import('../src/citation/citation.define.js');
       inMode(mode);
-      const el = mount('<odd-citation></odd-citation>') as HTMLElementTagNameMap['odd-citation'];
+      // This approved specimen represents the allocated inline presentation.
+      const el = mount(
+        '<odd-citation presentation="inline"></odd-citation>',
+      ) as HTMLElementTagNameMap['odd-citation'];
       el.sourceId = 'example';
       el.index = 1;
       el.source = {

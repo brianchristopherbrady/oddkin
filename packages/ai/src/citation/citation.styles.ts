@@ -13,6 +13,7 @@ export const citationStyles = css`
     position: relative;
   }
   .trigger {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -41,12 +42,19 @@ export const citationStyles = css`
     color: ${token('color.text.secondary')};
   }
   .preview {
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    font-size: ${token('font.size.sm')};
+  }
+  .popover {
+    --odd-popover-max-inline-size: 28rem;
+  }
+  .inline {
     margin-block: ${token('space.xs')};
     padding: ${token('space.md')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.md')};
     background: ${token('color.surface.default')};
-    font-size: ${token('font.size.sm')};
   }
   .preview[hidden] {
     display: none !important;

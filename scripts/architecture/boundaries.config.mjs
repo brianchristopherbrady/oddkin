@@ -75,7 +75,8 @@ export default {
         allow: ['react', 'vue', 'svelte'],
       },
     },
-    // Optional AI interaction package (ADR 0040). Nothing general-purpose may depend on it.
+    // Optional AI interaction package (ADR 0040). General-purpose runtime packages do not depend
+    // on it; the docs application may consume its public exports in working examples.
     '@oddkin/ai': {
       kind: 'browser',
       allow: ['@oddkin/core', '@oddkin/tokens', '@oddkin/components'],
@@ -126,6 +127,7 @@ export default {
         '@oddkin/tokens',
         '@oddkin/components',
         '@oddkin/workbench',
+        '@oddkin/ai',
       ],
       domFree: [],
     },

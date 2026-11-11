@@ -421,6 +421,9 @@ export function resolveProjectContext(
     if (!manifest['exports'] || !(name.startsWith('@oddkin/') || manifest['customElements']))
       continue;
     readInput(join(dir, 'package.json'));
+    // Optional authored guidance shipped with a library, not a repository-only instruction.
+    const responsiveness = join(dir, 'RESPONSIVENESS.md');
+    if (existsSync(responsiveness)) readInput(responsiveness);
     const record: ProjectContext['packages'][number] = {
       name,
       version: manifest['version'] ?? '0.0.0',

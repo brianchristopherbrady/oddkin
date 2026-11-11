@@ -1,4 +1,5 @@
 import { compose } from '@oddkin/core/element';
+import { popoverDefinition } from '@oddkin/components/popover';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinCitation } from './citation.js';
 import { citationStyles } from './citation.styles.js';
@@ -9,4 +10,5 @@ export const citationDefinition = compose({
   element: OddkinCitation,
   template: citationTemplate,
   styles: [aiBaseStyles, citationStyles],
+  dependencies: { popover: popoverDefinition },
 });

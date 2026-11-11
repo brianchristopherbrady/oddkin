@@ -12,6 +12,7 @@
     { "path": "../../packages/state" },
     { "path": "../../packages/app" },
     { "path": "../../packages/components" },
+    { "path": "../../packages/ai" },
     { "path": "../../packages/workbench" }
   ]
 }

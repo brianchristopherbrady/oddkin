@@ -202,7 +202,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 19 |
 | `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 15 |
 | `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
-| `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 20 |
+| `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 25 |
 | `packages/components/dist/one-time-code/one-time-code.styles.js (oneTimeCodeStyles)` | yes | 19 |
 | `packages/components/dist/pagination/pagination.recipe.styles.js (paginationRecipeStyles)` | yes | 12 |
 | `packages/components/dist/pagination/pagination.structural.styles.js (paginationStructuralStyles)` | yes | 36 |
@@ -304,7 +304,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/checkpoint/checkpoint.recipe.styles.js (checkpointRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/checkpoint/checkpoint.styles.js (checkpointStyles)` | yes | 16 |
 | `packages/ai/dist/citation/citation.recipe.styles.js (citationRecipeStyles)` | yes | 7 |
-| `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 47 |
+| `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 51 |
 | `packages/ai/dist/context-picker/context-picker.recipe.styles.js (contextPickerRecipeStyles)` | yes | 14 |
 | `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 39 |
 | `packages/ai/dist/conversation/conversation.recipe.styles.js (conversationRecipeStyles)` | yes | 13 |

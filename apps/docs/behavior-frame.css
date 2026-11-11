@@ -1,0 +1,105 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-inline-size: 0;
+}
+body {
+  padding: 12px;
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-canvas);
+  font-family: var(--odd-font-family-sans, system-ui);
+}
+#behavior-scene {
+  display: block;
+  min-inline-size: 0;
+  border: 1px solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-lg);
+  background: var(--odd-color-surface-default);
+}
+.behavior-canvas-heading {
+  --odd-stack-gap: 4px;
+  padding: 16px;
+  border-block-end: 1px solid var(--odd-color-border-default);
+}
+.behavior-canvas-heading strong {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.behavior-canvas-heading span,
+.behavior-neighbor p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--odd-color-text-secondary);
+}
+#behavior-allocation {
+  container: odd-container / inline-size;
+  padding: 16px;
+  min-inline-size: 0;
+}
+#behavior-allocation[data-purpose='flow'] {
+  min-block-size: 100px;
+}
+#behavior-allocation[data-purpose='bounded'] {
+  block-size: 320px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+#behavior-preview,
+#behavior-preview > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.behavior-neighbor {
+  padding: 16px;
+  border-block-start: 1px solid var(--odd-color-border-default);
+}
+.behavior-neighbor label {
+  display: block;
+  margin-block-end: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.behavior-neighbor textarea {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-md);
+  font: 13px/1.6 var(--odd-font-family-sans, system-ui);
+  background: var(--odd-color-surface-default);
+  color: var(--odd-color-text-primary);
+  resize: vertical;
+}
+.behavior-neighbor p {
+  margin: 8px 0 0;
+}
+#behavior-scene > footer {
+  --odd-cluster-gap: 8px;
+  padding: 10px 16px;
+  border-block-start: 1px solid var(--odd-color-border-default);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--odd-color-text-secondary);
+}
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--odd-color-focus-ring);
+  outline-offset: 3px;
+}
+@media (max-width: 360px) {
+  body {
+    padding: 8px;
+  }
+  #behavior-allocation {
+    padding: 10px;
+  }
+  .behavior-canvas-heading,
+  .behavior-neighbor {
+    padding: 12px;
+  }
+}

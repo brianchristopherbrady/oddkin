@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
@@ -85,6 +85,317 @@ describe('registration', () => {
       expect(customElements.get('odd-action-approval')).toBeDefined();
     },
   );
+});
+
+describe('odd-citation', () => {
+  const define = () => import('../src/citation/citation.define.js');
+  let unload: () => void;
+  beforeAll(async () => {
+    unload = await loadTheme();
+  });
+  afterAll(() => unload());
+  const focused = (): Element | null => {
+    let active = document.activeElement;
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+    return active;
+  };
+  const toggled = (popover: HTMLElement, state: 'open' | 'closed') =>
+    new Promise<void>((resolve) => {
+      const listener = (event: Event) => {
+        if ((event as ToggleEvent).newState !== state) return;
+        popover.removeEventListener('toggle', listener);
+        resolve();
+      };
+      popover.addEventListener('toggle', listener);
+    });
+  const citation = (presentation: 'popover' | 'inline' = 'popover') =>
+    mount('odd-citation', define, (element) => {
+      element.sourceId = 'first';
+      element.index = 1;
+      element.presentation = presentation;
+      element.source = {
+        type: 'source',
+        id: 's1',
+        sourceId: 'first',
+        title: 'First source',
+        url: 'https://example.com/source',
+        excerpt: 'Supporting information for this claim.',
+      };
+    });
+  const popup = (element: Element) =>
+    element.shadowRoot!.querySelector<HTMLElementTagNameMap['odd-popover']>('odd-popover')!;
+  const show = (element: Element) =>
+    $$(element, 'button').find((button) => text(button) === 'Show in sources')!;
+  const open = async (element: HTMLElementTagNameMap['odd-citation']) => {
+    const popover = popup(element);
+    const opened = toggled(popover, 'open');
+    await userEvent.click($(element, '[part="trigger"]')!);
+    await opened;
+    await settle(element);
+    await settle(popover);
+    return popover;
+  };
+
+  it('uses a bounded public popover without moving its parent or the following working note', async () => {
+    const element = await citation();
+    const paragraph = document.createElement('p');
+    const note = document.createElement('textarea');
+    note.value = 'Keep this working draft.';
+    paragraph.append('A supported claim ', element);
+    container.style.inlineSize = '260px';
+    container.append(paragraph, note);
+    await settle(element);
+    const trigger = $(element, '[part="trigger"]')!;
+    const preview = $(element, '[part="preview"]')!;
+    const before = note.getBoundingClientRect().top;
+    const parentHeight = container.getBoundingClientRect().height;
+    const popover = await open(element);
+    expect(popover.label).toBe('Source 1: First source');
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog');
+    expect(note.getBoundingClientRect().top).toBe(before);
+    expect(container.getBoundingClientRect().height).toBe(parentHeight);
+    element.source = { ...element.source!, title: 'A'.repeat(180), excerpt: 'Detail '.repeat(90) };
+    container.style.inlineSize = '180px';
+    await settle(element);
+    await frames(3);
+    expect($(element, '[part="trigger"]')).toBe(trigger);
+    expect($(element, '[part="preview"]')).toBe(preview);
+    expect(popup(element)).toBe(popover);
+    expect(popover.matches(':popover-open')).toBe(true);
+    expect(element.presentation).toBe('popover');
+    expect(note.value).toBe('Keep this working draft.');
+    // Placement follows its ResizeObserver-driven size cap; require the settled surface to
+    // satisfy the same viewport bound rather than sampling between its two layout passes.
+    await expect
+      .poll(() => popover.getBoundingClientRect().right)
+      .toBeLessThanOrEqual(innerWidth - 7);
+    const rectangle = popover.getBoundingClientRect();
+    const viewportLeft = visualViewport?.offsetLeft ?? 0;
+    const viewportRight = viewportLeft + (visualViewport?.width ?? innerWidth);
+    const geometry = JSON.stringify({
+      rectangle: rectangle.toJSON(),
+      viewportLeft,
+      viewportRight,
+      innerWidth,
+      maxInlineSize: getComputedStyle(popover).maxInlineSize,
+    });
+    expect(rectangle.width).toBeGreaterThan(0);
+    expect(rectangle.left, geometry).toBeGreaterThanOrEqual(7);
+    expect(rectangle.right, geometry).toBeLessThanOrEqual(innerWidth - 7);
+    expect(preview.scrollWidth).toBeLessThanOrEqual(preview.clientWidth + 1);
+  });
+
+  it('supports explicitly allocated inline growth while retaining the same marker and draft', async () => {
+    const element = await citation('inline');
+    const note = document.createElement('textarea');
+    note.value = 'Inline draft.';
+    container.style.inlineSize = '260px';
+    container.append(note);
+    const trigger = $(element, '[part="trigger"]')!;
+    const before = note.getBoundingClientRect().top;
+    expect(popup(element)).toBeNull();
+    await userEvent.click(trigger);
+    await settle(element);
+    expect(note.getBoundingClientRect().top).toBeGreaterThan(before);
+    expect($(element, '[part="preview"]')!.getAttribute('role')).toBe('group');
+    expect(trigger.getAttribute('aria-haspopup')).toBeNull();
+    container.style.inlineSize = '210px';
+    await frames(2);
+    expect(element.presentation).toBe('inline');
+    expect($(element, '[part="trigger"]')).toBe(trigger);
+    await userEvent.keyboard('{Escape}');
+    await settle(element);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(focused()).toBe(trigger);
+    expect(note.value).toBe('Inline draft.');
+  });
+
+  it('uses native keyboard, close, trigger-toggle, and outside dismissal without stealing pointer focus', async () => {
+    const element = await citation();
+    const note = document.createElement('textarea');
+    note.setAttribute('aria-label', 'Outside working note');
+    container.append(note);
+    const trigger = $(element, '[part="trigger"]')!;
+    const popover = await open(element);
+    expect(focused()).toBe(trigger); // Includes pointer activation in Safari.
+    await userEvent.keyboard('{Tab}');
+    // Native WebKit keyboard navigation can skip links; it must still enter the preview's
+    // interactive controls without changing the user's platform preference.
+    expect([$(element, 'a'), show(element)]).toContain(focused());
+    let closed = toggled(popover, 'closed');
+    await userEvent.keyboard('{Escape}');
+    await closed;
+    await settle(element);
+    expect(focused()).toBe(trigger);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    await open(element);
+    closed = toggled(popover, 'closed');
+    await userEvent.click(trigger);
+    await closed;
+    await settle(element);
+    expect(popover.matches(':popover-open')).toBe(false);
+    await open(element);
+    const close = popover.shadowRoot!.querySelector<HTMLElement>('[part="close"]')!;
+    expect(close.getAttribute('aria-label')).toBe('Close source preview');
+    closed = toggled(popover, 'closed');
+    await userEvent.click(close);
+    await closed;
+    await settle(element);
+    expect(focused()).toBe(trigger);
+    await open(element);
+    $(element, 'a')!.focus();
+    closed = toggled(popover, 'closed');
+    await userEvent.click(note);
+    await closed;
+    await settle(element);
+    expect(focused()).toBe(note);
+  });
+
+  it('defers desired presentation changes until close and keeps the marker and active preview stable', async () => {
+    const element = await citation();
+    const trigger = $(element, '[part="trigger"]')!;
+    const popover = await open(element);
+    const preview = $(element, '[part="preview"]')!;
+    const link = $(element, 'a')!;
+    link.focus();
+    element.presentation = 'inline';
+    await settle(element);
+    expect(element.presentation).toBe('inline');
+    expect(popup(element)).toBe(popover);
+    expect($(element, '[part="preview"]')).toBe(preview);
+    expect(focused()).toBe(link);
+    const closed = toggled(popover, 'closed');
+    await userEvent.keyboard('{Escape}');
+    await closed;
+    await settle(element);
+    expect(popup(element)).toBeNull();
+    expect($(element, '[part="trigger"]')).toBe(trigger);
+    expect(focused()).toBe(trigger);
+    await userEvent.click(trigger);
+    await settle(element);
+    const inline = $(element, '[part="preview"]')!;
+    element.presentation = 'popover';
+    await settle(element);
+    expect(popup(element)).toBeNull();
+    expect($(element, '[part="preview"]')).toBe(inline);
+    expect(inline.hidden).toBe(false);
+    await userEvent.keyboard('{Escape}');
+    await settle(element);
+    expect(popup(element)).not.toBeNull();
+    expect($(element, '[part="trigger"]')).toBe(trigger);
+    expect(focused()).toBe(trigger);
+    const outside = document.createElement('textarea');
+    container.append(outside);
+    const reopened = await open(element);
+    $(element, 'a')!.focus();
+    element.presentation = 'inline';
+    await settle(element);
+    const outsideClosed = toggled(reopened, 'closed');
+    await userEvent.click(outside);
+    await outsideClosed;
+    await settle(element);
+    expect(popup(element)).toBeNull();
+    expect(focused()).toBe(outside);
+  });
+
+  it('updates unresolved and resolved source content in the open preview without inventing a source', async () => {
+    const element = await mount('odd-citation', define, (citation) => {
+      citation.sourceId = 'missing';
+      citation.index = 2;
+    });
+    const popover = await open(element);
+    const preview = $(element, '[part="preview"]')!;
+    expect(popover.label).toBe('Unresolved source reference 2');
+    expect(text(preview)).toContain('no source record was supplied');
+    expect($(element, 'a')).toBeNull();
+    const intents: unknown[] = [];
+    element.addEventListener('odd-citation-open', (event) => intents.push(event.detail));
+    element.source = { type: 'source', id: 's2', sourceId: 'missing', title: 'Now resolved' };
+    await settle(element);
+    expect(popup(element)).toBe(popover);
+    expect($(element, '[part="preview"]')).toBe(preview);
+    expect(popover.label).toBe('Source 2: Now resolved');
+    expect(text(preview)).toContain('Now resolved');
+    const action = show(element);
+    action.focus();
+    expect(focused()).toBe(action);
+    element.source = undefined;
+    await settle(element);
+    expect(text(preview)).toContain('no source record was supplied');
+    expect(popover.matches(':popover-open')).toBe(true);
+    expect(focused()).toBe($(element, '[part="trigger"]'));
+    element.source = { type: 'source', id: 's2', sourceId: 'missing', title: 'Resolved again' };
+    await settle(element);
+    const outside = document.createElement('textarea');
+    container.append(outside);
+    outside.focus();
+    element.source = undefined;
+    await settle(element);
+    expect(focused()).toBe(outside);
+    expect(intents).toEqual([]);
+  });
+
+  it('uses the current source identity atomically for activation and respects a cancelled default reveal', async () => {
+    const element = await citation();
+    const popover = await open(element);
+    element.sourceId = 'current';
+    element.source = { type: 'source', id: 's2', sourceId: 'current', title: 'Current source' };
+    await settle(element);
+    const activations: unknown[] = [];
+    const revealed: string[] = [];
+    element.addEventListener('odd-source-reveal', ({ detail }) => revealed.push(detail.sourceId));
+    const cancel = (event: GlobalEventHandlersEventMap['odd-citation-open']) => {
+      activations.push(event.detail);
+      expect(event.cancelable && event.bubbles && event.composed).toBe(true);
+      event.preventDefault();
+    };
+    element.addEventListener('odd-citation-open', cancel);
+    await userEvent.click(show(element));
+    await settle(element);
+    expect(activations).toEqual([{ sourceId: 'current', resolved: true }]);
+    expect(revealed).toEqual([]);
+    expect(popover.matches(':popover-open')).toBe(true);
+    element.removeEventListener('odd-citation-open', cancel);
+    element.addEventListener(
+      'odd-citation-open',
+      () => {
+        element.sourceId = 'host-next';
+      },
+      { once: true },
+    );
+    const closed = toggled(popover, 'closed');
+    await userEvent.click(show(element));
+    await closed;
+    await settle(element);
+    expect(revealed).toEqual(['current']);
+  });
+
+  it('reports an unresolved activation if its record disappeared before the queued render', async () => {
+    const element = await citation();
+    await open(element);
+    const action = show(element);
+    const activated: unknown[] = [];
+    const revealed: unknown[] = [];
+    element.addEventListener('odd-citation-open', (event) => activated.push(event.detail));
+    element.addEventListener('odd-source-reveal', (event) => revealed.push(event.detail));
+    element.source = undefined;
+    action.click(); // A host record change and activation in the same task.
+    await settle(element);
+    expect(activated).toEqual([{ sourceId: 'first', resolved: false }]);
+    expect(revealed).toEqual([]);
+  });
+
+  it('releases the composed open popover and its placement work when removed', async () => {
+    await define();
+    const before = scopeStats();
+    const element = await citation();
+    await open(element);
+    element.remove();
+    flush();
+    await frames(2);
+    flush();
+    expect(scopeStats()).toEqual(before);
+  });
 });
 
 describe('odd-response', () => {
@@ -220,9 +531,7 @@ describe('odd-response', () => {
     expect(text(citations[1]!.shadowRoot!.querySelector('[part="preview"]'))).toContain(
       'not available',
     );
-    triggers[1]!.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, composed: true }),
-    );
+    await userEvent.keyboard('{Escape}');
     await settle(citations[1] as unknown as { updateComplete: Promise<void> });
     expect(triggers[1]!.getAttribute('aria-expanded')).toBe('false');
   });

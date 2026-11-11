@@ -52,6 +52,7 @@ describe('the @oddkin/components kit', () => {
       'json:recipes',
       'json:stylesheets',
       'json:models',
+      'responsiveness',
     ]);
     expect(Object.keys(metadata.stylesheets)).toContain('stylesheet:layout');
     for (const entry of manifest.entries.filter((e) => e.id.startsWith('stylesheet:')))

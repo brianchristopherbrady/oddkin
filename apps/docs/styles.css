@@ -1086,3 +1086,148 @@ odd-side-nav:not(:defined) > a {
     min-inline-size: var(--odd-control-height-sm);
   }
 }
+/* Foundations / Responsiveness: the lab's surrounding controls and canvas. Previewed
+   components retain their own styles and render in the existing Workbench frame runtime. */
+.behavior-lab {
+  container: behavior-lab / inline-size;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-lg);
+  padding: clamp(var(--odd-space-sm), 2.5vw, var(--odd-space-lg));
+  background: var(--odd-color-surface-default);
+}
+.behavior-lab > h2 {
+  margin-block-start: 0;
+}
+.behavior-lab :is(#behavior-lab-controls, .behavior-lab-controls) {
+  --odd-auto-grid-min: 14rem;
+  --odd-auto-grid-gap: var(--odd-space-md);
+  align-items: start;
+  gap: var(--odd-space-md);
+  min-inline-size: 0;
+  margin-block: var(--odd-space-lg);
+}
+.behavior-lab :is(.behavior-lab-field, .behavior-lab-group) {
+  --odd-stack-gap: var(--odd-space-xs);
+  align-content: start;
+  gap: var(--odd-space-xs);
+  min-inline-size: 0;
+}
+.behavior-lab fieldset.behavior-lab-group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.behavior-lab :is(.behavior-lab-label, .behavior-lab-group legend, .behavior-lab-field > label) {
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+}
+.behavior-lab .behavior-lab-group legend {
+  padding: 0;
+  margin-block-end: var(--odd-space-xs);
+}
+.behavior-lab
+  :is(#behavior-lab-controls, .behavior-lab-controls)
+  :is(select, input[type='search'], input[type='number']) {
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--odd-control-height-md);
+  padding: var(--odd-space-xs) var(--odd-control-padding-inline-md);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-strong);
+  border-radius: var(--odd-control-radius);
+  background: var(--odd-color-surface-default);
+  color: var(--odd-color-text-primary);
+  font: inherit;
+}
+.behavior-lab input[type='range'] {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  margin-inline: 0;
+  accent-color: var(--odd-color-action-default);
+}
+.behavior-lab .behavior-lab-width-value {
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+  font-variant-numeric: tabular-nums;
+}
+.behavior-lab .behavior-lab-actions {
+  --odd-cluster-gap: var(--odd-space-xs);
+  align-items: center;
+  gap: var(--odd-space-xs);
+  min-inline-size: 0;
+}
+.behavior-lab :is(#behavior-lab-canvas, .behavior-lab-canvas) {
+  justify-items: center;
+  align-items: start;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--odd-space-sm);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-sunken);
+}
+.behavior-lab :is(#behavior-lab-canvas, .behavior-lab-canvas) iframe {
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  border: 0;
+  background: var(--odd-color-surface-default);
+}
+.behavior-lab :is(.behavior-lab-status, .behavior-lab-help, .behavior-lab-observation) {
+  min-inline-size: 0;
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+  overflow-wrap: anywhere;
+}
+.behavior-lab .behavior-lab-status {
+  margin-block: var(--odd-space-sm);
+}
+.behavior-lab .behavior-lab-meta {
+  display: block;
+  min-inline-size: 0;
+  margin-block: var(--odd-space-md);
+}
+.behavior-lab .behavior-lab-meta :is(dt, dd) {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.behavior-lab .behavior-lab-meta dt {
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+}
+.behavior-lab .behavior-lab-meta dd {
+  margin-block-start: var(--odd-space-2xs);
+}
+.behavior-lab .behavior-lab-events {
+  max-block-size: 16rem;
+  min-inline-size: 0;
+  padding-inline-start: var(--odd-space-lg);
+  overflow: auto;
+  scrollbar-gutter: stable;
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+}
+.behavior-lab .behavior-lab-events :is(li, code) {
+  overflow-wrap: anywhere;
+}
+.behavior-lab :is(button, input, select, textarea, a):focus-visible {
+  outline: var(--odd-focus-width) solid var(--odd-color-focus-ring);
+  outline-offset: var(--odd-focus-offset);
+}
+@container behavior-lab (inline-size < 30rem) {
+  .behavior-lab :is(#behavior-lab-controls, .behavior-lab-controls) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .behavior-lab :is(#behavior-lab-canvas, .behavior-lab-canvas) {
+    padding: var(--odd-space-2xs);
+  }
+}

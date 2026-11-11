@@ -32,6 +32,8 @@ export const comboboxStructuralStyles = css`
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    /* The grid item may shrink below the native input's intrinsic width. */
+    min-inline-size: 0;
     cursor: text;
   }
   .chips {

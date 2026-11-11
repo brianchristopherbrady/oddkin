@@ -664,6 +664,9 @@ function guide(
     ...refs('composition').map(
       (e) => `- Interfaces as data (validate and render JSON documents): ${e.path}.`,
     ),
+    ...refs('task')
+      .filter((e) => e.id === 'responsiveness')
+      .map((e) => `- Responsiveness and host composition (authored): ${e.path}.`),
     ...(refs('model').length
       ? [
           `- Models: ${refs('model')
@@ -810,6 +813,13 @@ export function generateKit(
       });
   }
   for (const { path, text, entry } of extra) add(path, text, entry);
+  const responsiveness = join(library.dir, 'RESPONSIVENESS.md');
+  if (existsSync(responsiveness))
+    add('references/responsiveness.md', readFileSync(responsiveness, 'utf8'), {
+      id: 'responsiveness',
+      kind: 'task',
+      provenance: 'authored',
+    });
   const guideText = guide(project, library, components, categories, entries, packaged);
   files.set('GUIDE.md', guideText);
   const manifest: KitManifest = {

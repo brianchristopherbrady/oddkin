@@ -749,6 +749,7 @@
     "agent",
     "custom-elements.json",
     "oddkin.metadata.json",
+    "RESPONSIVENESS.md",
     "README.md"
   ],
   "dependencies": {

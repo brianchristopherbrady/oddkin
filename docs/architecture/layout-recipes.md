@@ -378,7 +378,7 @@ Round 9 (converted 2026-10-28 by Agent 1, which took over the rows Agent 2 and A
 | ai/artifact/artifact.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.header` row({ gap: space.xs, wrap: true }) | — |
 | ai/change-review/change-review.styles.ts | Agent 2 | `.list` stack({ gap: space.sm }); `.body` (each proposal's group, 2026-11-04) stack({ gap: space.xs }); `.split` autoGrid({ min: '14rem', fill: 'auto-fit', gap: space.sm }) | — |
 | ai/checkpoint/checkpoint.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.confirm` stack({ gap: space.xs }) | — |
-| ai/citation/citation.styles.ts | Agent 2 | `.preview` stack({ gap: space.2xs }) | `.trigger`: inline box: glyph and label inside the element box |
+| ai/citation/citation.styles.ts | Agent 2 | `.preview` stack({ gap: space.sm }); `.identity` stack({ gap: space.2xs }) | `.trigger`: inline marker; source preview geometry comes from the composed `odd-popover` by default, or an explicitly allocated inline region (2026-11-10, ADR 0050) |
 | ai/context-picker/context-picker.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.list` stack({ gap: space.2xs }); `.row` row({ gap: space.xs, wrap: true }); `.url` row({ gap: space.2xs, align: 'stretch', wrap: true }) | — |
 | ai/conversation/conversation.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.feed` stack({ gap: space.lg }); `.history, .empty` row({ gap: space.xs, align: 'stretch', wrap: true, justify: 'center' }) | — |
 | ai/inline-assist/inline-assist.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.toolbar` row({ gap: space.2xs, align: 'stretch', wrap: true }); `.language` row({ gap: space.xs, wrap: true }) | — |
@@ -395,3 +395,5 @@ Round 9 (converted 2026-10-28 by Agent 1, which took over the rows Agent 2 and A
 | ai/transcript/transcript.styles.ts | Agent 2 | `.list` stack({ gap: space.2xs }) | — |
 | ai/usage-meter/usage-meter.styles.ts | Agent 2 | `.list` stack({ gap: space.xs }); `dd` stack({ gap: space.2xs }) | `.entry`: cell grid: named or sized columns |
 | ai/voice-input/voice-input.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }) | `.record`: inline box: glyph and label inside the element box |
+
+**Citation presentation update (2026-11-10).** Its recipe arranges the same source identity, excerpt, and actions. The template composes the existing public `popoverDefinition` for the default anchored preview, with `presentation="inline"` for deliberately allocated growth. Placement and native overlay behavior belong to that primitive; they are not recipe conditions. The explicit option does not react to width, and a requested presentation change waits for an open preview to close. See [ai-interaction.md §7.6](./ai-interaction.md#76-citation-preview-presentation) and [ADR 0050](./decisions/0050-citation-preview-presentation.md).

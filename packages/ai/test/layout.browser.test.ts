@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 
 // The arrangements of the AI elements' layout recipes (layout-recipes.md §14), measured from the
@@ -369,11 +370,14 @@ describe('odd-sources', () => {
 });
 
 describe('odd-citation', () => {
-  it('stacks the preview', async () => {
-    const el = await mount<Updating & { sourceId: string; index: number; source: unknown }>(
+  it('stacks the allocated inline preview', async () => {
+    const el = await mount<
+      Updating & { sourceId: string; index: number; source: unknown; presentation: string }
+    >(
       'odd-citation',
       () => import('../src/citation/citation.define.js'),
       (e) => {
+        e.presentation = 'inline';
         e.sourceId = 'wcag';
         e.index = 1;
         e.source = {
@@ -596,6 +600,50 @@ describe('odd-question', () => {
     const el = await example('question', 'form');
     expectColumn($(el, '.field'), space('2xs'));
   });
+
+  it.each(['default', 'form', 'text'])(
+    'keeps the %s answer draft and native selection while its bounded parent shrinks',
+    async (key) => {
+      Object.assign(container.style, {
+        boxSizing: 'border-box',
+        padding: '10px',
+        blockSize: '20rem',
+        overflow: 'auto',
+        scrollbarGutter: 'stable',
+      });
+      const el = await example('question', key);
+      const selector =
+        key === 'default'
+          ? 'input[name="custom"]'
+          : key === 'form'
+            ? 'input[name="title"]'
+            : 'textarea[name="text"]';
+      const field = $(el, selector) as HTMLInputElement | HTMLTextAreaElement;
+      await userEvent.fill(field, 'Draft response');
+      field.setSelectionRange(5, 5);
+
+      // On platforms with a 15px scrollbar these grant 207px and 187px to the same
+      // component. The test measures the real grant rather than assuming scrollbar size.
+      for (const width of [242, 222, 440, 222]) {
+        container.style.inlineSize = `${width}px`;
+        await settle(el);
+        expect($(el, selector)).toBe(field);
+        expect(field.value).toBe('Draft response');
+        expect(el.shadowRoot!.activeElement).toBe(field);
+        expect([field.selectionStart, field.selectionEnd]).toEqual([5, 5]);
+        expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth + 1);
+        const form = $(el, '[part="form"]');
+        expect(form.scrollWidth).toBeLessThanOrEqual(form.clientWidth + 1);
+        const edge = form.getBoundingClientRect().right;
+        for (const control of form.querySelectorAll('input, textarea, select'))
+          expect(control.getBoundingClientRect().right).toBeLessThanOrEqual(edge + 1);
+      }
+
+      await userEvent.keyboard('!');
+      expect(field.value).toBe('Draft! response');
+      expect([field.selectionStart, field.selectionEnd]).toEqual([6, 6]);
+    },
+  );
 });
 
 describe('odd-response-feedback', () => {

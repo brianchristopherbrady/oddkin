@@ -81,7 +81,7 @@ Elements use properties for records and typed, bubbling, composed events for int
 | `odd-conversation`, `odd-message` | Feed of messages, history, follow-latest scrolling, announcements, run status, composer slot; a message's versions |
 | `odd-prompt-input` | Composer: multiline input, IME-safe Enter, attachments (paste, drop, picker), Send/Stop |
 | `odd-response` | Streaming Markdown with citations, code, tables; canonical copy |
-| `odd-citation`, `odd-sources` | Inline references with previews; source list |
+| `odd-citation`, `odd-sources` | Inline references with anchored popover previews or explicitly allocated inline details; source list |
 | `odd-tool-call` | Tool identity, purpose, streamed arguments, execution state, result, retry |
 | `odd-action-approval` | Approve/reject one revision of a proposed action |
 | `odd-context-picker` | Files, documents, URLs, selections with statuses |
@@ -97,6 +97,20 @@ Elements use properties for records and typed, bubbling, composed events for int
 | `odd-checkpoint` | Restore points with confirmed outcomes |
 
 Full API (properties, attributes, events, slots, parts, CSS properties) is in `custom-elements.json` and `oddkin.metadata.json`; record schemas in `schemas/`.
+
+## Citation previews
+
+`odd-citation` defaults to `presentation="popover"`, composing the existing `odd-popover` so source details can open without moving the following work. Enter or Space opens it; Tab reaches its controls; Escape or Close source preview closes it and restores the marker's logical focus. An outside control keeps the focus the user moved there.
+
+For a directly composed citation whose parent deliberately allocates a growing source-details region, choose the inline presentation:
+
+```html
+<odd-citation source-id="report" index="1" presentation="inline"></odd-citation>
+```
+
+Assign its source record through the `source` property as usual. The equivalent choice is `citation.presentation = 'inline'`. A presentation change while the preview is open takes effect after close; resizing never switches it automatically. Generated Markdown markers use the component default; no response-wide presentation property or global adaptive context is introduced.
+
+**Show in sources** retains the existing cancelable `odd-citation-open` event with `{ sourceId, resolved }`. Its uncancelled, resolved default emits `odd-source-reveal` for the same captured source identity. The `trigger` and `preview` parts remain, and `strings.close` localizes the composed close control. This changes the previous inline default; [ADR 0050](../../docs/architecture/decisions/0050-citation-preview-presentation.md) records the rationale, migration, and owner-preference confirmation boundary. Read the shared [responsiveness guide](RESPONSIVENESS.md) for parent ownership and evidence limits.
 
 ## Patterns
 

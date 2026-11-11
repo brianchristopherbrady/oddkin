@@ -84,6 +84,53 @@ describe('odd-combobox', () => {
       expect(box.hasAttribute(name)).toBe(false);
   });
 
+  it.each(['default', 'compact'])(
+    'keeps an editable query and its controls inside narrow allocations at %s density',
+    async (density) => {
+      const { el, log } = await mount();
+      container.dataset['oddDensity'] = density;
+      container.style.inlineSize = '400px';
+      el.style.inlineSize = '100%';
+      await press(el, '{Control>}a{/Control}be');
+      const originalInput = input(el);
+      const originalPopup = part(el, 'popup');
+      originalInput.setSelectionRange(1, 2);
+
+      for (const width of [265, 211, 400, 211]) {
+        container.style.inlineSize = `${width}px`;
+        await settle(el);
+        expect(input(el)).toBe(originalInput);
+        expect(part(el, 'popup')).toBe(originalPopup);
+        expect(el.shadowRoot!.activeElement).toBe(originalInput);
+        expect([el.value, el.query, originalInput.value]).toEqual(['cobalt', 'be', 'be']);
+        expect([originalInput.selectionStart, originalInput.selectionEnd]).toEqual([1, 2]);
+        expect(open(el)).toBe(true);
+        const host = el.getBoundingClientRect();
+        const control = part(el, 'control').getBoundingClientRect();
+        const editor = originalInput.getBoundingClientRect();
+        const clear = part(el, 'clear').getBoundingClientRect();
+        expect(control.left).toBeGreaterThanOrEqual(host.left - 1);
+        expect(control.right).toBeLessThanOrEqual(host.right + 1);
+        expect(editor.left).toBeGreaterThanOrEqual(control.left);
+        expect(editor.right).toBeLessThanOrEqual(clear.left + 1);
+        expect(clear.right).toBeLessThanOrEqual(control.right + 1);
+        expect(el.scrollWidth).toBeLessThanOrEqual(el.clientWidth + 1);
+        expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth + 1);
+      }
+
+      await press(el, '{Enter}');
+      expect(el.value).toBe('beacon');
+      expect(originalInput.value).toBe('Beacon');
+      expect(log.slice(-2)).toEqual(['input beacon', 'change beacon']);
+      await userEvent.click(part(el, 'clear'));
+      await settle(el);
+      expect(el.value).toBe('');
+      expect(el.shadowRoot!.activeElement).toBe(originalInput);
+      expect(part(el, 'clear').hidden).toBe(true);
+      expect(el.scrollWidth).toBeLessThanOrEqual(el.clientWidth + 1);
+    },
+  );
+
   it('filters while typing, activates the first match, and chooses it with Enter', async () => {
     const { el, log } = await mount();
     await press(el, '{Control>}a{/Control}e');

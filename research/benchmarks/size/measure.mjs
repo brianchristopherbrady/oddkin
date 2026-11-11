@@ -87,7 +87,11 @@ export const BUDGETS = {
   // comments. 24,640 since 2026-11-08 (Agent 1's call), the smallest 64 B step: measured 24,623
   // (+2,805) with odd-copy-button for the copy action and each code block (audit step 3), its
   // confirmation popover on the shared overlay look (owner, 2026-11-07), and its announcer.
-  'ai-response': 24640,
+  // Responsiveness slice, 2026-11-10: citation reuses public odd-popover/Overlay/PositionController
+  // and FocusRecovery instead of a private preview runtime. Measured 28,853 vs 24,570 at
+  // de271436 (+4,283 B);
+  // per-change BUDGET review in docs/verification.md. Smallest 64 B step; no blanket headroom.
+  'ai-response': 28864,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -156,7 +160,10 @@ export const BUDGETS = {
   // minified, and the line diff, 0.9 KB, entering the chat bundle) and the risk badge.
   // 64,512 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 64,503 (+297) with
   // page 09's host-confirmed receipts: the approved scope from the record and the recorded reason.
-  'ai-chat': 64512,
+  // Same citation foundation reuse: 68,948 vs 64,481 at de271436 (+4,467 B), 2026-11-10.
+  // Question's native fieldset minimum correction adds 6 B: final 68,954 (+4,473 B total).
+  // Independent BUDGET review recorded with the responsiveness slice; release review remains.
+  'ai-chat': 68992,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

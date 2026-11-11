@@ -28,7 +28,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C01 | Prompt composer | `odd-prompt-input` | `ComposerController` | native `textarea`/file input, `odd-button`, `live()` |
 | C02 | Conversation/messages | `odd-conversation`, `odd-message` | `ConversationController`, `createConversationView` | `repeat()`, `Scope`, signals, `odd-copy-button` |
 | C03 | Streaming response | `odd-response` | `MarkdownView` | DOM-only rendering, `@oddkin/ai/highlight`, `odd-copy-button` |
-| C04 | Citations/sources | `odd-citation`, `odd-sources` | — | native `button`/links |
+| C04 | Citations/sources | `odd-citation`, `odd-sources` | — | `odd-popover`; native `button`/links |
 | C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | native `details` |
 | C06 | Action approval | `odd-action-approval` | `ConversationController.decide` | `odd-button` |
 | C07 | Context selection | `odd-context-picker` | host records (`ContextItemModel`) | native file/URL inputs |
@@ -258,6 +258,16 @@ Artifacts keep `artifactId` across revisions; the viewer shows preview or source
 
 `VoiceController` runs a replaceable `VoiceAdapter` (states: unsupported, idle, requesting-permission, recording, processing, denied, unavailable, interrupted, error; interim and final segments). Adapters: `@oddkin/ai/voice/web-speech` (feature-detected Web Speech API), `@oddkin/ai/voice/recorder` (`MediaRecorder` capture + host `transcribe(blob)`), and `createScriptedVoiceAdapter` for tests and demos. Browser speech recognition is never the only path. An element-owned session is cancelled on disconnect; microphones, tracks, timers, and listeners are released (A19).
 
+### 7.6 Citation preview presentation
+
+`odd-citation` keeps its marker in reading flow and uses `presentation="popover"` by default: a named, anchored non-modal `odd-popover` shows the source without moving following content. A parent that intentionally allocates a growing details region can choose `presentation="inline"`, whose preview is a named group after the marker. This production presentation decision is recorded in [ADR 0050](./decisions/0050-citation-preview-presentation.md); it supersedes the inline-only presentation in the historical ADR 0049 owner decision, without claiming explicit owner approval of the later enum/default.
+
+The public property is the desired presentation. A change while the preview is open waits until close before the effective view changes. The marker remains the same node; focus returns to that logical marker when closing requires it, including after a deferred presentation change. Outside pointer focus and focus moved to the source destination are retained. Width changes affect wrapping and the existing popover's placement, never the chosen presentation. Enter or Space toggles the marker, Tab reaches preview controls, and Escape closes it. The composed close control uses `strings.close`; `trigger` and `preview` remain the citation's CSS parts.
+
+The source record stays host-owned. Missing data renders an unresolved reference. **Show in sources**, rather than opening the marker, emits the existing cancelable `odd-citation-open` with the current captured `{ sourceId, resolved }`. When uncancelled and resolved, its default emits `odd-source-reveal` for that same identity and closes the preview; the host or message reveals the list item. Cancelling the activation vetoes that default. Property changes do not emit an activation intent.
+
+Directly composed citations can select the inline option through the property or attribute. Generated Markdown markers use the component default; there is no response-wide presentation option or inherited adaptive context. Follow the actual public surface and the host ownership rules in [responsiveness.md](./responsiveness.md).
+
 ## 8. Rendering and content boundaries
 
 ### 8.1 Markdown dialect
@@ -276,7 +286,7 @@ All model output, tool output, URLs, file names, and metadata are untrusted. Ren
 
 ### 9.1 Semantics
 
-Conversation: `role="feed"` of `article` messages with `aria-posinset`/`aria-setsize`, `aria-busy` while loading or streaming, roving `tabindex`, Page Up/Down between messages, Ctrl+Home/End out of the feed. Approval, checkpoint, question, tool call, artifact: labelled groups with native buttons and form controls. Inline assist: APG toolbar (roving tabindex, arrow keys, Home/End). Citations: buttons with `aria-expanded` controlling a preview usable by keyboard and touch. Focus recovery: when a control disappears (e.g. Stop after completion, a confirmation step), focus moves to the element's status text rather than to `body`. Labels and descriptions stay inside the shadow root that owns the control; host-provided labels (`label` property) are forwarded.
+Conversation: `role="feed"` of `article` messages with `aria-posinset`/`aria-setsize`, `aria-busy` while loading or streaming, roving `tabindex`, Page Up/Down between messages, Ctrl+Home/End out of the feed. Approval, checkpoint, question, tool call, artifact: labelled groups with native buttons and form controls. Inline assist: APG toolbar (roving tabindex, arrow keys, Home/End). Citations: buttons with `aria-expanded` controlling a named non-modal popover by default, or a named inline group when explicitly selected (§7.6); both are usable by keyboard and touch without hover. Focus recovery: when a control disappears (e.g. Stop after completion, a confirmation step), focus moves to the element's status text rather than to `body`. Labels and descriptions stay inside the shadow root that owns the control; host-provided labels (`label` property) are forwarded.
 
 ### 9.2 Announcement policy
 

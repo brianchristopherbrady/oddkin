@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-odd-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive component playground</title>
+    <!-- docs:csp -->
+    <link rel="stylesheet" href="/public/@oddkin/tokens/css/default.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/reset.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/base.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/layout.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/typography.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/button.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/field.css" />
+    <link rel="stylesheet" href="/apps/docs/behavior-frame.css" />
+    <script type="importmap" id="oddkin-import-map"></script>
+    <script type="module" src="/apps/docs/dist/behavior-frame.js"></script>
+  </head>
+  <body>
+    <odd-container id="behavior-scene" measure="fluid">
+      <header class="behavior-canvas-heading odd-stack">
+        <strong>Component workspace</strong><span>Resize the parent and keep working.</span>
+      </header>
+      <section
+        id="behavior-allocation"
+        data-purpose="flow"
+        aria-label="Allocated component region"
+        tabindex="0"
+      >
+        <main id="behavior-preview" data-oddkin-preview></main>
+      </section>
+      <section class="behavior-neighbor">
+        <label for="behavior-neighbor">Neighboring draft</label>
+        <textarea id="behavior-neighbor" rows="2" spellcheck="false">
+Keep this draft while the component changes.</textarea>
+        <p>This field belongs to the surrounding experience.</p>
+      </section>
+      <footer class="odd-cluster odd-row-between">
+        <span id="behavior-grant">Content can grow in this region.</span
+        ><output id="behavior-movement">0 px neighbor movement</output>
+      </footer>
+    </odd-container>
+  </body>
+</html>

@@ -7,7 +7,7 @@ An answer that rests on sources should say which claim comes from where, and let
 ## Elements and recipes
 
 - `odd-response` (`@oddkin/ai`): renders `[^sourceId]` in its Markdown as an `odd-citation` resolved against its `sources`.
-- `odd-citation` (`@oddkin/ai`): the marker; it opens a preview after itself and offers "Show in sources".
+- `odd-citation` (`@oddkin/ai`): the inline marker; it opens a named anchored popover by default and offers "Show in sources". Direct compositions can choose `presentation="inline"` when the parent allocates a growing details region.
 - `odd-sources` (`@oddkin/ai`): the numbered list, with `reveal(sourceId)`.
 
 `odd-message` connects the three itself; use the pattern when you place a response and its sources yourself.
@@ -19,13 +19,14 @@ An answer that rests on sources should say which claim comes from where, and let
 ## Interaction and accessibility
 
 - Each marker is a button named after its source ("Source 1: Annual report"), with `aria-expanded` for its preview; Escape closes the preview and returns focus to the marker.
-- The preview is ordinary content after the marker, not a popup, so screen reader and touch users reach it in reading order.
-- "Show in sources" sends `odd-source-reveal`; the listener calls `reveal()`, which scrolls the list item into view, highlights it, and focuses it.
+- The default preview composes `odd-popover`, a named non-modal dialog available by keyboard and touch without hover. Tab reaches its controls; Escape or the close control restores the marker's logical focus. Pressing an outside control keeps focus at that destination.
+- In the explicit inline presentation, the preview is a named group after the marker. A presentation change while it is open waits until close, preserving the active view and marker.
+- "Show in sources" sends cancelable `odd-citation-open` with `{ sourceId, resolved }`; its uncancelled, resolved default sends `odd-source-reveal` for the same captured identity. The listener calls `reveal()`, which scrolls the list item into view, highlights it, and focuses it. The preview closes without taking focus from that source destination.
 - Source links are checked by the URL policy; unsafe ones render as text.
 
 ## Responsive behaviour
 
-Markers flow with the text as superscripts; the preview wraps to the response's width; the list's titles wrap.
+Markers flow with the text as superscripts. The default source popover wraps within its available viewport space without moving following content. An explicitly allocated inline preview grows in its parent. Width changes do not switch between presentations, and the list's titles wrap. Generated `odd-response` citations use the component default; the response has no presentation option of its own.
 
 ## States
 
@@ -38,4 +39,4 @@ Use it for answers grounded in documents or search results. For a reading list w
 
 ## Evidence
 
-`packages/ai/test/patterns.browser.test.ts` checks, in Chromium, Firefox, and WebKit, the markers' names and numbers, that the preview opens and Escape returns focus, and that "Show in sources" reveals and focuses the list item.
+`packages/ai/test/patterns.browser.test.ts` exercises the markers' names and numbers, opening, Escape focus return, and "Show in sources" revealing and focusing the list item. `elements.browser.test.ts` adds the production presentation, layout, focus-continuity, identity, and cleanup regressions. These describe test coverage; current run results and remaining limits are recorded in `docs/verification.md`. The presentation change and its migration are recorded in [ADR 0050](../../../../docs/architecture/decisions/0050-citation-preview-presentation.md).

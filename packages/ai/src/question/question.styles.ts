@@ -5,6 +5,7 @@ import { questionRecipeStyles } from './question.recipe.styles.js';
 /**
  * The arrangement is the layout recipe in `question.recipe.ts`. The fieldset is a flex column,
  * not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks.
+ * Its native min-content minimum must yield to the form's allocated width.
  */
 export const questionStyles = css`
   ${questionRecipeStyles}
@@ -18,6 +19,7 @@ export const questionStyles = css`
     display: flex;
     flex-direction: column;
     gap: ${token('space.xs')};
+    min-inline-size: 0;
     margin: 0;
     padding: 0;
     border: 0;
