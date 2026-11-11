@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained. The tool call's approved redesign added by Agent 1 for the parity tests (Figma page 10, 900:2) (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 1 family (33 definitions), transferred in 1 slice with verified length 19037 and FNV-1a 4095638199; appended after the existing families, with its page. Every other family and every component id retained.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
@@ -12,7 +12,8 @@
     { "id": "359:2", "name": "05 · Icons" },
     { "id": "805:3", "name": "08 · AI · Shared parts · Interaction spec" },
     { "id": "805:4", "name": "09 · AI · Action approval · Interaction spec" },
-    { "id": "908:6118", "name": "11 · AI · Change review · Interaction spec" }
+    { "id": "908:6118", "name": "11 · AI · Change review · Interaction spec" },
+    { "id": "900:2", "name": "10 · AI · Tool call · Interaction spec" }
   ],
   "families": [
     {
@@ -115408,6 +115409,654 @@
           "count": 8,
           "variants": ["State=Requested, Form=Compact"],
           "overriddenFields": ["componentProperties", "height", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "900:41785",
+      "name": "Oddkin/AI/ToolCall/Proposal",
+      "page": "900:2",
+      "frame": "Specification · automatic section stack",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Content",
+          "type": "VARIANT",
+          "defaultValue": "Typical",
+          "variantOptions": [
+            "Typical",
+            "Retryable",
+            "BackendRefusal",
+            "ApprovalNeeded",
+            "ApprovalSubmitting",
+            "ApprovalFailed",
+            "Approved",
+            "Rejected",
+            "Expired",
+            "Superseded",
+            "Withdrawn",
+            "ApprovedFailure",
+            "NoOutput",
+            "CustomRenderer",
+            "CollapsedApproval",
+            "Final",
+            "Long",
+            "Minimal",
+            "ApprovalSelected",
+            "BackendRefusalUnresolved",
+            "ApprovalRejectSubmitting",
+            "CollapsedFailure",
+            "ApprovalRejectFailed"
+          ]
+        },
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Status",
+          "type": "VARIANT",
+          "defaultValue": "input-streaming",
+          "variantOptions": [
+            "input-streaming",
+            "input-available",
+            "executing",
+            "output-available",
+            "output-error",
+            "denied",
+            "cancelled"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "900:40799",
+          "name": "Status=cancelled, Content=Typical, Density=Full",
+          "values": { "Status": "cancelled", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "900:40737",
+          "name": "Status=denied, Content=BackendRefusal, Density=Full",
+          "values": { "Status": "denied", "Content": "BackendRefusal", "Density": "Full" }
+        },
+        {
+          "id": "944:6231",
+          "name": "Status=denied, Content=BackendRefusalUnresolved, Density=Full",
+          "values": { "Status": "denied", "Content": "BackendRefusalUnresolved", "Density": "Full" }
+        },
+        {
+          "id": "948:5702",
+          "name": "Status=executing, Content=Approved, Density=Full",
+          "values": { "Status": "executing", "Content": "Approved", "Density": "Full" }
+        },
+        {
+          "id": "900:40634",
+          "name": "Status=executing, Content=Typical, Density=Full",
+          "values": { "Status": "executing", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "900:41026",
+          "name": "Status=input-available, Content=ApprovalFailed, Density=Full",
+          "values": { "Status": "input-available", "Content": "ApprovalFailed", "Density": "Full" }
+        },
+        {
+          "id": "900:40828",
+          "name": "Status=input-available, Content=ApprovalNeeded, Density=Full",
+          "values": { "Status": "input-available", "Content": "ApprovalNeeded", "Density": "Full" }
+        },
+        {
+          "id": "989:9931",
+          "name": "Status=input-available, Content=ApprovalRejectFailed, Density=Full",
+          "values": {
+            "Status": "input-available",
+            "Content": "ApprovalRejectFailed",
+            "Density": "Full"
+          }
+        },
+        {
+          "id": "982:6688",
+          "name": "Status=input-available, Content=ApprovalRejectSubmitting, Density=Full",
+          "values": {
+            "Status": "input-available",
+            "Content": "ApprovalRejectSubmitting",
+            "Density": "Full"
+          }
+        },
+        {
+          "id": "944:6118",
+          "name": "Status=input-available, Content=ApprovalSelected, Density=Full",
+          "values": {
+            "Status": "input-available",
+            "Content": "ApprovalSelected",
+            "Density": "Full"
+          }
+        },
+        {
+          "id": "900:40941",
+          "name": "Status=input-available, Content=ApprovalSubmitting, Density=Full",
+          "values": {
+            "Status": "input-available",
+            "Content": "ApprovalSubmitting",
+            "Density": "Full"
+          }
+        },
+        {
+          "id": "900:41104",
+          "name": "Status=input-available, Content=Approved, Density=Full",
+          "values": { "Status": "input-available", "Content": "Approved", "Density": "Full" }
+        },
+        {
+          "id": "900:41531",
+          "name": "Status=input-available, Content=CollapsedApproval, Density=Full",
+          "values": {
+            "Status": "input-available",
+            "Content": "CollapsedApproval",
+            "Density": "Full"
+          }
+        },
+        {
+          "id": "900:41225",
+          "name": "Status=input-available, Content=Expired, Density=Full",
+          "values": { "Status": "input-available", "Content": "Expired", "Density": "Full" }
+        },
+        {
+          "id": "900:41699",
+          "name": "Status=input-available, Content=Minimal, Density=Full",
+          "values": { "Status": "input-available", "Content": "Minimal", "Density": "Full" }
+        },
+        {
+          "id": "900:41166",
+          "name": "Status=input-available, Content=Rejected, Density=Full",
+          "values": { "Status": "input-available", "Content": "Rejected", "Density": "Full" }
+        },
+        {
+          "id": "900:41282",
+          "name": "Status=input-available, Content=Superseded, Density=Full",
+          "values": { "Status": "input-available", "Content": "Superseded", "Density": "Full" }
+        },
+        {
+          "id": "900:41756",
+          "name": "Status=input-available, Content=Typical, Density=Compact",
+          "values": { "Status": "input-available", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "900:40605",
+          "name": "Status=input-available, Content=Typical, Density=Full",
+          "values": { "Status": "input-available", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "900:41339",
+          "name": "Status=input-available, Content=Withdrawn, Density=Full",
+          "values": { "Status": "input-available", "Content": "Withdrawn", "Density": "Full" }
+        },
+        {
+          "id": "900:41727",
+          "name": "Status=input-streaming, Content=Typical, Density=Compact",
+          "values": { "Status": "input-streaming", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "900:40576",
+          "name": "Status=input-streaming, Content=Typical, Density=Full",
+          "values": { "Status": "input-streaming", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "948:5765",
+          "name": "Status=output-available, Content=Approved, Density=Full",
+          "values": { "Status": "output-available", "Content": "Approved", "Density": "Full" }
+        },
+        {
+          "id": "900:41499",
+          "name": "Status=output-available, Content=CustomRenderer, Density=Full",
+          "values": { "Status": "output-available", "Content": "CustomRenderer", "Density": "Full" }
+        },
+        {
+          "id": "900:41667",
+          "name": "Status=output-available, Content=Long, Density=Full",
+          "values": { "Status": "output-available", "Content": "Long", "Density": "Full" }
+        },
+        {
+          "id": "900:41467",
+          "name": "Status=output-available, Content=NoOutput, Density=Full",
+          "values": { "Status": "output-available", "Content": "NoOutput", "Density": "Full" }
+        },
+        {
+          "id": "900:40663",
+          "name": "Status=output-available, Content=Typical, Density=Full",
+          "values": { "Status": "output-available", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "982:6926",
+          "name": "Status=output-error, Content=ApprovedFailure, Density=Compact",
+          "values": { "Status": "output-error", "Content": "ApprovedFailure", "Density": "Compact" }
+        },
+        {
+          "id": "900:41396",
+          "name": "Status=output-error, Content=ApprovedFailure, Density=Full",
+          "values": { "Status": "output-error", "Content": "ApprovedFailure", "Density": "Full" }
+        },
+        {
+          "id": "982:6980",
+          "name": "Status=output-error, Content=CollapsedFailure, Density=Compact",
+          "values": {
+            "Status": "output-error",
+            "Content": "CollapsedFailure",
+            "Density": "Compact"
+          }
+        },
+        {
+          "id": "982:6868",
+          "name": "Status=output-error, Content=CollapsedFailure, Density=Full",
+          "values": { "Status": "output-error", "Content": "CollapsedFailure", "Density": "Full" }
+        },
+        {
+          "id": "900:41637",
+          "name": "Status=output-error, Content=Final, Density=Full",
+          "values": { "Status": "output-error", "Content": "Final", "Density": "Full" }
+        },
+        {
+          "id": "900:40695",
+          "name": "Status=output-error, Content=Retryable, Density=Full",
+          "values": { "Status": "output-error", "Content": "Retryable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/lg"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/lg"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/md"],
+            "paddingBottom": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 21, 22, 23, 24,
+                  25, 26, 28, 30, 31, 32
+                ]
+              },
+              { "value": "Oddkin · Component roles/space/md", "variants": [17, 20, 27, 29] }
+            ],
+            "paddingLeft": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 21, 22, 23, 24,
+                  25, 26, 28, 30, 31, 32
+                ]
+              },
+              { "value": "Oddkin · Component roles/space/md", "variants": [17, 20, 27, 29] }
+            ],
+            "paddingRight": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 21, 22, 23, 24,
+                  25, 26, 28, 30, 31, 32
+                ]
+              },
+              { "value": "Oddkin · Component roles/space/md", "variants": [17, 20, 27, 29] }
+            ],
+            "paddingTop": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 21, 22, 23, 24,
+                  25, 26, 28, 30, 31, 32
+                ]
+              },
+              { "value": "Oddkin · Component roles/space/md", "variants": [17, 20, 27, 29] }
+            ],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/lg"],
+            "topRightRadius": ["Oddkin · Component roles/radius/lg"]
+          }
+        },
+        {
+          "path": ["Arguments"],
+          "types": ["FRAME"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 31, 32
+          ],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Arguments", "Arguments"],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 31, 32
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Arguments", "code viewport · max16rem"],
+          "types": ["FRAME"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 31, 32
+          ],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": [
+            "Arguments",
+            "code viewport · max16rem",
+            "{\n  \"path\": \"docs/release-notes.md\",\n  \"content\": \"Add the launch…"
+          ],
+          "types": ["TEXT"],
+          "in": [20, 21],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/mono"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/code/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/code/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/code/letter-spacing"],
+            "textStyle": ["Oddkin/Code"]
+          }
+        },
+        {
+          "path": [
+            "Arguments",
+            "code viewport · max16rem",
+            "{\n  \"path\": \"docs/release-notes.md\",\n  \"mode\": \"replace\",\n  \"content\": \""
+          ],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26,
+            27, 28, 31, 32
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/mono"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/code/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/code/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/code/letter-spacing"],
+            "textStyle": ["Oddkin/Code"]
+          }
+        },
+        {
+          "path": ["Result"],
+          "types": ["FRAME"],
+          "in": [22, 24, 26],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Result", "Result"],
+          "types": ["TEXT"],
+          "in": [22, 24, 26],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Result", "code viewport · max16rem"],
+          "types": ["FRAME"],
+          "in": [22, 24, 26],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": [
+            "Result",
+            "code viewport · max16rem",
+            "Section 1: Reviewed release notes and confirmed the launch-readiness che"
+          ],
+          "types": ["TEXT"],
+          "in": [24],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/mono"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/code/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/code/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/code/letter-spacing"],
+            "textStyle": ["Oddkin/Code"]
+          }
+        },
+        {
+          "path": ["Result", "code viewport · max16rem", "Updated docs/release-notes.md."],
+          "types": ["TEXT"],
+          "in": [22, 26],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/mono"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/code/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/code/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/code/letter-spacing"],
+            "textStyle": ["Oddkin/Code"]
+          }
+        },
+        {
+          "path": ["Result · application renderer"],
+          "types": ["FRAME"],
+          "in": [23],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": [
+            "Result · application renderer",
+            "Found 3 documents\nLaunch research · 8 Nov\nSupport capacity · 7 Nov\nPilot"
+          ],
+          "types": ["TEXT"],
+          "in": [23],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Result · application renderer", "Result · application renderer"],
+          "types": ["TEXT"],
+          "in": [23],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["The file changed after this proposal was prepared."],
+          "types": ["TEXT"],
+          "in": [27, 28, 29, 30, 31, 32],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        { "path": ["disclosure trigger · Details"], "types": ["INSTANCE"] },
+        {
+          "path": ["linked odd-action-approval · approved"],
+          "types": ["INSTANCE"],
+          "in": [1, 3, 11, 22, 27, 28, 29, 30]
+        },
+        {
+          "path": ["linked odd-action-approval · cancelled"],
+          "types": ["INSTANCE"],
+          "in": [2, 19]
+        },
+        { "path": ["linked odd-action-approval · expired"], "types": ["INSTANCE"], "in": [13] },
+        { "path": ["linked odd-action-approval · failed"], "types": ["INSTANCE"], "in": [5, 7] },
+        { "path": ["linked odd-action-approval · rejected"], "types": ["INSTANCE"], "in": [15] },
+        {
+          "path": ["linked odd-action-approval · requested"],
+          "types": ["INSTANCE"],
+          "in": [6, 9, 12]
+        },
+        {
+          "path": ["linked odd-action-approval · submitting"],
+          "types": ["INSTANCE"],
+          "in": [8, 10]
+        },
+        { "path": ["linked odd-action-approval · superseded"], "types": ["INSTANCE"], "in": [16] },
+        {
+          "path": ["native button · Retry · Default"],
+          "types": ["INSTANCE"],
+          "in": [27, 28, 29, 30, 32]
+        },
+        {
+          "path": ["tool.purpose"],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31, 32
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["tool.status"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["tool.title"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/md"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/semibold"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/AI/title"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/ActionApproval/Proposal",
+          "sourceId": "813:436",
+          "count": 20,
+          "variants": [
+            "Status=approved, Content=Typical, Density=Full",
+            "Status=cancelled, Content=Typical, Density=Full",
+            "Status=expired, Content=Typical, Density=Full",
+            "Status=failed, Content=Typical, Density=Full",
+            "Status=rejected, Content=Typical, Density=Full",
+            "Status=requested, Content=ScopeRequired, Density=Full",
+            "Status=requested, Content=ScopeSelected, Density=Full",
+            "Status=submitting, Content=Reject, Density=Full",
+            "Status=submitting, Content=Typical, Density=Full",
+            "Status=superseded, Content=Typical, Density=Full"
+          ],
+          "overriddenFields": [
+            "characters",
+            "componentProperties",
+            "height",
+            "name",
+            "styledTextSegments",
+            "visible",
+            "width"
+          ]
+        },
+        {
+          "source": "Oddkin/AI/Internal/DisclosureTrigger",
+          "sourceId": "812:627",
+          "count": 33,
+          "variants": [],
+          "overriddenFields": ["componentProperties", "height", "name", "width"]
+        },
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 5,
+          "variants": ["Appearance=secondary, Size=md, State=Default"],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
         }
       ]
     }

@@ -6313,3 +6313,18 @@ Read-only export through the Figma MCP (session `f420d5e6`), as for item 6.
 | Node tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/figma-component-export.test.ts` | 3 files, 9 tests passed |
 
 **Not verified here:** the browser parity tests (no test compares the new family yet: Agent 2's item 24 adds that comparison with the visual pass).
+
+## 2026-11-10 — The tool call's family in the Figma snapshot, and the answers to pages 11 to 14 (round 11, Agent 1, item 8)
+
+Read-only export through the Figma MCP (session `67c816ae`), as for items 6 and 7; the answers come from the pages fetched below, read on 2026-11-10.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Families on page 10 | `use_figma`, read-only: component sets of `900:2` | One: `Oddkin/AI/ToolCall/Proposal` (`900:41785`), 33 variants |
+| Transfer | One `use_figma` slice, saved verbatim, checked by its length and FNV-1a | 19,037 characters, FNV-1a 4095638199: OK |
+| Snapshot and map | `.tmp/add-p10-family.mjs`; `npx prettier --write`; `node design/figma/reuse.render.mjs --write` | The family and its page appended; 3 references deferred (the approval proposal, the disclosure trigger, the button) |
+| Node tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/figma-component-export.test.ts` | 3 files, 9 tests passed |
+| Sources for the answers | Fetched: NN/g error-message guidelines and visibility of system status; GOV.UK error message and checkboxes; WAI-ARIA APG dialog and alert dialog patterns; VS Code's review and revert agent changes; Claude Code's checkpointing | Quoted in ADR 0049, "Pages 10 to 14" |
+| The built waiting wording | `git grep recorded main -- packages/ai/src/activity/activity.ts` | "{count} response recorded." is shown for responses still on their way: Agent 2's item 26 |
+
+**Not verified here:** the answers with users or assistive technology, and the products' behaviour beyond their published documentation.

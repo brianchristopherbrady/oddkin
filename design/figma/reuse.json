@@ -15,7 +15,7 @@
   "counts": {
     "style": 122,
     "slot": 54,
-    "deferred": 21,
+    "deferred": 24,
     "controller": 18,
     "native": 7,
     "element": 26,
@@ -282,6 +282,33 @@
       "count": 4,
       "class": "element",
       "reason": "odd-activity's wait renders the status part's complete odd-badge above its counts; BadgePresentation is its Figma-only adapter (ADR 0049)."
+    },
+    {
+      "consumer": "Oddkin/AI/ToolCall/Proposal",
+      "consumerId": "900:41785",
+      "source": "Oddkin/AI/ActionApproval/Proposal",
+      "sourceId": "813:436",
+      "count": 20,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
+    },
+    {
+      "consumer": "Oddkin/AI/ToolCall/Proposal",
+      "consumerId": "900:41785",
+      "source": "Oddkin/AI/Internal/DisclosureTrigger",
+      "sourceId": "812:627",
+      "count": 33,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
+    },
+    {
+      "consumer": "Oddkin/AI/ToolCall/Proposal",
+      "consumerId": "900:41785",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 5,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the tool call, Figma page 10)."
     },
     {
       "consumer": "Oddkin/Common/CheckboxOption",

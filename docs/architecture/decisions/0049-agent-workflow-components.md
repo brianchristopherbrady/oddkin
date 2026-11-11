@@ -90,6 +90,13 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 
 **Gaps.** The design records the pages cite (`C:\SLT_Backup_10-21-2026\ai-redesign\*.json`) are not on disk. The Figma-only adapters exist because the badge, textarea, and disclosure specimens on pages 02 and 03 have fixed geometry: making those primitives responsive in Figma is the owner's follow-up, followed by a snapshot refresh (Agent 1).
 
+**Pages 10 to 14 (2026-11-10).** The owner approved page 11 (the change review) on 2026-11-09 and page 10 (the tool call) on 2026-11-10; pages 12 to 14 await review. The owner asked Agent 1 to settle the four open questions of pages 11 to 14 from research on shipped products and published guidance:
+
+- **Page 11, Apply and Undo failures:** the error names the operation that failed and says what the host confirmed, never more; the decision row keeps its buttons, so trying again is the same Apply or Undo. No generic Retry and no new status. Error-message guidance asks for precise, constructive messages that keep the person's work, never "An error occurred" ([NN/g](https://www.nngroup.com/articles/error-message-guidelines/), [GOV.UK](https://design-system.service.gov.uk/components/error-message/)); VS Code keeps Keep and Undo beside each change ([VS Code](https://code.visualstudio.com/docs/agents/run/review-code-edits)).
+- **Page 12, responses on their way:** a response stays "is being recorded" until the host confirms it: "1 response is being recorded. 2 requests still need your input." The page 08 wording already built ("1 response recorded.") claims a confirmation that has not happened, so it changes too. Status must show the system's actual state ([NN/g](https://www.nngroup.com/articles/visibility-system-status/)).
+- **Page 13, a blank Other:** a selected Other with no text is an error even beside other choices, and the draft stays. A conditionally revealed question is answered when its option is selected, each error state has its own message, and no field is cleared ([GOV.UK checkboxes](https://design-system.service.gov.uk/components/checkboxes/), [GOV.UK error message](https://design-system.service.gov.uk/components/error-message/)).
+- **Page 14, the restore confirmation:** focus goes to Keep current state, the least destructive action, with the confirmation's text as its description; if the checkpoint or its scope changes while confirming, the confirmation closes, says why, and focus returns to Restore. Restoring is not easily reversed ([WAI-ARIA APG dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/), [alert dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)); VS Code asks to confirm before Restore Checkpoint removes later requests, and Claude Code's rewind offers Never mind beside each restore ([VS Code](https://code.visualstudio.com/docs/agents/run/review-code-edits), [Claude Code](https://code.claude.com/docs/en/checkpointing)).
+
 **Rows.**
 
 | What | Row |
@@ -98,8 +105,10 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 | `odd-action-approval` to page 09 | Agent 2, item 21 |
 | The page 08 and 09 families exported into the design snapshot, for the parity tests | Agent 1, item 6: done on 2026-11-09 |
 | `odd-change-review` to page 11 (approved by the owner, 2026-11-09), and its family in the snapshot | Agent 2, item 24; Agent 1, item 7 |
+| `odd-tool-call` to page 10 (approved by the owner, 2026-11-10), and its family in the snapshot | Agent 2, item 25; Agent 1, item 8 |
+| `odd-activity`'s wording for responses on their way (page 12's answered question) | Agent 2, item 26 |
 | Agent 3's visual refinements of item 9 | Wait for their pages (20, 21, and 26 to 28); the `odd-citation` and `odd-transcript` tests go ahead |
-| Pages 10 and 12 to 30 | The owner's design session, then one implementation row per approved page |
+| Pages 12 to 30 | The owner's design session, then one implementation row per approved page |
 
 ## Context
 
