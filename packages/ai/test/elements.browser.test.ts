@@ -3589,7 +3589,7 @@ describe('odd-action-approval to Figma page 09', () => {
     expect(buttons.every((b) => b.hasAttribute('disabled'))).toBe(true);
   });
 
-  it('is laid out by its container: 640 px wide, 720 at most, 24 px in; below 480 px, 16 px in, its buttons stacked full width and 48 px tall', async () => {
+  it('is laid out by its container: 640 px wide, 720 at most, 24 px in; below 480 px, the narrow arrangement stacks its buttons, the density unchanged', async () => {
     const removeTheme = await loadTheme();
     try {
       const el = await approval();
@@ -3615,11 +3615,12 @@ describe('odd-action-approval to Figma page 09', () => {
       expect(buttons().map((b) => b.height)).toEqual([40, 40]);
       container.style.inlineSize = '479px';
       await frames();
-      expect(getComputedStyle(base).paddingInlineStart).toBe('16px');
+      // Only the arrangement changes with the width: padding and heights are the theme density's.
+      expect(getComputedStyle(base).paddingInlineStart).toBe('24px');
       const row = $(el, '[part="actions"]')!.getBoundingClientRect();
       const [approve, reject] = buttons();
-      expect([approve!.left, approve!.width, approve!.height]).toEqual([row.left, row.width, 48]);
-      expect([reject!.left, reject!.width, reject!.height]).toEqual([row.left, row.width, 48]);
+      expect([approve!.left, approve!.width, approve!.height]).toEqual([row.left, row.width, 40]);
+      expect([reject!.left, reject!.width, reject!.height]).toEqual([row.left, row.width, 40]);
       expect(reject!.top).toBeGreaterThan(approve!.bottom);
     } finally {
       removeTheme();

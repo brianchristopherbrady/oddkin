@@ -8,10 +8,13 @@ import { actionApprovalRecipeStyles } from './action-approval.recipe.styles.js';
  * components' field sheets, with odd-textarea's inset and resize, in body type (the disclosure
  * around it sets UI type).
  *
- * Its container sets its density (Figma page 09): 640 px wide by default and 720 px at most, the
- * rest of the space its parent's, 24 px in; below 480 px, compact: 16 px in, its controls 48 px
- * tall, the decision's buttons stacked. A button fills its box: its label's width in a row, the
- * row's when stacked (outside the container query, where WebKit ignores `::part()` rules).
+ * Its container sets its arrangement (Figma page 09): 640 px wide by default and 720 px at most,
+ * the rest of the space its parent's, 24 px in; below 480 px, the narrow arrangement: the
+ * decision's buttons stacked. Padding and control height stay the theme density's
+ * (`data-odd-density`), never the width's (responsiveness.md: density is separate from space;
+ * pages 08 and 09 draw 16 px and 48 px there, ADR 0049). A button fills its box: its label's
+ * width in a row, the row's when stacked (outside the container query, where WebKit ignores
+ * `::part()` rules).
  */
 export const actionApprovalStyles = css`
   ${actionApprovalRecipeStyles}
@@ -72,11 +75,6 @@ export const actionApprovalStyles = css`
     inline-size: 100%;
   }
   @container odd-action-approval (inline-size < 30rem) {
-    .base {
-      padding: ${token('space.md')};
-      --odd-button-height: ${token('control.height.lg')};
-      --odd-field-height: ${token('control.height.lg')};
-    }
     .actions {
       flex-direction: column;
       align-items: stretch;

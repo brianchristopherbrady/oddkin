@@ -6441,3 +6441,12 @@ Records and guidance only; no component code changed.
 | The fix | `text-entry.browser.test.ts` and `one-time-code.browser.test.ts` in Chromium, Firefox, and WebKit | 38 passed in Chromium; 33 passed and 5 skipped (Chromium-only input-method tests) in Firefox and WebKit; the narrow-allocation tests at default and compact density unchanged |
 | Probes | `mutate.mjs`, 2 mutants: the cells without their structural width; without their structural height | 2 of 2 killed |
 | Repository | `npm run build`, `npm run typecheck`, the components' node tests, `browser-set.mjs` on the AI and components contract tests and the components' accessibility, examples, Figma parity (forms), text entry, and one-time code files, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint` | Each exit 0: the components' node tests 473 passed; the browser set 1,124 passed in Chromium and 1,119 in Firefox and WebKit (the rest skipped); `components:one-time-code` 640 B gzip of 640 |
+
+## 2026-11-10 — odd-action-approval: the narrow arrangement leaves density to the theme (round 11, Agent 2; Agent 1's ask)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The approval's container | `packages/ai/test/elements.browser.test.ts`, "is laid out by its container": 640 px wide, 720 px at most, 600 px in a 600 px parent, 24 px in with its buttons in a row 40 px tall; at 479 px the buttons stack, each the row's width, still 40 px tall, and the padding stays 24 px | 347 passed and 4 skipped in each of Chromium, Firefox, and WebKit (`browser-set.mjs` on the AI contract, conversation, elements, layout, Figma parity, frameworks, patterns, and reflow files) |
+| Probes | `mutate.mjs`, 3 mutants: the narrow arrangement changing the padding, or the control height, with the width; the buttons not stacked below 480 px | 3 of 3 killed |
+| e2e | `e2e-when-free.mjs`: `e2e/docs-responsiveness.spec.ts` and `e2e/ai-demos.spec.ts` | 93 passed in Chromium, Firefox, and WebKit, workspace and packed builds |
+| Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write` | Each exit 0; `ai-chat` 68,934 B gzip of 68,992 (-28) and `ai:styles` 5,289 (-21), the width-driven padding and heights gone |

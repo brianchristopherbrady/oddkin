@@ -39,7 +39,7 @@ deliberate(
   ],
   [
     /^odd-action-approval\/Requested\/(light|dark)\s+\S+ (paddingLeft|paddingTop) /,
-    'Page 09 sets the approval 24 px in, and 16 px in below 480 px of its container.',
+    'Page 09 sets the approval 24 px in; below 480 px of its container it draws 16 px, where Oddkin changes only the arrangement and leaves padding to the theme density (ADR 0049).',
   ],
 );
 
@@ -1197,13 +1197,14 @@ describe('Figma parity: the reason field (page 08)', () => {
 // The decision row of page 08 (805:3, `Oddkin/AI/Internal/DecisionRow/*`): a family per operation,
 // a variant per state. Each state's frame and lines bind tokens; its buttons are named with their
 // state (`native button · Approve · Loading`), and the row shows those and no others, nor any line
-// the state does not draw. Full density (the approval in a 40rem container): the approval's
-// compact row binds the same tokens, its buttons stacked full width at 48 px (the elements tests
-// measure that). Not compared: the change review's, the dismissal's, and the undo's Unavailable
-// (the review has no capabilities), and the confirmation's Failed and Unavailable (a restore
-// request has no failure of its own before the record says `restore-failed`, and Restore… does
-// not open the confirmation while restoring is unavailable). A failed proposal keeps the buttons
-// of what failed (ADR 0049, "Pages 10 to 14"), so the review's three rows compare their Failed.
+// the state does not draw. Full density (the approval in a 40rem container): the approval's narrow
+// arrangement stacks the same buttons full width at the theme density's height, where pages 08 and
+// 09 draw 48 px (the elements tests measure that; ADR 0049). Not compared: the change review's, the
+// dismissal's, and the undo's Unavailable (the review has no capabilities), and the confirmation's
+// Failed and Unavailable (a restore request has no failure of its own before the record says
+// `restore-failed`, and Restore… does not open the confirmation while restoring is unavailable).
+// A failed proposal keeps the buttons of what failed (ADR 0049, "Pages 10 to 14"), so the review's
+// three rows compare their Failed.
 describe('Figma parity: the decision row (page 08)', () => {
   const LINES: [RegExp, string][] = [
     [/error/, '.decision-error'],
