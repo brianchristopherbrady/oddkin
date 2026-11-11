@@ -712,3 +712,275 @@ describe('editors keep the value, the caret, and the focus (row 30)', () => {
     }
   });
 });
+
+describe('navigation and data keep the place, the selection, and the focus (row 30)', () => {
+  it.each(SETUPS)('odd-tabs keep the chosen tab, its panel, and the focus (%s)', async (setup) => {
+    const el = await mount<HTMLElement & { value: string }>(
+      setup,
+      `<odd-tabs label="Project" value="overview"><odd-tab-panel label="Overview" value="overview">Overview text</odd-tab-panel><odd-tab-panel label="Recent activity" value="activity">Activity text <button id="in-activity">Open</button></odd-tab-panel><odd-tab-panel label="Settings and permissions" value="settings">Settings text</odd-tab-panel></odd-tabs>`,
+      'odd-tabs',
+    );
+    const tabs = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="tab"]')];
+    await userEvent.click(tabs[1]!);
+    await settle(el);
+    tabs[1]!.focus();
+    const unchanged = sameLook(...tabs);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(el.value).toBe('activity');
+      expect(tabs[1]!.getAttribute('aria-selected')).toBe('true');
+      expect(focused()).toBe(tabs[1]);
+      expect(container.querySelector<HTMLElement>('#in-activity')!.checkVisibility()).toBe(true);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-tree keeps the expanded and chosen items and the focus (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { items: unknown; value: string }>(
+        setup,
+        `<odd-tree label="Project files"></odd-tree>`,
+        'odd-tree',
+      );
+      el.items = [
+        {
+          id: 'components',
+          label: 'Components of the design system',
+          children: [
+            {
+              id: 'forms',
+              label: 'Forms and validation',
+              children: [
+                { id: 'text-field', label: 'Text field with a description' },
+                { id: 'combobox', label: 'Combobox' },
+              ],
+            },
+            { id: 'navigation', label: 'Navigation' },
+          ],
+        },
+        { id: 'guides', label: 'Guides' },
+      ];
+      await settle(el);
+      const items = () => [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="item"]')];
+      items()[0]!.focus();
+      const forward = setup === 'right to left' ? '{ArrowLeft}' : '{ArrowRight}';
+      await userEvent.keyboard(`${forward}{ArrowDown}${forward}{ArrowDown}{Enter}`);
+      await settle(el);
+      expect(el.value).toBe('text-field');
+      const item = focused();
+      const shown = items();
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        const now = items();
+        expect(now.length === shown.length && now.every((node, i) => node === shown[i])).toBe(true);
+        expect(el.value).toBe('text-field');
+        expect(focused()).toBe(item);
+        expectInside();
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-side-nav keeps the open group and the focused link across its wide arrangement (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { items: unknown; current: string }>(
+        setup,
+        `<odd-side-nav label="Primary"></odd-side-nav>`,
+        'odd-side-nav',
+      );
+      el.items = [
+        { id: 'overview', kind: 'link', label: 'Overview', href: '#overview' },
+        { id: 'components', kind: 'link', label: 'Components', href: '#components', badge: '12' },
+        {
+          id: 'guides',
+          kind: 'group',
+          label: 'Guides for teams',
+          items: [
+            { id: 'theming', kind: 'link', label: 'Theming', href: '#theming' },
+            { id: 'layout', kind: 'link', label: 'Layout and responsiveness', href: '#layout' },
+          ],
+        },
+        { id: 'create', kind: 'action', label: 'Create project', action: 'project.create' },
+      ];
+      el.current = 'components';
+      await settle(el);
+      await userEvent.click(part(el, 'group-toggle'));
+      await settle(el);
+      const link = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="link"]')].find((a) =>
+        a.textContent?.includes('Layout'),
+      )!;
+      link.focus();
+      const toggle = part(el, 'group-toggle');
+      const unchanged = sameLook(link, toggle);
+      // Wide enough for its wide arrangement (40rem), then narrow.
+      for (const width of [700, 400, 240, 700, 240]) {
+        await resize(width, el);
+        expect(toggle.getAttribute('aria-expanded')).toBe('true');
+        expect(focused()).toBe(link);
+        expect(link.checkVisibility()).toBe(true);
+        expectInside();
+        unchanged();
+      }
+    },
+  );
+
+  it.each(SETUPS)('odd-pagination keeps the focused page and stays inside (%s)', async (setup) => {
+    const el = await mount(
+      setup,
+      `<odd-pagination current="3" page-count="12" label="Search results"></odd-pagination>`,
+      'odd-pagination',
+    );
+    const pages = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="page"]')];
+    const four = pages.find((page) => page.textContent?.trim() === '4')!;
+    four.focus();
+    const unchanged = sameLook(...pages);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(focused()).toBe(four);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)('odd-toolbar keeps the focused control and stays inside (%s)', async (setup) => {
+    const el = await mount(
+      setup,
+      `<odd-toolbar label="Project actions"><odd-button id="filter">Filter</odd-button><span>3 selected</span><button id="export">Export</button><input id="search" aria-label="Search" value="atlas" size="8"><odd-button id="new">New item</odd-button></odd-toolbar>`,
+      'odd-toolbar',
+    );
+    const exported = container.querySelector<HTMLElement>('#export')!;
+    exported.focus();
+    const unchanged = sameLook(exported);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(focused()).toBe(exported);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)('odd-carousel keeps the shown slide and the focus (%s)', async (setup) => {
+    const el = await mount<HTMLElement & { current: string }>(
+      setup,
+      `<odd-carousel label="Workspace highlights" current="1"><div><h3>A place for every project</h3></div><div><h3>Keep your team in sync</h3><button id="in-second">Explore</button></div><div><h3>Move from idea to delivery</h3></div>${'<div><p>More</p></div>'.repeat(6)}</odd-carousel>`,
+      'odd-carousel',
+    );
+    const next = part(el, 'next');
+    next.focus();
+    await userEvent.keyboard('{Enter}');
+    await settle(el);
+    expect(el.current).toBe('2');
+    const unchanged = sameLook(next, part(el, 'previous'));
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(el.current).toBe('2');
+      expect(focused()).toBe(next);
+      expect(container.querySelector<HTMLElement>('#in-second')!.checkVisibility()).toBe(true);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)('odd-calendar keeps the chosen and the focused days (%s)', async (setup) => {
+    const el = await mount<HTMLElement & { value: string }>(
+      setup,
+      `<odd-calendar label="Publish date" value="2026-10-26"></odd-calendar>`,
+      'odd-calendar',
+    );
+    const day = (date: string) =>
+      el.shadowRoot!.querySelector<HTMLElement>(`[part~="day"][data-date="${date}"]`)!;
+    day('2026-10-26').focus();
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await settle(el);
+    expect(el.value).toBe('2026-11-02');
+    const chosen = day('2026-11-02');
+    const unchanged = sameLook(chosen);
+    for (const width of WIDTHS) {
+      await resize(width, el);
+      expect(el.value).toBe('2026-11-02');
+      expect(focused()).toBe(chosen);
+      expectInside();
+      unchanged();
+    }
+  });
+
+  it.each(SETUPS)(
+    'odd-split-panel keeps its position, the focused separator, and the panes’ share (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & { position: number }>(
+        setup,
+        `<odd-split-panel label="Resize files" position="30" min="10" max="80"><div slot="start">Files</div><div slot="end">Preview of the chosen file</div></odd-split-panel>`,
+        'odd-split-panel',
+      );
+      const separator = part(el, 'separator');
+      separator.focus();
+      await userEvent.keyboard(setup === 'right to left' ? '{ArrowLeft}' : '{ArrowRight}');
+      await settle(el);
+      const position = el.position;
+      expect(position).toBeGreaterThan(30);
+      const share = () => {
+        const [start, all] = [
+          part(el, 'start').getBoundingClientRect(),
+          el.getBoundingClientRect(),
+        ];
+        return start.width / all.width;
+      };
+      const first = share();
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(el.position).toBe(position);
+        expect(focused()).toBe(separator);
+        expect(share()).toBeCloseTo(first, 1);
+        expectInside();
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-table keeps its sort, the chosen rows, and the focus, scrolling on its own (%s)',
+    async (setup) => {
+      const el = await mount<HTMLElement & Record<string, unknown>>(
+        setup,
+        `<odd-table label="Projects"></odd-table>`,
+        'odd-table',
+      );
+      Object.assign(el, {
+        columns: [
+          { key: 'name', label: 'Project', sortable: true },
+          { key: 'owner', label: 'Owner' },
+          { key: 'tasks', label: 'Open tasks', align: 'end', sortable: true },
+        ],
+        rows: [
+          { id: 'b', cells: { name: 'Beacon', owner: 'Jonas Lindqvist', tasks: 31 } },
+          { id: 'a', cells: { name: 'Atlas', owner: 'Mira Okafor', tasks: 12 } },
+          { id: 'c', cells: { name: 'Cinder', owner: 'Ada Brennan', tasks: 4 } },
+        ],
+        selection: 'multiple',
+      });
+      await settle(el);
+      el.sort = 'name';
+      el.sortDirection = 'ascending';
+      await settle(el);
+      const boxes = () => [
+        ...el.shadowRoot!.querySelectorAll<HTMLInputElement>('tbody input[type="checkbox"]'),
+      ];
+      await userEvent.click(boxes()[1]!);
+      await settle(el);
+      const box = boxes()[1]!;
+      box.focus();
+      const selected = el.selected;
+      const order = () =>
+        [...el.shadowRoot!.querySelectorAll('tbody tr')].map((row) => row.textContent?.trim());
+      const rows = order();
+      for (const width of WIDTHS) {
+        await resize(width, el);
+        expect(el.selected).toEqual(selected);
+        expect(order()).toEqual(rows);
+        expect(focused()).toBe(box);
+        expectInside();
+      }
+    },
+  );
+});

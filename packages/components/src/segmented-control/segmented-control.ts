@@ -21,6 +21,7 @@ export { changeEvent, inputEvent } from '../form-control/radio-control.js';
  * @previewRole segmented
  * @useFor A compact choice among two to five short values that takes effect at once: a view mode, a preview size.
  * @notFor Switching between content panels (use odd-tabs); options that need descriptions (use odd-radio-group); actions (use odd-button or odd-toolbar).
+ * @notFor Long labels, many options, or a narrow host (use odd-select or odd-radio-group).
  * @limitation Option descriptions are each segment's tooltip (`title`); groups (`<optgroup>`) are drawn as one run of segments.
  * @category Forms
  * @customization 1 2 3
