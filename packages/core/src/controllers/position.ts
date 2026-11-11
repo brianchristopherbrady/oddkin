@@ -122,8 +122,14 @@ export class PositionController implements Controller {
         if (live) this.#place();
       });
     };
+    const resize = new ResizeObserver(resized);
+    resize.observe(anchor);
+    resize.observe(surface);
     const targets: EventTarget[] = [window];
+    // A box around the anchor that changes size can move it without resizing it (a parent that
+    // narrows, text before it that wraps or grows): those boxes are observed too.
     for (let el = parentOf(anchor); el; el = parentOf(el)) {
+      resize.observe(el);
       const style = getComputedStyle(el);
       if (/auto|scroll|hidden|overlay/.test(style.overflowX + style.overflowY)) targets.push(el);
     }
@@ -132,9 +138,6 @@ export class PositionController implements Controller {
       target.addEventListener('scroll', place, { passive: true });
       target.addEventListener('resize', place, { passive: true });
     }
-    const resize = new ResizeObserver(resized);
-    resize.observe(anchor);
-    resize.observe(surface);
     this.#stop = () => {
       live = false;
       if (resizeFrame !== undefined) view.cancelAnimationFrame(resizeFrame);

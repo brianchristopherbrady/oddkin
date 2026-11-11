@@ -229,6 +229,50 @@ describe('PositionController', () => {
     expect(rect(surface).top).toBe(140);
   });
 
+  it('follows an anchor that its parent moves without resizing it', async () => {
+    // Text before the anchor wraps when the parent narrows: the anchor moves, its size stays.
+    const parent = styled(document.createElement('p'), { width: '400px', margin: '0' });
+    parent.append('Container queries respond to the component ');
+    const anchor = styled(document.createElement('button'), {
+      width: '80px',
+      height: '20px',
+      padding: '0',
+      border: '0',
+    });
+    const surface = styled(document.createElement('div'), {
+      width: '100px',
+      height: '50px',
+      padding: '0',
+      border: '0',
+    });
+    surface.popover = 'manual';
+    parent.append(anchor);
+    container.append(parent, surface);
+    position(anchor, surface, { offset: 4 });
+    surface.showPopover();
+    await settle();
+    await frames();
+    for (const width of ['260px', '150px', '400px']) {
+      const before = rect(anchor);
+      parent.style.setProperty('width', width);
+      await frames();
+      expect(rect(anchor)).not.toEqual(before);
+      expect(rect(surface)).toMatchObject({
+        left: rect(anchor).left,
+        top: rect(anchor).bottom + 4,
+      });
+    }
+    // Closed, nothing is observed: a narrower parent places nothing.
+    surface.hidePopover();
+    await frames();
+    const closed = [surface.style.getPropertyValue('left'), surface.style.getPropertyValue('top')];
+    parent.style.setProperty('width', '150px');
+    await frames();
+    expect([surface.style.getPropertyValue('left'), surface.style.getPropertyValue('top')]).toEqual(
+      closed,
+    );
+  });
+
   it('sizes a surface from resize placements without observer-loop errors and cancels queued work on close', async () => {
     const loopErrors: string[] = [];
     const recordError = (event: ErrorEvent) => {
