@@ -114,6 +114,12 @@ try {
     for (const [command, target] of Object.entries(manifest.bin ?? {}))
       if (target.startsWith('./') || !files.includes(target))
         failures.push(`${name}: bin ${command} must name a packed file without ./ (${target})`);
+    // Nothing runs when the package is installed (RF-13); npm builds a binding.gyp even without a script.
+    for (const script of ['preinstall', 'install', 'postinstall', 'prepare'])
+      if (manifest.scripts?.[script])
+        failures.push(`${name}: has a ${script} script; nothing may run on install`);
+    if (files.includes('binding.gyp'))
+      failures.push(`${name}: tarball has binding.gyp, which npm builds on install`);
     const agentBytes = info.files
       .filter((file) => file.path.startsWith('agent/'))
       .reduce((sum, file) => sum + file.size, 0);
@@ -423,5 +429,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, keywords, repository URL and directory, homepage, issues URL, module type, sideEffects, and types for every JavaScript export; ${RESPONSIVENESS_PACKAGES.join(' and ')} explicitly pack ${RESPONSIVENESS_ASSET} matching ${RESPONSIVENESS_SOURCE}; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, keywords, repository URL and directory, homepage, issues URL, module type, sideEffects, and types for every JavaScript export, and nothing runs on install; ${RESPONSIVENESS_PACKAGES.join(' and ')} explicitly pack ${RESPONSIVENESS_ASSET} matching ${RESPONSIVENESS_SOURCE}; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
 );

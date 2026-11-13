@@ -258,7 +258,7 @@ Where:
 - in CI, as an artifact of the run that verified the candidate (RF-10);
 - with the owner's approval, as GitHub Release assets (D-11).
 
-Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `results/` (the Vitest and Playwright JSON reports) and `impact/` (the report against the previous commit, not yet against the previous release). The other steps' outcomes and times come from the GitHub API rather than from `results/`. Not yet: the SBOM, the release notes, and the registry smoke.
+Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `results/` (the Vitest and Playwright JSON reports) and `impact/` (the report against the previous commit, not yet against the previous release). The other steps' outcomes and times come from the GitHub API rather than from `results/`. Since 2026-11-12 (RF-13) it also writes `sbom.json` (`npm sbom`, CycloneDX, the eight packages and their runtime dependencies; its hash in `evidence.json`), and in CI it records the `npm audit` counts. Not yet: the release notes and the registry smoke.
 
 ## 15. npm scope and trusted-publishing setup
 
@@ -276,9 +276,7 @@ Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `re
 
 ## 16. CI and verification sequence
 
-**Every push to `main` (exists, `ci.yml`):** `npm ci`, Playwright install, lint, typecheck, build, node project, browser project per engine with `--no-file-parallelism`, `verify:metadata`, size, e2e, `verify:packs`, the change-impact report against the previous commit (CF.2), and the evidence artifact (RF-10). To add:
-
-- an `npm audit --omit=dev` report, kept informational at first (RF-13).
+**Every push to `main` (exists, `ci.yml`):** `npm ci`, Playwright install, lint, typecheck, build, node project, browser project per engine with `--no-file-parallelism`, `verify:metadata`, size, e2e, `verify:packs`, the change-impact report against the previous commit (CF.2), an `npm audit --omit=dev` of the published packages, informational (RF-13, since 2026-11-12), and the evidence artifact with its SBOM (RF-10, RF-13).
 
 **Release candidate, from a clean checkout:**
 
@@ -311,13 +309,13 @@ Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `re
 | Topic | Current | Class | Task |
 | --- | --- | --- | --- |
 | Runtime dependencies | None outside `@oddkin`, enforced by `verify-packs` | Verified | — |
-| Install scripts in packages | None | Verified | Add a `verify-packs` rule to keep it so (RF-13) |
+| Install scripts in packages | None; `verify-packs` fails on a `preinstall`, `install`, `postinstall`, or `prepare` script or a packed `binding.gyp` (2026-11-12) | Verified | — |
 | Tarball contents | No `src`, `test`, or stale files; explicit `files` | Verified | — |
 | Workflow permissions | `contents: read`, and in `ci.yml` `actions: read` (the evidence reads its job's step times); Pages deploy uses `id-token: write` in its own job | Verified | — |
-| Action pinning | Major tags (`@v7`), not commits | Partial | RF-13 (pin by SHA, or record the decision) |
-| Dependency updates | No Dependabot or Renovate | Planned | RF-13 |
+| Action pinning | Every action pinned to a release's commit, its version in a comment (2026-11-12) | Verified | Dependabot proposes the updates |
+| Dependency updates | Dependabot, weekly, for npm (grouped: development minor and patch; runtime) and GitHub Actions (`.github/dependabot.yml`, 2026-11-12) | Verified | — |
 | Vulnerability reporting | `SECURITY.md` (2026-10-30) sends reports to GitHub private vulnerability reporting, which the owner enabled (GitHub's API reports it enabled on 2026-11-01) | Partial | RF-13 |
-| Provenance and SBOM | None | Planned | RF-12, RF-09 |
+| Provenance and SBOM | The SBOM is in every evidence bundle (`sbom.json`, 2026-11-12); no provenance yet | Partial | RF-12 |
 | Publishing credentials | The owner's interactive 2FA; no stored token | Verified for now | RF-12 |
 | Analyzer's bundled TypeScript | Exact `typescript@5.9.3`, Node-only | Verified | Track its advisories (RF-13) |
 | Secrets in artifacts | Evidence bundle design excludes source and environment secrets | Planned | RF-09 test |
@@ -556,6 +554,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Done when:** a reporting channel exists; dependency and action updates are proposed weekly; the SBOM is in the evidence bundle.
 - **Risks:** update noise; group the updates.
 - **State (2026-10-30, Agent 1):** `SECURITY.md` points to GitHub private vulnerability reporting (D-8), which the owner enables under the repository's Settings, Security. Open: Dependabot, the audit report, action pins, and the SBOM.
+- **State (2026-11-12, Agent 1):** done. `.github/dependabot.yml` proposes npm and GitHub Actions updates weekly, grouped; every action is pinned to a release's commit; CI runs `npm audit --omit=dev --workspace=packages`, informational, and keeps its JSON in the evidence (0 advisories in 20 runtime dependencies on 2026-11-12); the evidence bundle has `sbom.json` from `npm sbom` (the private workspace root gained `"version": "0.0.0"`, which `npm sbom` needs); `verify-packs` fails on an install script or a packed `binding.gyp`.
 
 ### RF-14 Metadata and kit order at release
 

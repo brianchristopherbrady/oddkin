@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // The release evidence bundle (release-evidence.v0; docs/commercialization/release-foundation-plan.md
-// RF-09, RF-10): what this checkout would publish, with its hashes, and the checks that ran on it.
+// RF-09, RF-10, RF-13): what this checkout would publish, with its hashes, its SBOM, and the
+// checks that ran on it.
 //   node scripts/release/evidence.mjs --out <dir> [--allow-dirty] [--ci]
-// Writes <dir>/evidence.json and <dir>/EVIDENCE.md. A local run needs no network. Check results
-// are read from <dir>/results (vitest-<run>.json, e2e.json) and <dir>/impact (status.json,
-// report.json) when CI wrote them; --ci also reads this job's step times from the GitHub API.
+// Writes <dir>/evidence.json, <dir>/EVIDENCE.md, and <dir>/sbom.json. A local run needs no
+// network. Check results are read from <dir>/results (vitest-<run>.json, e2e.json),
+// <dir>/impact (status.json, report.json), and <dir>/npm-audit.json when CI wrote them; --ci also
+// reads this job's step times from the GitHub API.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -74,7 +76,36 @@ export function packDryRun(directories, root = ROOT) {
   );
 }
 
+/** The CycloneDX SBOM of the given workspaces and their runtime dependencies (`npm sbom`). */
+export function sbomOf(directories, root = ROOT) {
+  return JSON.parse(
+    npm(
+      [
+        'sbom',
+        '--sbom-format',
+        'cyclonedx',
+        '--sbom-type',
+        'library',
+        '--omit',
+        'dev',
+        ...directories.map((dir) => `--workspace=${dir}`),
+      ],
+      root,
+    ),
+  );
+}
+
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const serialize = (value) => `${JSON.stringify(value, null, 2)}\n`;
+// npm reports `npm error code <CODE>`, then the message, then where its log is.
+const reasonOf = (error) => {
+  const lines = String(error?.stderr || error?.message || error)
+    .split('\n')
+    .map((line) => line.replace(/^npm error /, '').trim())
+    .filter((line) => line && !line.startsWith('A complete log of this run'));
+  const code = /^code (\S+)$/.exec(lines[0] ?? '')?.[1];
+  return (code ? `${code}: ${lines[1] ?? ''}` : (lines[0] ?? '')).trim() || 'unknown error';
+};
 const readJson = async (path) =>
   existsSync(path) ? JSON.parse(await readFile(path, 'utf8')) : undefined;
 const tally = (items, key) => {
@@ -117,9 +148,26 @@ export function summarizePlaywright(report) {
   };
 }
 
+/** Advisory counts by severity from `npm audit --json`, or why there are none. */
+export function summarizeAudit(report) {
+  const counts = report?.metadata?.vulnerabilities;
+  if (!counts)
+    return {
+      state: 'unavailable',
+      reason: String(report?.error?.summary ?? report?.message ?? 'no vulnerability counts'),
+    };
+  const severities = ['critical', 'high', 'moderate', 'low', 'info'];
+  return {
+    state: 'read',
+    total: counts.total ?? 0,
+    ...Object.fromEntries(severities.map((severity) => [severity, counts[severity] ?? 0])),
+  };
+}
+
 /**
  * The check results CI left in `dir`: `results/vitest-<run>.json` (Vitest's JSON reporter),
- * `results/e2e.json` (Playwright's), and `impact/status.json` with `impact/report.json`.
+ * `results/e2e.json` (Playwright's), `impact/status.json` with `impact/report.json`, and
+ * `npm-audit.json` (`npm audit --omit=dev --json`).
  */
 export async function readResults(dir) {
   const tests = [];
@@ -139,6 +187,7 @@ export async function readResults(dir) {
       });
     }
   const e2eReport = await readJson(join(resultsDir, 'e2e.json'));
+  const auditReport = await readJson(join(dir, 'npm-audit.json'));
   const status = await readJson(join(dir, 'impact', 'status.json'));
   const report = status && (await readJson(join(dir, 'impact', 'report.json')));
   const impact = status && {
@@ -154,6 +203,7 @@ export async function readResults(dir) {
     tests,
     e2e: e2eReport ? summarizePlaywright(e2eReport) : null,
     impact: impact ?? null,
+    audit: auditReport ? summarizeAudit(auditReport) : null,
   };
 }
 
@@ -217,7 +267,8 @@ function ciRun(env) {
 
 /**
  * Collect the evidence for the checkout at `root`. A dirty working tree is refused unless
- * `allowDirty`; either way the evidence records it. `out` is where CI left its results.
+ * `allowDirty`; either way the evidence records it. `out` is where CI left its results. The
+ * SBOM itself is returned as `sbomDocument`, which `writeEvidence` writes to sbom.json.
  */
 export async function collectEvidence({
   root = ROOT,
@@ -225,6 +276,7 @@ export async function collectEvidence({
   allowDirty = false,
   ci = false,
   pack = packDryRun,
+  sbom = sbomOf,
   env = process.env,
 } = {}) {
   const source = readSource(root);
@@ -260,9 +312,30 @@ export async function collectEvidence({
       if (existsSync(path))
         artifacts.push({ path: `${directory}/${file}`, sha256: sha256(await readFile(path)) });
     }
-  const results = out ? await readResults(out) : { tests: [], e2e: null, impact: null };
+  const results = out
+    ? await readResults(out)
+    : { tests: [], e2e: null, impact: null, audit: null };
   const steps = ci ? await readSteps(env) : null;
-  const recorded = results.tests.length > 0 || results.e2e || results.impact || steps;
+  const recorded =
+    results.tests.length > 0 || results.e2e || results.impact || results.audit || steps;
+  let sbomDocument;
+  let sbomRecord;
+  try {
+    sbomDocument = sbom(
+      listed.map((pkg) => pkg.directory),
+      root,
+    );
+    sbomRecord = {
+      state: 'written',
+      file: 'sbom.json',
+      format: `${sbomDocument.bomFormat} ${sbomDocument.specVersion}`,
+      components: (sbomDocument.components ?? []).length,
+      sha256: sha256(serialize(sbomDocument)),
+    };
+  } catch (error) {
+    sbomDocument = undefined;
+    sbomRecord = { state: 'unavailable', reason: reasonOf(error) };
+  }
   return {
     schema: SCHEMA,
     generatedAt: new Date().toISOString(),
@@ -275,12 +348,14 @@ export async function collectEvidence({
     },
     packages,
     artifacts,
+    sbom: sbomRecord,
     checks: recorded
       ? { state: 'recorded', ...results, steps }
       : {
           state: 'not-run',
           reason: 'No check results were supplied; CI writes them beside the evidence.',
         },
+    ...(sbomDocument && { sbomDocument }),
   };
 }
 
@@ -324,6 +399,12 @@ export function renderEvidenceMarkdown(evidence) {
     '| --- | --- |',
     ...evidence.artifacts.map((artifact) => `| ${artifact.path} | \`${artifact.sha256}\` |`),
     '',
+    '## Software bill of materials',
+    '',
+    evidence.sbom.state === 'written'
+      ? `\`${evidence.sbom.file}\`: ${evidence.sbom.format}, ${plural(evidence.sbom.components, 'component')}, as \`npm sbom\` writes it (runtime dependencies only), SHA-256 \`${evidence.sbom.sha256}\`.`
+      : `Not written: ${evidence.sbom.reason}.`,
+    '',
     '## Checks',
     '',
   ];
@@ -362,6 +443,20 @@ export function renderEvidenceMarkdown(evidence) {
         : []),
       '',
     );
+  if (checks.audit)
+    lines.push(
+      checks.audit.state === 'read'
+        ? `npm audit of the runtime dependencies (informational): ${plural(checks.audit.total, 'advisory', 'advisories')}${
+            checks.audit.total
+              ? ` (${['critical', 'high', 'moderate', 'low', 'info']
+                  .filter((severity) => checks.audit[severity])
+                  .map((severity) => `${checks.audit[severity]} ${severity}`)
+                  .join(', ')})`
+              : ''
+          }.`
+        : `npm audit unavailable: ${checks.audit.reason}.`,
+      '',
+    );
   if (checks.steps?.state === 'read')
     lines.push(
       `Steps of job \`${checks.steps.job}\` until this one:`,
@@ -377,13 +472,16 @@ export function renderEvidenceMarkdown(evidence) {
   return `${lines.join('\n')}\n`;
 }
 
-const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+const plural = (count, word, words = `${word}s`) => `${count} ${count === 1 ? word : words}`;
 
 /** The evidence in one line, for a CI annotation on the run's page. */
 export function renderEvidenceLine(evidence) {
   const { source, checks } = evidence;
   const parts = [
     `Packed ${plural(evidence.packages.length, 'package')} and hashed ${plural(evidence.artifacts.length, 'generated file')} at commit ${source.commit.slice(0, 12)}${source.dirty ? ' (dirty)' : ''}`,
+    evidence.sbom.state === 'written'
+      ? `SBOM: ${plural(evidence.sbom.components, 'component')}`
+      : 'no SBOM',
   ];
   if (checks.state === 'not-run') parts.push('checks not run');
   else {
@@ -396,6 +494,12 @@ export function renderEvidenceLine(evidence) {
         `e2e: ${checks.e2e.passed} passed${checks.e2e.failed ? ` (${checks.e2e.failed} failed)` : ''}${checks.e2e.flaky ? `, ${checks.e2e.flaky} flaky` : ''}`,
       );
     if (checks.impact) parts.push(`change impact: ${checks.impact.state}`);
+    if (checks.audit)
+      parts.push(
+        checks.audit.state === 'read'
+          ? `npm audit: ${plural(checks.audit.total, 'advisory', 'advisories')}`
+          : 'npm audit unavailable',
+      );
     if (checks.steps)
       parts.push(
         checks.steps.state === 'read'
@@ -406,11 +510,13 @@ export function renderEvidenceLine(evidence) {
   return parts.join(' · ');
 }
 
-/** Write evidence.json and EVIDENCE.md into `out`. */
+/** Write evidence.json and EVIDENCE.md into `out`, and sbom.json when the SBOM was made. */
 export async function writeEvidence(out, evidence) {
+  const { sbomDocument, ...record } = evidence;
   await mkdir(out, { recursive: true });
-  await writeFile(join(out, 'evidence.json'), `${JSON.stringify(evidence, null, 2)}\n`);
-  await writeFile(join(out, 'EVIDENCE.md'), renderEvidenceMarkdown(evidence));
+  await writeFile(join(out, 'evidence.json'), serialize(record));
+  await writeFile(join(out, 'EVIDENCE.md'), renderEvidenceMarkdown(record));
+  if (sbomDocument) await writeFile(join(out, 'sbom.json'), serialize(sbomDocument));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -436,7 +542,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         `::notice title=Release evidence::${renderEvidenceLine(evidence).replace(/%/g, '%25')}`,
       );
     console.log(
-      `Release evidence: ${join(out, 'evidence.json')} (${evidence.packages.length} packages, ${evidence.artifacts.length} files hashed, commit ${evidence.source.commit.slice(0, 12)}${evidence.source.dirty ? ', dirty' : ''}; checks ${evidence.checks.state}).`,
+      `Release evidence: ${join(out, 'evidence.json')} (${evidence.packages.length} packages, ${evidence.artifacts.length} files hashed, commit ${evidence.source.commit.slice(0, 12)}${evidence.source.dirty ? ', dirty' : ''}; SBOM ${evidence.sbom.state === 'written' ? `of ${evidence.sbom.components} components` : `not written (${evidence.sbom.reason})`}; checks ${evidence.checks.state}).`,
     );
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);

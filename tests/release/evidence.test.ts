@@ -14,6 +14,8 @@ import {
   renderEvidenceLine,
   renderEvidenceMarkdown,
   SCHEMA,
+  summarizeAudit,
+  writeEvidence,
   type PackEntry,
   type ReleaseEvidence,
 } from '../../scripts/release/evidence.mjs';
@@ -49,6 +51,13 @@ const fakePack = (directories: readonly string[], at: string): PackEntry[] =>
       unpackedSize: 4096,
     };
   });
+const fakeSbom = (directories: readonly string[]) => ({
+  bomFormat: 'CycloneDX',
+  specVersion: '1.5',
+  components: directories.map((directory) => ({ purl: `pkg:npm/${directory}` })),
+});
+const sbomHash = (directories: readonly string[]) =>
+  sha256(Buffer.from(`${JSON.stringify(fakeSbom(directories), null, 2)}\n`));
 
 /** A committed checkout with one publishable package and one private one. */
 async function fixtureRepo() {
@@ -82,7 +91,7 @@ async function fixtureRepo() {
 describe('release evidence', () => {
   it('records the source, the environment, each publishable package, and the generated files', async () => {
     const { dir, commit } = await fixtureRepo();
-    const evidence = await collectEvidence({ root: dir, pack: fakePack, env: {} });
+    const evidence = await collectEvidence({ root: dir, pack: fakePack, sbom: fakeSbom, env: {} });
     expect(evidence.schema).toBe(SCHEMA);
     expect(Date.parse(evidence.generatedAt)).not.toBeNaN();
     expect(evidence.source).toEqual({ commit, dirty: false, changes: 0 });
@@ -107,33 +116,44 @@ describe('release evidence', () => {
       },
     ]);
     expect(evidence.checks).toEqual({ state: 'not-run', reason: expect.any(String) });
+    expect(evidence.sbom).toEqual({
+      state: 'written',
+      file: 'sbom.json',
+      format: 'CycloneDX 1.5',
+      components: 1,
+      sha256: sbomHash(['packages/demo']),
+    });
     expect(renderEvidenceLine(evidence)).toBe(
-      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · checks not run`,
+      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · SBOM: 1 component · checks not run`,
     );
   });
 
   it('refuses a dirty working tree unless told to record it', async () => {
     const { dir } = await fixtureRepo();
     await writeFile(join(dir, 'notes.txt'), 'uncommitted\n');
-    await expect(collectEvidence({ root: dir, pack: fakePack, env: {} })).rejects.toThrow(
-      /1 uncommitted change/,
-    );
+    await expect(
+      collectEvidence({ root: dir, pack: fakePack, sbom: fakeSbom, env: {} }),
+    ).rejects.toThrow(/1 uncommitted change/);
     const evidence = await collectEvidence({
       root: dir,
       pack: fakePack,
+      sbom: fakeSbom,
       env: {},
       allowDirty: true,
     });
     expect(evidence.source).toMatchObject({ dirty: true, changes: 1 });
     expect(renderEvidenceMarkdown(evidence)).toContain('**dirty** (1 uncommitted change(s))');
-    expect(renderEvidenceLine(evidence)).toMatch(/ \(dirty\) · checks not run$/);
+    expect(renderEvidenceLine(evidence)).toMatch(
+      / \(dirty\) · SBOM: 1 component · checks not run$/,
+    );
   });
 
-  it('records this checkout as git reports it, with the eight published packages', async () => {
+  it('records this checkout as git reports it, with the eight published packages and their SBOM', async () => {
     const porcelain = execFileSync('git', ['status', '--porcelain'], {
       cwd: root,
       encoding: 'utf8',
     });
+    // The real `npm sbom`: it needs the private workspace root to have a version.
     const evidence = await collectEvidence({ allowDirty: true, pack: fakePack, env: {} });
     expect(evidence.source.dirty).toBe(porcelain.trim() !== '');
     expect(evidence.source.commit).toBe(
@@ -151,6 +171,47 @@ describe('release evidence', () => {
     ]);
     for (const artifact of evidence.artifacts)
       expect(sha256(await readFile(join(root, artifact.path)))).toBe(artifact.sha256);
+    expect(evidence.sbom).toMatchObject({
+      state: 'written',
+      format: expect.stringMatching(/^CycloneDX /),
+    });
+    const purls = (evidence.sbomDocument?.components as { purl: string }[]).map((c) => c.purl);
+    for (const pkg of evidence.packages)
+      expect(purls).toContain(`pkg:npm/${pkg.name.replace('@', '%40')}@${pkg.version}`);
+  });
+
+  it('writes the SBOM beside the evidence, or records why there is none', async () => {
+    const { dir } = await fixtureRepo();
+    const npmFailure = Object.assign(new Error('Command failed: npm sbom'), {
+      stderr:
+        'npm error code EINVALIDPURLTYPE\nnpm error Invalid type "range" of package "acme@"\nnpm error A complete log of this run can be found in: x.log\n',
+    });
+    const failed = await collectEvidence({
+      root: dir,
+      pack: fakePack,
+      sbom: () => {
+        throw npmFailure;
+      },
+      env: {},
+    });
+    const reason = 'EINVALIDPURLTYPE: Invalid type "range" of package "acme@"';
+    expect(failed.sbom).toEqual({ state: 'unavailable', reason });
+    expect(failed.sbomDocument).toBeUndefined();
+    expect(renderEvidenceMarkdown(failed)).toContain(`Not written: ${reason}.`);
+    expect(renderEvidenceLine(failed)).toContain(' · no SBOM · ');
+    const out = await tempDir('oddkin-evidence-write-');
+    await writeEvidence(out, failed);
+    expect(existsSync(join(out, 'sbom.json'))).toBe(false);
+
+    const evidence = await collectEvidence({ root: dir, pack: fakePack, sbom: fakeSbom, env: {} });
+    await writeEvidence(out, evidence);
+    expect(sha256(await readFile(join(out, 'sbom.json')))).toBe(sbomHash(['packages/demo']));
+    const written = JSON.parse(await readFile(join(out, 'evidence.json'), 'utf8')) as object;
+    expect(written).not.toHaveProperty('sbomDocument');
+    expect(written).toMatchObject({ sbom: { state: 'written', file: 'sbom.json' } });
+    expect(await readFile(join(out, 'EVIDENCE.md'), 'utf8')).toContain(
+      '`sbom.json`: CycloneDX 1.5, 1 component',
+    );
   });
 
   it('keeps environment values and sources out of the bundle', async () => {
@@ -159,6 +220,7 @@ describe('release evidence', () => {
     const evidence = await collectEvidence({
       root: dir,
       pack: fakePack,
+      sbom: fakeSbom,
       env: {
         ODDKIN_EVIDENCE_CANARY: canary,
         GITHUB_TOKEN: canary,
@@ -247,6 +309,16 @@ describe('release evidence', () => {
         checks: [{ state: 'selected' }, { state: 'selected' }, { state: 'reused' }],
       }),
     );
+    await writeFile(
+      join(out, 'npm-audit.json'),
+      JSON.stringify({
+        auditReportVersion: 2,
+        vulnerabilities: {},
+        metadata: {
+          vulnerabilities: { info: 0, low: 1, moderate: 0, high: 2, critical: 0, total: 3 },
+        },
+      }),
+    );
 
     const results = await readResults(out);
     expect(results.tests).toEqual([
@@ -273,18 +345,51 @@ describe('release evidence', () => {
       checks: { selected: 2, reused: 1 },
       fullVerification: null,
     });
+    expect(results.audit).toEqual({
+      state: 'read',
+      total: 3,
+      critical: 0,
+      high: 2,
+      moderate: 0,
+      low: 1,
+      info: 0,
+    });
 
     const { dir, commit } = await fixtureRepo();
-    const evidence = await collectEvidence({ root: dir, out, pack: fakePack, env: {} });
+    const evidence = await collectEvidence({
+      root: dir,
+      out,
+      pack: fakePack,
+      sbom: fakeSbom,
+      env: {},
+    });
     expect(evidence.checks).toEqual({ state: 'recorded', ...results, steps: null });
     const markdown = renderEvidenceMarkdown(evidence);
     expect(markdown).toContain('| chromium | 8 | 1 | 1 |');
     expect(markdown).toContain('| firefox | 1 | 1 | 0 | 1 |');
     expect(markdown).toContain(`Change impact: written against \`${base.slice(0, 12)}\``);
+    expect(markdown).toContain(
+      'npm audit of the runtime dependencies (informational): 3 advisories (2 high, 1 low).',
+    );
     expect(markdown).not.toContain('Not run');
     expect(renderEvidenceLine(evidence)).toBe(
-      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · Vitest: chromium 8 passed (1 failed), node 3 passed · e2e: 2 passed (1 failed), 1 flaky · change impact: written`,
+      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · SBOM: 1 component · Vitest: chromium 8 passed (1 failed), node 3 passed · e2e: 2 passed (1 failed), 1 flaky · change impact: written · npm audit: 3 advisories`,
     );
+  });
+
+  it('says why npm audit gave no counts', () => {
+    expect(
+      summarizeAudit({ error: { code: 'ENOTFOUND', summary: 'request to the registry failed' } }),
+    ).toEqual({ state: 'unavailable', reason: 'request to the registry failed' });
+    expect(summarizeAudit({ metadata: { vulnerabilities: { total: 0 } } })).toEqual({
+      state: 'read',
+      total: 0,
+      critical: 0,
+      high: 0,
+      moderate: 0,
+      low: 0,
+      info: 0,
+    });
   });
 
   it("reads this job's step times from GitHub, and says when it cannot", async () => {
@@ -360,6 +465,7 @@ describe.skipIf(!process.env['CI'] && !process.env['ODDKIN_RELEASE_TESTS'])(
         { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] },
       );
       expect(existsSync(join(out, 'EVIDENCE.md'))).toBe(true);
+      expect(existsSync(join(out, 'sbom.json'))).toBe(true);
       const evidence = JSON.parse(
         await readFile(join(out, 'evidence.json'), 'utf8'),
       ) as ReleaseEvidence;

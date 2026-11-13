@@ -76,7 +76,34 @@ export interface CheckResults {
   tests: VitestRun[];
   e2e: PlaywrightSummary | null;
   impact: ImpactEvidence | null;
+  audit: AuditEvidence | null;
 }
+
+/** `npm audit --omit=dev` counts by severity (informational; RF-13). */
+export type AuditEvidence =
+  | {
+      state: 'read';
+      total: number;
+      critical: number;
+      high: number;
+      moderate: number;
+      low: number;
+      info: number;
+    }
+  | { state: 'unavailable'; reason: string };
+
+/** The SBOM written beside the evidence (`npm sbom`, CycloneDX; RF-13). */
+export type SbomEvidence =
+  | {
+      state: 'written';
+      file: 'sbom.json';
+      /** For example `CycloneDX 1.5`. */
+      format: string;
+      components: number;
+      /** Of sbom.json as written. */
+      sha256: string;
+    }
+  | { state: 'unavailable'; reason: string };
 
 export type StepEvidence =
   | {
@@ -107,9 +134,15 @@ export interface ReleaseEvidence {
   };
   packages: EvidencePackage[];
   artifacts: EvidenceArtifact[];
+  sbom: SbomEvidence;
   checks:
     | ({ state: 'recorded'; steps: StepEvidence | null } & CheckResults)
     | { state: 'not-run'; reason: string };
+}
+
+export interface CollectedEvidence extends ReleaseEvidence {
+  /** The SBOM itself: `writeEvidence` writes it to sbom.json, not into evidence.json. */
+  sbomDocument?: { bomFormat: string; specVersion: string; components?: unknown[] };
 }
 
 export type Environment = Record<string, string | undefined>;
@@ -117,7 +150,12 @@ export type Environment = Record<string, string | undefined>;
 export declare function readSource(root?: string): EvidenceSource;
 export declare function listPackages(root?: string): Promise<ListedPackage[]>;
 export declare function packDryRun(directories: readonly string[], root?: string): PackEntry[];
+export declare function sbomOf(
+  directories: readonly string[],
+  root?: string,
+): NonNullable<CollectedEvidence['sbomDocument']>;
 export declare function summarizePlaywright(report: unknown): PlaywrightSummary;
+export declare function summarizeAudit(report: unknown): AuditEvidence;
 export declare function readResults(dir: string): Promise<CheckResults>;
 export declare function readSteps(env?: Environment): Promise<StepEvidence>;
 export declare function collectEvidence(options?: {
@@ -128,8 +166,12 @@ export declare function collectEvidence(options?: {
   /** Also read this job's step times from the GitHub API. */
   ci?: boolean;
   pack?: (directories: readonly string[], root: string) => PackEntry[];
+  sbom?: (
+    directories: readonly string[],
+    root: string,
+  ) => NonNullable<CollectedEvidence['sbomDocument']>;
   env?: Environment;
-}): Promise<ReleaseEvidence>;
+}): Promise<CollectedEvidence>;
 export declare function renderEvidenceMarkdown(evidence: ReleaseEvidence): string;
 export declare function renderEvidenceLine(evidence: ReleaseEvidence): string;
-export declare function writeEvidence(out: string, evidence: ReleaseEvidence): Promise<void>;
+export declare function writeEvidence(out: string, evidence: CollectedEvidence): Promise<void>;

@@ -6562,3 +6562,16 @@ Records and guidance only; no component code changed.
 | Probes | `mutate.mjs`, 4 mutants: references not followed transitively (killed once the Node file also imported core); an entry mapped to a package's first project; every import counted as referenced; the check not run | 4 of 4 killed |
 | Clean build | All 11 `*.tsbuildinfo` of packages and apps and the analyzer's `dist/metadata-types.*` removed, then `npx tsc -b` | Exit 0 |
 | Repository | `npm run typecheck`, `npm run lint` | Each exit 0 |
+
+## 2026-11-12 — Dependency hygiene: Dependabot, action pins, npm audit, the SBOM in the evidence, no install scripts (round 11, Agent 1; row 3, RF-13)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The fault found | `npm sbom --sbom-format cyclonedx --omit dev --workspace packages/core` | Exit 1, `EINVALIDPURLTYPE`: the private workspace root had no `version`; with `"version": "0.0.0"` (and the two matching lockfile lines from `npm install --package-lock-only`) it writes the SBOM |
+| SBOM | `node scripts/release/evidence.mjs --out .tmp/ev-test --allow-dirty` | Exit 0; `sbom.json` 10,980 bytes, CycloneDX 1.5, 9 components: the eight `@oddkin` packages at `1.0.0-beta.2` and `typescript@5.9.3`; EVIDENCE.md names it with its SHA-256 |
+| Evidence tests | `npx vitest run --project node tests/release/evidence.test.ts` | 8 passed, 1 skipped (the full command test, which runs in CI) |
+| Probe | The root `version` removed from `package.json`, then from both it and the lockfile | The real-checkout SBOM test fails both times (state `unavailable`) |
+| Audit | `npm audit --omit=dev --workspace=packages --json` | Exit 0; 0 advisories in 20 runtime dependencies |
+| Install scripts | `npm run verify:packs` | Exit 0 with the new rule; with a `postinstall` added to `@oddkin/state` it fails: "has a postinstall script; nothing may run on install" |
+| Action pins | GitHub API, each action's newest release in the major version used | 18 references in `ci.yml`, `docs.yml`, `registry-smoke.yml` pinned; each major tag pointed at the same commit, so nothing that runs changes |
+| Not run here | Dependabot and the CI audit step | They run on GitHub: Dependabot on its weekly schedule, the audit on the next push |
