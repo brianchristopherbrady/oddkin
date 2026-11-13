@@ -7,20 +7,38 @@
 // A version already on npm with the same packed contents is skipped, so a run stopped part way
 // (a missed npm sign-in) resumes. Other contents under a published version, or nothing left to
 // do, stop the run, dry run included: the versions were not stepped (set-versions.mjs --next).
+// `--ci` is the release workflow's mode (.github/workflows/release.yml, RF-12): npm trusted
+// publishing through GitHub's OIDC token, with provenance, and a summary on the run's page.
+// `--tarballs <dir>` publishes the files `npm pack` wrote there instead of the workspaces, each
+// first checked against the integrity `<dir>/evidence.json` recorded: the release job publishes
+// exactly what the verify job built and checked, and installs nothing itself.
 // Run after a clean build and the §3 checks.
 //   node scripts/release/publish.mjs            # dry run of all eight
 //   node scripts/release/publish.mjs --publish  # the owner, logged in to npm
+//   node scripts/release/publish.mjs --ci --tarballs <dir> [--publish]   # release.yml
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ciProblems, integrityOf, renderSummary, tarballName, unverified } from './publish-ci.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const ORDER = ['tokens', 'core', 'state', 'app', 'components', 'ai', 'analyzer', 'workbench'];
-const npmCli = process.env['npm_execpath']?.endsWith('.js')
-  ? process.env['npm_execpath']
-  : join(dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+// npm through its CLI script and the current Node: no shell. Run directly (not from an npm
+// script), npm_execpath is unset; Node installs npm beside itself (Windows) or under ../lib.
+const npmCli = [
+  process.env['npm_execpath'],
+  join(dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  join(dirname(process.execPath), '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+].find((path) => path?.endsWith('.js') && existsSync(path));
 const live = process.argv.includes('--publish');
+const ci = process.argv.includes('--ci');
+const tarballsAt = process.argv.indexOf('--tarballs');
+const tarballs = tarballsAt >= 0 ? resolve(process.argv[tarballsAt + 1] ?? '') : undefined;
+if (!npmCli) {
+  console.error('npm-cli.js was not found beside this Node binary.');
+  process.exit(1);
+}
 
 const manifests = ORDER.map((dir) => ({
   dir,
@@ -39,6 +57,13 @@ if (problems.length) {
 }
 const npm = (...args) =>
   execFileSync(process.execPath, [npmCli, ...args], { cwd: root, encoding: 'utf8', stdio: 'pipe' });
+if (ci) {
+  const blocked = ciProblems({ env: process.env, npmVersion: npm('--version').trim(), live });
+  if (blocked.length) {
+    console.error(`Not publishing from CI: ${blocked.join('; ')}.`);
+    process.exit(1);
+  }
+}
 const view = (...args) => {
   try {
     return JSON.parse(npm('view', ...args, '--json'));
@@ -47,8 +72,34 @@ const view = (...args) => {
     throw error;
   }
 };
+const tarballOf = (m) => join(tarballs, tarballName(m.name, m.version));
 const packedIntegrity = (m) =>
-  JSON.parse(npm('pack', '--dry-run', '--json', '--workspace', `packages/${m.dir}`))[0].integrity;
+  tarballs
+    ? integrityOf(readFileSync(tarballOf(m)))
+    : JSON.parse(npm('pack', '--dry-run', '--json', '--workspace', `packages/${m.dir}`))[0]
+        .integrity;
+if (tarballs) {
+  const missing = manifests.filter((m) => !existsSync(tarballOf(m))).map((m) => tarballOf(m));
+  if (missing.length) {
+    console.error(`No tarball: ${missing.join(', ')}.`);
+    process.exit(1);
+  }
+  // Only what the verified evidence recorded is published.
+  const evidenceFile = join(tarballs, 'evidence.json');
+  const evidence = existsSync(evidenceFile)
+    ? JSON.parse(readFileSync(evidenceFile, 'utf8'))
+    : undefined;
+  const notVerified = unverified(
+    evidence,
+    manifests.map((m) => ({ spec: `${m.name}@${m.version}`, integrity: packedIntegrity(m) })),
+  );
+  if (notVerified.length) {
+    console.error(
+      `Not the packages the evidence recorded: ${notVerified.join(', ')} (${evidenceFile}).`,
+    );
+    process.exit(1);
+  }
+}
 
 const plan = manifests.map((m) => {
   const registry = view(m.name, 'versions', 'dist-tags');
@@ -82,11 +133,18 @@ for (const p of plan) if (!p.publish) console.log(`Already on npm with these con
 for (const p of todo) {
   if (p.publish) {
     const tag = /-([0-9A-Za-z-]+)/.exec(p.version)?.[1] ?? 'latest';
-    const args = [npmCli, 'publish', '--workspace', `packages/${p.dir}`, '--tag', tag];
+    const target = tarballs ? [tarballOf(p)] : ['--workspace', `packages/${p.dir}`];
+    const args = [npmCli, 'publish', ...target, '--tag', tag];
     if (!live) args.push('--dry-run');
+    // Trusted publishing adds provenance by default; asking for it makes a run without it fail.
+    else if (ci) args.push('--provenance');
     console.log(`${live ? 'Publishing' : 'Dry run:'} ${p.spec} --tag ${tag}`);
     // Inherited stdio: npm may ask the owner for a one-time password.
     execFileSync(process.execPath, args, { cwd: root, stdio: live ? 'inherit' : 'pipe' });
+    if (live && ci)
+      console.log(
+        `::notice title=Published ${p.spec}::https://www.npmjs.com/package/${p.name}/v/${p.version}`,
+      );
   }
   if (p.latest) {
     // npm dist-tag has no dry run.
@@ -103,6 +161,8 @@ for (const p of todo) {
 const published = todo.filter((p) => p.publish).length;
 const moved = todo.filter((p) => p.latest).length;
 const there = plan.length - published;
+if (ci && process.env['GITHUB_STEP_SUMMARY'])
+  appendFileSync(process.env['GITHUB_STEP_SUMMARY'], renderSummary(plan, { live }));
 console.log(
   live
     ? `Published ${published} packages and moved latest for ${moved} (${there} already there). Check: npm dist-tag ls @oddkin/core`

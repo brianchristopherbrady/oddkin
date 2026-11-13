@@ -74,7 +74,7 @@ The fresh apps (`tests/consumers/`, `e2e/fresh-consumers.spec.ts`, 2026-10-29) i
 
 Settled by the owner (2026-10-27): all eight packages publish as `1.0.0-beta.0` on the `beta` dist-tag under the owner's `@oddkin` scope. Users opt in with `npm install @oddkin/core@beta`. The first publish of a new package also points `latest` at it, so on 2026-10-28 `latest` and `beta` both name `1.0.0-beta.0`. Until a package has a stable version, `publish.mjs` keeps `latest` on the newest prerelease (`npm dist-tag add <name>@<version> latest` after each publish; owner's choice, 2026-10-28): npm resolves a range to the `latest` version whenever it fits (`npm-pick-manifest`), so a `latest` left on `1.0.0-beta.0` would hold every `^1.0.0-beta.0` install and update there, and a newer package next to it would bring a second `@oddkin/core`. From 1.0.0 on, a prerelease leaves `latest` alone. The registry also lists a `0.0.0-stage` version in each package, "Temporary package placeholder for staged publishing", created with the package; no range used here matches it. A prerelease promises no stability: the freeze (ADR 0029, ADR 0047) starts at 1.0.0. On `main` the versions, the caret internal ranges, and `publishConfig` (`access: public`, `tag: beta`) are set (`node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public`; `--check` confirms them), and the eight packages are no longer `private`.
 
-**Owner commands** (the publish needs the owner's npm account and its two-factor approval; run from a clean checkout of `main`):
+**Owner commands** (the local path, kept as the fallback for the workflow below; the publish needs the owner's npm account and its two-factor approval; run from a clean checkout of `main`):
 
 ```sh
 npm ci
@@ -102,3 +102,19 @@ Bin paths are plain `dist/...` paths. npm 11.19 publish rewrites a bin written a
 Rehearsed on 2026-10-28 from a clean checkout of main (2cc56d3) up to the dry run: `npm ci`, the clean build, `verify:packs`, the kit check, and `publish.mjs` all pass ([verification.md](./verification.md)). Repeated at be7c66d after the bin fix, with `npm run verify:metadata`: all pass, and the dry run shows no npm rewrite.
 
 Later betas: `node scripts/release/set-versions.mjs --next` steps both lines' prerelease number (`1.0.0-beta.0` to `1.0.0-beta.1`; `--next rc` gives `1.0.0-rc.0`; a release version is named with `--runtime` and `--tools`). Then `npm install`, `npm test` (the contract records include the version, so `npm run verify:metadata` fails until the contract tests run again), the §3 checks, the release notes (§1), and the same commands. After the publish, `RELEASED` in `e2e/duplicate-core.spec.ts` names the new version, so a copy of core from the last release keeps running beside the current one. 1.0.0 drops the suffix, publishes under `latest`, and starts the changelogs (§1).
+
+### Publishing from GitHub Actions (RF-12)
+
+From `1.0.0-beta.3`, a release publishes from `.github/workflows/release.yml` through npm trusted publishing, so each version carries npm provenance, and one approval in GitHub replaces the sixteen at the terminal. The owner starts it from the repository's Actions tab ("Release", "Run workflow"), on the commit whose versions were stepped and whose release notes exist (`docs/releases/<version>.md`). Unticked, "Publish to npm" makes the run a dry run, which any branch may rehearse; only `main` publishes.
+
+- **verify** runs the release checks of §3 on a clean build of that commit: lint, types, the node project, the browser project in each engine, `verify:metadata`, size, e2e, `verify:packs`, the kit and version checks, the change impact against the previous release tag, and the informational `npm audit`. It packs the eight packages into `release-evidence/`, writes the evidence there from the clean checkout (refusing a dirty one), and runs `publish.mjs --tarballs` as a dry run against that evidence. The `release-evidence` artifact keeps the tarballs, the evidence, the SBOM, and the test results for 90 days.
+- **publish**, only when ticked and only on `main`, waits for the reviewer of the GitHub environment `npm`, then publishes exactly those tarballs with `publish.mjs --ci --tarballs release-evidence --publish`: each tarball is checked against the integrity the evidence recorded, and each is published with `--provenance` and its dist-tag, then `latest` moves as above. The job checks out only the manifests and scripts, installs npm 11.21.2 (npm moves dist-tags through trusted publishing from 11.21.0; Node 24 ships 11.19), and installs or builds nothing of the project's, so no dependency code runs where the OIDC token can be minted.
+- **draft** creates the GitHub Release `v<version>` as a draft on that commit, with the release notes and `EVIDENCE.md`, `evidence.json`, `sbom.json`, and `npm-audit.json` attached (D-11). Publishing the draft creates the tag.
+
+**The owner's setup, once** (release-foundation-plan §15 and RF-12):
+
+1. In the repository's Settings, Environments, create `npm` with the owner as its required reviewer, deployments from `main` only.
+2. On npmjs.com, for each of the eight packages: Settings, Trusted publishing, GitHub Actions, with organization or user `brianchristopherbrady`, repository `oddkin`, workflow `release.yml`, environment `npm`, and the allowed actions `npm publish` and `npm dist-tag` ticked. A new trusted publisher expires unless a publish uses it within 2 days, so add them when the release is ready to run.
+3. After the first publish from the workflow shows provenance on npm, each package may be set to "Require two-factor authentication and disallow tokens".
+
+The local commands above stay working as the fallback.

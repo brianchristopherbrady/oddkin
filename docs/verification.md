@@ -6575,3 +6575,12 @@ Records and guidance only; no component code changed.
 | Install scripts | `npm run verify:packs` | Exit 0 with the new rule; with a `postinstall` added to `@oddkin/state` it fails: "has a postinstall script; nothing may run on install" |
 | Action pins | GitHub API, each action's newest release in the major version used | 18 references in `ci.yml`, `docs.yml`, `registry-smoke.yml` pinned; each major tag pointed at the same commit, so nothing that runs changes |
 | Not run here | Dependabot and the CI audit step | They run on GitHub: Dependabot on its weekly schedule, the audit on the next push |
+
+## 2026-11-12 — Publishing from GitHub Actions with provenance, built (round 11, Agent 1; row 3, RF-12)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Helpers | `npx vitest run --project node tests/release/publish.test.ts` | 5 passed: npm version comparison; `--ci` refused outside Actions, with npm below 11.21.0, or publishing without an OIDC token; tarball names and npm integrity strings; only tarballs the evidence recorded; the run summary |
+| Rehearsal | `npm pack --workspace=packages --pack-destination <dir>`, `node scripts/release/evidence.mjs --out <dir> --allow-dirty`, `node scripts/release/publish.mjs --tarballs <dir>` | Eight tarballs and the evidence with its SBOM written; the dry run stops as it must on `main` at `1.0.0-beta.2`: six packages are on npm with other contents (the versions are not stepped), and `@oddkin/app` and `@oddkin/state` pack byte for byte as published |
+| Probes | One byte appended to `oddkin-core-1.0.0-beta.2.tgz`; `--ci` run locally | Refused: "Not the packages the evidence recorded: @oddkin/core@1.0.0-beta.2"; refused: "--ci runs only in GitHub Actions; npm 11.19.1 cannot move dist-tags through trusted publishing" |
+| Not run | The workflow on GitHub, the publish, provenance on npm | Need the owner: the environment `npm`, the trusted publishers, and the `1.0.0-beta.3` versions; RF-12 is done when that publish shows provenance |

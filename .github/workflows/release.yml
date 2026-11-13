@@ -1,0 +1,143 @@
+name: Release
+
+# Publishes the eight packages to npm from GitHub Actions with provenance, through npm trusted publishing
+# (RF-12; docs/release-process.md §5). The owner starts it from the Actions tab; unticked, publish leaves it a
+# dry run, which any branch may rehearse, and only main publishes. `verify` runs the release checks on the
+# release commit, packs the packages, and writes the evidence; `publish` waits for the `npm` environment's
+# reviewer, then publishes exactly those tarballs and installs nothing of the project's; `draft` makes the
+# GitHub Release as a draft with the notes and evidence.
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to npm (unticked, a dry run)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    # Pinned as in ci.yml.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      # The evidence reads this job's step times.
+      actions: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # No dependency cache in a release build (npm's trusted-publishing guidance).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - id: version
+        name: The version, its release notes, and the previous release
+        run: |
+          version=$(jq -r .version packages/core/package.json)
+          test -f "docs/releases/$version.md" || { echo "::error::docs/releases/$version.md is missing: every release has notes."; exit 1; }
+          previous=$(git describe --tags --abbrev=0 --match 'v*' --exclude "v$version" HEAD 2>/dev/null || true)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "previous=${previous:+$(git rev-parse "$previous^{commit}")}" >> "$GITHUB_OUTPUT"
+          echo "::notice title=Release::$version, compared with ${previous:-no earlier release tag}"
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      # The release checklist (docs/release-process.md §3 and §5), from a clean build.
+      - run: node scripts/release/clean.mjs
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx vitest run --project node --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-node.json
+      - run: npx vitest run --project browser --browser.name=chromium --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-chromium.json
+      - run: npx vitest run --project browser --browser.name=firefox --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-firefox.json
+      - run: npx vitest run --project browser --browser.name=webkit --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-webkit.json
+      - run: npm run verify:metadata
+      - run: npm run size
+      - run: npm run test:e2e
+      - run: npm run verify:packs
+      - run: node scripts/agent-kit/package-kits.mjs --check
+      - run: node scripts/release/set-versions.mjs --check
+      - name: Change impact against the previous release
+        env:
+          IMPACT_BASE: ${{ steps.version.outputs.previous }}
+        run: node scripts/ci/impact-summary.mjs --out release-evidence/impact
+      # Informational, as in ci.yml (RF-13).
+      - continue-on-error: true
+        run: |
+          npm audit --omit=dev --workspace=packages --json > release-evidence/npm-audit.json || true
+          npm audit --omit=dev --workspace=packages
+      - name: Pack the packages
+        run: npm pack --workspace=packages --pack-destination release-evidence
+      # A clean checkout only: the evidence must describe the release commit.
+      - name: Evidence
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/release/evidence.mjs --out release-evidence --ci
+      # The tarballs against the evidence, and what would publish.
+      - run: node scripts/release/publish.mjs --tarballs release-evidence
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-evidence
+          path: release-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  publish:
+    needs: verify
+    if: inputs.publish && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    # Its required reviewer is the owner; npm's trusted publishers name this environment.
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # The manifests and the release scripts only: nothing of the project's is installed or built here.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # npm moves dist-tags through trusted publishing from 11.21.0; Node 24 ships 11.19.
+      - run: npm install --global npm@11.21.2
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-evidence
+          path: release-evidence
+      - run: node scripts/release/publish.mjs --ci --tarballs release-evidence --publish
+
+  draft:
+    needs: [verify, publish]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-evidence
+          path: release-evidence
+      # A draft: the owner reads it and publishes it, which creates the tag on this commit.
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          prerelease=$([[ "$VERSION" == *-* ]] && echo --prerelease || true)
+          gh release create "v$VERSION" --draft $prerelease --target "$GITHUB_SHA" --title "v$VERSION" \
+            --notes-file "docs/releases/$VERSION.md" \
+            release-evidence/EVIDENCE.md release-evidence/evidence.json release-evidence/sbom.json \
+            release-evidence/npm-audit.json
+          echo "::notice title=Draft release::v$VERSION is a draft with its notes and evidence; publishing it creates the tag."
