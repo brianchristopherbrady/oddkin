@@ -478,8 +478,8 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | rating | rating/Item × 30 | native | Each star is a native radio in odd-rating's one shadow tree (OddkinRadioControl, as odd-radio-group): the platform gives one Tab stop and arrow-key selection; the rating submits one value through @oddkin/core/controllers/form. |
 | rating/Item | icon General/star × 5 | style | The built-in starGlyph of the shared glyph module (from design/icons/general/star.svg), in the star's text colour and filled when on. |
 | relativeTime | icon clock × 5 | style | odd-relative-time draws the clock from the shared glyph module (clockGlyph, design/icons/general/clock.svg), icon.size.sm in the secondary text colour. |
-| search | icon close × 3 | style | The close/remove glyph is built in and comes from the shared glyph module. |
-| search | icon search × 4 | style | The search glyph is built into the element and comes from the shared glyph module. |
+| search | icon close × 5 | style | The close/remove glyph is built in and comes from the shared glyph module. |
+| search | icon search × 6 | style | The search glyph is built into the element and comes from the shared glyph module. |
 | stat | icon General/direction-arrow-up × 2 | style | odd-stat draws the arrow from the shared glyph module (arrowUpGlyph, design/icons/general/direction-arrow-bold-up.svg; rotated for a decrease), icon.size.sm in the secondary text colour. |
 | toggleButton | icon bold × 8 | slot | The icon is the author's content; the toggle owns only its pressed state. |
 | Oddkin/Layout/AspectRatio | Oddkin/Layout/SpecimenItem × 3 | slot | Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency. |

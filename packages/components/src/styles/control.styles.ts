@@ -5,7 +5,8 @@ import { token } from '@oddkin/tokens/refs';
  * The field look of the Common page (158:22) for every Oddkin form control: the label in the UI
  * type role, help and error in the small role, and the control surface (`color.border.strong`,
  * `control.radius`, `control.height.md`, never below the target size) with its hover, invalid,
- * disabled, and read-only states. The field variables (`--odd-field-height`, `-radius`,
+ * disabled, and read-only states, and the glyphs at its start and end at `icon.size.md`, as Figma's
+ * field icons are drawn. The field variables (`--odd-field-height`, `-radius`,
  * `-border-color`, `-background`) apply to every form control and the `.odd-field` recipe, which
  * is generated from these rules.
  */
@@ -68,19 +69,28 @@ export const controlStyles = css`
     color: ${token('color.text.disabled')};
   }
   .control-box > select.control {
-    padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
+    padding-inline-end: calc(
+      ${token('control.padding.inline.md')} + ${token('icon.size.md')} + ${token('control.gap')}
+    );
   }
   .control-box:has(> .control-start) > .control {
     padding-inline-start: calc(
-      ${token('control.padding.inline.md')} + 1em + ${token('control.gap')}
+      ${token('control.padding.inline.md')} + ${token('icon.size.md')} + ${token('control.gap')}
     );
   }
   .control-box:has(> .control-end) > input.control {
-    padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
+    padding-inline-end: calc(
+      ${token('control.padding.inline.md')} + ${token('icon.size.md')} + ${token('control.gap')}
+    );
   }
   .control-start,
   .control-end {
     margin-inline: ${token('control.padding.inline.md')};
+  }
+  .control-start .glyph,
+  .control-end .glyph {
+    inline-size: ${token('icon.size.md')};
+    block-size: ${token('icon.size.md')};
   }
   .control-box > .control:disabled ~ * {
     color: ${token('color.text.disabled')};

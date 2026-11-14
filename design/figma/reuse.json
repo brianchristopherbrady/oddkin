@@ -1296,7 +1296,7 @@
       "consumerId": "159:1144",
       "source": "Oddkin/Icon/close",
       "sourceId": "159:288",
-      "count": 3,
+      "count": 5,
       "class": "style",
       "reason": "The close/remove glyph is built in and comes from the shared glyph module."
     },
@@ -1305,7 +1305,7 @@
       "consumerId": "159:1144",
       "source": "Oddkin/Icon/search",
       "sourceId": "159:297",
-      "count": 4,
+      "count": 6,
       "class": "style",
       "reason": "The search glyph is built into the element and comes from the shared glyph module."
     },

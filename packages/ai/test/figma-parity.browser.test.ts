@@ -1580,6 +1580,19 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
         total: 12,
       });
       const surface = shadow(el, '[part="surface"]');
+      const searchbox = shadow(el, '[part="search"]') as HTMLInputElement;
+      // The search field is Figma's inline search, focused (`Oddkin/Common/search`, 775:3422),
+      // whose label, help, and clear button are hidden.
+      const inline: Target[] = [
+        { layer: ['Search input / Focus', 'Surface'], el: searchbox, kind: 'frame' },
+        {
+          layer: ['Search input / Focus', 'Surface', 'Search resources'],
+          el: searchbox,
+          kind: 'text',
+        },
+        { layer: ['Search input / Focus', 'Surface [2]'], el: searchbox, kind: 'ring' },
+      ];
+      expect(searchbox.matches(':focus-visible')).toBe(true);
       const targets: Target[] = [
         {
           layer: content(),
@@ -1613,7 +1626,7 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
         { layer: content('Footer'), el: shadow(el, '.footer'), kind: 'frame', gap: 'column-gap' },
         { layer: content('Footer', '3 selected'), el: shadow(el, '.count'), kind: 'text' },
       ];
-      await transitions(targets);
+      await transitions([...targets, ...inline]);
       expectNone([
         ...compare('Oddkin/Common/popover', { State: 'Picker' }, [
           {
@@ -1627,6 +1640,7 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
           },
         ]),
         ...compare(SURFACE, { State: 'Search results' }, targets),
+        ...compare('Oddkin/Common/search', { State: 'Inline focus' }, inline),
         ...button(named(el, 'Close'), 'ghost', 'Close'),
         ...button(named(el, 'Selected (3)'), 'ghost', 'Selected (3)'),
         ...button(named(el, 'Browse…'), 'ghost', 'Browse…'),
@@ -1647,12 +1661,17 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       expect([box.width, box.height]).toEqual([416, 480]);
       // Figma's inline search: the 40 px field space.2xs in on every side of its 398 × 48 box, which
       // its focus ring fills; a text searchbox, so no engine adds a clear button Figma does not draw.
-      const searchbox = shadow(el, '[part="search"]') as HTMLInputElement;
       const field = shadow(el, '.search-field').getBoundingClientRect();
       expect([field.width, field.height]).toEqual([398, 48]);
       const input = searchbox.getBoundingClientRect();
       expect([input.width, input.height]).toEqual([390, 40]);
       expect([searchbox.type, searchbox.getAttribute('role')]).toEqual(['text', 'searchbox']);
+      // Its search icon: 20 × 20 (`icon.size.md`), 12 px in and centred; the text 40 px in.
+      const glyph = shadow(el, '.search-field .glyph').getBoundingClientRect();
+      expect([glyph.width, glyph.height]).toEqual([20, 20]);
+      expect(glyph.left - input.left).toBeCloseTo(12, 1);
+      expect(glyph.top - input.top).toBeCloseTo(10, 1);
+      expect(getComputedStyle(searchbox).paddingInlineStart).toBe('40px');
       // The footer is as tall as its md buttons (Figma's 40), and each row 56 (3.5rem).
       expect(shadow(el, '.footer').getBoundingClientRect().height).toBe(40);
       expect(rows(el).map((row) => row.getBoundingClientRect().height)).toEqual([56, 56, 56]);

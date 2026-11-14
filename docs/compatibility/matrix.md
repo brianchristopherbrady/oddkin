@@ -166,10 +166,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
 | `packages/components/dist/color-picker/color-picker.recipe.styles.js (colorPickerRecipeStyles)` | yes | 15 |
 | `packages/components/dist/color-picker/color-picker.structural.styles.js (colorPickerStructuralStyles)` | yes | 71 |
-| `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 43 |
+| `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 42 |
 | `packages/components/dist/combobox/combobox.recipe.styles.js (comboboxRecipeStyles)` | yes | 14 |
 | `packages/components/dist/combobox/combobox.structural.styles.js (comboboxStructuralStyles)` | yes | 61 |
-| `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 38 |
+| `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 37 |
 | `packages/components/dist/command-palette/command-palette.recipe.styles.js (commandPaletteRecipeStyles)` | yes | 13 |
 | `packages/components/dist/command-palette/command-palette.structural.styles.js (commandPaletteStructuralStyles)` | yes | 45 |
 | `packages/components/dist/command-palette/command-palette.styles.js (commandPaletteStyles)` | yes | 24 |
@@ -178,7 +178,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/copy-button/copy-button.structural.styles.js (copyButtonStructuralStyles)` | yes | 17 |
 | `packages/components/dist/copy-button/copy-button.styles.js (copyButtonStyles)` | yes | 12 |
 | `packages/components/dist/date-picker/date-picker.structural.styles.js (datePickerStructuralStyles)` | yes | 18 |
-| `packages/components/dist/date-picker/date-picker.styles.js (datePickerStyles)` | yes | 14 |
+| `packages/components/dist/date-picker/date-picker.styles.js (datePickerStyles)` | yes | 13 |
 | `packages/components/dist/dialog/dialog.recipe.styles.js (dialogRecipeStyles)` | yes | 14 |
 | `packages/components/dist/dialog/dialog.structural.styles.js (dialogStructuralStyles)` | yes | 43 |
 | `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 16 |
@@ -196,7 +196,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
 | `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 22 |
-| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 23 |
+| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 22 |
 | `packages/components/dist/listbox/listbox.recipe.styles.js (listboxRecipeStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 17 |
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 19 |
@@ -250,7 +250,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/status-marker/status-marker.styles.js (statusMarkerStyles)` | yes | 10 |
 | `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |
 | `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 23 |
-| `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 32 |
+| `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 33 |
 | `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 29 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/glyphs.js (glyphStyles)` | yes | 20 |

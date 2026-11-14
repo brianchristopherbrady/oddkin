@@ -25,7 +25,9 @@ export const comboboxStyles = css`
   }
   .control-box:has(.chevron) > .box,
   .control-box:has(.clear:not([hidden])) > .box {
-    padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
+    padding-inline-end: calc(
+      ${token('control.padding.inline.md')} + ${token('icon.size.md')} + ${token('control.gap')}
+    );
   }
   :host([multiple]) .box {
     padding-block: ${token('space.xs')};
@@ -33,7 +35,8 @@ export const comboboxStyles = css`
   }
   .control-box:has(.chevron):has(.clear:not([hidden])) > .box {
     padding-inline-end: calc(
-      ${token('control.padding.inline.md')} + 2em + 2 * ${token('control.gap')}
+      ${token('control.padding.inline.md')} + 2 * ${token('icon.size.md')} + 2 *
+        ${token('control.gap')}
     );
   }
   .box:has(.combobox:focus-visible) {

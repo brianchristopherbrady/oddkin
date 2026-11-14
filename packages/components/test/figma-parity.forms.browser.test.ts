@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   compare,
   deliberate,
@@ -656,4 +656,43 @@ describe('Figma parity: oneTimeCode/Cell', () => {
       await transitions(targets);
       expectNone(compare('Oddkin/Common/oneTimeCode/Cell', { State: state }, targets));
     });
+});
+
+// Figma draws a field's icons 20 by 20 (`icon.size.md`): search's `Icon · search` and
+// `Icon · close` (159:1111, 159:1114), combobox's search (159:1411), select's chevron (159:1296).
+// The number stepper's are 16 by 16 (159:1069). Instances bind no size, so `compare` cannot see it.
+describe('Figma parity: field glyphs', () => {
+  const size = (glyph: Element | null | undefined) => {
+    const { width, height } = glyph!.getBoundingClientRect();
+    return [width, height];
+  };
+  it('search draws its search and clear glyphs at 20px', async () => {
+    const el = mount(
+      '<odd-input type="search" label="Search projects" value="Design system"></odd-input>',
+    );
+    await settle(el);
+    expect(size(el.shadowRoot!.querySelector('.control-start .glyph'))).toEqual([20, 20]);
+    expect(size(el.shadowRoot!.querySelector('.control-end .clear .glyph'))).toEqual([20, 20]);
+  });
+  it('combobox draws its search glyph at 20px', async () => {
+    const el = mount(
+      '<odd-combobox label="Project" placeholder="Choose a project…"></odd-combobox>',
+    );
+    await settle(el);
+    expect(size(el.shadowRoot!.querySelector('.control-start .glyph'))).toEqual([20, 20]);
+  });
+  it('select draws its chevron at 20px', async () => {
+    const el = mount('<odd-select label="Workspace role"></odd-select>');
+    await settle(el);
+    expect(size(el.shadowRoot!.querySelector('.control-end .glyph'))).toEqual([20, 20]);
+  });
+  it("number keeps its stepper's glyphs at 16px", async () => {
+    const el = mount(
+      '<odd-input type="number" label="Seats" value="12" min="1" max="50"></odd-input>',
+    );
+    await settle(el);
+    const glyphs = [...el.shadowRoot!.querySelectorAll('.stepper .glyph')];
+    expect(glyphs).toHaveLength(2);
+    for (const glyph of glyphs) expect(size(glyph)).toEqual([16, 16]);
+  });
 });

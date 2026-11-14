@@ -425,11 +425,10 @@ describe('odd-date-picker', () => {
     expect(style.backgroundColor).toBe('rgba(0, 0, 0, 0)');
     expect(style.color).toBe(themeValue('color', '--odd-color-text-secondary'));
     expect(style.cursor).toBe('pointer');
-    // The 1em glyph keeps its place at the end of the field box; the target is centred on it.
+    // The glyph (`icon.size.md`) keeps its place at the end of the field box; the target is centred on it.
     const glyph = box(button.querySelector('.glyph')!);
     const field = box(root.querySelector('.control-box')!);
-    const control = getComputedStyle(part('control'));
-    expect(glyph.width).toBeCloseTo(parseFloat(control.fontSize), 1);
+    expect(glyph.width).toBeCloseTo(parseFloat(themeValue('inline-size', '--odd-icon-size-md')), 1);
     expect(field.right - glyph.right).toBeCloseTo(
       parseFloat(themeValue('padding-top', '--odd-control-padding-inline-md')),
       0,

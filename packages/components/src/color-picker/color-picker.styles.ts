@@ -33,7 +33,7 @@ export const colorPickerStyles = css`
   .button {
     inline-size: ${token('target.min')};
     block-size: ${token('target.min')};
-    margin: calc((1em - ${token('target.min')}) / 2);
+    margin: calc((${token('icon.size.md')} - ${token('target.min')}) / 2);
     border-radius: ${token('control.radius')};
     color: ${token('color.text.secondary')};
   }

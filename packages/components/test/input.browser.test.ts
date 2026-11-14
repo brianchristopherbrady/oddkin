@@ -1049,7 +1049,9 @@ describe('search', () => {
       themeValue('border-top-left-radius', '--odd-radius-full'),
     );
     expect(style.color).toBe(themeValue('color', '--odd-color-text-secondary'));
-    expect(parseFloat(style.marginTop)).toBeCloseTo((parseFloat(style.fontSize) - 24) / 2);
+    const icon = parseFloat(themeValue('inline-size', '--odd-icon-size-md'));
+    const target = parseFloat(themeValue('inline-size', '--odd-target-min'));
+    expect(parseFloat(style.marginTop)).toBeCloseTo((icon - target) / 2);
     const glyph = clear.querySelector('svg')!.getBoundingClientRect();
     const box = clear.getBoundingClientRect();
     expect(glyph.left + glyph.width / 2).toBeCloseTo(box.left + box.width / 2, 0);

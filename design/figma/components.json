@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained. The tool call's approved redesign added by Agent 1 for the parity tests (Figma page 10, 900:2) (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 1 family (33 definitions), transferred in 1 slice with verified length 19037 and FNV-1a 4095638199; appended after the existing families, with its page. Every other family and every component id retained. The context picker's owner design (C07, Figma page 06, 767:2) added by Agent 1 for the parity tests (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 19 families (78 definitions), transferred in 5 slices, each verified by its length and FNV-1a, joined to 108863 characters; appended after the existing families, with their page. Every other family and every component id retained.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained. The tool call's approved redesign added by Agent 1 for the parity tests (Figma page 10, 900:2) (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 1 family (33 definitions), transferred in 1 slice with verified length 19037 and FNV-1a 4095638199; appended after the existing families, with its page. Every other family and every component id retained. The context picker's owner design (C07, Figma page 06, 767:2) added by Agent 1 for the parity tests (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 19 families (78 definitions), transferred in 5 slices, each verified by its length and FNV-1a, joined to 108863 characters; appended after the existing families, with their page. Every other family and every component id retained. Oddkin/Common/search gained State=Inline and Inline focus (775:3405, 775:3422), which the C07 context picker draws (row 34 verifier V6) (2026-11-14, Figma MCP session 4c7ebbb4-6e0c-40b4-a6c7-a2210e3e1fe4): read-only components.export.js filtered to 1 families (6 definitions), transferred in 1 slice(s) with verified length 14351 and FNV-1a 2284742357; each replaced in place by id. Every other family and every component id retained.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
@@ -10135,20 +10135,23 @@
       "page": "158:22",
       "frame": "Definitions · Fields & controls",
       "kind": "COMPONENT_SET",
-      "description": "A search landmark or labelled field, with a clear action after text is entered. Design proposal; not a promised custom-element API.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/search.\nRepository source: packages/components/src/input/input.ts.\nCode Connect export/name: OddkinInput.\nREGISTRATION/PUBLIC IMPORT: import &#39;@oddkin/components/define/input&#39;;\nimport &#39;@oddkin/components/define/input&#39;;\n&lt;odd-input&gt;&lt;/odd-input&gt;\nOptional side-effect-free class import: import { OddkinInput } from &#39;@oddkin/components/input&#39;; this class import alone does not register the tag. Set type=&quot;search&quot; on odd-input. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nA search landmark or labelled field, with a clear action after text is entered.",
       "properties": [
+        { "name": "Inline value", "type": "TEXT", "defaultValue": "Search resources" },
         {
           "name": "State",
           "type": "VARIANT",
           "defaultValue": "Empty",
-          "variantOptions": ["Empty", "Filled", "Focus", "Disabled"]
+          "variantOptions": ["Empty", "Filled", "Focus", "Disabled", "Inline", "Inline focus"]
         }
       ],
       "variants": [
         { "id": "159:1143", "name": "State=Disabled", "values": { "State": "Disabled" } },
         { "id": "159:1106", "name": "State=Empty", "values": { "State": "Empty" } },
         { "id": "159:1118", "name": "State=Filled", "values": { "State": "Filled" } },
-        { "id": "159:1131", "name": "State=Focus", "values": { "State": "Focus" } }
+        { "id": "159:1131", "name": "State=Focus", "values": { "State": "Focus" } },
+        { "id": "775:3405", "name": "State=Inline", "values": { "State": "Inline" } },
+        { "id": "775:3422", "name": "State=Inline focus", "values": { "State": "Inline focus" } }
       ],
       "layers": [
         {
@@ -10398,7 +10401,7 @@
         {
           "path": ["Search input / Focus"],
           "types": ["FRAME"],
-          "in": [3],
+          "in": [3, 4, 5],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
             "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
@@ -10409,7 +10412,7 @@
         {
           "path": ["Search input / Focus", "Search by name or description."],
           "types": ["TEXT"],
-          "in": [3],
+          "in": [3, 4, 5],
           "bound": {
             "fills": ["Oddkin · Component roles/color/text/secondary"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
@@ -10422,7 +10425,7 @@
         {
           "path": ["Search input / Focus", "Search projects"],
           "types": ["TEXT"],
-          "in": [3],
+          "in": [3, 4, 5],
           "bound": {
             "fills": ["Oddkin · Component roles/color/text/primary"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
@@ -10435,7 +10438,7 @@
         {
           "path": ["Search input / Focus", "Surface"],
           "types": ["FRAME"],
-          "in": [3],
+          "in": [3, 4, 5],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
@@ -10466,17 +10469,31 @@
         {
           "path": ["Search input / Focus", "Surface", "Icon · close"],
           "types": ["INSTANCE"],
-          "in": [3]
+          "in": [3, 4, 5]
         },
         {
           "path": ["Search input / Focus", "Surface", "Icon · search"],
           "types": ["INSTANCE"],
-          "in": [3]
+          "in": [3, 4, 5]
+        },
+        {
+          "path": ["Search input / Focus", "Surface", "Search resources"],
+          "types": ["TEXT"],
+          "in": [4, 5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          },
+          "properties": { "characters": ["Inline value"] }
         },
         {
           "path": ["Search input / Focus", "Surface [2]"],
           "types": ["FRAME"],
-          "in": [3],
+          "in": [3, 4, 5],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
@@ -10494,14 +10511,14 @@
         {
           "source": "Oddkin/Icon/close",
           "sourceId": "159:288",
-          "count": 3,
+          "count": 5,
           "variants": [],
           "overriddenFields": ["name", "strokes"]
         },
         {
           "source": "Oddkin/Icon/search",
           "sourceId": "159:297",
-          "count": 4,
+          "count": 6,
           "variants": [],
           "overriddenFields": ["name", "strokes"]
         }
