@@ -16,6 +16,7 @@ export const CONTEXT_PICKER_STRINGS = {
   close: 'Close',
   search: 'Search resources',
   allSources: 'All sources',
+  selectedOnly: 'Selected only',
   scope: 'Sources to search',
   selected: 'Selected ({count})',
   count: '{count} selected',
@@ -23,6 +24,7 @@ export const CONTEXT_PICKER_STRINGS = {
   connected: '{count} connected sources',
   matches: '{count} matches · {sources}',
   searching: 'Searching {sources}… · previous results shown',
+  updating: 'Updating',
   loading: 'Loading · {sources}',
   loadingTitle: 'Loading resources',
   loadingText: 'Getting recent resources from {sources}.',
@@ -46,6 +48,7 @@ export const CONTEXT_PICKER_STRINGS = {
   failedText: 'Your selections are safe. Try searching again.',
   partial: '{failed} unavailable · {searched} of {total} sources searched',
   retry: 'Retry search',
+  retrySources: 'Retry {sources}',
   confirmHint: 'Changes apply only when you choose Add {count}',
   singleHint: 'Choose one resource · applies and closes',
   limit: '{count} of {max} selected · remove one to add another',
@@ -72,7 +75,7 @@ export const contextPickerToggleEvent = event('toggle', {
   description: 'A `ToggleEvent` (`oldState`, `newState`) each time the surface opens or closes.',
 });
 
-/** Identity of a resource: its source and its id. */
+/** @internal Identity of a resource: its source and its id. */
 export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string =>
   `${r.sourceId}\u001f${r.id}`;
 
@@ -81,7 +84,7 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  * button opens a search with a separate list of results; the host answers each search, owns the
  * chosen resources (`value`), and shows them outside the picker.
  *
- * Choosing only asks (`odd-context-change`, cancelable): the selection changes when the host sets
+ * Choosing proposes a change (`odd-context-change`): unless a handler cancels it, it becomes
  * `value`. With `commit="confirm"` changes stay a draft until Add N, and Cancel, Close, Escape, or
  * leaving the surface discards them.
  *
@@ -97,12 +100,13 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  * @keyboard Enter or Space on the trigger opens it and focuses the search. Down Arrow or Tab moves into the results; Up, Down, Home, and End move; Space or Enter chooses. Escape, Close, and Done close and return focus to the trigger; Tab or a press outside closes and leaves focus there.
  * @useFor Choosing documents, pages, or records from connected sources as context for a request.
  * @notFor Uploading, connecting accounts, or fetching content (the host's); showing the chosen context (compose chips or rows outside).
+ * @limitation A change is announced, and closes a single choice, only when it is applied during its event: a host that cancels and sets `value` later announces it itself.
  * @customization 1 2
  * @category AI
  */
 export class OddkinContextPicker extends OddkinElement.with({
   value: prop.array<ContextResource>({
-    description: 'The chosen resources (host-owned). Identity is `sourceId` with `id`.',
+    description: 'The chosen resources. Identity is `sourceId` with `id`.',
   }),
   sources: prop.array<ContextSource>({ description: 'The connected sources (host-owned).' }),
   results: prop.object<ContextResults>({
@@ -142,6 +146,8 @@ export class OddkinContextPicker extends OddkinElement.with({
   readonly _draft = signal<readonly ContextResource[] | undefined>(undefined);
   /** @internal The latest request, until its results arrive. */
   readonly _pending = signal<string | undefined>(undefined);
+  /** @internal The latest request asks for the next page. */
+  readonly _paging = signal(false);
   /** @internal The results shown: the latest that answered one of this picker's requests. */
   readonly _shown = signal<ContextResults | undefined>(undefined);
   /** @internal The active option's index. */
@@ -293,9 +299,15 @@ export class OddkinContextPicker extends OddkinElement.with({
   };
   /** @internal */
   readonly _onScope = (event: Event): void => {
-    this._scope.value = (event.target as HTMLSelectElement).value;
-    this._view.value = 'results';
+    const select = event.target as HTMLSelectElement;
     this._browse.value = undefined;
+    if (select.selectedOptions[0]?.dataset['view'] === 'selected') {
+      this._view.value = 'selected';
+      this.#listbox.setActive(-1);
+      return;
+    }
+    this._scope.value = select.value;
+    this._view.value = 'results';
     this.#request(this._query.peek());
   };
   /** @internal */
@@ -313,6 +325,7 @@ export class OddkinContextPicker extends OddkinElement.with({
     const abort = (this.#abort = new AbortController());
     const requestId = createId('context');
     this._pending.value = requestId;
+    this._paging.value = cursor !== undefined;
     this.#append = cursor === undefined ? undefined : this._shown.peek()?.items;
     const sourceIds = this._scopeIds();
     const browse = this._browse.peek();
@@ -360,15 +373,20 @@ export class OddkinContextPicker extends OddkinElement.with({
         }),
         key: `browse:${results.requestId}`,
       });
-    if (this._query.peek() && failed.length < (results.sources?.length ?? 1))
+    if (this._query.peek() && failed.length < (results.sources?.length ?? 1)) {
+      const items = this._shown.peek()?.items ?? [];
+      // A page with a cursor is not all the matches: without a total, say how many are loaded.
+      const total = results.total ?? (results.nextCursor === undefined ? items.length : undefined);
+      const count = formatNumber(total ?? items.length, langOf(this));
       this.#say({
-        text: results.items.length
-          ? format(this._strings.resultsAnnouncement, {
-              count: formatNumber(results.total ?? results.items.length, langOf(this)),
-            })
-          : this._strings.noMatchesAnnouncement,
+        text: !items.length
+          ? this._strings.noMatchesAnnouncement
+          : total === undefined
+            ? format(this._strings.loaded, { count })
+            : format(this._strings.resultsAnnouncement, { count }),
         key: `results:${results.requestId}`,
       });
+    }
   }
 
   // ---- Browsing ----
@@ -494,12 +512,15 @@ export class OddkinContextPicker extends OddkinElement.with({
   /** @internal Cancel, in confirm mode: the draft is discarded. */
   readonly _onCancel = (): void => this._close(true);
 
-  /** Ask the host; true when it set `value` to the proposal. */
+  /** Propose `next`; applied unless a handler cancels. True when `value` is the proposal. */
   #propose(
     next: readonly ContextResource[],
     reason: 'add' | 'remove' | 'replace' | 'apply',
   ): boolean {
+    const before = this.value;
     if (!this.emit(contextChangeEvent, { value: [...next], reason })) return false;
+    // A handler may set `value` itself; otherwise the proposal applies.
+    if (this.value === before) this.value = [...next];
     const keys = this.value.map(resourceKey);
     return keys.length === next.length && next.every((r, i) => resourceKey(r) === keys[i]);
   }

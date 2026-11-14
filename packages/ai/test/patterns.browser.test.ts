@@ -102,6 +102,7 @@ describe('the pattern list', () => {
       'citations-with-sources',
       'approval-outside-a-tool-call',
       'agent-asks-then-acts',
+      'context-for-a-request',
     ]);
     for (const { id, title, elements } of patterns) {
       const page = await commands.readFile(`packages/ai/patterns/${id}/README.md`);
@@ -410,5 +411,58 @@ describe('Agent asks, then acts', () => {
       ['odd-approval-decide', expect.objectContaining({ approvalId: 'post', revision: 1 })],
     ]);
     expect(text(approval.shadowRoot!.querySelector('.outcome'))).toContain('Approved');
+  });
+});
+
+describe('Context for a request', () => {
+  it('adds a chip for each chosen resource, removes one from its chip, and folds the rest behind +N more', async () => {
+    // A cast keeps TypeScript from loading the built chip's types beside its source's.
+    await import('@oddkin/components/define/chip' as string);
+    await import('../src/context-picker/context-picker.define.js');
+    const root = await example('context-for-a-request');
+    const picker = $<HTMLElementTagNameMap['odd-context-picker']>(root, 'odd-context-picker');
+    const chips = $(root, '.chips');
+    const labels = () => [...chips.querySelectorAll('odd-chip')].map(text);
+    expect(chips.getAttribute('aria-label')).toBe('Context for the request');
+    expect(labels()).toEqual(['Launch brief', 'Release checklist']);
+    const trigger = inner(picker, '[part="trigger"]');
+    expect(text(trigger)).toBe('Add context');
+    trigger.click();
+    await settle(root);
+    const option = (label: string) =>
+      [...picker.shadowRoot!.querySelectorAll<HTMLElement>('[role="option"]')].find((o) =>
+        text(o).startsWith(label),
+      )!;
+    // Choosing applies the change, and the chip appears.
+    option('Customer interviews').click();
+    await settle(root);
+    expect(picker.value.map((r) => r.id)).toEqual(['brief', 'checklist', 'interviews']);
+    expect(labels()).toEqual(['Launch brief', 'Release checklist', 'Customer interviews']);
+    // A fourth folds the row: three chips and +1 more, which expands and collapses.
+    option('Decision log').click();
+    await settle(root);
+    const more = () => $<HTMLButtonElement>(chips, '.more');
+    expect(labels()).toHaveLength(3);
+    expect([text(more()), more().getAttribute('aria-expanded')]).toEqual(['+1 more', 'false']);
+    more().click();
+    await settle(root);
+    expect(labels()).toEqual([
+      'Launch brief',
+      'Release checklist',
+      'Customer interviews',
+      'Decision log',
+    ]);
+    expect([text(more()), more().getAttribute('aria-expanded')]).toEqual(['Show fewer', 'true']);
+    expect(focused()).toBe(more());
+    // A chip's button removes its resource from the picker; focus goes to the chips' group.
+    picker.open = false;
+    await settle(root);
+    const remove = inner($(chips, 'odd-chip'), '[part~="remove"]');
+    expect(remove.getAttribute('aria-label')).toBe('Remove Launch brief');
+    remove.click();
+    await settle(root);
+    expect(picker.value.map((r) => r.id)).toEqual(['checklist', 'interviews', 'decisions']);
+    expect(labels()).toEqual(['Release checklist', 'Customer interviews', 'Decision log']);
+    expect(focused()).toBe(chips);
   });
 });

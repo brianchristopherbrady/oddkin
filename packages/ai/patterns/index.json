@@ -65,6 +65,13 @@
       "summary": "Ask the question an action depends on, then propose the action the answer shaped, in order in the conversation.",
       "elements": ["odd-conversation", "odd-message", "odd-question", "odd-action-approval"],
       "recipes": []
+    },
+    {
+      "id": "context-for-a-request",
+      "title": "Context for a request",
+      "summary": "Attach resources from the application's connected sources to the next request, as removable chips beside Add context.",
+      "elements": ["odd-context-picker", "odd-chip"],
+      "recipes": [".odd-cluster", ".odd-button"]
     }
   ]
 }

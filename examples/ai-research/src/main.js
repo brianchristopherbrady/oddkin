@@ -94,7 +94,7 @@ controller.subscribe(sync);
 sync();
 
 // Context is application-owned: the host answers the picker's searches from its connected sources,
-// accepts each change by setting `value`, and shows the chosen resources as removable chips.
+// lets each change apply, and shows the chosen resources as removable chips.
 const contextSources = [
   { id: 'notes', label: 'Notes' },
   { id: 'papers', label: 'Papers', description: '2 collections', browse: true },
@@ -176,9 +176,9 @@ const library = [
 picker.sources = contextSources;
 picker.multiple = true;
 const chosen = $('#chosen-context');
-const showChosen = () => {
+const showChosen = (value = picker.value) => {
   chosen.replaceChildren(
-    ...picker.value.map((resource) => {
+    ...value.map((resource) => {
       const chip = document.createElement('odd-chip');
       chip.removable = true;
       chip.textContent = resource.label;
@@ -207,8 +207,7 @@ picker.addEventListener('odd-context-query', ({ detail }) => {
   }, 250);
 });
 picker.addEventListener('odd-context-change', ({ detail }) => {
-  picker.value = detail.value;
-  showChosen();
+  showChosen(detail.value);
   note(`context: ${detail.reason} (${detail.value.length} chosen)`);
 });
 picker.value = library.slice(0, 1);

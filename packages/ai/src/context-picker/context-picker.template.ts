@@ -1,4 +1,4 @@
-import { checkGlyph, fileGlyph, plusGlyph, searchGlyph } from '@oddkin/components/styles';
+import { checkGlyph, fileGlyph, searchGlyph } from '@oddkin/components/styles';
 import { html, nothing, repeat } from '@oddkin/core/template';
 import type { ContextResource } from '../contracts/types.js';
 import { format, formatNumber, langOf } from '../internal/strings.js';
@@ -14,7 +14,8 @@ const highlighted = (label: string, query: string) => {
 
 /**
  * Anatomy: the `trigger`; the `surface` (title and Close, `search`, the scope and Selected, the
- * status line, the `results` listbox or a feedback block, the `footer`); two live regions.
+ * status line, the collection that scrolls: `browse`, the `results` listbox, Load more, a retry or
+ * feedback block; the `footer`); two live regions.
  */
 export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const t = host._strings;
@@ -24,14 +25,19 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const reviewing = host._view.value === 'selected';
   const chosen = host._chosen.value;
   const keys = host._keys.value;
+  const active = host._active.value;
   const shown = host._shown.value;
   const loading = host._loading.value;
   const scopeIds = host._scopeIds();
   const states = shown?.sources ?? [];
   const failed = states.filter((s) => s.status === 'failed');
   const allFailed = !!shown && !loading && failed.length > 0 && failed.length === states.length;
+  const messages = [...new Set(failed.map((s) => s.error?.message).filter(Boolean))].join(' ');
+  const retryable = failed.some((s) => s.error?.retryable !== false);
+  const updating = loading && !!shown && !host._paging.value;
   const browse = host._browse.value;
   const browsingRoot = !!browse && !browse.sourceId;
+  const partial = !reviewing && !browsingRoot && !loading && !allFailed && failed.length > 0;
   const here = browse?.sourceId ? host._path() : '';
   const browsable = host.sources.filter((s) => s.browse);
   const all: readonly ContextResource[] = reviewing
@@ -64,7 +70,7 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
           ? shown
             ? format(t.searching, { sources })
             : format(t.loading, { sources: format(t.connected, { count: n(scopeIds.length) }) })
-          : failed.length
+          : partial
             ? format(t.partial, {
                 failed: host._sourcesText(failed.map((s) => s.sourceId)),
                 searched: n(states.length - failed.length),
@@ -98,10 +104,14 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
         ? html`<p class="feedback-title danger">
               ${format(t.failed, { sources: host._sourcesText(failed.map((s) => s.sourceId)) })}
             </p>
-            <p class="feedback-text">${t.failedText}</p>
-            <button class="odd-button" data-size="sm" type="button" @click=${host._onRetry}>
-              ${t.retry}
-            </button>`
+            <p class="feedback-text">${messages || t.failedText}</p>
+            ${
+              retryable
+                ? html`<button class="odd-button" type="button" @click=${host._onRetry}>
+                    ${t.retry}
+                  </button>`
+                : nothing
+            }`
         : loading && !shown
           ? html`<p class="feedback-title">${t.loadingTitle}</p>
               <p class="feedback-text">${format(t.loadingText, { sources })}</p>
@@ -112,7 +122,12 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
             ? query
               ? html`<p class="feedback-title">${format(t.noMatches, { sources })}</p>
                   <p class="feedback-text">${t.noMatchesText}</p>
-                  <button class="odd-button" data-size="sm" type="button" @click=${host._onClear}>
+                  <button
+                    class="odd-button"
+                    data-appearance="ghost"
+                    type="button"
+                    @click=${host._onClear}
+                  >
                     ${t.clearSearch}
                   </button>`
               : html`<p class="feedback-title">${t.empty}</p>
@@ -121,8 +136,7 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
 
   return html`<button
       part="trigger"
-      class="odd-button trigger"
-      data-size="md"
+      class="odd-button"
       type="button"
       aria-haspopup="dialog"
       aria-expanded=${host.open ? 'true' : 'false'}
@@ -130,7 +144,7 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
       ?disabled=${host.disabled}
       @click=${host._onTrigger}
     >
-      ${plusGlyph}<span>${host.label || t.add}</span>
+      ${host.label || t.add}
     </button>
     <div
       part="surface"
@@ -143,211 +157,231 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
       @focusout=${host._onFocusOut}
       @toggle=${host._onSurfaceToggle}
     >
-      <div class="header">
-        <h2 id="title" class="title">${reviewing ? t.selectedTitle : t.title}</h2>
-        <button
-          class="odd-button close"
-          data-size="sm"
-          data-appearance="ghost"
-          type="button"
-          @click=${host._onClose}
-        >
-          ${t.close}
-        </button>
-      </div>
-      <div class="control-box search-field">
-        <span class="control-start" aria-hidden="true">${searchGlyph}</span>
-        <input
-          part="search"
-          class="control search"
-          type="search"
-          autocomplete="off"
-          placeholder=${t.search}
-          aria-label=${t.search}
-          aria-controls="results"
-          .value=${query}
-          @input=${host._onInput}
-          @keydown=${host._onSearchKey}
-        />
-      </div>
-      <div class="scope-row">
-        ${
-          host.sources.length > 1
-            ? html`<span class="control-box"
-                ><select class="control scope" aria-label=${t.scope} @change=${host._onScope}>
-                  <option value="" ?selected=${!scopeValue}>${t.allSources}</option>
-                  ${host.sources.map(
-                    (s) =>
-                      html`<option .value=${s.id} ?selected=${scopeValue === s.id}>
-                        ${s.label}
-                      </option>`,
-                  )}
-                </select></span
-              >`
-            : nothing
-        }
-        <button
-          class="odd-button"
-          data-size="sm"
-          data-appearance="ghost"
-          type="button"
-          aria-pressed=${reviewing ? 'true' : 'false'}
-          @click=${host._onSelectedView}
-        >
-          ${format(t.selected, { count })}
-        </button>
-      </div>
-      <p id="status" class=${`status-line${allFailed || failed.length ? ' danger' : ''}`}>
-        ${status}
-      </p>
-      ${
-        browse
-          ? html`<div part="browse" class="browse">
-              ${
-                browsingRoot
-                  ? browsable.map(
+      <div class="content">
+        <div class="header">
+          <h2 id="title" class="title">${reviewing ? t.selectedTitle : t.title}</h2>
+          <button
+            class="odd-button close"
+            data-appearance="ghost"
+            type="button"
+            @click=${host._onClose}
+          >
+            ${t.close}
+          </button>
+        </div>
+        <div class="control-box search-field">
+          <span class="control-start" aria-hidden="true">${searchGlyph}</span>
+          <input
+            part="search"
+            class="control search"
+            type="text"
+            role="searchbox"
+            enterkeyhint="search"
+            autocomplete="off"
+            placeholder=${t.search}
+            aria-label=${t.search}
+            aria-controls="results"
+            .value=${query}
+            @input=${host._onInput}
+            @keydown=${host._onSearchKey}
+          />
+        </div>
+        <div class="scope-row">
+          ${
+            host.sources.length > 1
+              ? html`<span class="control-box"
+                  ><select class="control scope" aria-label=${t.scope} @change=${host._onScope}>
+                    <option value="" ?selected=${!reviewing && !scopeValue}>${t.allSources}</option>
+                    ${host.sources.map(
                       (s) =>
-                        html`<button
-                          class="odd-button source"
-                          data-size="sm"
+                        html`<option .value=${s.id} ?selected=${!reviewing && scopeValue === s.id}>
+                          ${s.label}
+                        </option>`,
+                    )}
+                    <option data-view="selected" ?selected=${reviewing}>${t.selectedOnly}</option>
+                  </select></span
+                >`
+              : nothing
+          }
+          <button
+            class="odd-button"
+            data-appearance="ghost"
+            type="button"
+            aria-pressed=${reviewing ? 'true' : 'false'}
+            @click=${host._onSelectedView}
+          >
+            ${format(t.selected, { count })}
+          </button>
+        </div>
+        <p id="status" class=${`status-line${partial ? ' danger' : ''}`}>${status}</p>
+        <div class="collection">
+          ${
+            browse
+              ? html`<div part="browse" class="browse">
+                  ${
+                    browsingRoot
+                      ? browsable.map(
+                          (s) =>
+                            html`<button
+                              class="odd-button source"
+                              data-appearance="ghost"
+                              type="button"
+                              data-id=${s.id}
+                              @click=${host._onSource}
+                            >
+                              ${s.description ? format(t.detail, { label: s.label, detail: s.description }) : s.label}
+                            </button>`,
+                        )
+                      : html`<button
+                          class="odd-button back"
                           data-appearance="ghost"
                           type="button"
-                          data-id=${s.id}
-                          @click=${host._onSource}
+                          @click=${host._onBack}
                         >
-                          ${s.description ? format(t.detail, { label: s.label, detail: s.description }) : s.label}
-                        </button>`,
-                    )
-                  : html`<button
-                      class="odd-button back"
-                      data-size="sm"
-                      data-appearance="ghost"
-                      type="button"
-                      @click=${host._onBack}
-                    >
-                      ${format(t.back, { where: backTo })}
-                    </button>`
-              }
-            </div>`
-          : nothing
-      }
-      ${
-        containers.length
-          ? html`<div class="containers">
-              ${containers.map(
-                (r) =>
-                  html`<button
-                    class="odd-button container"
-                    data-size="sm"
+                          ${format(t.back, { where: backTo })}
+                        </button>`
+                  }
+                </div>`
+              : nothing
+          }
+          ${
+            containers.length
+              ? html`<div class="containers">
+                  ${containers.map(
+                    (r) =>
+                      html`<button
+                        class="odd-button container"
+                        data-appearance="ghost"
+                        type="button"
+                        data-key=${resourceKey(r)}
+                        @click=${host._onContainer}
+                      >
+                        ${format(t.detail, { label: r.label, detail: r.description ?? r.type })}
+                      </button>`,
+                  )}
+                </div>`
+              : nothing
+          }
+          <div
+            part="results"
+            id="results"
+            class="results"
+            role="listbox"
+            tabindex="0"
+            aria-labelledby="title"
+            aria-describedby="status"
+            aria-multiselectable=${host.multiple ? 'true' : 'false'}
+            aria-busy=${loading ? 'true' : 'false'}
+            ?hidden=${!items.length}
+            @keydown=${host._onResultsKey}
+            @focus=${host._onResultsFocus}
+          >
+            ${repeat(
+              items,
+              (r) => resourceKey(r),
+              (r, index) => {
+                const isChosen = keys.has(resourceKey(r));
+                const blocked = host._blocked(r);
+                const meta = [
+                  browse?.sourceId && !reviewing ? undefined : host._sourceLabel(r.sourceId),
+                  r.path,
+                  blocked || r.unavailable || (updating ? t.updating : r.description),
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+                return html`<div
+                  part="option"
+                  class=${`option${index === active ? ' active' : ''}`}
+                  role="option"
+                  data-key=${resourceKey(r)}
+                  aria-selected=${isChosen ? 'true' : 'false'}
+                  aria-disabled=${blocked ? 'true' : 'false'}
+                  aria-label=${`${r.label}, ${r.type}, ${host._sourceLabel(r.sourceId)}`}
+                  aria-description=${meta}
+                  @click=${host._onOptionClick}
+                >
+                  <span class=${`option-start indicator${host.multiple ? '' : ' radio'}`}
+                    ><span class="indicator-box" data-state=${isChosen ? 'checked' : null}></span>${
+                      host.multiple
+                        ? html`<span class="indicator-mark indicator-check">${checkGlyph}</span>`
+                        : html`<span class="indicator-mark indicator-check indicator-dot"></span>`
+                    }</span
+                  >
+                  <span class="option-icon" aria-hidden="true">${fileGlyph}</span>
+                  <span class="option-label">
+                    <span class="name">${highlighted(r.label, reviewing ? '' : query)}</span>
+                    <span class="option-description">${meta}</span>
+                  </span>
+                </div>`;
+              },
+            )}
+          </div>
+          ${
+            more
+              ? html`<button
+                  class="odd-button more"
+                  data-appearance="ghost"
+                  type="button"
+                  @click=${host._onLoadMore}
+                >
+                  ${t.loadMore}
+                </button>`
+              : nothing
+          }
+          ${
+            partial && retryable
+              ? html`<button
+                  class="odd-button retry"
+                  data-appearance="ghost"
+                  type="button"
+                  @click=${host._onRetry}
+                >
+                  ${format(t.retrySources, {
+                    sources: host._sourcesText(failed.map((s) => s.sourceId)),
+                  })}
+                </button>`
+              : nothing
+          }
+          <div class="feedback" ?hidden=${feedback === nothing}>${feedback}</div>
+        </div>
+        <div part="footer" class="footer">
+          <span class="count">${format(t.count, { count })}</span>
+          <slot name="actions"></slot>
+          ${
+            browsable.length
+              ? html`<button
+                  class="odd-button"
+                  data-appearance="ghost"
+                  type="button"
+                  @click=${host._onBrowse}
+                >
+                  ${t.browse}
+                </button>`
+              : nothing
+          }
+          ${
+            confirm
+              ? html`<button
+                    class="odd-button"
                     data-appearance="ghost"
                     type="button"
-                    data-key=${resourceKey(r)}
-                    @click=${host._onContainer}
+                    @click=${host._onCancel}
                   >
-                    ${format(t.detail, { label: r.label, detail: r.description ?? r.type })}
-                  </button>`,
-              )}
-            </div>`
-          : nothing
-      }
-      <div
-        part="results"
-        id="results"
-        class="results"
-        role="listbox"
-        tabindex="0"
-        aria-labelledby="title"
-        aria-describedby="status"
-        aria-multiselectable=${host.multiple ? 'true' : 'false'}
-        aria-busy=${loading ? 'true' : 'false'}
-        ?hidden=${!items.length}
-        @keydown=${host._onResultsKey}
-        @focus=${host._onResultsFocus}
-      >
-        ${repeat(
-          items,
-          (r) => resourceKey(r),
-          (r, index) => {
-            const isChosen = keys.has(resourceKey(r));
-            const blocked = host._blocked(r);
-            const meta = [host._sourceLabel(r.sourceId), r.path, blocked || r.description]
-              .filter(Boolean)
-              .join(' · ');
-            return html`<div
-              part="option"
-              class=${`option${index === host._active.value ? ' active' : ''}`}
-              role="option"
-              data-key=${resourceKey(r)}
-              aria-selected=${isChosen ? 'true' : 'false'}
-              aria-disabled=${blocked ? 'true' : 'false'}
-              aria-label=${`${r.label}, ${r.type}, ${host._sourceLabel(r.sourceId)}`}
-              aria-description=${meta}
-              @click=${host._onOptionClick}
-            >
-              <span class=${`option-start indicator${host.multiple ? '' : ' radio'}`}
-                ><span class="indicator-box" data-state=${isChosen ? 'checked' : null}></span>${
-                  host.multiple
-                    ? html`<span class="indicator-mark indicator-check">${checkGlyph}</span>`
-                    : html`<span class="indicator-mark indicator-dot"></span>`
-                }</span
-              >
-              <span class="option-icon" aria-hidden="true">${fileGlyph}</span>
-              <span class="option-label">
-                <span class="name">${highlighted(r.label, reviewing ? '' : query)}</span>
-                <span class="option-description">${meta}</span>
-              </span>
-            </div>`;
-          },
-        )}
-      </div>
-      ${
-        more
-          ? html`<button
-              class="odd-button more"
-              data-size="sm"
-              data-appearance="ghost"
-              type="button"
-              @click=${host._onLoadMore}
-            >
-              ${t.loadMore}
-            </button>`
-          : nothing
-      }
-      <div class="feedback" ?hidden=${feedback === nothing}>${feedback}</div>
-      <div part="footer" class="footer">
-        <span class="count">${format(t.count, { count })}</span>
-        <slot name="actions"></slot>
-        ${
-          browsable.length
-            ? html`<button
-                class="odd-button"
-                data-size="sm"
-                data-appearance="ghost"
-                type="button"
-                @click=${host._onBrowse}
-              >
-                ${t.browse}
-              </button>`
-            : nothing
-        }
-        ${
-          confirm
-            ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._onCancel}>
-                  ${t.cancel}
-                </button>
-                <button
-                  class="odd-button"
-                  data-size="sm"
-                  data-appearance="primary"
-                  type="button"
-                  @click=${host._onApply}
-                >
-                  ${format(t.apply, { count })}
+                    ${t.cancel}
+                  </button>
+                  <button
+                    class="odd-button"
+                    data-appearance="primary"
+                    type="button"
+                    @click=${host._onApply}
+                  >
+                    ${format(t.apply, { count })}
+                  </button>`
+              : html`<button class="odd-button" type="button" @click=${host._onDone}>
+                  ${t.done}
                 </button>`
-            : html`<button class="odd-button" data-size="sm" type="button" @click=${host._onDone}>
-                ${t.done}
-              </button>`
-        }
+          }
+        </div>
       </div>
     </div>
     <div class="visually-hidden live-polite" aria-live="polite" aria-atomic="true"></div>

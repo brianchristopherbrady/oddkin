@@ -519,24 +519,23 @@ describe('odd-checkpoint', () => {
 });
 
 describe('odd-context-picker', () => {
-  it("stacks the surface; the title beside Close, the scope beside Selected, the footer's parts in rows", async () => {
+  it("stacks the surface; the title beside Close, the scope beside Selected, the collection's parts, the footer's parts in rows", async () => {
     const el = await example<HTMLElementTagNameMap['odd-context-picker']>('context-picker');
-    el.addEventListener('odd-context-query', ({ detail }) => {
-      el.results = {
-        requestId: detail.requestId,
-        items: el.value.concat(el.value.map((r) => ({ ...r, id: `${r.id}-2` }))),
-      };
-    });
     el.open = true;
     await settle(el);
-    // space.xs between the surface's parts and inside its rows, as Figma's C07 surface spaces them.
-    expectColumn($(el, '.surface'), space('xs'));
+    // A second page to load, so the collection holds the results and Load more.
+    el.results = { ...el.results!, nextCursor: 'p2' };
+    await settle(el);
+    // Figma's C07 surface (page 06): its parts space.xs apart, Close beside the title space.xs
+    // away, the scope and Selected, the collection's parts, and the results space.3xs apart.
+    expectColumn($(el, '.content'), space('xs'));
     const header = $(el, '.header');
     const [title, close] = [...header.children].map((child) => child.getBoundingClientRect());
     expect(Math.abs(middle(title!) - middle(close!)), 'title beside Close').toBeLessThanOrEqual(1);
     expect(round(header.getBoundingClientRect().right - close!.right), 'Close at the end').toBe(0);
-    expectRow($(el, '.scope-row'), space('xs'));
-    expectColumn($(el, '.results'), space('none'));
+    expectRow($(el, '.scope-row'), space('3xs'));
+    expectColumn($(el, '.collection'), space('3xs'));
+    expectColumn($(el, '.results'), space('3xs'));
     expectRow($(el, '.footer'), space('xs'));
   });
 });
@@ -1440,6 +1439,190 @@ describe('continuity', () => {
         expect(reason.checked).toBe(true);
         expect(form.hidden).toBe(false);
         expectInside(form);
+      }
+    },
+  );
+
+  // The context picker (row 34): its surface belongs to the top layer, beside its trigger, inside
+  // the test viewport, so the parent narrows from 400 to 222 px as the other popover probes do.
+  // The host shows the chosen resources as chips beside the picker (the composition the C07 design
+  // draws), and the probes count the picker's toggle events: a resize opens or closes nothing.
+  const POPOVER_WIDTHS = [400, 260, 222, 400, 222];
+  type Picker = HTMLElementTagNameMap['odd-context-picker'];
+  type Resource = Picker['value'][number];
+  const library: Resource[] = ['Launch brief', 'Launch checklist', 'Launch retrospective'].map(
+    (label, i) => ({ sourceId: 'drive', id: `r${i}`, label, type: 'document', path: 'Product' }),
+  );
+  /** The picker beside the host's chips, which follow its value; the host answers at once. */
+  const composer = async (setup: (el: Picker) => void) => {
+    const el = await mount<Picker>(
+      'odd-context-picker',
+      () => import('../src/context-picker/context-picker.define.js'),
+      (e) => {
+        e.sources = [
+          { id: 'drive', label: 'Drive', browse: true },
+          { id: 'wiki', label: 'Wiki' },
+        ];
+        e.multiple = true;
+        e.value = [library[0]!];
+        setup(e);
+      },
+    );
+    const row = document.createElement('div');
+    row.className = 'odd-cluster';
+    const chips = document.createElement('div');
+    chips.className = 'odd-cluster';
+    row.append(chips, el);
+    container.append(row);
+    const draw = (value: readonly Resource[]) => {
+      const kept = new Map(
+        [...chips.children].map((chip) => [chip.getAttribute('data-key'), chip]),
+      );
+      chips.replaceChildren(
+        ...value.map((r) => {
+          const chip = kept.get(r.id) ?? document.createElement('span');
+          chip.setAttribute('data-key', r.id);
+          chip.textContent = r.label;
+          return chip;
+        }),
+      );
+    };
+    draw(el.value);
+    el.addEventListener('odd-context-change', ({ detail }) => draw(detail.value));
+    el.addEventListener('odd-context-query', ({ detail }) => {
+      el.results = {
+        requestId: detail.requestId,
+        items: detail.location
+          ? detail.location.id
+            ? [library[2]!]
+            : [
+                {
+                  sourceId: 'drive',
+                  id: 'launch',
+                  label: 'Launch',
+                  type: 'folder',
+                  container: true,
+                },
+              ]
+          : library.filter((r) => r.label.toLowerCase().includes(detail.query.toLowerCase())),
+      };
+    });
+    const toggles: string[] = [];
+    el.addEventListener('toggle', (event) => toggles.push((event as ToggleEvent).newState));
+    const surface = $(el, '[part="surface"]');
+    const trigger = $(el, '[part="trigger"]');
+    container.style.inlineSize = `${POPOVER_WIDTHS[0]}px`;
+    trigger.click();
+    await settle(el);
+    const beside = () => {
+      const [a, b] = [trigger.getBoundingClientRect(), surface.getBoundingClientRect()];
+      const gap = Math.min(Math.abs(a.top - b.bottom), Math.abs(b.top - a.bottom));
+      return gap <= 12 && b.left < a.right && a.left < b.right;
+    };
+    await expect.poll(beside).toBe(true);
+    /** Still open, once, beside its trigger, and nothing overflows sideways. */
+    const expectOpen = () => {
+      expect(surface.matches(':popover-open')).toBe(true);
+      expect(toggles).toEqual(['open']);
+      expect(beside()).toBe(true);
+      expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth + 1);
+    };
+    return { el, chips, surface, expectOpen };
+  };
+  const buttonsOf = (el: Picker) => el.shadowRoot!.querySelectorAll<HTMLElement>('.odd-button');
+
+  it.each(SETUPS)(
+    'odd-context-picker keeps a query, the chosen resources and their chips, and the active result (%s)',
+    async (setup) => {
+      bound(setup);
+      const { el, chips, expectOpen } = await composer(() => {});
+      const search = $(el, '[part="search"]') as HTMLInputElement;
+      await userEvent.fill(search, 'launch');
+      await new Promise((resolve) => setTimeout(resolve, 260));
+      await settle(el);
+      search.setSelectionRange(3, 3);
+      const content = $(el, '.content');
+      const first = density(content, buttonsOf(el));
+      const chip = chips.firstElementChild;
+      for (const width of POPOVER_WIDTHS) {
+        await resize(width, el);
+        await frames();
+        expectOpen();
+        expect($(el, '[part="search"]')).toBe(search);
+        expect(search.value).toBe('launch');
+        expect(el.shadowRoot!.activeElement).toBe(search);
+        expect([search.selectionStart, search.selectionEnd]).toEqual([3, 3]);
+        expect(density(content, buttonsOf(el))).toEqual(first);
+      }
+      // Into the results, choose the second, and stay on the third.
+      await userEvent.keyboard('{ArrowDown}{ArrowDown} {ArrowDown}');
+      await settle(el);
+      const results = $(el, '[part="results"]');
+      const options = [...results.querySelectorAll<HTMLElement>('[role="option"]')];
+      expect(el.value.map((r) => r.id)).toEqual(['r0', 'r1']);
+      expect([...chips.children].map((c) => c.textContent)).toEqual([
+        'Launch brief',
+        'Launch checklist',
+      ]);
+      const drawn = [...chips.children];
+      expect(drawn[0]).toBe(chip);
+      for (const width of POPOVER_WIDTHS) {
+        await resize(width, el);
+        await frames();
+        expectOpen();
+        expect(el.shadowRoot!.activeElement).toBe(results);
+        expect(results.getAttribute('aria-activedescendant')).toBe(options[2]!.id);
+        expect(options[2]!.classList.contains('active')).toBe(true);
+        const now = [...results.querySelectorAll('[role="option"]')];
+        expect(now.length === options.length && now.every((o, i) => o === options[i])).toBe(true);
+        expect(options.map((o) => o.getAttribute('aria-selected'))).toEqual([
+          'true',
+          'true',
+          'false',
+        ]);
+        expect([...chips.children]).toEqual(drawn);
+        expect(search.value).toBe('launch');
+        expect(density(content, buttonsOf(el))).toEqual(first);
+      }
+    },
+  );
+
+  it.each(SETUPS)(
+    'odd-context-picker keeps a draft to confirm and the collection browsed into (%s)',
+    async (setup) => {
+      bound(setup);
+      const { el, chips, expectOpen } = await composer((e) => (e.commit = 'confirm'));
+      const [, second] = el.shadowRoot!.querySelectorAll<HTMLElement>('[role="option"]');
+      second!.click();
+      await settle(el);
+      const apply = () =>
+        [...el.shadowRoot!.querySelectorAll('[part="footer"] .odd-button')]
+          .find((b) => b.textContent!.trim().startsWith('Add'))!
+          .textContent!.trim();
+      expect(apply()).toBe('Add 2');
+      // Browse into Drive, then into Launch: two levels deep, focus on Back.
+      [...buttonsOf(el)].find((b) => b.textContent!.trim() === 'Browse…')!.click();
+      await settle(el);
+      $(el, '.source').click();
+      await settle(el);
+      $(el, '.container').click();
+      await settle(el);
+      const back = $(el, '.back');
+      await expect.poll(() => el.shadowRoot!.activeElement).toBe(back);
+      const status = $(el, '.status-line').textContent;
+      const content = $(el, '.content');
+      const first = density(content, buttonsOf(el));
+      for (const width of POPOVER_WIDTHS) {
+        await resize(width, el);
+        await frames();
+        expectOpen();
+        expect($(el, '.back')).toBe(back);
+        expect(el.shadowRoot!.activeElement).toBe(back);
+        expect($(el, '.status-line').textContent).toBe(status);
+        expect(apply()).toBe('Add 2');
+        expect(el.value.map((r) => r.id)).toEqual(['r0']);
+        expect(chips.children).toHaveLength(1);
+        expect(density(content, buttonsOf(el))).toEqual(first);
       }
     },
   );

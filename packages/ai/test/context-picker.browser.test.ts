@@ -96,8 +96,8 @@ interface Harness {
   ): Promise<void>;
 }
 
-/** A picker whose host records each query; with `accept`, it accepts every change. */
-async function mount(setup: (el: Picker) => void = () => {}, accept = true): Promise<Harness> {
+/** A picker whose host records each query; with `assign`, its handler sets each change itself. */
+async function mount(setup: (el: Picker) => void = () => {}, assign = true): Promise<Harness> {
   await import('../src/context-picker/context-picker.define.js');
   const el = document.createElement('odd-context-picker');
   el.sources = sources;
@@ -105,7 +105,7 @@ async function mount(setup: (el: Picker) => void = () => {}, accept = true): Pro
   setup(el);
   const queries: ContextQueryDetail[] = [];
   el.addEventListener('odd-context-query', (e) => queries.push(e.detail));
-  if (accept) el.addEventListener('odd-context-change', (e) => (el.value = e.detail.value));
+  if (assign) el.addEventListener('odd-context-change', (e) => (el.value = [...e.detail.value]));
   container.append(el);
   await settle(el);
   return {
@@ -219,9 +219,11 @@ describe('odd-context-picker', () => {
     const results = $(h.el, '[part="results"]')!;
     expect(h.el.shadowRoot!.activeElement).toBe(results);
     expect(results.getAttribute('aria-activedescendant')).toBe(options(h.el)[0]!.id);
+    expect(options(h.el).map((o) => o.classList.contains('active'))).toEqual([true, false]);
     await userEvent.keyboard('{ArrowDown}');
     await settle(h.el);
     expect(results.getAttribute('aria-activedescendant')).toBe(options(h.el)[1]!.id);
+    expect(options(h.el).map((o) => o.classList.contains('active'))).toEqual([false, true]);
     expect(changes).toEqual([]);
     await userEvent.keyboard(' ');
     await settle(h.el);
@@ -232,7 +234,7 @@ describe('odd-context-picker', () => {
     expect(h.el.open).toBe(true);
   });
 
-  it('changes nothing until the host sets the value; a cancelled change is refused', async () => {
+  it('a cancelled change is refused: nothing is chosen', async () => {
     const h = await mount(() => {}, false);
     await open(h);
     await h.answer([brief]);
@@ -276,6 +278,11 @@ describe('odd-context-picker', () => {
     await h.answer([brief, checklist]);
     expect($(h.el, '[part="results"]')!.getAttribute('aria-multiselectable')).toBe('false');
     expect($$(h.el, '.indicator-dot')).toHaveLength(2);
+    // A single choice shows its dot on the chosen row only.
+    expect($$(h.el, '.indicator-dot').map((d) => getComputedStyle(d).visibility)).toEqual([
+      'hidden',
+      'visible',
+    ]);
     const proposals: string[] = [];
     h.el.addEventListener('odd-context-change', (e) => proposals.push(e.detail.reason));
     options(h.el)[0]!.click();
@@ -369,7 +376,7 @@ describe('odd-context-picker', () => {
     expect(h.el.value).toEqual([]);
   });
 
-  it('a host that neither accepts nor cancels changes nothing: no choice, no announcement, still open', async () => {
+  it('a change no handler cancels applies: chosen, announced, and a single choice closes', async () => {
     const h = await mount((el) => (el.multiple = false), false);
     const heard: string[] = [];
     container.addEventListener('odd-announce', (e) => {
@@ -380,21 +387,46 @@ describe('odd-context-picker', () => {
     await h.answer([brief]);
     options(h.el)[0]!.click();
     await settle(h.el);
-    expect(h.el.value).toEqual([]);
+    expect(h.el.value).toEqual([brief]);
+    expect(heard).toEqual(['Launch brief, document, Drive, selected. 1 selected.']);
+    expect(h.el.open).toBe(false);
+  });
+
+  it('a value the handler sets stays, even another one; only the proposal is announced', async () => {
+    const h = await mount((el) => (el.multiple = false), false);
+    const heard: string[] = [];
+    container.addEventListener('odd-announce', (e) => {
+      heard.push((e as CustomEvent<{ text: string }>).detail.text);
+      e.preventDefault();
+    });
+    h.el.addEventListener('odd-context-change', () => (h.el.value = [checklist]));
+    await open(h);
+    await h.answer([brief, checklist]);
+    options(h.el)[0]!.click();
+    await settle(h.el);
+    expect(h.el.value).toEqual([checklist]);
     expect(heard).toEqual([]);
     expect(h.el.open).toBe(true);
   });
 
-  it('a change the host cancels is refused even if it also set the value', async () => {
+  it('cancelled, then set by the host: shown, but not announced, and the surface stays open', async () => {
     const h = await mount((el) => (el.multiple = false), false);
+    const heard: string[] = [];
+    container.addEventListener('odd-announce', (e) => {
+      heard.push((e as CustomEvent<{ text: string }>).detail.text);
+      e.preventDefault();
+    });
     h.el.addEventListener('odd-context-change', (e) => {
-      h.el.value = e.detail.value;
+      h.el.value = [...e.detail.value];
       e.preventDefault();
     });
     await open(h);
     await h.answer([brief]);
     options(h.el)[0]!.click();
     await settle(h.el);
+    expect(h.el.value).toEqual([brief]);
+    expect(options(h.el)[0]!.getAttribute('aria-selected')).toBe('true');
+    expect(heard).toEqual([]);
     expect(h.el.open).toBe(true);
   });
   it('an unavailable resource cannot be added, but stays removable once chosen', async () => {
@@ -439,6 +471,64 @@ describe('odd-context-picker', () => {
     expect(search.value).toBe('');
   });
 
+  it("shows the host's message for a failed source, and Retry only when it may help", async () => {
+    const h = await mount();
+    await open(h);
+    const fail = async (retryable?: boolean) => {
+      const q = h.queries.at(-1)!;
+      h.el.results = {
+        requestId: q.requestId,
+        items: [],
+        sources: [
+          {
+            sourceId: 'drive',
+            status: 'failed',
+            error: { code: 'auth', message: 'Reconnect Drive.', retryable },
+          },
+          {
+            sourceId: 'wiki',
+            status: 'failed',
+            error: { code: 'auth', message: 'Reconnect Drive.', retryable: false },
+          },
+        ],
+      };
+      await settle(h.el);
+    };
+    await fail();
+    expect($(h.el, '.feedback-text')!.textContent?.trim()).toBe('Reconnect Drive.');
+    expect($$(h.el, '.feedback button').map((b) => b.textContent?.trim())).toEqual([
+      'Retry search',
+    ]);
+    await fail(false);
+    expect($$(h.el, '.feedback button')).toEqual([]);
+  });
+
+  it('announces how many are loaded while more pages may come, and the total when known', async () => {
+    const h = await mount();
+    const heard: string[] = [];
+    container.addEventListener('odd-announce', (e) => {
+      heard.push((e as CustomEvent<{ text: string }>).detail.text);
+      e.preventDefault();
+    });
+    await open(h);
+    const search = $(h.el, '[part="search"]') as HTMLInputElement;
+    const type = async (value: string) => {
+      search.value = value;
+      search.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 260));
+    };
+    await type('l');
+    await h.answer([brief], [], { nextCursor: 'p2' });
+    expect(heard.at(-1)).toBe('1 loaded');
+    ($(h.el, '.more') as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([checklist]);
+    expect(heard.at(-1)).toBe('2 results.');
+    await type('la');
+    await h.answer([brief], [], { nextCursor: 'p2', total: 30 });
+    expect(heard.at(-1)).toBe('30 results.');
+  });
+
   it('reviews the chosen resources under Selected (N)', async () => {
     const h = await mount((el) => (el.value = [brief, checklist]));
     await open(h);
@@ -452,6 +542,36 @@ describe('odd-context-picker', () => {
     options(h.el)[1]!.click();
     await settle(h.el);
     expect(h.el.value).toEqual([brief]);
+  });
+
+  it('the scope offers the same review: Selected only', async () => {
+    const h = await mount((el) => (el.value = [brief, checklist]));
+    await open(h);
+    await h.answer([]);
+    const asked = h.queries.length;
+    const scope = $(h.el, 'select.scope') as HTMLSelectElement;
+    scope.selectedIndex = [...scope.options].findIndex((o) => o.dataset['view'] === 'selected');
+    scope.dispatchEvent(new Event('change', { bubbles: true }));
+    await settle(h.el);
+    expect($(h.el, '.title')!.textContent).toBe('Selected context');
+    expect(names(h.el)).toEqual(['Launch brief', 'Release checklist']);
+    expect(h.queries, 'reviewing asks the host nothing').toHaveLength(asked);
+  });
+
+  it('only the collection scrolls: the header, search, and footer stay in view', async () => {
+    const h = await mount();
+    await open(h);
+    await h.answer(
+      Array.from({ length: 20 }, (_, i) => ({ ...brief, id: `r${i}`, label: `Resource ${i}` })),
+    );
+    const collection = $(h.el, '.collection') as HTMLElement;
+    collection.scrollTop = collection.scrollHeight;
+    expect(collection.scrollTop).toBeGreaterThan(0);
+    const surface = $(h.el, '[part="surface"]')!.getBoundingClientRect();
+    expect($(h.el, '.header')!.getBoundingClientRect().top).toBeGreaterThanOrEqual(surface.top);
+    expect($(h.el, '[part="footer"]')!.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      surface.bottom,
+    );
   });
 
   it('Escape and Done return focus to the trigger; Tab out closes and leaves focus outside', async () => {
@@ -667,6 +787,24 @@ describe('odd-context-picker: browsing and paging', () => {
     expect(heard).toEqual(['Drive: 3 items.']);
   });
 
+  it('rows inside a browsed source leave out its name; the review keeps every source', async () => {
+    const h = await mountBrowsable((el) => (el.value = [checklist]));
+    await open(h);
+    await h.answer([]);
+    browse(h).click();
+    await settle(h.el);
+    ($$(h.el, '.source')[0] as HTMLElement).click();
+    await settle(h.el);
+    await h.answer([folderRef]);
+    const meta = () => text(options(h.el)[0]!.querySelector('.option-description'));
+    expect(meta()).not.toContain('Drive');
+    // Selected (1) while still inside Drive: the chosen page is from Wiki and says so.
+    ($$(h.el, '.scope-row button')[0] as HTMLElement).click();
+    await settle(h.el);
+    expect(names(h.el)).toEqual(['Release checklist']);
+    expect(meta()).toBe('Wiki');
+  });
+
   it('closing leaves browsing; reopening starts at the results', async () => {
     const h = await mountBrowsable();
     await open(h);
@@ -693,6 +831,8 @@ describe('odd-context-picker: browsing and paging', () => {
     await settle(h.el);
     expect(h.queries.at(-1)).toMatchObject({ cursor: 'p2', query: '' });
     expect($(h.el, '.more')).toBeNull();
+    // The shown rows are not being updated while the next page loads.
+    expect(text(options(h.el)[0]!.querySelector('.option-description'))).not.toContain('Updating');
     await h.answer([checklist], [], { nextCursor: 'p3' });
     expect(names(h.el)).toEqual(['Launch brief', 'Release checklist']);
     expect(options(h.el)[0]!.getAttribute('aria-selected')).toBe('true');

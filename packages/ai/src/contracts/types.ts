@@ -7,9 +7,6 @@ import type {
   ApprovalModel,
   ArtifactModel,
   CheckpointModel,
-  ContextResourceModel,
-  ContextResultsModel,
-  ContextSourceModel,
   ConversationSnapshotModel,
   FeedbackModel,
   MessageModel,
@@ -25,6 +22,11 @@ import type {
   publicErrorSchema,
   usageEntrySchema,
 } from './models.js';
+import type {
+  ContextResourceModel,
+  ContextResultsModel,
+  ContextSourceModel,
+} from './context-models.js';
 
 export type { JsonValue };
 export type PublicError = Infer<typeof publicErrorSchema>;

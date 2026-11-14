@@ -13,13 +13,13 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 132,
+    "style": 146,
     "slot": 54,
-    "deferred": 55,
-    "controller": 18,
+    "deferred": 18,
+    "controller": 20,
     "native": 7,
     "element": 29,
-    "independent": 1
+    "independent": 22
   },
   "references": [
     {
@@ -136,8 +136,8 @@
       "source": "Oddkin/AI/ContextPicker/Surface",
       "sourceId": "776:1338",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "controller",
+      "reason": "odd-context-picker draws its surface in its own shadow tree: a non-modal dialog in the top layer, placed by core's PositionController, its results kept by core's ActiveDescendant (packages/ai/src/context-picker)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker",
@@ -145,8 +145,8 @@
       "source": "Oddkin/AI/ContextPicker/Trigger",
       "sourceId": "770:162",
       "count": 6,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The trigger is the native button sheet's secondary md button (nativeButtonStyles), in the text form."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Breadcrumb",
@@ -154,8 +154,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design anatomy: the surface says where browsing is with its own Back button (native button sheet) and status line."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/CommandExploration",
@@ -163,8 +163,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/CommandExploration",
@@ -172,8 +172,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
@@ -181,8 +181,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 6,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
@@ -190,8 +190,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 12,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
@@ -199,8 +199,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/DomainExamples",
@@ -208,8 +208,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Examples",
@@ -217,8 +217,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 15,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Examples",
@@ -226,8 +226,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 20,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Examples",
@@ -235,8 +235,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 4,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Examples",
@@ -244,8 +244,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 4,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -254,7 +254,7 @@
       "sourceId": "770:161",
       "count": 6,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -263,7 +263,7 @@
       "sourceId": "159:439",
       "count": 19,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -272,7 +272,7 @@
       "sourceId": "159:612",
       "count": 3,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -281,7 +281,7 @@
       "sourceId": "159:1144",
       "count": 2,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Feedback",
@@ -289,8 +289,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "Retry search and Clear search: Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Footer",
@@ -298,8 +298,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 5,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "Done, Cancel, Add N, and Browse…: Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
@@ -308,7 +308,7 @@
       "sourceId": "770:161",
       "count": 3,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
@@ -317,7 +317,7 @@
       "sourceId": "159:439",
       "count": 5,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
@@ -326,7 +326,7 @@
       "sourceId": "159:1144",
       "count": 1,
       "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Navigation",
@@ -334,8 +334,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 9,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design anatomy: the surface navigates its views with the scope select, Selected (N), and Browse… (native button sheet)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
@@ -343,8 +343,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
@@ -352,8 +352,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 11,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
@@ -361,8 +361,8 @@
       "source": "Oddkin/Common/chip",
       "sourceId": "159:612",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResearchBrowserExample",
@@ -370,8 +370,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
@@ -379,8 +379,8 @@
       "source": "Oddkin/Common/checkbox",
       "sourceId": "159:1181",
       "count": 9,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The row's indicator is the control indicator's decorative box (controlIndicatorStyles), checked for a chosen resource."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
@@ -388,8 +388,8 @@
       "source": "Oddkin/Common/radio",
       "sourceId": "159:1209",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "A single choice's indicator: the control indicator's box made round with its dot by the picker's sheet, as the radio group draws it."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResourceRow",
@@ -397,8 +397,8 @@
       "source": "Oddkin/Icon/file",
       "sourceId": "159:312",
       "count": 11,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The file glyph from the shared glyph sheet (fileGlyph)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ResourceType",
@@ -406,8 +406,8 @@
       "source": "Oddkin/Icon/file",
       "sourceId": "159:312",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The file glyph from the shared glyph sheet (fileGlyph)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Search",
@@ -415,8 +415,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 4,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/SelectedAttachment",
@@ -424,8 +424,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "A host composition: the Context for a request pattern (packages/ai/patterns) composes odd-chip and a native button beside the picker; no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/SelectedAttachment",
@@ -433,8 +433,8 @@
       "source": "Oddkin/Icon/file",
       "sourceId": "159:312",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "A host composition: the Context for a request pattern (packages/ai/patterns) composes odd-chip and a native button beside the picker; no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/SelectedChip",
@@ -442,8 +442,8 @@
       "source": "Oddkin/Common/chip",
       "sourceId": "159:612",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "A host composition: the Context for a request pattern (packages/ai/patterns) composes odd-chip and a native button beside the picker; no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/SelectedOverflow",
@@ -451,8 +451,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "A host composition: the Context for a request pattern (packages/ai/patterns) composes odd-chip and a native button beside the picker; no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/SelectedOverflow",
@@ -460,8 +460,8 @@
       "source": "Oddkin/Common/chip",
       "sourceId": "159:612",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "independent",
+      "reason": "A host composition: the Context for a request pattern (packages/ai/patterns) composes odd-chip and a native button beside the picker; no part of the element."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -469,8 +469,8 @@
       "source": "Oddkin/AI/ContextPicker/Feedback",
       "sourceId": "771:353",
       "count": 4,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The feedback is drawn by the picker's own template and sheet (context-picker.template.ts, context-picker.styles.ts)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -478,8 +478,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 24,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The option-row sheets (optionRowStructuralStyles, optionRowStyles) with the picker's padding, radius, and pressed fill."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -487,8 +487,8 @@
       "source": "Oddkin/AI/ContextPicker/Search",
       "sourceId": "771:348",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -496,8 +496,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 77,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -505,8 +505,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 14,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "controller",
+      "reason": "The overlay surface sheets (overlaySurfaceStructuralStyles, overlaySurfaceStyles) and core's PositionController, as odd-popover's."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Surface",
@@ -514,8 +514,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 13,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Trigger",
@@ -523,8 +523,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 10,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 3 classifies this reference when it builds the part (the context picker's C07 design, Figma page 06)."
+      "class": "style",
+      "reason": "Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/Internal/BadgePresentation",

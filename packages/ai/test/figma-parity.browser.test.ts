@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { commands } from 'vitest/browser';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { cdp, commands, page, server, userEvent } from 'vitest/browser';
 import {
   compare,
   deliberate,
@@ -40,6 +40,10 @@ deliberate(
   [
     /^odd-action-approval\/Requested\/(light|dark)\s+\S+ (paddingLeft|paddingTop) /,
     'Page 09 sets the approval 24 px in; below 480 px of its container it draws 16 px, where Oddkin changes only the arrangement and leaves padding to the theme density (ADR 0049).',
+  ],
+  [
+    /^Oddkin\/AI\/ContextPicker\/ResourceRow Multiple\/False\/Disabled .+ fills \(--odd-color-text-(primary|secondary)\): /,
+    'A row that cannot be chosen draws its text in the disabled colour, as every Oddkin option row does; Figma fades the whole row to 50 % opacity, an unbound value.',
   ],
 );
 
@@ -1428,6 +1432,603 @@ describe('Figma parity: the decision row (page 08)', () => {
       await expectState(confirmation, 'Submitting', shadow(el, '.confirm'));
       await show('restored', { outcome: 'Restored the document to 09:30.' });
       await expectState(confirmation, 'Resolved', el.shadowRoot!);
+    });
+  }
+});
+
+// The context picker on the owner's C07 design (Figma page 06, 767:2; `Oddkin/AI/ContextPicker/*`).
+// The surface is Figma's popover (`Oddkin/Common/popover`, Picker) holding the picker content; its
+// buttons are md native buttons compared with `Oddkin/Common/button`; its rows with `ResourceRow`
+// and its feedback with `Feedback`, each in the state the surface draws. Not compared here: the
+// host's compositions (`SelectedChip`, `SelectedOverflow`, `SelectedAttachment`: the pattern's),
+// the design-only frames, and the expanded and full-screen browsers, which are not built
+// (component-catalog.md section 7).
+describe('Figma parity: odd-context-picker (page 06)', () => {
+  type Picker = HTMLElementTagNameMap['odd-context-picker'];
+  type Resource = Picker['value'][number];
+  const SURFACE = 'Oddkin/AI/ContextPicker/Surface';
+  const ROW = 'Oddkin/AI/ContextPicker/ResourceRow';
+  const FEEDBACK = 'Oddkin/AI/ContextPicker/Feedback';
+  const content = (...path: string[]) => [
+    'Oddkin popover · linked primitive',
+    'Content',
+    'Picker content',
+    ...path,
+  ];
+  const sources = [
+    { id: 'drive', label: 'Drive', description: '240 resources', browse: true },
+    { id: 'wiki', label: 'Wiki', description: '86 pages', browse: true },
+    { id: 'records', label: 'Records' },
+  ];
+  const brief: Resource = {
+    sourceId: 'drive',
+    id: 'brief',
+    label: 'Launch brief',
+    type: 'document',
+    path: 'Product / Launch',
+    description: '2h ago',
+  };
+  const checklist: Resource = {
+    sourceId: 'wiki',
+    id: 'checklist',
+    label: 'Launch checklist',
+    type: 'page',
+    path: 'Platform team',
+    description: 'Yesterday',
+  };
+  const acme: Resource = {
+    sourceId: 'records',
+    id: 'acme',
+    label: 'Acme renewal',
+    type: 'account',
+  };
+  const notes: Resource = {
+    sourceId: 'drive',
+    id: 'notes',
+    label: 'Pricing notes',
+    type: 'document',
+    unavailable: 'Access changed · Remove or replace',
+  };
+  const BUTTON = {
+    primary: 'Button / Default',
+    secondary: 'Button / Secondary',
+    ghost: 'Button / Ghost',
+  };
+  /** Differences of a native button from Figma's md button of that appearance. */
+  const button = (el: HTMLElement | undefined, appearance: keyof typeof BUTTON, what: string) => {
+    expect(el, what).toBeTruthy();
+    const frame = BUTTON[appearance];
+    return compare(
+      'Oddkin/Common/button',
+      { Appearance: appearance, Size: 'md', State: 'Default' },
+      [
+        { layer: [frame], el: el!, kind: 'frame' },
+        { layer: [frame, 'Label'], el: el!, kind: 'text' },
+      ],
+    ).map((line) => `${what}: ${line}`);
+  };
+  const named = (el: Picker, label: string) =>
+    [...el.shadowRoot!.querySelectorAll<HTMLElement>('button')].find(
+      (b) => b.textContent!.trim() === label,
+    );
+  const rows = (el: Picker) => [...el.shadowRoot!.querySelectorAll<HTMLElement>('[role="option"]')];
+  const rowTargets = (row: HTMLElement, name: string, meta: string, ring = false): Target[] => [
+    ring
+      ? { layer: [], el: row, kind: 'ring' }
+      : {
+          layer: [],
+          el: row,
+          kind: 'frame',
+          gap: 'column-gap',
+          fields: [
+            ['paddingRight', 'padding-inline-end'],
+            ['paddingBottom', 'padding-block-end'],
+            ['bottomRightRadius', 'border-end-end-radius'],
+          ],
+        },
+    { layer: ['Identity and provenance'], el: row.querySelector('.option-label')!, kind: 'frame' },
+    { layer: ['Identity and provenance', name], el: row.querySelector('.name')!, kind: 'text' },
+    {
+      layer: ['Identity and provenance', meta],
+      el: row.querySelector('.option-description')!,
+      kind: 'text',
+    },
+  ];
+  /** A picker the host answers: `answer` gives the latest query these results. */
+  const open = async (setup: (el: Picker) => void = () => {}) => {
+    await import('../src/context-picker/context-picker.define.js');
+    const el = mount('<odd-context-picker></odd-context-picker>') as Picker;
+    el.sources = sources;
+    el.multiple = true;
+    setup(el);
+    let latest = '';
+    el.addEventListener('odd-context-query', ({ detail }) => (latest = detail.requestId));
+    await settle(el);
+    shadow(el, '[part="trigger"]').click();
+    await settle(el);
+    const answer = async (results: Omit<NonNullable<Picker['results']>, 'requestId'>) => {
+      el.results = { requestId: latest, ...results };
+      await settle(el);
+    };
+    const search = async (query: string) => {
+      const field = shadow(el, '[part="search"]') as HTMLInputElement;
+      field.value = query;
+      field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await new Promise((resolve) => setTimeout(resolve, 260));
+      await settle(el);
+    };
+    return { el, answer, search };
+  };
+  const complete = (...ids: string[]) =>
+    ids.map((sourceId) => ({ sourceId, status: 'complete' as const }));
+  // The surface is placed in the viewport: room for Figma's 416 × 480 below the trigger.
+  let viewport: [number, number];
+  beforeAll(async () => {
+    viewport = [window.innerWidth, window.innerHeight];
+    await page.viewport(1024, 800);
+  });
+  afterAll(() => page.viewport(...viewport));
+
+  for (const mode of MODES) {
+    it(`Surface, search results (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer, search } = await open((el) => (el.value = [brief, acme, notes]));
+      await search('launch');
+      await answer({
+        items: [brief, checklist, { ...brief, id: 'retro', label: 'Launch retrospective' }],
+        sources: complete('drive', 'wiki', 'records'),
+        total: 12,
+      });
+      const surface = shadow(el, '[part="surface"]');
+      const targets: Target[] = [
+        {
+          layer: content(),
+          el: shadow(el, '.content'),
+          kind: 'frame',
+          gap: 'row-gap',
+          fields: [
+            ['paddingRight', 'padding-inline-end'],
+            ['paddingBottom', 'padding-block-end'],
+          ],
+        },
+        { layer: content('Header'), el: shadow(el, '.header'), kind: 'frame', gap: 'column-gap' },
+        { layer: content('Header', 'Add context'), el: shadow(el, '.title'), kind: 'text' },
+        {
+          layer: content('Scope and view'),
+          el: shadow(el, '.scope-row'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        {
+          layer: content('12 matches · Drive, Wiki and Records'),
+          el: shadow(el, '.status-line'),
+          kind: 'text',
+        },
+        {
+          layer: content('Scrollable results · listbox'),
+          el: shadow(el, '[part="results"]'),
+          kind: 'frame',
+          gap: 'row-gap',
+        },
+        { layer: content('Footer'), el: shadow(el, '.footer'), kind: 'frame', gap: 'column-gap' },
+        { layer: content('Footer', '3 selected'), el: shadow(el, '.count'), kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone([
+        ...compare('Oddkin/Common/popover', { State: 'Picker' }, [
+          {
+            layer: [],
+            el: surface,
+            kind: 'frame',
+            fields: [
+              ['strokeRightWeight', 'border-inline-end-width'],
+              ['bottomRightRadius', 'border-end-end-radius'],
+            ],
+          },
+        ]),
+        ...compare(SURFACE, { State: 'Search results' }, targets),
+        ...button(named(el, 'Close'), 'ghost', 'Close'),
+        ...button(named(el, 'Selected (3)'), 'ghost', 'Selected (3)'),
+        ...button(named(el, 'Browse…'), 'ghost', 'Browse…'),
+        ...button(named(el, 'Done'), 'secondary', 'Done'),
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'True', State: 'Default' },
+          rowTargets(rows(el)[0]!, 'Launch brief', 'Drive · Product / Launch · Updated 2h ago'),
+        ),
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'False', State: 'Default' },
+          rowTargets(rows(el)[1]!, 'Launch brief', 'Drive · Product / Launch · Updated 2h ago'),
+        ),
+      ]);
+      // Figma's 416 × 480 surface, its parts space.xs apart inside.
+      const box = surface.getBoundingClientRect();
+      expect([box.width, box.height]).toEqual([416, 480]);
+      // Figma's inline search: the 40 px field space.2xs in on every side of its 398 × 48 box, which
+      // its focus ring fills; a text searchbox, so no engine adds a clear button Figma does not draw.
+      const searchbox = shadow(el, '[part="search"]') as HTMLInputElement;
+      const field = shadow(el, '.search-field').getBoundingClientRect();
+      expect([field.width, field.height]).toEqual([398, 48]);
+      const input = searchbox.getBoundingClientRect();
+      expect([input.width, input.height]).toEqual([390, 40]);
+      expect([searchbox.type, searchbox.getAttribute('role')]).toEqual(['text', 'searchbox']);
+      // The footer is as tall as its md buttons (Figma's 40), and each row 56 (3.5rem).
+      expect(shadow(el, '.footer').getBoundingClientRect().height).toBe(40);
+      expect(rows(el).map((row) => row.getBoundingClientRect().height)).toEqual([56, 56, 56]);
+      // The title's line height: parity.ts compares only Figma's line heights given in pixels.
+      expect(getComputedStyle(shadow(el, '.title')).lineHeight).toBe(
+        await figmaLineHeight('Oddkin/Component/AI/title'),
+      );
+    });
+
+    it(`Resource rows: hover, focus, single, unavailable, limit (${mode})`, async () => {
+      inMode(mode);
+      const meta = 'Drive · Product / Launch · Updated 2h ago';
+      const { el, answer } = await open((el) => (el.value = [notes]));
+      await answer({ items: [brief, notes], sources: complete('drive', 'wiki', 'records') });
+      await userEvent.hover(rows(el)[0]!);
+      const hover = rowTargets(rows(el)[0]!, 'Launch brief', meta);
+      await transitions(hover);
+      const differences = compare(
+        ROW,
+        { Selection: 'Multiple', Selected: 'False', State: 'Hover' },
+        hover,
+      );
+      await userEvent.unhover(rows(el)[0]!);
+      await userEvent.keyboard('{ArrowDown}');
+      await settle(el);
+      differences.push(
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'False', State: 'Focus' },
+          rowTargets(rows(el)[0]!, 'Launch brief', meta, true),
+        ),
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'True', State: 'Unavailable' },
+          rowTargets(rows(el)[1]!, 'Pricing notes', 'Drive · Access changed · Remove or replace'),
+        ),
+      );
+      await userEvent.keyboard('{ArrowDown}');
+      await settle(el);
+      differences.push(
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'True', State: 'Focus' },
+          rowTargets(rows(el)[1]!, 'Launch brief', meta, true),
+        ),
+      );
+      expect(rows(el)[1]!.querySelector('.option-description')!.textContent).toBe(
+        'Drive · Access changed · Remove or replace',
+      );
+      el.max = 1;
+      await settle(el);
+      differences.push(
+        ...compare(
+          ROW,
+          { Selection: 'Multiple', Selected: 'False', State: 'Disabled' },
+          rowTargets(rows(el)[0]!, 'Launch brief', meta),
+        ),
+      );
+      el.max = 0;
+      el.multiple = false;
+      el.value = [brief];
+      await settle(el);
+      differences.push(
+        ...compare(
+          ROW,
+          { Selection: 'Single', Selected: 'True', State: 'Default' },
+          rowTargets(rows(el)[0]!, 'Launch brief', meta),
+        ),
+      );
+      expectNone(differences);
+      // Figma's radio for a single choice: the indicator round, its dot shown.
+      const box = rows(el)[0]!.querySelector<HTMLElement>('.indicator-box')!;
+      expect(parseFloat(getComputedStyle(box).borderTopLeftRadius)).toBeGreaterThanOrEqual(
+        box.getBoundingClientRect().width / 2,
+      );
+      expect(getComputedStyle(rows(el)[0]!.querySelector('.indicator-dot')!).visibility).toBe(
+        'visible',
+      );
+      // Long text: two lines of name and two of metadata at most.
+      const long = 'Customer onboarding research — APAC enterprise accounts, interviews and notes';
+      el.results = {
+        ...el.results!,
+        items: [
+          {
+            ...brief,
+            label: `${long}, ${long}`,
+            path: 'Knowledge base / Customer research / 2026 / Interviews / Enterprise / APAC',
+            description: long,
+          },
+        ],
+      };
+      await settle(el);
+      for (const part of ['.name', '.option-description']) {
+        const text = rows(el)[0]!.querySelector<HTMLElement>(part)!;
+        const lines =
+          text.getBoundingClientRect().height / parseFloat(getComputedStyle(text).lineHeight);
+        expect(Math.round(lines), part).toBe(2);
+        expect(text.scrollHeight, `${part} is clamped`).toBeGreaterThan(text.clientHeight);
+      }
+    });
+
+    // Vitest cannot hold a pointer down: Chromium does it through CDP, released on the title.
+    it.runIf(server.browser === 'chromium')(`Resource row, pressed (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer } = await open();
+      await answer({ items: [brief], sources: complete('drive', 'wiki', 'records') });
+      const row = rows(el)[0]!;
+      const targets = rowTargets(row, 'Launch brief', 'Drive · Product / Launch · Updated 2h ago');
+      const mouse = (type: 'mousePressed' | 'mouseMoved' | 'mouseReleased', at: Element) => {
+        const { x, y } = at.getBoundingClientRect();
+        return cdp().send('Input.dispatchMouseEvent', {
+          type,
+          x: x + 4,
+          y: y + 4,
+          button: 'left',
+          clickCount: 1,
+        });
+      };
+      await mouse('mousePressed', row);
+      try {
+        await transitions(targets);
+        expectNone(
+          compare(ROW, { Selection: 'Multiple', Selected: 'False', State: 'Pressed' }, targets),
+        );
+      } finally {
+        await mouse('mouseMoved', shadow(el, '.title'));
+        await mouse('mouseReleased', shadow(el, '.title'));
+      }
+      expect(el.value, 'a press released elsewhere chooses nothing').toEqual([]);
+    });
+
+    it(`Feedback: failure, no matches, loading, no resources (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer, search } = await open();
+      const feedback = (state: string, frame: string, title: string, text: string) =>
+        compare(FEEDBACK, { State: state }, [
+          {
+            layer: [frame],
+            el: shadow(el, '.feedback'),
+            kind: 'frame',
+            gap: 'row-gap',
+            fields: [
+              ['paddingRight', 'padding-inline-end'],
+              ['paddingBottom', 'padding-block-end'],
+            ],
+          },
+          { layer: [frame, title], el: shadow(el, '.feedback-title'), kind: 'text' },
+          { layer: [frame, text], el: shadow(el, '.feedback-text'), kind: 'text' },
+        ]);
+      const differences = [
+        ...feedback(
+          'Loading',
+          'Loading resources',
+          'Loading resources',
+          'Getting recent resources from Drive, Wiki and Records.',
+        ),
+        ...compare(FEEDBACK, { State: 'Loading' }, [
+          {
+            layer: ['Loading resources', 'Loading skeleton'],
+            el: shadow(el, '.placeholder'),
+            kind: 'frame',
+          },
+        ]),
+        ...compare(SURFACE, { State: 'Loading' }, [
+          {
+            layer: content('Loading · 3 connected sources'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+      ];
+      // The text's line height: parity.ts compares only Figma's line heights given in pixels.
+      expect(getComputedStyle(shadow(el, '.feedback-text')).lineHeight).toBe(
+        await figmaLineHeight('Oddkin/Component/Field/small'),
+      );
+      await search('launch');
+      await answer({ items: [], sources: [{ sourceId: 'drive', status: 'failed' }] });
+      differences.push(
+        ...feedback(
+          'Search failure',
+          'Drive could not be searched',
+          'Drive could not be searched',
+          'Your selections are safe. Try searching this source again.',
+        ),
+        ...button(named(el, 'Retry search'), 'secondary', 'Retry search'),
+        ...compare(SURFACE, { State: 'Search failure' }, [
+          {
+            layer: content('Drive search failed · results unknown'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+      );
+      await search('frostlight');
+      await answer({ items: [], sources: complete('drive', 'wiki', 'records') });
+      differences.push(
+        ...feedback(
+          'No matches',
+          'No matches in Drive',
+          'No matches in Drive',
+          'Try another name, clear filters or choose All sources.',
+        ),
+        ...button(named(el, 'Clear search'), 'ghost', 'Clear search'),
+      );
+      named(el, 'Clear search')!.click();
+      await settle(el);
+      await answer({ items: [], sources: complete('drive', 'wiki', 'records') });
+      differences.push(
+        ...feedback(
+          'No resources',
+          'No resources available',
+          'No resources available',
+          'This source has no resources to browse.',
+        ),
+      );
+      expectNone(differences);
+    });
+
+    it(`Surface, partial failure and searching (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer, search } = await open((el) => (el.value = [brief]));
+      await search('launch');
+      await answer({
+        items: [brief, acme],
+        sources: [...complete('drive', 'records'), { sourceId: 'wiki', status: 'failed' }],
+      });
+      const differences = [
+        ...compare(SURFACE, { State: 'Partial failure' }, [
+          {
+            layer: content('Wiki unavailable · 2 of 3 sources searched'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+          {
+            layer: content('Scrollable results · listbox'),
+            el: shadow(el, '.collection'),
+            kind: 'frame',
+            gap: 'row-gap',
+          },
+        ]),
+        ...button(named(el, 'Retry Wiki'), 'ghost', 'Retry Wiki'),
+      ];
+      // Retry hugs its label, as Figma's button does, rather than filling the collection.
+      expect(named(el, 'Retry Wiki')!.getBoundingClientRect().width).toBeLessThan(
+        shadow(el, '.collection').getBoundingClientRect().width / 2,
+      );
+      await search('launch p');
+      expect(rows(el)[0]!.querySelector('.option-description')!.textContent).toBe(
+        'Drive · Product / Launch · Updating',
+      );
+      differences.push(
+        ...compare(SURFACE, { State: 'Searching' }, [
+          {
+            layer: content('Searching Drive… · previous results shown'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+      );
+      expectNone(differences);
+    });
+
+    it(`Surface, confirm and selected review (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer } = await open((el) => {
+        el.commit = 'confirm';
+        el.value = [brief, acme, notes];
+      });
+      await answer({ items: [brief, checklist], sources: complete('drive', 'wiki', 'records') });
+      const differences = [
+        ...button(named(el, 'Cancel'), 'ghost', 'Cancel'),
+        ...button(named(el, 'Add 3'), 'primary', 'Add 3'),
+        ...compare(SURFACE, { State: 'Confirm' }, [
+          {
+            layer: content('Changes apply only when you choose Add 3'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+      ];
+      named(el, 'Selected (3)')!.click();
+      await settle(el);
+      expect(
+        (shadow(el, 'select.scope') as HTMLSelectElement).selectedOptions[0]!.textContent,
+      ).toBe('Selected only');
+      differences.push(
+        ...compare(SURFACE, { State: 'Selected review' }, [
+          { layer: content('Header', 'Selected context'), el: shadow(el, '.title'), kind: 'text' },
+          {
+            layer: content('3 selected · across all sources'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+      );
+      expectNone(differences);
+    });
+
+    it(`Surface, browse sources and a nested collection (${mode})`, async () => {
+      inMode(mode);
+      const { el, answer } = await open();
+      await answer({ items: [], sources: complete('drive', 'wiki', 'records') });
+      named(el, 'Browse…')!.click();
+      await settle(el);
+      const differences = [
+        ...compare(SURFACE, { State: 'Browse sources' }, [
+          {
+            layer: content('Browse source navigation · buttons'),
+            el: shadow(el, '[part="browse"]'),
+            kind: 'frame',
+            gap: 'row-gap',
+          },
+          {
+            layer: content('Browse · search scope stays explicit'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+        ]),
+        ...button(named(el, 'Drive · 240 resources'), 'ghost', 'Drive · 240 resources'),
+      ];
+      // Focus rings inside the scrolling collection are inset, as its rows' are: none is clipped.
+      await userEvent.keyboard('{Tab}');
+      const focused = el.shadowRoot!.activeElement as HTMLElement;
+      expect(focused.textContent!.trim()).toBe('Wiki · 86 pages');
+      expect(focused.matches(':focus-visible')).toBe(true);
+      expect(parseFloat(getComputedStyle(focused).outlineOffset)).toBeLessThan(0);
+      named(el, 'Drive · 240 resources')!.click();
+      await settle(el);
+      await answer({
+        items: [
+          {
+            sourceId: 'drive',
+            id: 'research',
+            label: 'Research',
+            type: 'folder',
+            description: 'Open collection',
+            container: true,
+          },
+          {
+            sourceId: 'drive',
+            id: 'folder',
+            label: 'Launch folder',
+            type: 'folder',
+            description: 'Folder reference · contents not selected',
+          },
+        ],
+        sources: complete('drive'),
+      });
+      differences.push(
+        ...compare(SURFACE, { State: 'Browse nested' }, [
+          {
+            layer: content('Browse collection · independent navigation and selection'),
+            el: shadow(el, '.collection'),
+            kind: 'frame',
+            gap: 'row-gap',
+          },
+        ]),
+        ...button(named(el, 'Back · Sources'), 'ghost', 'Back'),
+        ...button(named(el, 'Research · Open collection'), 'ghost', 'Research · Open collection'),
+      );
+      // Inside a source, its rows do not repeat the source's name.
+      expect(rows(el)[0]!.querySelector('.option-description')!.textContent).toBe(
+        'Folder reference · contents not selected',
+      );
+      expectNone(differences);
+    });
+
+    it(`Trigger, text form (${mode})`, async () => {
+      await import('../src/context-picker/context-picker.define.js');
+      inMode(mode);
+      const el = mount('<odd-context-picker></odd-context-picker>') as Picker;
+      await settle(el);
+      const trigger = shadow(el, '[part="trigger"]');
+      expect(trigger.textContent!.trim()).toBe('Add context');
+      expect(trigger.querySelector('svg'), 'the text form has no icon').toBeNull();
+      expectNone(button(trigger, 'secondary', 'Add context'));
     });
   }
 });

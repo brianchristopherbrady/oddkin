@@ -126,7 +126,7 @@ const folders: Record<string, ContextResource[]> = {
     },
   ],
 };
-/** The host: answers each search from `library` after a short delay, and accepts every change. */
+/** The host: answers each search from `library` after a short delay; every change applies. */
 function host(scope: Scope, element: Picker): void {
   scope.listen<GlobalEventHandlersEventMap['odd-context-query']>(
     element,
@@ -147,13 +147,6 @@ function host(scope: Scope, element: Picker): void {
           sources: detail.sourceIds.map((sourceId) => ({ sourceId, status: 'complete' as const })),
         };
       }, 300);
-    },
-  );
-  scope.listen<GlobalEventHandlersEventMap['odd-context-change']>(
-    element,
-    'odd-context-change',
-    ({ detail }) => {
-      element.value = detail.value;
     },
   );
 }
@@ -199,7 +192,7 @@ export default defineExamples('odd-context-picker', {
     },
     recommended: true,
     guidance:
-      'The host answers each `odd-context-query` with `results` carrying its `requestId`, and accepts a change by setting `value` in the `odd-context-change` handler. Show the chosen resources outside the picker (chips or rows), each removable.',
+      'The host answers each `odd-context-query` with `results` carrying its `requestId`. A change applies unless the host cancels `odd-context-change`, to refuse it or to set `value` later. Show the chosen resources outside the picker (chips or rows), each removable.',
     fixture({ scope, element }) {
       host(scope, element);
     },

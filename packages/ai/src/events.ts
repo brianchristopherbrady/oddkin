@@ -319,13 +319,12 @@ export const contextQueryEvent = event<ContextQueryDetail>('odd-context-query', 
   composed: true,
   cancelable: false,
   intent: 'user',
-  description:
-    'Find resources: answer with `results` carrying the same `requestId`; a newer request aborts `signal`.',
+  description: 'Request resources; answer with `results`.',
 });
 
 export interface ContextChangeDetail {
-  /** The proposed committed value, a new array: accept it with `picker.value = detail.value`. */
-  readonly value: ContextResource[];
+  /** The proposed value, applied to `value` unless the event is cancelled. */
+  readonly value: readonly ContextResource[];
   readonly reason: 'add' | 'remove' | 'replace' | 'apply';
 }
 export const contextChangeEvent = event<ContextChangeDetail>('odd-context-change', {
@@ -333,8 +332,7 @@ export const contextChangeEvent = event<ContextChangeDetail>('odd-context-change
   composed: true,
   cancelable: true,
   intent: 'user',
-  description:
-    'A proposed selection: set `value` in the handler to accept it, or cancel the event to refuse it.',
+  description: 'A proposed `value`, applied unless cancelled.',
 });
 
 export const planInputEvent = event<{ readonly planId: string; readonly stepId: string }>(

@@ -6,9 +6,6 @@ export {
   ApprovalModel,
   ArtifactModel,
   CheckpointModel,
-  ContextResourceModel,
-  ContextResultsModel,
-  ContextSourceModel,
   ConversationSnapshotModel,
   FeedbackModel,
   MessageModel,
@@ -24,6 +21,7 @@ export {
   provenanceSchema,
   publicErrorSchema,
 } from './models.js';
+export { ContextResourceModel, ContextResultsModel, ContextSourceModel } from './context-models.js';
 export {
   CAPABILITY_NAMES,
   can,

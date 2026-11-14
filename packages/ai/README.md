@@ -114,7 +114,7 @@ Assign its source record through the `source` property as usual. The equivalent 
 
 ## Patterns
 
-Arrangements of these elements for common needs, with no element of their own, each with a page and a working example in plain HTML: [patterns/](patterns/index.json) (shipped in the package, and listed in its agent kit). Suggested prompts, branch navigation, reasoning disclosure, copy action, empty conversation, chat layout, citations with sources, approval outside a tool call, and agent asks, then acts.
+Arrangements of these elements for common needs, with no element of their own, each with a page and a working example in plain HTML: [patterns/](patterns/index.json) (shipped in the package, and listed in its agent kit). Suggested prompts, branch navigation, reasoning disclosure, copy action, empty conversation, chat layout, citations with sources, approval outside a tool call, agent asks, then acts, and context for a request.
 
 ## States you must report
 

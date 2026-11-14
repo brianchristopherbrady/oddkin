@@ -11,7 +11,7 @@ const check = process.argv.includes('--check');
 const { toJSONSchema } = await import(
   pathToFileURL(join(root, 'packages/core/dist/model/schema.js')).href
 );
-const models = await import(pathToFileURL(join(root, 'packages/ai/dist/contracts/models.js')).href);
+const models = await import(pathToFileURL(join(root, 'packages/ai/dist/contracts/index.js')).href);
 
 await mkdir(out, { recursive: true });
 let stale = 0;

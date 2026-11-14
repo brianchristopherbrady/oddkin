@@ -52,7 +52,7 @@ Existing primitives reused: `OddkinElement.with()` and `prop.*` (typed propertie
 
 ## 3. Data contracts
 
-All records are defined once with `@oddkin/core/model` in `packages/ai/src/contracts/models.ts`; TypeScript types are inferred, untrusted input is validated with the same definitions, and `scripts/build-ai-schemas.mjs` writes JSON Schema to `packages/ai/schemas/` (13 files, `--check` mode in CI).
+All records are defined once with `@oddkin/core/model` in `packages/ai/src/contracts/models.ts` (the context picker's three in `context-models.ts`, so bundles without the picker do not carry them); TypeScript types are inferred, untrusted input is validated with the same definitions, and `scripts/build-ai-schemas.mjs` writes JSON Schema to `packages/ai/schemas/` (15 files, `--check` mode in CI).
 
 | Record | Model | Key | Notes |
 | --- | --- | --- | --- |
@@ -182,7 +182,7 @@ A2UI (<https://a2ui.org/>, v0.9 era drafts with a v1.0 candidate, read 2026-10-1
 
 ## 6. Element API (Web Components)
 
-- **Properties** carry records, arrays, controllers, adapters, renderer hooks, and `strings`. **Attributes** carry scalar configuration (`label`, `placeholder`, `enter-behavior`, `allow-urls`, `insert-only`, `announce`, `view`, …). Transcripts, attachments, and records are never reflected.
+- **Properties** carry records, arrays, controllers, adapters, renderer hooks, and `strings`. **Attributes** carry scalar configuration (`label`, `placeholder`, `enter-behavior`, `commit`, `insert-only`, `announce`, `view`, …). Transcripts, attachments, and records are never reflected.
 - Properties assigned before upgrade are replayed through `OddkinElement`'s mechanism (tested in React and Vue fixtures, A16).
 - **Replacement, not mutation.** Assign a new array or object to update; elements never mutate what they receive. Array properties are typed as mutable arrays (`prop.array`); in TypeScript copy readonly snapshots (`[...state.proposals]`) or keep application arrays mutable.
 - Registration through `@oddkin/ai/define/<name>` only; importing a class or the root entry defines nothing. Dependencies (`odd-button`, nested AI elements) register first.
@@ -215,7 +215,7 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
 | `odd-assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
 | `odd-context-query` | `{requestId, query, sourceIds, location?, cursor?, signal}` | no | Find resources; the host answers with `results` carrying the `requestId`; a newer request aborts `signal`. With `location` (`{sourceId, id?}`: a source's top level, or inside one of its containers) list what is there; with `cursor` (the `nextCursor` of the results shown) answer the next page, which the picker appends. A resource with `container` opens its contents and is never chosen itself; a folder reference is an ordinary resource |
-| `odd-context-change` | `{value, reason: 'add' \| 'remove' \| 'replace' \| 'apply'}` | yes | A proposed selection; the host accepts by setting `value` in the handler, refuses by cancelling |
+| `odd-context-change` | `{value, reason: 'add' \| 'remove' \| 'replace' \| 'apply'}` | yes | A proposed selection, applied to `value` unless cancelled: cancel to refuse it, or to set `value` later (the picker then announces nothing and stays open) |
 | `odd-plan-input-request` | `planId`, `stepId` | no | Request |
 | `odd-voice-transcript` | `text` | no | Completed locally (final transcript chosen) |
 | `odd-transcript-change` | `segmentId`, `text` | no | User edit |

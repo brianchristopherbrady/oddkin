@@ -1,0 +1,87 @@
+<!-- Context for a request: resources from the application's connected sources, attached as removable chips beside Add context. Load @oddkin/tokens/css/default.css, @oddkin/components/css/layout.css, and @oddkin/components/css/button.css on the page. -->
+<div class="context-row odd-cluster">
+  <div
+    class="chips odd-cluster"
+    role="group"
+    aria-label="Context for the request"
+    tabindex="-1"
+  ></div>
+  <odd-context-picker></odd-context-picker>
+</div>
+<script type="module">
+  import '@oddkin/ai/define/context-picker';
+  import '@oddkin/components/define/chip';
+
+  const picker = document.querySelector('odd-context-picker');
+  const chips = document.querySelector('.chips');
+  const library = [
+    { sourceId: 'drive', id: 'brief', label: 'Launch brief', type: 'document', path: 'Product' },
+    {
+      sourceId: 'wiki',
+      id: 'checklist',
+      label: 'Release checklist',
+      type: 'page',
+      path: 'Platform',
+    },
+    { sourceId: 'drive', id: 'interviews', label: 'Customer interviews', type: 'document' },
+    { sourceId: 'wiki', id: 'decisions', label: 'Decision log', type: 'page', path: 'Product' },
+    { sourceId: 'drive', id: 'pricing', label: 'Pricing notes', type: 'document', path: 'Sales' },
+  ];
+  picker.sources = [
+    { id: 'drive', label: 'Drive' },
+    { id: 'wiki', label: 'Wiki' },
+  ];
+  picker.multiple = true;
+
+  // The host searches its sources; an answer to a request the picker replaced is dropped.
+  picker.addEventListener('odd-context-query', ({ detail }) => {
+    const query = detail.query.toLocaleLowerCase();
+    queueMicrotask(() => {
+      if (detail.signal.aborted) return;
+      picker.results = {
+        requestId: detail.requestId,
+        items: library.filter(
+          (r) =>
+            detail.sourceIds.includes(r.sourceId) && r.label.toLocaleLowerCase().includes(query),
+        ),
+      };
+    });
+  });
+
+  // One chip per attached resource; past three, the rest wait behind "+N more".
+  const SHOWN = 3;
+  let expanded = false;
+  const draw = (value = picker.value) => {
+    const hidden = expanded ? 0 : Math.max(0, value.length - SHOWN);
+    const more = document.createElement('button');
+    more.className = 'odd-button more';
+    more.dataset.appearance = 'ghost';
+    more.dataset.size = 'sm';
+    more.type = 'button';
+    more.textContent = expanded ? 'Show fewer' : `+${hidden} more`;
+    more.setAttribute('aria-expanded', String(expanded));
+    more.addEventListener('click', () => {
+      expanded = !expanded;
+      draw();
+      chips.querySelector('.more').focus();
+    });
+    chips.replaceChildren(
+      ...value.slice(0, value.length - hidden).map((resource) => {
+        const chip = document.createElement('odd-chip');
+        chip.removable = true;
+        chip.textContent = resource.label;
+        chip.addEventListener('odd-chip-remove', () => {
+          picker.value = picker.value.filter((r) => r !== resource);
+          draw();
+          chips.focus();
+        });
+        return chip;
+      }),
+      ...(value.length > SHOWN ? [more] : []),
+    );
+  };
+  // The picker applies each change it proposes unless the host cancels it: draw what it applies.
+  picker.addEventListener('odd-context-change', ({ detail }) => draw(detail.value));
+  picker.value = library.slice(0, 2);
+  draw();
+</script>
