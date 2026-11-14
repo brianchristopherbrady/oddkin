@@ -456,7 +456,10 @@ export const CSS_BUDGETS = {
   // draws its label through the parts of the odd-disclosure it composes (audit step 3).
   // 5,376 again since 2026-11-07: measured 4,990 (-507) once the AI sheets' CSS comments moved
   // into their doc comments.
-  'ai:styles': 5376,
+  // 5,632 from 2026-11-14 (row 34; Agent 1, requested by Agent 2 in the lanes): measured 5,595 with
+  // odd-context-picker on the owner's C07 design (browse, paging, chip overflow and review): the
+  // other AI sheets are 5,075, the picker's about 520.
+  'ai:styles': 5632,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */
