@@ -6640,3 +6640,19 @@ Agent 3's landings 1 and 2 (the two sections above) cherry-picked onto `b7cb9d09
 | Packs | `npm run verify:packs` (before the last two fixes, which change no declaration) | Exit 0: packed consumers, declarations, framework typings, kits, and docs snippets |
 | Size | `node scripts/check-size.mjs` | `ai-headless` 14,909 B of 15,104, `ai-chat` 69,204 of 69,312, and `ai-response` 28,926 of 28,928: the context models moved out, and the two context events' descriptions are shorter. `ai:styles` 5,595 of 5,376: the other AI sheets come to 5,075 and the picker's add about 520 (landing 2 measured 5,667), so `BUDGET` to Agent 1 |
 | Not done | — | The owner's questions: the expanded browser and the full-screen surface below 480 px, the icon-only trigger, an icon per resource type. Real assistive technology |
+
+## 2026-11-14 — Item 10: field glyphs at `icon.size.md`, and Figma's inline search exported (round 11, Agent 1)
+
+The two gaps the verifier of Agent 2's item 34 found in Agent 1's lane (`eb7e7ed8`). V6: `Oddkin/Common/search` `State=Inline` and `Inline focus` (`775:3405`, `775:3422`), which the context picker's C07 design draws, exported into `design/figma/components.json` with the oddkin-figma skill's scripts (the family refreshed, its references counted in `reuse.json`, the catalog re-rendered). V3: Figma's field icons, measured with a read-only `use_figma` on the Common page: search's search and close, combobox's search, select's chevron, and dateTime's calendar and clock are 20 × 20 (`icon.size.md`); number's minus and plus 16 × 16; the inline search's icon 12 px in and centred, its text 40 px in. The shared field drew its start and end glyphs at 1em (16 px).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| New parity | `packages/components/test/figma-parity.forms.browser.test.ts`, "Figma parity: field glyphs" | 4 cases: search's search and clear glyphs, combobox's search glyph, and select's chevron 20 × 20; number's two stepper glyphs stay 16 × 16 |
+| The picker's search | `packages/ai/test/figma-parity.browser.test.ts`, "Surface, search results", light and dark | Its search field compared with `Oddkin/Common/search` `Inline focus` (surface, text, and ring; the field matches `:focus-visible`); its glyph 20 × 20, 12 px in and 10 px down; its text padded 40 px in |
+| Probe | `.tmp/mutant-glyph-size.mjs`: the slot glyph rule removed, in Chromium | Killed: 3 of the 4 new cases fail (`[16, 16]` for `[20, 20]`); the stepper case passes, as it should |
+| Updated tests | `date-picker.browser.test.ts` (the calendar glyph's width) and `input.browser.test.ts` (the clear button's margin) | They pinned 1em and 24 px; they now read `--odd-icon-size-md` and `--odd-target-min` |
+| Three engines | `.tmp/v3-engines.mjs`: 17 browser files (the components' parity for forms, collections, pickers, and the Common page; input, combobox, select, date picker, colour picker, picker, option views, recipes CSS, control layout recipes; the AI parity, context picker, model select, prompt input), on the final sources | Chromium 647 passed, 1 skipped; Firefox 627 passed, 21 skipped; WebKit 635 passed, 13 skipped |
+| Node | The snapshot, reuse, icon, and recipe tests (8 files) | 65 passed |
+| Size | `node scripts/check-size.mjs` | Exit 0: `components:shared` 3,499 B of 3,520, `components:recipes` 2,746 of 2,752, `ai:styles` 5,595 of 5,632; no budget changes |
+| Gate | `gate-light.mjs eb7e7ed8 --size` with the 8 node files | Pass on `eb7e7ed8`: typecheck, lint (after `npm run compat` regenerated the matrix, whose feature counts change for the five edited sheets), the 8 node files (65 passed), and size, exit 0 each |
+| Not done | — | e2e: no e2e test measures field glyphs (checked by search) |
