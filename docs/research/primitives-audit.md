@@ -61,9 +61,9 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 20 | [search](#20-search) | search (159:1144) | `odd-input` | audited | gap | gap | ok | gap | ok | ok |
 | 21 | [skeleton](#21-skeleton) | skeleton (161:1959) | `odd-skeleton` | audited | ok | ok | ok | ok | ok | gap |
 | 22 | [slider](#22-slider) | slider (159:1287) | `odd-slider` | audited | ok | ok | ok | ? | ok | ok |
-| 23 | [spinner](#23-spinner) | spinner (161:1939) | `odd-spinner` | not started | ? | ? | ? | ? | ? | ? |
-| 24 | [stat](#24-stat) | stat (555:2908) | `odd-stat` | not started | ? | ? | ? | ? | ? | ? |
-| 25 | [switch](#25-switch) | switch (159:1258) | `odd-switch` | not started | ? | ? | ? | ? | ? | ? |
+| 23 | [spinner](#23-spinner) | spinner (161:1939) | `odd-spinner` | audited | ok | gap | gap | ok | ok | ok |
+| 24 | [stat](#24-stat) | stat (555:2908) | `odd-stat` | audited | ok | ok | ok | ? | ok | ok |
+| 25 | [switch](#25-switch) | switch (159:1258) | `odd-switch` | audited | ok | ok | ok | ? | ok | ok |
 | 26 | [textarea](#26-textarea) | textarea (159:1056) | `odd-textarea` | not started | ? | ? | ? | ? | ? | ? |
 | 27 | [toggleButton](#27-togglebutton) | toggleButton (159:501) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
 | 28 | [tooltip](#28-tooltip) | tooltip (160:2470) | `odd-tooltip` | not started | ? | ? | ? | ? | ? | ? |
@@ -621,7 +621,7 @@ Code: `odd-slider` (packages/components/src/slider/).
 
 ## 23. spinner
 
-Status: not started.
+Status: audited (2026-11-15). The API and the label match, but the indicator does not: Figma draws eight dots in a 36 px circle (27 px inline), the code a 20 px ring (16 px small). The parity test compares only the gap and the label (D1).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -633,11 +633,23 @@ Code: `odd-spinner` (packages/components/src/spinner/).
 | --- | --- | --- | --- | --- |
 | `label: string = ""`, `size: sm \| md \| lg = md` | `(default)` | `base`, `indicator` | `--odd-spinner-color` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| SP1 | api | Figma State Default and Inline map to size md and sm with the status text as content (space.md and space.sm before it); label names a spinner without visible text, and size lg is larger. | None. |
+| SP2 | visual | Figma's indicator: eight 4 px dots around a 36 px circle, three in color.action.default and five in color.border.default (Inline: 3 px dots, 27 px). The code: a ring at icon.size.md (20 px; 16 and 24 px for sm and lg) in color.border.default, its top and right in color.action.default, turning every 0.8 s, stopped under reduced motion. The label matches (UI type, color.text.secondary). | Decision D1. |
+| SP3 | parity | figma-parity.browser.test.ts compares Default's gap and label only; the indicator is not compared, and Inline is not compared. | Compare the indicator's size and colours, and Inline, once D1 is decided. |
+| SP4 | a11y | The status text or label is the accessible status (Figma: "paired with a meaningful status label"); the indicator is decorative. | None. |
+
+Decisions for the owner:
+
+- **D1: The spinner's indicator: Figma's eight dots at 36 px, or the code's ring at icon sizes?** Open.
+  1. Figma's dots, at token sizes: the code draws the eight dots, and Figma's 36 and 27 px become sizes on the icon scale (for example 24 and 16 px), so the spinner sits in a button or a row.
+  2. The ring, at icon sizes, and Figma is redrawn as a ring.
+  - Recommendation: The first: keep Figma's dots, at icon sizes. A 36 px default is larger than any control text a spinner sits beside, and the button's loading state draws the same indicator.
 
 ## 24. stat
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the five Figma states map to label, value, trend, and loading, and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -649,11 +661,15 @@ Code: `odd-stat` (packages/components/src/stat/).
 | --- | --- | --- | --- | --- |
 | `label: string = ""`, `value: string = ""`, `trend: none \| increase \| decrease = none`, `loading: boolean = false` | `(default)` | `base`, `context`, `label`, `placeholder`, `value` | — | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| ST1 | api | Figma State Neutral, Increase, Decrease, Loading, and Unavailable map to trend (none, increase, decrease), loading, and a missing value ("—"); Figma's Label and Value text are label and value, its context line the default slot. | None. |
+| ST2 | visual | Matching: the label and context in color.text.secondary, the value in color.text.primary, the 16 px trend arrow space.xs before the context, and the color.surface.sunken placeholder (radius.sm) while loading. | None. |
+| ST3 | parity | figma-parity.display.browser.test.ts compares all five states. | None. |
 
 ## 25. switch
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the eight Figma variants map to the API and are compared, and the written state Figma's review row asks for is drawn.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -665,7 +681,11 @@ Code: `odd-switch` (packages/components/src/switch/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false` | `(default)` | `control`, `description`, `error`, `field`, `label`, `state`, `thumb` | — | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| SW1 | api | Figma Value (Off, On) and State (Default, Hover, Focus, Disabled) map to checked, browser states, and disabled. The code writes the state beside the switch (part state, localizable), as the review row asks ("thumb position and written value express the state"). | None. |
+| SW2 | visual | Matching: the 40 x 24 track (radius.full) with a border.width.default border in color.border.strong, color.surface.sunken off and color.selection.background on, the 16 px thumb in color.text.secondary off and color.selection.foreground on, color.text.disabled when disabled, and the focus ring. | None. |
+| SW3 | parity | figma-parity.forms.browser.test.ts compares all eight variants. | None. |
 
 ## 26. textarea
 

@@ -2070,17 +2070,55 @@
         "cssProperties": ["--odd-spinner-color"],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "gap",
+        "parity": "gap",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "SP1",
+          "check": "api",
+          "finding": "Figma State Default and Inline map to size md and sm with the status text as content (space.md and space.sm before it); label names a spinner without visible text, and size lg is larger.",
+          "proposal": "None."
+        },
+        {
+          "id": "SP2",
+          "check": "visual",
+          "finding": "Figma's indicator: eight 4 px dots around a 36 px circle, three in color.action.default and five in color.border.default (Inline: 3 px dots, 27 px). The code: a ring at icon.size.md (20 px; 16 and 24 px for sm and lg) in color.border.default, its top and right in color.action.default, turning every 0.8 s, stopped under reduced motion. The label matches (UI type, color.text.secondary).",
+          "proposal": "Decision D1."
+        },
+        {
+          "id": "SP3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares Default's gap and label only; the indicator is not compared, and Inline is not compared.",
+          "proposal": "Compare the indicator's size and colours, and Inline, once D1 is decided."
+        },
+        {
+          "id": "SP4",
+          "check": "a11y",
+          "finding": "The status text or label is the accessible status (Figma: \"paired with a meaningful status label\"); the indicator is decorative.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "The spinner's indicator: Figma's eight dots at 36 px, or the code's ring at icon sizes?",
+          "options": [
+            "Figma's dots, at token sizes: the code draws the eight dots, and Figma's 36 and 27 px become sizes on the icon scale (for example 24 and 16 px), so the spinner sits in a button or a row.",
+            "The ring, at icon sizes, and Figma is redrawn as a ring."
+          ],
+          "recommendation": "The first: keep Figma's dots, at icon sizes. A 36 px default is larger than any control text a spinner sits beside, and the button's loading state draws the same indicator.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "The API and the label match, but the indicator does not: Figma draws eight dots in a 36 px circle (27 px inline), the code a 20 px ring (16 px small). The parity test compares only the gap and the label (D1)."
     },
     {
       "order": 24,
@@ -2112,17 +2150,38 @@
         "cssProperties": [],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "ST1",
+          "check": "api",
+          "finding": "Figma State Neutral, Increase, Decrease, Loading, and Unavailable map to trend (none, increase, decrease), loading, and a missing value (\"—\"); Figma's Label and Value text are label and value, its context line the default slot.",
+          "proposal": "None."
+        },
+        {
+          "id": "ST2",
+          "check": "visual",
+          "finding": "Matching: the label and context in color.text.secondary, the value in color.text.primary, the 16 px trend arrow space.xs before the context, and the color.surface.sunken placeholder (radius.sm) while loading.",
+          "proposal": "None."
+        },
+        {
+          "id": "ST3",
+          "check": "parity",
+          "finding": "figma-parity.display.browser.test.ts compares all five states.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the five Figma states map to label, value, trend, and loading, and are compared."
     },
     {
       "order": 25,
@@ -2158,17 +2217,38 @@
         "cssProperties": [],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "SW1",
+          "check": "api",
+          "finding": "Figma Value (Off, On) and State (Default, Hover, Focus, Disabled) map to checked, browser states, and disabled. The code writes the state beside the switch (part state, localizable), as the review row asks (\"thumb position and written value express the state\").",
+          "proposal": "None."
+        },
+        {
+          "id": "SW2",
+          "check": "visual",
+          "finding": "Matching: the 40 x 24 track (radius.full) with a border.width.default border in color.border.strong, color.surface.sunken off and color.selection.background on, the 16 px thumb in color.text.secondary off and color.selection.foreground on, color.text.disabled when disabled, and the focus ring.",
+          "proposal": "None."
+        },
+        {
+          "id": "SW3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all eight variants.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the eight Figma variants map to the API and are compared, and the written state Figma's review row asks for is drawn."
     },
     {
       "order": 26,
