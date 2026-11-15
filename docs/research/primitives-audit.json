@@ -667,17 +667,50 @@
         "cssProperties": [],
         "events": ["odd-copy", "odd-announce"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "CP1",
+          "check": "api",
+          "finding": "Figma State Default, Focus, and Disabled map to the button, keyboard focus, and disabled; Copied and Error are outcomes of a copy, not attributes. The code takes the text from value or from another element (from), with an optional label.",
+          "proposal": "None."
+        },
+        {
+          "id": "CP2",
+          "check": "visual",
+          "finding": "Figma draws the small (button/sm) button with the copy glyph, \"Copied to clipboard.\" in color.text.secondary, and \"Could not copy. Select the text.\" in color.danger.foreground. The code matches; the success message is in a popover (owner, 2026-11-07), recorded in the parity test.",
+          "proposal": "None."
+        },
+        {
+          "id": "CP3",
+          "check": "parity",
+          "finding": "figma-parity.display.browser.test.ts compares the button frame and the outcome message for the copied and refused copies.",
+          "proposal": "None."
+        },
+        {
+          "id": "CP4",
+          "check": "a11y",
+          "finding": "The outcome is announced (odd-announce); the button is named by label or its default text. Not yet measured: the contrast of the outcome text in light and dark.",
+          "proposal": "Measure in the accessibility pass."
+        },
+        {
+          "id": "CP5",
+          "check": "docs",
+          "finding": "Examples copy a value, use their own label, and show disabled; none copies the text of another element with from, which the guidance describes.",
+          "proposal": "Add an example with from."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The API and look match Figma, with one deliberate difference (the owner's): a successful copy is confirmed in a small popover, where Figma writes it inline. One docs gap: no example copies from another element (from)."
     },
     {
       "order": 7,
@@ -709,17 +742,56 @@
         "cssProperties": ["--odd-disclosure-background", "--odd-disclosure-radius"],
         "events": ["toggle"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "DS1",
+          "check": "api",
+          "finding": "Figma State Closed, Expanded, and Focus map to open and keyboard focus. The code adds label, the summary slot for a richer summary, name (one open at a time in a group, an accordion), and disabled.",
+          "proposal": "None."
+        },
+        {
+          "id": "DS2",
+          "check": "visual",
+          "finding": "Matching: card.radius, color.surface.default with a color.border.default border, the 20 px chevron (icon.size.md, right when closed and down when open), the UI label in color.text.primary, the content in color.text.secondary below an inset color.border.default divider, and the focus ring.",
+          "proposal": "None."
+        },
+        {
+          "id": "DS3",
+          "check": "parity",
+          "finding": "figma-parity.navigation.browser.test.ts compares Closed, Expanded (surface, label, divider, and both content texts), and Focus (the ring).",
+          "proposal": "None."
+        },
+        {
+          "id": "DS4",
+          "check": "a11y",
+          "finding": "A native details and summary: keyboard operation and the expanded state come from the platform. Not yet measured: the contrast of the secondary content text.",
+          "proposal": "Measure in the accessibility pass."
+        },
+        {
+          "id": "DS5",
+          "check": "responsive",
+          "finding": "The label and the content wrap in the width the parent grants (min-inline-size: 0, overflow-wrap: anywhere).",
+          "proposal": "None."
+        },
+        {
+          "id": "DS6",
+          "check": "docs",
+          "finding": "Examples cover closed, open, an accordion group (name), a rich summary, and disabled.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: every Figma state maps to the API, the tokens match, and the parity test compares all three states."
     },
     {
       "order": 8,

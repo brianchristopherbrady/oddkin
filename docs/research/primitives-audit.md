@@ -44,8 +44,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | audited | gap | gap | ok | ? | ok | gap |
 | 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | audited | ok | ok | ok | gap | ok | ok |
-| 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | not started | ? | ? | ? | ? | ? | ? |
-| 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | not started | ? | ? | ? | ? | ? | ? |
+| 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | audited | ok | ok | ok | ? | ok | gap |
+| 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | audited | ok | ok | ok | ? | ok | ok |
 | 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | not started | ? | ? | ? | ? | ? | ? |
 | 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | not started | ? | ? | ? | ? | ? | ? |
 | 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | not started | ? | ? | ? | ? | ? | ? |
@@ -227,7 +227,7 @@ Code: `odd-chip` (packages/components/src/chip/).
 
 ## 6. copyButton
 
-Status: not started.
+Status: audited (2026-11-15). The API and look match Figma, with one deliberate difference (the owner's): a successful copy is confirmed in a small popover, where Figma writes it inline. One docs gap: no example copies from another element (from).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -239,11 +239,17 @@ Code: `odd-copy-button` (packages/components/src/copy-button/).
 | --- | --- | --- | --- | --- |
 | `value: string = ""`, `from: string = ""`, `label: string = ""`, `disabled: boolean = false` | — | `base`, `button`, `confirmation`, `fallback`, `status` | — | `odd-copy`, `odd-announce` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| CP1 | api | Figma State Default, Focus, and Disabled map to the button, keyboard focus, and disabled; Copied and Error are outcomes of a copy, not attributes. The code takes the text from value or from another element (from), with an optional label. | None. |
+| CP2 | visual | Figma draws the small (button/sm) button with the copy glyph, "Copied to clipboard." in color.text.secondary, and "Could not copy. Select the text." in color.danger.foreground. The code matches; the success message is in a popover (owner, 2026-11-07), recorded in the parity test. | None. |
+| CP3 | parity | figma-parity.display.browser.test.ts compares the button frame and the outcome message for the copied and refused copies. | None. |
+| CP4 | a11y | The outcome is announced (odd-announce); the button is named by label or its default text. Not yet measured: the contrast of the outcome text in light and dark. | Measure in the accessibility pass. |
+| CP5 | docs | Examples copy a value, use their own label, and show disabled; none copies the text of another element with from, which the guidance describes. | Add an example with from. |
 
 ## 7. disclosure
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: every Figma state maps to the API, the tokens match, and the parity test compares all three states.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -255,7 +261,14 @@ Code: `odd-disclosure` (packages/components/src/disclosure/).
 | --- | --- | --- | --- | --- |
 | `label: string = ""`, `open: boolean = false`, `name: string = ""`, `disabled: boolean = false` | `(default)`, `summary` | `base`, `content`, `label`, `marker`, `summary` | `--odd-disclosure-background`, `--odd-disclosure-radius` | `toggle` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| DS1 | api | Figma State Closed, Expanded, and Focus map to open and keyboard focus. The code adds label, the summary slot for a richer summary, name (one open at a time in a group, an accordion), and disabled. | None. |
+| DS2 | visual | Matching: card.radius, color.surface.default with a color.border.default border, the 20 px chevron (icon.size.md, right when closed and down when open), the UI label in color.text.primary, the content in color.text.secondary below an inset color.border.default divider, and the focus ring. | None. |
+| DS3 | parity | figma-parity.navigation.browser.test.ts compares Closed, Expanded (surface, label, divider, and both content texts), and Focus (the ring). | None. |
+| DS4 | a11y | A native details and summary: keyboard operation and the expanded state come from the platform. Not yet measured: the contrast of the secondary content text. | Measure in the accessibility pass. |
+| DS5 | responsive | The label and the content wrap in the width the parent grants (min-inline-size: 0, overflow-wrap: anywhere). | None. |
+| DS6 | docs | Examples cover closed, open, an accordion group (name), a rich summary, and disabled. | None. |
 
 ## 8. divider
 
