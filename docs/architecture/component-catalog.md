@@ -265,7 +265,7 @@ implementation references now sit on Primitives; the 48 AI definitions remain on
 
 ### 4.1 The context picker on the C07 design (page 06, 767:2; 2026-11-13)
 
-`packages/ai/test/figma-parity.browser.test.ts` ("odd-context-picker (page 06)") compares, in light and dark and in Chromium, Firefox, and WebKit: the surface with `Oddkin/Common/popover` (Picker) and `Oddkin/AI/ContextPicker/Surface` (search results, loading, search failure, partial failure, searching, confirm, selected review, browse sources, browse nested), its rows with `ResourceRow` (default, hover, focus, selected, unavailable, limit reached, single, long text; pressed in Chromium, which can hold the pointer down), its feedback with `Feedback` (loading, search failure, no matches, no resources), the 20 px icon of `ResourceType` (the document icon, or the host's icon for a resource's `kind`), the icon form of `Trigger` (default, hover, focus, disabled) with the secondary md button, the sheet with `MobileSurface` (at its 390 × 844 frame: the fill, padding, gaps, title type, status, footer, and buttons), and every button with `Oddkin/Common/button` in the appearance drawn, md.
+`packages/ai/test/figma-parity.browser.test.ts` ("odd-context-picker (page 06)") compares, in light and dark and in Chromium, Firefox, and WebKit: the surface with `Oddkin/Common/popover` (Picker) and `Oddkin/AI/ContextPicker/Surface` (search results, loading, search failure, partial failure, searching, confirm, selected review, browse sources, browse nested), its rows with `ResourceRow` (default, hover, focus, selected, unavailable, limit reached, single, long text; pressed in Chromium, which can hold the pointer down), its feedback with `Feedback` (loading, search failure, no matches, no resources), the 20 px icon of `ResourceType` (the document icon, or the host's icon for a resource's `kind`), the icon form of `Trigger` (default, hover, focus, disabled) with the secondary md button, the sheet with `MobileSurface` (at its 390 × 844 frame: the fill, padding, gaps, title type, status, footer, and buttons), the expanded browser with `ExpandedBrowser` (Desktop at 1100 × 800 and Mobile at 390 × 844: the dialog's fill, border, and radius, its content's padding and gaps, the title, the sources and the review on the sunken fill with their padding and gaps, the collection, the status, the footer, the buttons, the current source secondary, and the widths: 1040 and 358), and every button with `Oddkin/Common/button` in the appearance drawn, md.
 
 Deliberate differences:
 
@@ -279,8 +279,11 @@ Deliberate differences:
 - Buttons hug their labels and the content fills the surface; Figma's buttons have fixed widths, and its content leaves 4 px under the footer.
 - The icon trigger is a square of the control height around its 16 px plus; Figma's instance keeps a text button's inline padding around an empty label (66 px wide in its 40 px frame). Its text stays its name and shows as an `odd-tooltip`, which adds no description (owner, 2026-11-14).
 - The sheet keeps md controls (40 px); Figma draws its buttons 44 px tall, unbound. Its content keeps `space.md` inside the device's safe area, which the sheet adds around it.
+- The expanded browser's list of sources is its scope: All sources, then every source (the current one secondary, browsed from its top when it can be), then Selected (N), so the scope select gives way to it. Figma draws Recent and Favorites at its head: the empty search of every source is All sources, as the scope select names it, and no source contract offers favourites ("hide affordances that the host does not provide"). Its path is the status line ("Drive / Product / Launch · browse", small type), as in the surface; Figma draws the path in the UI type and the count under the rows. Back appears inside a container only: the list leaves a source.
+- The browser's 1 px border takes room inside it (1006 of Figma's 1008 px inside 1040), as every Oddkin surface's does; Figma draws strokes inside. The collection takes the rest of the row; Figma leaves 32 px of its body unused.
+- On a phone the browser's sources wrap two to a line above the collection, and the review follows it, so every source is one press away and every chosen resource stays reachable and removable; Figma's Mobile collapses the sources into "Drive · Change source" and leaves the review out. The review's chips are `odd-chip`, as hosts draw the chosen context; the hint is the sheet's ("Selections stay when you change search or source."), the folder sentence being the host's to say.
 
-Not built yet (owner, 2026-11-14: Agent 2's item 35): the expanded browser (`ExpandedBrowser`), a modal opened by the person's Browse all. The sheet (`MobileSurface`) is `presentation="sheet"`: the host chooses it, never the width (responsiveness.md), and a change while it is open applies after it closes. `SelectedChip`, `SelectedOverflow`, and `SelectedAttachment` are host compositions: the Context for a request pattern (`packages/ai/patterns`).
+The sheet (`MobileSurface`) is `presentation="sheet"`: the host chooses it, never the width (responsiveness.md), and a change while it is open applies after it closes. The expanded browser (`ExpandedBrowser`) opens only from Browse… (Figma's "Browse all resources…", owner 2026-11-14) and closes with the picker. `SelectedChip`, `SelectedOverflow`, and `SelectedAttachment` are host compositions: the Context for a request pattern (`packages/ai/patterns`).
 
 ## 5. Icons
 
@@ -335,7 +338,7 @@ retain their recorded status.
 
 <!-- oddkin:reuse:begin (generated by node design/figma/reuse.render.mjs --write) -->
 
-Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, element 29, independent 22, native 7, slot 54, style 146.
+Status: **approved** (2026-10-24). 296 references; controller 20, deferred 11, element 30, independent 22, native 7, slot 54, style 152.
 
 | Class | Meaning |
 | --- | --- |
@@ -376,8 +379,15 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | Oddkin/AI/ContextPicker/Examples | button × 20 | independent | Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element. |
 | Oddkin/AI/ContextPicker/Examples | popover × 4 | independent | Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element. |
 | Oddkin/AI/ContextPicker/Examples | search × 4 | independent | Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element. |
+| Oddkin/AI/ContextPicker/ExpandedBrowser | Oddkin/AI/ContextPicker/ResourceRow × 6 | style | The expanded browser (Browse…): The option-row sheets (optionRowStructuralStyles, optionRowStyles) with the picker's padding, radius, and pressed fill. |
+| Oddkin/AI/ContextPicker/ExpandedBrowser | button × 19 | style | The expanded browser (Browse…): Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws. |
+| Oddkin/AI/ContextPicker/ExpandedBrowser | chip × 3 | element | The expanded browser reviews the choice as complete removable odd-chip elements, each naming its own remove button (the picker's definition dependencies). |
+| Oddkin/AI/ContextPicker/ExpandedBrowser | search × 2 | style | The expanded browser (Browse…): The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is. |
 | Oddkin/AI/ContextPicker/Feedback | button × 3 | style | Retry search and Clear search: Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws. |
 | Oddkin/AI/ContextPicker/Footer | button × 5 | style | Done, Cancel, Add N, and Browse…: Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws. |
+| Oddkin/AI/ContextPicker/MobileSurface | Oddkin/AI/ContextPicker/ResourceRow × 3 | style | The sheet (presentation="sheet"): The option-row sheets (optionRowStructuralStyles, optionRowStyles) with the picker's padding, radius, and pressed fill. |
+| Oddkin/AI/ContextPicker/MobileSurface | button × 5 | style | The sheet (presentation="sheet"): Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws. |
+| Oddkin/AI/ContextPicker/MobileSurface | search × 1 | style | The sheet (presentation="sheet"): The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is. |
 | Oddkin/AI/ContextPicker/Navigation | button × 9 | independent | Design anatomy: the surface navigates its views with the scope select, Selected (N), and Browse… (native button sheet). |
 | Oddkin/AI/ContextPicker/ResearchBrowserExample | Oddkin/AI/ContextPicker/ResourceRow × 2 | independent | Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element. |
 | Oddkin/AI/ContextPicker/ResearchBrowserExample | button × 11 | independent | Design-only frame of the C07 design (context-picker-redesign.json, classifications); no part of the element. |
@@ -622,7 +632,7 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | odd-prompt-input/Draft ready (dark, light) | button × 1 | element | A complete odd-button (approve, reject, send, skip, …) with no ARIA ID relationship or form ownership across the shadow boundary: an element dependency, as the code already declares. |
 | odd-question/Choice · requested (dark, light) | button/sm × 2 | element | A complete odd-button (approve, reject, send, skip, …) with no ARIA ID relationship or form ownership across the shadow boundary: an element dependency, as the code already declares. |
 | odd-response-feedback/Negative rating · drafting (dark, light) | button/sm × 2 | element | A complete odd-button (approve, reject, send, skip, …) with no ARIA ID relationship or form ownership across the shadow boundary: an element dependency, as the code already declares. |
-| DataGrid, GridColumnHeader, GridRow, GridSelection, Oddkin/AI/ContextPicker/ExpandedBrowser, Oddkin/AI/ContextPicker/MobileSurface | 18 references | deferred | Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, "The design specs"). |
+| DataGrid, GridColumnHeader, GridRow, GridSelection | 11 references | deferred | Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, "The design specs"). |
 
 #### Element dependencies
 
@@ -638,7 +648,7 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | `odd-citation` | `odd-popover` | The source preview is a complete odd-popover widget the marker opens, anchored to it; the marker and its working note stay in the citation's own tree. |
 | `odd-combobox` | `odd-avatar` | Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options). The avatars view nests odd-avatar, a complete widget with no ID relationship across the boundary. |
 | `odd-command-palette` | `odd-icon` | Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them). |
-| `odd-context-picker` | `odd-icon`, `odd-tooltip` | The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are. |
+| `odd-context-picker` | `odd-chip`, `odd-icon`, `odd-tooltip` | The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are; the expanded browser reviews the choice as removable odd-chips, each naming its own remove button, as host compositions of the chosen context do. |
 | `odd-conversation` | `odd-activity`, `odd-message` | Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness. |
 | `odd-date-picker` | `odd-calendar` | The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings. |
 | `odd-menu` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |

@@ -9,6 +9,7 @@ import {
   overlaySurfaceStructuralStyles,
   overlaySurfaceStyles,
 } from '@oddkin/components/styles';
+import { chipDefinition } from '@oddkin/components/chip';
 import { iconDefinition } from '@oddkin/components/icon';
 import { tooltipDefinition } from '@oddkin/components/tooltip';
 import { compose } from '@oddkin/core/element';
@@ -34,6 +35,6 @@ export const contextPickerDefinition = compose({
     controlIndicatorStyles,
     contextPickerStyles,
   ],
-  // The icon trigger's tooltip, and resource icons by kind.
-  dependencies: { icon: iconDefinition, tooltip: tooltipDefinition },
+  // The icon trigger's tooltip, resource icons by kind, and the browser's removable chips.
+  dependencies: { chip: chipDefinition, icon: iconDefinition, tooltip: tooltipDefinition },
 });

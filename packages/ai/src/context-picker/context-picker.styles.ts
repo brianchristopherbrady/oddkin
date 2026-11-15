@@ -10,16 +10,21 @@ import { contextPickerRecipeStyles } from './context-picker.recipe.styles.js';
  * the small icon size; the surface 26rem wide and 30rem tall
  * (the shared surface keeps it within the room the placement leaves), its content `space.xs` in,
  * with only the collection scrolling (its buttons' focus rings inset, as its rows' are, so it clips
- * none); the title in the AI title type; the search field `space.2xs` in on every side, so its focus
+ * none); Back, Load more, and Retry at its start, as wide as their labels (Figma draws them at the
+ * start, 176 px); the title in the AI title type; the search field `space.2xs` in on every side, so its focus
  * ring fills the search box as Figma's inline search draws it; rows `space.xs` in with the small
  * radius, at least 3.5rem, the sunken fill while pressed, two lines of name and two of metadata at
  * most, a single choice's indicator round with its dot (as the radio group draws it);
  * the query's match in the link colour; feedback `space.md` in, its title in the UI type and its
  * text in the field's small type; the loading placeholders; the count that pushes the footer's
- * buttons to the end. The sheet (Figma MobileSurface) fills the viewport, its content `space.md`
- * in (or the safe area) and `space.sm` apart, the title in the title type, the scope row and the
- * collection's parts and rows `space.xs` apart, and the scope and Selected sharing the row. The
- * arrangement is the layout recipe.
+ * buttons to the end. The sheet (Figma MobileSurface) fills the viewport (or the safe area); the
+ * expanded browser (ExpandedBrowser) is 65rem wide, within `space.md` of the viewport, with the
+ * card radius and the scrim behind it. In both, the content is `space.md` in and `space.sm` apart,
+ * the title in the title type, the scope row and the collection's parts and rows `space.xs` apart,
+ * and the scope and Selected share the row. The browser's body scrolls as a whole (its focus rings
+ * inset, as the collection's): the sources (12rem, `space.xs` in) and the review (17rem,
+ * `space.sm` in) on the sunken fill, beside the collection, which takes the rest; the sources'
+ * buttons share their lines. Every surface clips; the arrangement is the layout recipe.
  */
 export const contextPickerStyles = css`
   ${contextPickerRecipeStyles}
@@ -34,11 +39,13 @@ export const contextPickerStyles = css`
     padding-inline: 0;
     font-size: ${token('icon.size.sm')};
   }
+  .surface {
+    overflow: hidden;
+  }
   .surface:popover-open {
     display: flex;
     inline-size: 26rem;
     block-size: 30rem;
-    overflow: hidden;
   }
   .fullscreen {
     inline-size: 100%;
@@ -49,24 +56,49 @@ export const contextPickerStyles = css`
     border-radius: 0;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
       env(safe-area-inset-left);
-    overflow: hidden;
   }
-  .fullscreen[open] {
+  .browser {
+    inline-size: 65rem;
+    max-inline-size: calc(100% - 2 * ${token('space.md')});
+    border-radius: ${token('card.radius')};
+  }
+  .browser::backdrop {
+    background: ${token('color.scrim')};
+  }
+  dialog[open] {
     display: flex;
   }
-  .fullscreen .content {
+  dialog .content {
     gap: ${token('space.sm')};
     padding: ${token('space.md')};
   }
-  .fullscreen .title {
+  dialog .title {
     font-size: ${token('type.title.size')};
     line-height: ${token('type.title.line-height')};
   }
-  .fullscreen :is(.scope-row, .collection, .results) {
+  dialog :is(.scope-row, .collection, .results) {
     gap: ${token('space.xs')};
   }
-  .fullscreen .scope-row > * {
+  dialog .scope-row > * {
     flex: 1 1 40%;
+  }
+  .nav,
+  .review {
+    background: ${token('color.surface.sunken')};
+  }
+  .nav {
+    flex: 1 1 12rem;
+    padding: ${token('space.xs')};
+  }
+  .nav > * {
+    flex: 1 1 8rem;
+  }
+  .main {
+    flex: 999 1 20rem;
+  }
+  .review {
+    flex: 1 1 17rem;
+    padding: ${token('space.sm')};
   }
   .content {
     flex: 1 1 auto;
@@ -94,14 +126,17 @@ export const contextPickerStyles = css`
   .feedback-title.danger {
     color: ${token('color.danger.foreground')};
   }
-  .collection {
+  .collection,
+  .body {
     flex: 1 1 auto;
     min-block-size: 0;
     overflow-y: auto;
   }
-  .collection .odd-button:focus-visible {
+  :is(.collection, .body) :focus-visible {
     outline-offset: calc(-1 * ${token('focus.width')});
   }
+  .back,
+  .more,
   .retry {
     align-self: start;
   }
@@ -148,7 +183,7 @@ export const contextPickerStyles = css`
   .feedback {
     padding: ${token('space.md')};
   }
-  .feedback p {
+  :is(.feedback, .review) p {
     margin: 0;
   }
   .feedback-title {

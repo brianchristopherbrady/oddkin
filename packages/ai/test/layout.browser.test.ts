@@ -1453,6 +1453,13 @@ describe('continuity', () => {
   const library: Resource[] = ['Launch brief', 'Launch checklist', 'Launch retrospective'].map(
     (label, i) => ({ sourceId: 'drive', id: `r${i}`, label, type: 'document', path: 'Product' }),
   );
+  const launch: Resource = {
+    sourceId: 'drive',
+    id: 'launch',
+    label: 'Launch',
+    type: 'folder',
+    container: true,
+  };
   /** The picker beside the host's chips, which follow its value; the host answers at once. */
   const composer = async (setup: (el: Picker) => void) => {
     const el = await mount<Picker>(
@@ -1495,16 +1502,12 @@ describe('continuity', () => {
         items: detail.location
           ? detail.location.id
             ? [library[2]!]
-            : [
-                {
-                  sourceId: 'drive',
-                  id: 'launch',
-                  label: 'Launch',
-                  type: 'folder',
-                  container: true,
-                },
-              ]
-          : library.filter((r) => r.label.toLowerCase().includes(detail.query.toLowerCase())),
+            : [launch]
+          : [
+              ...library.filter((r) => r.label.toLowerCase().includes(detail.query.toLowerCase())),
+              // The recent resources hold a collection to browse into.
+              ...(detail.query ? [] : [launch]),
+            ],
       };
     });
     const toggles: string[] = [];
@@ -1600,11 +1603,7 @@ describe('continuity', () => {
           .find((b) => b.textContent!.trim().startsWith('Add'))!
           .textContent!.trim();
       expect(apply()).toBe('Add 2');
-      // Browse into Drive, then into Launch: two levels deep, focus on Back.
-      [...buttonsOf(el)].find((b) => b.textContent!.trim() === 'Browse…')!.click();
-      await settle(el);
-      $(el, '.source').click();
-      await settle(el);
+      // Into the collection the recent resources hold: focus on Back.
       $(el, '.container').click();
       await settle(el);
       const back = $(el, '.back');
@@ -1687,4 +1686,77 @@ describe('continuity', () => {
       }
     },
   );
+
+  // The expanded browser (Browse…) stays as the window narrows to a phone's and widens: 65rem
+  // within the viewport's margin, its sources, collection, and review wrapping below each other
+  // in its own width, with nothing overflowing it and the work in it kept.
+  it('odd-context-picker keeps the expanded browser and the work in it as the window narrows and widens', async () => {
+    const el = await mount<Picker>(
+      'odd-context-picker',
+      () => import('../src/context-picker/context-picker.define.js'),
+      (e) => {
+        e.sources = [
+          { id: 'drive', label: 'Drive', browse: true },
+          { id: 'wiki', label: 'Wiki', browse: true },
+        ];
+        e.multiple = true;
+        e.commit = 'confirm';
+        e.value = [library[0]!];
+      },
+    );
+    el.addEventListener('odd-context-query', ({ detail }) => {
+      el.results = {
+        requestId: detail.requestId,
+        items: detail.location
+          ? [launch, ...library]
+          : library.filter((r) => r.label.toLowerCase().includes(detail.query.toLowerCase())),
+      };
+    });
+    const toggles: string[] = [];
+    el.addEventListener('toggle', (event) => toggles.push((event as ToggleEvent).newState));
+    $(el, '[part="trigger"]').click();
+    await settle(el);
+    $(el, '[role="option"]:nth-child(2)').click();
+    await settle(el);
+    [...buttonsOf(el)].find((b) => b.textContent!.trim() === 'Browse…')!.click();
+    await settle(el);
+    const drive = el.shadowRoot!.querySelectorAll<HTMLElement>('.nav .source')[1]!;
+    drive.click();
+    await settle(el);
+    const surface = $(el, '[part="surface"]');
+    const [nav, main, review] = ['.nav', '.main', '.review'].map((s) => $(el, s));
+    const chips = () => [...el.shadowRoot!.querySelectorAll('.review odd-chip')];
+    const chosen = chips();
+    const focused = el.shadowRoot!.activeElement;
+    expect(focused, 'focus is in the browser').toBeTruthy();
+    expect(chosen).toHaveLength(2);
+    const before = [window.innerWidth, window.innerHeight] as const;
+    try {
+      for (const [width, height] of VIEWPORTS) {
+        await page.viewport(width, height);
+        await frames();
+        expect($(el, '[part="surface"]')).toBe(surface);
+        expect(surface.matches(':modal')).toBe(true);
+        const box = surface.getBoundingClientRect();
+        expect(box.width).toBe(Math.min(1040, width - 32));
+        expect(box.left).toBeCloseTo((width - box.width) / 2, 0);
+        for (const part of [surface, $(el, '.content'), $(el, '.body')])
+          expect(part.scrollWidth).toBeLessThanOrEqual(part.clientWidth + 1);
+        const [a, b, c] = [nav!, main!, review!].map((p) => p.getBoundingClientRect()) as [
+          DOMRect,
+          DOMRect,
+          DOMRect,
+        ];
+        if (width >= 1024) expect([b.top, c.top]).toEqual([a.top, a.top]);
+        else expect(b.top).toBeGreaterThanOrEqual(a.bottom);
+        expect(el.shadowRoot!.activeElement).toBe(focused);
+        expect(drive.getAttribute('aria-current')).toBe('true');
+        expect(chips()).toEqual(chosen);
+        expect(el.value.map((r) => r.id)).toEqual(['r0']);
+        expect(toggles).toEqual(['open']);
+      }
+    } finally {
+      await page.viewport(...before);
+    }
+  });
 });

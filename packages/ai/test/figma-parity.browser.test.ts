@@ -1439,10 +1439,11 @@ describe('Figma parity: the decision row (page 08)', () => {
 // The context picker on the owner's C07 design (Figma page 06, 767:2; `Oddkin/AI/ContextPicker/*`).
 // The surface is Figma's popover (`Oddkin/Common/popover`, Picker) holding the picker content; its
 // buttons are md native buttons compared with `Oddkin/Common/button`; its rows with `ResourceRow`
-// and its feedback with `Feedback`, each in the state the surface draws. Not compared here: the
-// host's compositions (`SelectedChip`, `SelectedOverflow`, `SelectedAttachment`: the pattern's),
-// the design-only frames, and the expanded and full-screen browsers, which are not built
-// (component-catalog.md section 7).
+// and its feedback with `Feedback`, each in the state the surface draws; the sheet with
+// `MobileSurface` and the expanded browser with `ExpandedBrowser`. Not compared here: the host's
+// compositions (`SelectedChip`, `SelectedOverflow`, `SelectedAttachment`: the pattern's), the
+// design-only frames, and the chips of the browser's review (odd-chip, compared with
+// `Oddkin/Common/chip` in the components' parity).
 describe('Figma parity: odd-context-picker (page 06)', () => {
   type Picker = HTMLElementTagNameMap['odd-context-picker'];
   type Resource = Picker['value'][number];
@@ -1990,9 +1991,25 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
 
     it(`Surface, browse sources and a nested collection (${mode})`, async () => {
       inMode(mode);
+      const research: Resource = {
+        sourceId: 'drive',
+        id: 'research',
+        label: 'Research',
+        type: 'folder',
+        description: 'Open collection',
+        container: true,
+      };
       const { el, answer } = await open();
-      await answer({ items: [], sources: complete('drive', 'wiki', 'records') });
-      named(el, 'Browse…')!.click();
+      await answer({ items: [research], sources: complete('drive', 'wiki', 'records') });
+      // The surface's own list of sources: Back out of a collection opened from the results
+      // (Browse… opens the expanded browser).
+      named(el, 'Research · Open collection')!.click();
+      await settle(el);
+      await answer({ items: [], sources: complete('drive') });
+      named(el, 'Back · Drive')!.click();
+      await settle(el);
+      await answer({ items: [], sources: complete('drive') });
+      named(el, 'Back · Sources')!.click();
       await settle(el);
       const differences = [
         ...compare(SURFACE, { State: 'Browse sources' }, [
@@ -2020,14 +2037,7 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       await settle(el);
       await answer({
         items: [
-          {
-            sourceId: 'drive',
-            id: 'research',
-            label: 'Research',
-            type: 'folder',
-            description: 'Open collection',
-            container: true,
-          },
+          research,
           {
             sourceId: 'drive',
             id: 'folder',
@@ -2198,5 +2208,213 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
         await page.viewport(1024, 800);
       }
     });
+
+    // Figma's ExpandedBrowser, which Browse… opens: 1040 wide (Desktop) and 358 on a phone
+    // (Mobile, at 390 × 844), browsing Drive with three resources chosen in a confirm draft.
+    for (const [viewport, width, height] of [
+      ['Desktop', 1100, 800],
+      ['Mobile', 390, 844],
+    ] as const)
+      it(`Expanded browser, ${viewport} (${mode})`, async () => {
+        inMode(mode);
+        await page.viewport(width, height);
+        try {
+          const BROWSER = 'Oddkin/AI/ContextPicker/ExpandedBrowser';
+          const desktop = viewport === 'Desktop';
+          const research: Resource = {
+            sourceId: 'drive',
+            id: 'research',
+            label: 'Research',
+            type: 'folder',
+            description: 'Open collection',
+            container: true,
+          };
+          const { el, answer } = await open((el) => {
+            el.commit = 'confirm';
+            el.value = [brief, checklist, acme];
+          });
+          await answer({ items: [], sources: complete('drive', 'wiki', 'records') });
+          named(el, 'Browse…')!.click();
+          await settle(el);
+          // Figma's location: Drive / Product / Launch.
+          named(el, 'Drive')!.click();
+          await settle(el);
+          for (const [id, label] of [
+            ['product', 'Product'],
+            ['launch', 'Launch'],
+          ] as const) {
+            await answer({
+              items: [{ sourceId: 'drive', id, label, type: 'folder', container: true }],
+              sources: complete('drive'),
+            });
+            named(el, `${label} · folder`)!.click();
+            await settle(el);
+          }
+          await answer({
+            items: [research, brief, { ...brief, id: 'positioning', label: 'Positioning' }],
+            sources: complete('drive'),
+            nextCursor: 'p2',
+          });
+          const dialog = shadow(el, '[part="surface"]');
+          const body = desktop ? 'column-gap' : 'row-gap';
+          const sides: NonNullable<Target['fields']> = [
+            ['paddingRight', 'padding-inline-end'],
+            ['paddingBottom', 'padding-block-end'],
+          ];
+          const targets: Target[] = [
+            {
+              layer: ['Browser title'],
+              el: shadow(el, '.header'),
+              kind: 'frame',
+              gap: 'column-gap',
+            },
+            { layer: ['Browser title', 'Browse context'], el: shadow(el, '.title'), kind: 'text' },
+            { layer: ['Browser body'], el: shadow(el, '.body'), kind: 'frame', gap: body },
+            {
+              layer: ['Browser body', 'Sources and location'],
+              el: shadow(el, '.nav'),
+              kind: 'frame',
+              gap: 'row-gap',
+              fields: sides,
+            },
+            {
+              layer: ['Browser body', 'Collection contents'],
+              el: shadow(el, '.main'),
+              kind: 'frame',
+              gap: 'row-gap',
+            },
+            {
+              layer: ['Browser body', 'Collection contents', '36 resources · Load more'],
+              el: shadow(el, '#status'),
+              kind: 'text',
+            },
+            {
+              layer: ['Confirm draft selection'],
+              el: shadow(el, '.footer'),
+              kind: 'frame',
+              gap: 'column-gap',
+            },
+            {
+              layer: ['Confirm draft selection', '3 selected'],
+              el: shadow(el, '.count'),
+              kind: 'text',
+            },
+          ];
+          if (desktop)
+            targets.push(
+              {
+                layer: ['Browser body', 'Selection review'],
+                el: shadow(el, '.review'),
+                kind: 'frame',
+                gap: 'row-gap',
+                fields: sides,
+              },
+              {
+                layer: ['Browser body', 'Selection review', 'Selected · 3'],
+                el: shadow(el, '#review-title'),
+                kind: 'text',
+              },
+              {
+                layer: layer(BROWSER, 'Selections stay when you browse'),
+                el: shadow(el, '.review .status-line'),
+                kind: 'text',
+              },
+            );
+          // The pointer rests on the title, off every button (an earlier case left it over one).
+          await userEvent.hover(shadow(el, '.title'));
+          // The current source's button eases from ghost into secondary: wait for every button.
+          await transitions([
+            ...targets,
+            ...[...el.shadowRoot!.querySelectorAll<HTMLElement>('button')].map((b): Target => ({
+              layer: [],
+              el: b,
+              kind: 'frame',
+            })),
+          ]);
+          const variant = { Viewport: viewport };
+          const differences = [
+            // The fill, border, and radius are the dialog's; the padding and gap its content's.
+            ...compare(BROWSER, variant, [{ layer: [], el: dialog, kind: 'frame' }]).filter(
+              (line) => !/ padding(Left|Top) \(/.test(line),
+            ),
+            ...compare(BROWSER, variant, [
+              {
+                layer: [],
+                el: shadow(el, '.content'),
+                kind: 'frame',
+                gap: 'row-gap',
+                fields: sides,
+              },
+            ]).filter((line) => !/ (fills|strokes|strokeTopWeight|topLeftRadius) \(/.test(line)),
+            ...compare(BROWSER, variant, targets),
+            ...button(named(el, 'Close'), 'ghost', 'Close'),
+            ...button(named(el, 'All sources'), 'ghost', 'All sources'),
+            ...button(named(el, 'Drive'), 'secondary', 'Drive (current)'),
+            ...button(named(el, 'Wiki'), 'ghost', 'Wiki'),
+            ...button(named(el, 'Records'), 'ghost', 'Records'),
+            ...button(named(el, 'Selected (3)'), 'ghost', 'Selected (3)'),
+            ...button(named(el, 'Back · Product'), 'ghost', 'Back · Product'),
+            ...button(
+              named(el, 'Research · Open collection'),
+              'ghost',
+              'Research · Open collection',
+            ),
+            ...button(named(el, 'Load more'), 'ghost', 'Load more'),
+            ...button(named(el, 'Cancel'), 'ghost', 'Cancel'),
+            ...button(named(el, 'Add 3'), 'primary', 'Add 3'),
+            ...compare(
+              ROW,
+              { Selection: 'Multiple', Selected: 'True', State: 'Default' },
+              rowTargets(rows(el)[0]!, 'Launch brief', 'Drive · Product / Launch · Updated 2h ago'),
+            ),
+          ];
+          expectNone(differences);
+          // The title in the title type (parity.ts compares only Figma's pixel line heights).
+          const title = getComputedStyle(shadow(el, '.title'));
+          expect([title.fontSize, title.fontWeight]).toEqual(['20px', '600']);
+          const w = (selector: string) => shadow(el, selector).getBoundingClientRect().width;
+          const nav = [...el.shadowRoot!.querySelectorAll('.nav .source')].map(
+            (b) => b.getBoundingClientRect().width,
+          );
+          // Figma draws the 1 px stroke inside the frame; the dialog's border takes that room.
+          const inner =
+            (desktop ? 1040 : 358) - 2 * parseFloat(getComputedStyle(dialog).borderLeftWidth) - 32;
+          if (desktop) {
+            // Figma's 1040, its body 1008 (here 1006): the sources 192 (buttons 176) and the review
+            // 272 beside the collection, which takes the rest (Figma leaves 32 px of it unused).
+            expect([w('[part="surface"]'), w('.header'), w('.body')]).toEqual([1040, inner, inner]);
+            // The collection grows 999 times faster than its neighbours: they keep within 0.2 px.
+            const columns = [w('.nav'), w('.review'), w('.main')];
+            [192, 272, inner - 192 - 272 - 32].forEach((width, i) =>
+              expect(columns[i]).toBeCloseTo(width, 0),
+            );
+            expect(nav.map(Math.round)).toEqual([176, 176, 176, 176]);
+          } else {
+            // Figma's 358: each part on its own line; two source buttons share a line.
+            expect([w('[part="surface"]'), w('.nav'), w('.main'), w('.review')]).toEqual([
+              358,
+              inner,
+              inner,
+              inner,
+            ]);
+            expect(nav).toEqual(Array(4).fill((inner - 16 - 8) / 2));
+          }
+          // Back and Load more sit at the collection's start, as wide as their labels (Figma: 176).
+          const main = shadow(el, '.main').getBoundingClientRect();
+          for (const label of ['Back · Product', 'Load more']) {
+            const box = named(el, label)!.getBoundingClientRect();
+            expect(box.left, label).toBe(main.left);
+            expect(box.width, label).toBeLessThan(main.width / 2);
+          }
+          expect(named(el, 'Research · Open collection')!.getBoundingClientRect().width).toBe(
+            main.width,
+          );
+          const field = shadow(el, '.search-field').getBoundingClientRect();
+          expect([field.width, field.height]).toEqual([inner, 48]);
+          expect(shadow(el, '.footer').getBoundingClientRect().height).toBe(40);
+        } finally {
+          await page.viewport(1024, 800);
+        }
+      });
   }
 });

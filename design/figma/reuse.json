@@ -13,12 +13,12 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 146,
+    "style": 152,
     "slot": 54,
-    "deferred": 18,
+    "deferred": 11,
     "controller": 20,
     "native": 7,
-    "element": 29,
+    "element": 30,
     "independent": 22
   },
   "references": [
@@ -253,8 +253,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 6,
-      "class": "deferred",
-      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The expanded browser (Browse…): The option-row sheets (optionRowStructuralStyles, optionRowStyles) with the picker's padding, radius, and pressed fill."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -262,8 +262,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 19,
-      "class": "deferred",
-      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The expanded browser (Browse…): Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -271,8 +271,8 @@
       "source": "Oddkin/Common/chip",
       "sourceId": "159:612",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "element",
+      "reason": "The expanded browser reviews the choice as complete removable odd-chip elements, each naming its own remove button (the picker's definition dependencies)."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/ExpandedBrowser",
@@ -280,8 +280,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built: the expanded browser waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The expanded browser (Browse…): The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Feedback",
@@ -307,8 +307,8 @@
       "source": "Oddkin/AI/ContextPicker/ResourceRow",
       "sourceId": "770:161",
       "count": 3,
-      "class": "deferred",
-      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The sheet (presentation=\"sheet\"): The option-row sheets (optionRowStructuralStyles, optionRowStyles) with the picker's padding, radius, and pressed fill."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
@@ -316,8 +316,8 @@
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 5,
-      "class": "deferred",
-      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The sheet (presentation=\"sheet\"): Native md buttons drawn by the native button sheet (nativeButtonStyles), in the appearances Figma draws."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/MobileSurface",
@@ -325,8 +325,8 @@
       "source": "Oddkin/Common/search",
       "sourceId": "159:1144",
       "count": 1,
-      "class": "deferred",
-      "reason": "Not built: the full-screen dialog, since a resize may not open a dialog (responsiveness.md), waits for the owner (Agent 2's item 34; component-catalog.md section 7)."
+      "class": "style",
+      "reason": "The sheet (presentation=\"sheet\"): The search is a text input with the searchbox role, drawn with the field sheets (fieldStructuralStyles, controlStyles) and the search glyph, as odd-input's search is."
     },
     {
       "consumer": "Oddkin/AI/ContextPicker/Navigation",
@@ -2750,8 +2750,8 @@
     },
     "odd-container": { "dependencies": [] },
     "odd-context-picker": {
-      "dependencies": ["odd-icon", "odd-tooltip"],
-      "reason": "The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are."
+      "dependencies": ["odd-chip", "odd-icon", "odd-tooltip"],
+      "reason": "The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are; the expanded browser reviews the choice as removable odd-chips, each naming its own remove button, as host compositions of the chosen context do."
     },
     "odd-conversation": {
       "dependencies": ["odd-activity", "odd-message"],

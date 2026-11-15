@@ -29,7 +29,9 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const n = (value: number) => formatNumber(value, lang);
   const name = host.label || t.add;
   const iconTrigger = host.trigger === 'icon';
-  const sheet = host._presentation.value === 'sheet';
+  const presentation = host._presentation.value;
+  const sheet = presentation === 'sheet';
+  const expanded = presentation === 'browser';
   const icons = host.icons;
   const query = host._query.value;
   const reviewing = host._view.value === 'selected';
@@ -69,6 +71,7 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const sources = host._sourcesText(scopeIds);
   const confirm = host.commit === 'confirm';
   const count = n(chosen.length);
+  const title = expanded ? t.browseTitle : reviewing ? t.selectedTitle : t.title;
 
   const status = reviewing
     ? format(t.review, { count })
@@ -144,66 +147,41 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
                   <p class="feedback-text">${t.emptyText}</p>`
             : nothing;
 
-  const body = html`<div class="content">
-    <div class="header">
-      <h2 id="title" class="title">${reviewing ? t.selectedTitle : t.title}</h2>
-      <button
-        class="odd-button close"
-        data-appearance="ghost"
-        type="button"
-        @click=${host._onClose}
-      >
-        ${t.close}
-      </button>
-    </div>
-    <div class="control-box search-field">
-      <span class="control-start" aria-hidden="true">${searchGlyph}</span>
-      <input
-        part="search"
-        class="control search"
-        type="text"
-        role="searchbox"
-        enterkeyhint="search"
-        autocomplete="off"
-        placeholder=${t.search}
-        aria-label=${t.search}
-        aria-controls="results"
-        .value=${query}
-        @input=${host._onInput}
-        @keydown=${host._onSearchKey}
-      />
-    </div>
-    <div class="scope-row">
-      ${
-        host.sources.length > 1
-          ? html`<span class="control-box"
-              ><select class="control scope" aria-label=${t.scope} @change=${host._onScope}>
-                <option value="" ?selected=${!reviewing && !scopeValue}>${t.allSources}</option>
-                ${host.sources.map(
-                  (s) =>
-                    html`<option .value=${s.id} ?selected=${!reviewing && scopeValue === s.id}>
-                      ${s.label}
-                    </option>`,
-                )}
-                <option data-view="selected" ?selected=${reviewing}>${t.selectedOnly}</option>
-              </select></span
-            >`
-          : nothing
-      }
-      <button
-        class="odd-button"
-        data-appearance="ghost"
-        type="button"
-        aria-pressed=${reviewing ? 'true' : 'false'}
-        @click=${host._onSelectedView}
-      >
-        ${format(t.selected, { count })}
-      </button>
-    </div>
-    <p id="status" class=${`status-line${partial ? ' danger' : ''}`}>${status}</p>
+  const selectedView = html`<button
+    class="odd-button"
+    data-appearance="ghost"
+    type="button"
+    aria-pressed=${reviewing ? 'true' : 'false'}
+    @click=${host._onSelectedView}
+  >
+    ${format(t.selected, { count })}
+  </button>`;
+
+  const scopeRow = html`<div class="scope-row">
+    ${
+      host.sources.length > 1
+        ? html`<span class="control-box"
+            ><select class="control scope" aria-label=${t.scope} @change=${host._onScope}>
+              <option value="" ?selected=${!reviewing && !scopeValue}>${t.allSources}</option>
+              ${host.sources.map(
+                (s) =>
+                  html`<option .value=${s.id} ?selected=${!reviewing && scopeValue === s.id}>
+                    ${s.label}
+                  </option>`,
+              )}
+              <option data-view="selected" ?selected=${reviewing}>${t.selectedOnly}</option>
+            </select></span
+          >`
+        : nothing
+    }
+    ${selectedView}
+  </div>`;
+
+  // The browser lists the sources beside the collection: Back leaves only a container.
+  const main = html`<p id="status" class=${`status-line${partial ? ' danger' : ''}`}>${status}</p>
     <div class="collection">
       ${
-        browse
+        browse && (browse.trail.length || !expanded)
           ? html`<div part="browse" class="browse">
               ${
                 browsingRoot
@@ -337,12 +315,82 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
       }
       <div class="feedback" ?hidden=${feedback === nothing}>${feedback}</div>
       ${sheet && !reviewing ? html`<p class="status-line">${t.keepHint}</p>` : nothing}
+    </div>`;
+
+  const body = html`<div class="content">
+    <div class="header">
+      <h2 id="title" class="title">${title}</h2>
+      <button
+        class="odd-button close"
+        data-appearance="ghost"
+        type="button"
+        @click=${host._onClose}
+      >
+        ${t.close}
+      </button>
     </div>
+    <div class="control-box search-field">
+      <span class="control-start" aria-hidden="true">${searchGlyph}</span>
+      <input
+        part="search"
+        class="control search"
+        type="text"
+        role="searchbox"
+        enterkeyhint="search"
+        autocomplete="off"
+        placeholder=${t.search}
+        aria-label=${t.search}
+        aria-controls="results"
+        .value=${query}
+        @input=${host._onInput}
+        @keydown=${host._onSearchKey}
+      />
+    </div>
+    ${
+      expanded
+        ? html`<div class="body">
+            <nav class="nav" aria-label=${t.sources}>
+              ${[{ id: '', label: t.allSources }, ...host.sources].map((s) => {
+                const current = !reviewing && s.id === scopeValue;
+                return html`<button
+                  class="odd-button source"
+                  data-appearance=${current ? null : 'ghost'}
+                  type="button"
+                  aria-current=${current ? 'true' : null}
+                  data-id=${s.id}
+                  @click=${host._onNav}
+                >
+                  ${s.label}
+                </button>`;
+              })}
+              ${selectedView}
+            </nav>
+            <div class="main">${main}</div>
+            <section class="review" aria-labelledby="review-title">
+              <p id="review-title" class="feedback-title">${format(t.reviewTitle, { count })}</p>
+              ${repeat(
+                chosen,
+                (r) => resourceKey(r),
+                (r) =>
+                  html`<odd-chip
+                    removable
+                    ?disabled=${host.disabled}
+                    data-key=${resourceKey(r)}
+                    @odd-chip-remove=${host._onChipRemove}
+                  >
+                    ${format(t.detail, { label: r.label, detail: host._sourceLabel(r.sourceId) })}
+                  </odd-chip>`,
+              )}
+              <p class="status-line">${t.keepHint}</p>
+            </section>
+          </div>`
+        : html`${scopeRow}${main}`
+    }
     <div part="footer" class="footer">
       <span class="count">${format(t.count, { count })}</span>
       <slot name="actions"></slot>
       ${
-        browsable.length
+        browsable.length && !expanded
           ? html`<button
               class="odd-button"
               data-appearance="ghost"
@@ -393,11 +441,11 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
     </button>
     ${iconTrigger ? html`<odd-tooltip anchor="trigger">${name}</odd-tooltip>` : nothing}
     ${
-      sheet
+      sheet || expanded
         ? html`<dialog
             part="surface"
             id="surface"
-            class="overlay-surface surface fullscreen"
+            class=${`overlay-surface surface ${expanded ? 'browser' : 'fullscreen'}`}
             aria-labelledby="title"
             @keydown=${host._onSurfaceKey}
             @close=${host._onSheetClose}

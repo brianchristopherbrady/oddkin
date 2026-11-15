@@ -13,6 +13,7 @@ export const CONTEXT_PICKER_STRINGS = {
   add: 'Add context',
   title: 'Add context',
   selectedTitle: 'Selected context',
+  browseTitle: 'Browse context',
   close: 'Close',
   search: 'Search resources',
   allSources: 'All sources',
@@ -55,6 +56,7 @@ export const CONTEXT_PICKER_STRINGS = {
   limitReached: 'Limit reached',
   review: '{count} selected · across all sources',
   noneSelected: 'Nothing selected yet.',
+  reviewTitle: 'Selected · {count}',
   keepHint: 'Selections stay when you change search or source.',
   done: 'Done',
   cancel: 'Cancel',
@@ -96,18 +98,21 @@ const showing = (surface: HTMLElement): boolean =>
  * leaving the surface discards them. `trigger="icon"` draws the trigger as a plus button, and
  * `icons` gives resources an icon by their `kind`. `presentation="sheet"` opens a full-screen
  * modal dialog instead of the anchored surface: the host chooses it, never the width, and a change
- * while open waits until it closes.
+ * while open waits until it closes. When a source can be browsed, Browse… opens the expanded
+ * browser, a modal dialog that keeps the search, scope, location, and draft, lists the sources
+ * beside the collection (one becomes the scope, browsed when it can be), and reviews the choice as
+ * removable chips; closing it closes the picker.
  *
  * @slot actions - Host actions in the surface's footer, e.g. upload or connect a source.
  * @csspart trigger - The button that opens the surface.
- * @csspart surface - The non-modal dialog anchored to the trigger in the top layer, or the full-screen modal dialog of the sheet.
+ * @csspart surface - The non-modal dialog anchored to the trigger in the top layer, the full-screen modal dialog of the sheet, or the expanded browser's modal dialog.
  * @csspart search - The search field.
- * @csspart browse - The sources list, or Back and where it goes, while browsing.
+ * @csspart browse - Back and where it goes, or the sources, while browsing.
  * @csspart results - The listbox of results, or of the chosen resources in review.
  * @csspart option - Each result.
  * @csspart footer - The count, host actions, and Done (or Cancel and Add N).
- * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the icon trigger is named by its text, which its tooltip shows on hover and focus (and adds no description). The surface is a non-modal `dialog` named by its title; the sheet is a modal one (the page behind it inert). The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
- * @keyboard Enter or Space on the trigger opens it and focuses the search. Down Arrow or Tab moves into the results; Up, Down, Home, and End move; Space or Enter chooses. Escape, Close, and Done close and return focus to the trigger; Tab or a press outside closes and leaves focus there.
+ * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the icon trigger is named by its text, which its tooltip shows on hover and focus (and adds no description). The surface is a non-modal `dialog` named by its title; the sheet and the expanded browser are modal ones (the page behind them inert). The browser's sources are a navigation landmark whose current source has `aria-current`, and its review a region named by its count. The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
+ * @keyboard Enter or Space on the trigger opens it and focuses the search. Down Arrow or Tab moves into the results; Up, Down, Home, and End move; Space or Enter chooses. Browse… moves focus to the browser's current source. A chip's remove button (Enter, Space, Backspace, or Delete) unchooses it and focuses the next chip. Escape, Close, and Done close and return focus to the trigger; Tab or a press outside the anchored surface closes it and leaves focus there.
  * @useFor Choosing documents, pages, or records from connected sources as context for a request.
  * @notFor Uploading, connecting accounts, or fetching content (the host's); showing the chosen context (compose chips or rows outside).
  * @limitation A change is announced, and closes a single choice, only when it is applied during its event: a host that cancels and sets `value` later announces it itself.
@@ -165,8 +170,11 @@ export class OddkinContextPicker extends OddkinElement.with({
 
   /** @internal The search text. */
   readonly _query = signal('');
-  /** @internal The presentation shown: `presentation`, applied only while closed. */
-  readonly _presentation = signal<'popover' | 'sheet'>('popover');
+  /**
+   * @internal The presentation shown: `presentation`, applied only while closed, or the expanded
+   * browser that Browse… opens.
+   */
+  readonly _presentation = signal<'popover' | 'sheet' | 'browser'>('popover');
   /** @internal The source searched, or '' for all of them. */
   readonly _scope = signal('');
   /** @internal `selected`: the chosen resources in review instead of the results. */
@@ -434,6 +442,7 @@ export class OddkinContextPicker extends OddkinElement.with({
       const root = this.shadowRoot;
       (
         root?.querySelector<HTMLElement>('.back') ??
+        root?.querySelector<HTMLElement>('.source[aria-current]') ??
         root?.querySelector<HTMLElement>('.source') ??
         root?.querySelector<HTMLElement>('[part="search"]')
       )?.focus();
@@ -447,18 +456,45 @@ export class OddkinContextPicker extends OddkinElement.with({
     this.#listbox.setActive(-1);
   }
 
-  /** @internal Browse…: the sources to look into; again, back to the results. */
+  /**
+   * @internal Browse…: the expanded browser, a modal dialog with the same query, scope, location,
+   * view, and draft; its list of sources, which sets the scope, replaces the scope select.
+   */
   readonly _onBrowse = (): void => {
-    if (this._browse.peek()) {
+    const browse = this._browse.peek();
+    if (browse && !browse.sourceId) {
       this._browse.value = undefined;
       this.#request(this._query.peek());
-      return;
     }
-    this.#stopRequest();
-    this._query.value = '';
+    this._presentation.value = 'browser';
+    void this.updateComplete.then(() => {
+      const surface = this._surface() as HTMLDialogElement | null | undefined;
+      if (!this.open || surface?.localName !== 'dialog') return;
+      // The sheet's dialog stays open; the anchored surface became this dialog.
+      if (!surface.open) surface.showModal();
+      const nav = this.shadowRoot?.querySelector('.nav');
+      (
+        nav?.querySelector<HTMLElement>('[aria-current]') ??
+        nav?.querySelector<HTMLElement>('.source')
+      )?.focus();
+    });
+  };
+  /**
+   * @internal The browser's list: a source becomes the scope, browsed from its top when it can
+   * be; All sources searches every source. Either way the search goes on in it.
+   */
+  readonly _onNav = (event: Event): void => {
+    const id = (event.currentTarget as HTMLElement).dataset['id'] as string;
+    this._scope.value = id;
     this._view.value = 'results';
-    this._browse.value = { trail: [] };
-    this.#focusNavigation();
+    if (this.sources.find((s) => s.id === id)?.browse) {
+      this._query.value = '';
+      this._browse.value = { sourceId: id, trail: [] };
+      this.#request('');
+    } else {
+      this._browse.value = undefined;
+      this.#request(this._query.peek());
+    }
   };
   /** @internal A source to browse. */
   readonly _onSource = (event: Event): void => {
@@ -519,27 +555,57 @@ export class OddkinContextPicker extends OddkinElement.with({
     const key = resourceKey(resource);
     const current = this._chosen.peek();
     const chosen = this._keys.peek().has(key);
-    let next: ContextResource[];
-    let reason: 'add' | 'remove' | 'replace';
     if (!this.multiple) {
-      if (chosen) return;
-      next = [resource];
-      reason = 'replace';
-    } else if (chosen) {
-      next = current.filter((r) => resourceKey(r) !== key);
-      reason = 'remove';
-    } else {
-      next = [...current, resource];
-      reason = 'add';
-    }
+      if (!chosen) this.#change(resource, [resource], 'replace');
+    } else if (chosen)
+      this.#change(
+        resource,
+        current.filter((r) => resourceKey(r) !== key),
+        'remove',
+      );
+    else this.#change(resource, [...current, resource], 'add');
+  }
+
+  /** @internal A chip's remove button in the browser's review: unchoose it, focus the next. */
+  readonly _onChipRemove = (event: Event): void => {
+    const chip = event.currentTarget as HTMLElement;
+    const key = chip.dataset['key'];
+    const resource = this._chosen.peek().find((r) => resourceKey(r) === key);
+    if (!resource || this.disabled) return;
+    const chips = () => [
+      ...(this.shadowRoot?.querySelectorAll<HTMLElement>('.review odd-chip') ?? []),
+    ];
+    const at = chips().indexOf(chip);
+    this.#change(
+      resource,
+      this._chosen.peek().filter((r) => r !== resource),
+      'remove',
+    );
+    void this.updateComplete.then(() => {
+      const rest = chips();
+      const next = rest[Math.min(at, rest.length - 1)];
+      (
+        next?.shadowRoot?.querySelector<HTMLElement>('[part="remove"]') ??
+        this.shadowRoot?.querySelector<HTMLElement>('[part="search"]')
+      )?.focus();
+    });
+  };
+
+  /** Choose (`replace`, `add`) or unchoose `resource`: a draft, or a proposed `value`. */
+  #change(
+    resource: ContextResource,
+    next: ContextResource[],
+    reason: 'add' | 'remove' | 'replace',
+  ): void {
+    const added = reason !== 'remove';
     if (this.commit === 'confirm') {
       this._draft.value = next;
-      this.#announceChange(resource, !chosen, next.length);
+      this.#announceChange(resource, added, next.length);
       return;
     }
     if (!this.#propose(next, reason)) return;
-    this.#announceChange(resource, !chosen, next.length);
-    if (!this.multiple) this._close(true);
+    this.#announceChange(resource, added, next.length);
+    if (!this.multiple && added) this._close(true);
   }
 
   /** @internal Add N, in confirm mode. */

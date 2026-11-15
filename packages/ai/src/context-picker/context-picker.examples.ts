@@ -220,13 +220,17 @@ export default defineExamples('odd-context-picker', {
       multiple: true,
       open: true,
       icons: { folder: folderIcon },
+      results: {
+        requestId: 'recent',
+        items: [folders['drive']![0]!, library[0]!, library[2]!],
+      },
     },
     guidance:
-      'A source with `browse` can be opened with Browse…: the picker asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person opens the browser; this example presses Browse… as one would. A resource’s `kind` picks its icon from `icons` (URLs the page may load); others show the document icon.',
+      'When a source has `browse`, Browse… opens the expanded browser: a modal dialog that keeps the search, scope, location, and draft, lists the sources beside the collection, and reviews the choice as removable chips. Browsing asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it, here in the surface itself, and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person browses: this example opens Product from the recent resources as one would. A resource’s `kind` picks its icon from `icons` (URLs the page may load); others show the document icon.',
     async fixture({ scope, element }) {
       host(scope, element);
       await element.updateComplete;
-      element.shadowRoot!.querySelector<HTMLButtonElement>('[part~="footer"] button')!.click();
+      element.shadowRoot!.querySelector<HTMLButtonElement>('.container')!.click();
     },
   },
   iconTrigger: {

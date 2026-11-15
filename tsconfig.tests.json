@@ -9,6 +9,9 @@
     "types": ["node"]
   },
   "include": [
+    // Component sources first: a package composing a component reads its built declarations,
+    // which declare the same global tag name; only a later .d.ts duplicate goes unreported.
+    "packages/components/src/*/index.ts",
     "packages/components/test/**/*.ts",
     "packages/*/test/**/*.ts",
     "packages/*/src/**/*.examples.ts",

@@ -306,7 +306,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/citation/citation.recipe.styles.js (citationRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 51 |
 | `packages/ai/dist/context-picker/context-picker.recipe.styles.js (contextPickerRecipeStyles)` | yes | 15 |
-| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 60 |
+| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 61 |
 | `packages/ai/dist/conversation/conversation.recipe.styles.js (conversationRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 51 |
 | `packages/ai/dist/inline-assist/inline-assist.recipe.styles.js (inlineAssistRecipeStyles)` | yes | 13 |
