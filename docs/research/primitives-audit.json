@@ -512,17 +512,50 @@
         "cssProperties": [],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "CB1",
+          "check": "api",
+          "finding": "Figma Selection (Unchecked, Checked, Mixed) maps to checked and indeterminate; State Disabled to disabled, Invalid to error (with required), Hover and Focus to browser states. The code adds description, name, value, and form participation.",
+          "proposal": "None."
+        },
+        {
+          "id": "CB2",
+          "check": "visual",
+          "finding": "Matching: the 20 px box with radius.sm and a border.width.default border in color.border.strong, color.surface.default, hover, and sunken (disabled) fills, color.selection.background when checked or mixed, the 16 px check and minus glyphs (icon.size.sm), the color.danger.foreground border when invalid (border.width.strong when checked), the space.sm gap, and primary or disabled label text.",
+          "proposal": "None."
+        },
+        {
+          "id": "CB3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all 15 variants: the row and its gap, the label, the box, the focus ring, and the Required message.",
+          "proposal": "None."
+        },
+        {
+          "id": "CB4",
+          "check": "a11y",
+          "finding": "The row is at least target.min (24 px) tall and the label is part of the target; the focus ring is compared with Figma. Not yet measured: the check and minus glyphs against color.selection.background, in light and dark.",
+          "proposal": "Measure in the accessibility pass."
+        },
+        {
+          "id": "CB5",
+          "check": "docs",
+          "finding": "Examples cover unchecked, checked, mixed, a description, required with its error, disabled, and a form.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: every Figma Selection and State maps to the API, every bound token matches, and the parity test compares all 15 variants in three engines. Left for the accessibility pass: the contrast of the check and minus glyphs on the selection colour."
     },
     {
       "order": 5,
@@ -553,17 +586,56 @@
         "cssProperties": ["--odd-chip-radius"],
         "events": ["odd-chip-remove"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "gap",
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "CH1",
+          "check": "api",
+          "finding": "Figma draws only the removable chip: State Default, Selected, Disabled, and Focus (on the remove button) map to removable, selected, disabled, and keyboard focus. The code also has a plain chip without remove, which Figma does not draw.",
+          "proposal": "None; Figma could add the plain chip."
+        },
+        {
+          "id": "CH2",
+          "check": "visual",
+          "finding": "Matching: control.radius, color.surface.sunken (color.selection.background with color.selection.foreground text when selected), control.gap, the control.height.sm minimum height, control.padding.inline.sm padding, the border.width.default border, the UI type, and the 16 px close glyph.",
+          "proposal": "None."
+        },
+        {
+          "id": "CH3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares all four states (surface, gap, text, focus ring); the collections parity test compares chips inside the multiselect.",
+          "proposal": "None."
+        },
+        {
+          "id": "CH4",
+          "check": "a11y",
+          "finding": "The remove button is 20 x 20 px (icon.size.md), below target.min (24 px). WCAG 2.2 Target Size (2.5.8, AA) then holds only through its spacing exception, which depends on what sits around the chip. Figma draws the 16 px glyph without a target.",
+          "proposal": "A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph."
+        },
+        {
+          "id": "CH5",
+          "check": "responsive",
+          "finding": "A chip is at most as wide as its parent and wraps long text (min-inline-size: 0, overflow-wrap: anywhere).",
+          "proposal": "None."
+        },
+        {
+          "id": "CH6",
+          "check": "docs",
+          "finding": "Examples cover removable, plain, selected, and disabled chips.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The API, tokens, and parity cover all four Figma states. One accessibility gap: the remove button is 20 x 20 px, below target.min (24 px)."
     },
     {
       "order": 6,

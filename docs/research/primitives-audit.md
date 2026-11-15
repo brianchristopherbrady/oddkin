@@ -42,8 +42,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | audited | gap | gap | gap | ? | ok | gap |
 | 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | audited | ok | gap | gap | ? | ok | ok |
 | 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | audited | gap | gap | ok | ? | ok | gap |
-| 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | not started | ? | ? | ? | ? | ? | ? |
-| 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | not started | ? | ? | ? | ? | ? | ? |
+| 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
+| 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | audited | ok | ok | ok | gap | ok | ok |
 | 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | not started | ? | ? | ? | ? | ? | ? |
 | 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | not started | ? | ? | ? | ? | ? | ? |
 | 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | not started | ? | ? | ? | ? | ? | ? |
@@ -182,7 +182,7 @@ Decisions for the owner:
 
 ## 4. checkbox
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: every Figma Selection and State maps to the API, every bound token matches, and the parity test compares all 15 variants in three engines. Left for the accessibility pass: the contrast of the check and minus glyphs on the selection colour.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -194,11 +194,17 @@ Code: `odd-checkbox` (packages/components/src/checkbox/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false`, `indeterminate: boolean = false` | `(default)` | `control`, `description`, `error`, `field`, `label` | — | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| CB1 | api | Figma Selection (Unchecked, Checked, Mixed) maps to checked and indeterminate; State Disabled to disabled, Invalid to error (with required), Hover and Focus to browser states. The code adds description, name, value, and form participation. | None. |
+| CB2 | visual | Matching: the 20 px box with radius.sm and a border.width.default border in color.border.strong, color.surface.default, hover, and sunken (disabled) fills, color.selection.background when checked or mixed, the 16 px check and minus glyphs (icon.size.sm), the color.danger.foreground border when invalid (border.width.strong when checked), the space.sm gap, and primary or disabled label text. | None. |
+| CB3 | parity | figma-parity.forms.browser.test.ts compares all 15 variants: the row and its gap, the label, the box, the focus ring, and the Required message. | None. |
+| CB4 | a11y | The row is at least target.min (24 px) tall and the label is part of the target; the focus ring is compared with Figma. Not yet measured: the check and minus glyphs against color.selection.background, in light and dark. | Measure in the accessibility pass. |
+| CB5 | docs | Examples cover unchecked, checked, mixed, a description, required with its error, disabled, and a form. | None. |
 
 ## 5. chip
 
-Status: not started.
+Status: audited (2026-11-15). The API, tokens, and parity cover all four Figma states. One accessibility gap: the remove button is 20 x 20 px, below target.min (24 px).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -210,7 +216,14 @@ Code: `odd-chip` (packages/components/src/chip/).
 | --- | --- | --- | --- | --- |
 | `removable: boolean = false`, `selected: boolean = false`, `disabled: boolean = false` | `(default)` | `base`, `remove` | `--odd-chip-radius` | `odd-chip-remove` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| CH1 | api | Figma draws only the removable chip: State Default, Selected, Disabled, and Focus (on the remove button) map to removable, selected, disabled, and keyboard focus. The code also has a plain chip without remove, which Figma does not draw. | None; Figma could add the plain chip. |
+| CH2 | visual | Matching: control.radius, color.surface.sunken (color.selection.background with color.selection.foreground text when selected), control.gap, the control.height.sm minimum height, control.padding.inline.sm padding, the border.width.default border, the UI type, and the 16 px close glyph. | None. |
+| CH3 | parity | figma-parity.browser.test.ts compares all four states (surface, gap, text, focus ring); the collections parity test compares chips inside the multiselect. | None. |
+| CH4 | a11y | The remove button is 20 x 20 px (icon.size.md), below target.min (24 px). WCAG 2.2 Target Size (2.5.8, AA) then holds only through its spacing exception, which depends on what sits around the chip. Figma draws the 16 px glyph without a target. | A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph. |
+| CH5 | responsive | A chip is at most as wide as its parent and wraps long text (min-inline-size: 0, overflow-wrap: anywhere). | None. |
+| CH6 | docs | Examples cover removable, plain, selected, and disabled chips. | None. |
 
 ## 6. copyButton
 
