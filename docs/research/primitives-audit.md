@@ -46,8 +46,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | audited | ok | ok | ok | gap | ok | ok |
 | 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | audited | ok | ok | ok | ? | ok | gap |
 | 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | audited | ok | ok | ok | ? | ok | ok |
-| 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | not started | ? | ? | ? | ? | ? | ? |
-| 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | audited | ok | ok | gap | gap | ok | gap |
+| 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | audited | gap | ok | gap | ? | ok | gap |
 | 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | not started | ? | ? | ? | ? | ? | ? |
 | 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
 | 12 | [input](#12-input) | input (159:1024) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
@@ -272,7 +272,7 @@ Code: `odd-disclosure` (packages/components/src/disclosure/).
 
 ## 8. divider
 
-Status: not started.
+Status: audited (2026-11-15). The recipe draws both Figma variants with Figma's tokens, but no parity test compares them, the labelled divider's suggested role="separator" can hide its words from screen readers, and no example shows it.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -280,11 +280,18 @@ Status: not started.
 
 Code: `.odd-divider (divider.css)`.
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| DV1 | api | Figma State Horizontal and Labelled map to hr.odd-divider and a labelled .odd-divider with its text ("OR") between two rules. | None. |
+| DV2 | visual | Matching: a border.width.default rule in color.border.default; the label in color.text.secondary in the small type (12 px). The recipe adds space.md above and below and space.sm between the label and the rules; Figma's Labelled variant has no auto layout, so its gap is a position. | Figma: auto layout on Labelled, with the space.sm gap. |
+| DV3 | parity | Not compared with Figma: recipes-css.browser.test.ts checks only that the rules are drawn. | Compare both variants (rule colour and width, label colour and type) in figma-parity.browser.test.ts. |
+| DV4 | a11y | The recipe's comment has the author give a labelled divider role="separator". A separator's content is presentational, so screen readers may not read its words ("or"), which carry meaning between two choices. | Guidance: hr for a plain divider; a labelled divider stays ordinary text with no separator role, so its words are read. |
+| DV5 | responsive | The rules stretch and shrink around the label in the width the parent grants. | None. |
+| DV6 | docs | Documented in the architecture notes only; no example on the docs site or in the CSS gallery. | An example of each variant where the recipes are shown. |
 
 ## 9. field
 
-Status: not started.
+Status: audited (2026-11-15). Every form control draws this anatomy, and its tokens match Figma. Figma's field has two things the code does not: the required state written in the label ("(required)"), and a second help text below the control. Both need the owner (D1, D2).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -292,7 +299,26 @@ Status: not started.
 
 Code: `.odd-field (field.css)`. The field look every form control shares (controlStyles).
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| FD1 | api | Figma's anatomy (review row: "Label, description, control, validation. Required state is written as well as marked."): the label "Email address (required)", a description above the control, the control, and a line below it, "We never share your address." (secondary), which the error replaces when invalid. The code has the label, the description above, the control, and the error below; a valid field shows nothing below. | Decision D1. |
+| FD2 | api | Required: the code sets the native required state, which assistive technology announces, but writes nothing in the label; Figma writes "(required)". | Decision D2. |
+| FD3 | visual | Matching: the UI type label in color.text.primary, the small type description in color.text.secondary, the control (control.radius, color.surface.default, a border.width.default border in color.border.strong, control.height.md, body text), and the error in color.danger.foreground with the danger border. | None. |
+| FD4 | parity | The field family is not compared; the input family's parity test covers the same anatomy for odd-input, and recipes-css.browser.test.ts checks that .odd-field draws native markup exactly like odd-input. | Compare the field family (Required and Invalid) once D1 and D2 are decided. |
+| FD5 | figma | For the owner: the field anatomy variants have no auto layout, so their gaps (8 px, 12 px) are positions, not tokens. | Auto layout with the field gap tokens. |
+| FD6 | docs | The .odd-field recipe is documented in the architecture notes only; no example on the docs site or in the CSS gallery. | An example of a native control in .odd-field, with its label, description, and error wired. |
+
+Decisions for the owner:
+
+- **D1: The line below the control in a valid field: a second help text, or not drawn?** Open.
+  1. One description, above the control, and only the error below it; Figma's line below is redrawn as part of the description.
+  2. A second help text below the control (a new attribute and slot on every form control), replaced by the error when invalid.
+  - Recommendation: The first: people and screen readers meet the description before they type, and every form control keeps one description.
+- **D2: Writing the required state, as Figma does.** Open.
+  1. Every form control writes a localized "(required)" after its label when required; the word is hidden from assistive technology, which already announces the required state.
+  2. The author writes it in the label text; the guidance says so.
+  3. Mark the optional fields instead ("(optional)"), as some government design systems do.
+  - Recommendation: The first: Figma's rule holds without each author remembering it, and screen readers hear "required" once.
 
 ## 10. icon
 
