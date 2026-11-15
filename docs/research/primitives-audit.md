@@ -51,8 +51,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | audited | ok | ok | gap | ok | ok | ok |
 | 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | audited | gap | gap | gap | ok | ok | gap |
 | 12 | [input](#12-input) | input (159:1024) | `odd-input` | audited | gap | gap | ok | ? | ok | ok |
-| 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | not started | ? | ? | ? | ? | ? | ? |
-| 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | audited | ok | gap | ok | ok | ok | gap |
+| 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | audited | ok | ok | gap | ? | ok | gap |
 | 15 | [number](#15-number) | number (159:1097) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
 | 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | not started | ? | ? | ? | ? | ? | ? |
 | 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | not started | ? | ? | ? | ? | ? | ? |
@@ -403,7 +403,7 @@ Decisions for the owner:
 
 ## 13. keyboardKey
 
-Status: not started.
+Status: audited (2026-11-15). The recipe draws Figma's key caps with Figma's tokens, but smaller: about 23 px tall where Figma draws 32 px (D1). Figma binds no size, so the parity test cannot see it.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -411,11 +411,24 @@ Status: not started.
 
 Code: `.odd-kbd (kbd.css)`.
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| KB1 | api | Figma State Default (a chord, Ctrl + K) and Sequence (G then P) map to kbd.odd-kbd for each key, with the author's text between the keys. | None. |
+| KB2 | visual | Matching: color.surface.default, a border.width.default border in color.border.default, radius.sm, and the code type (14 px) in color.text.secondary. Size: Figma's caps are 32 px tall (32 x 32 for a letter, 52 x 32 for Ctrl); the recipe's cap is its code line plus the border, about 23 px, at least 1.75em wide. | Decision D1. |
+| KB3 | parity | figma-parity.browser.test.ts compares Default (the cap and both keys' text); Sequence is the same recipe with other text. | None. |
+| KB4 | a11y | A kbd element, not focusable and not drawn as a button (Figma: "without making it look clickable"); forced colours draw its border. | None. |
+| KB5 | docs | No example of the recipe; the docs site uses it in its own pages. | An example of a chord and a sequence where the recipes are shown. |
+
+Decisions for the owner:
+
+- **D1: Key cap size: the recipe's compact cap (about 23 px) or Figma's 32 px cap?** Open.
+  1. Keep the compact cap, recorded as a deliberate difference: key caps sit in running text and menu rows, where a 32 px cap would push the lines apart.
+  2. Figma's 32 px cap, with padding from the space tokens, and Figma binds it.
+  - Recommendation: The first, unless key caps are meant to stand alone, larger than text.
 
 ## 14. link
 
-Status: not started.
+Status: audited (2026-11-15). The recipe draws Figma's three states with Figma's tokens. No parity test compares it with Figma, and no example shows it, nor the external-link icon Figma draws after the text.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -423,7 +436,13 @@ Status: not started.
 
 Code: `.odd-link (link.css)`.
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| LK1 | api | Figma State Default, Hover, and Focus map to a.odd-link and the browser states. Figma draws a 16 px external-link icon after the text; the recipe leaves an icon to the author. | Guidance and an example: an odd-icon (size sm) after the text, and words saying a link opens a new tab. |
+| LK2 | visual | Matching: color.link in the UI type, no underline at rest, an underline on hover and keyboard focus, and the focus ring (focus.width, color.focus.ring). Inside running text (p, li) the recipe always underlines, so links there do not rely on colour (WCAG 1.4.1); Figma draws no link in running text. | None. |
+| LK3 | parity | The link family is not compared with Figma; recipes-css.browser.test.ts checks the colour, the hover underline, and the focus ring. | Compare the three states in figma-parity.browser.test.ts. |
+| LK4 | a11y | A native link. Outside running text it has no underline at rest, as Figma draws it. Not yet measured: color.link against each surface, in light and dark. | Measure in the accessibility pass. |
+| LK5 | docs | No example of the recipe; the docs site uses it in its own pages. | An example of a link alone, in running text, and with an external-link icon. |
 
 ## 15. number
 

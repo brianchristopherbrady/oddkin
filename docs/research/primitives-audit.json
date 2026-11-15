@@ -1273,17 +1273,61 @@
         "recipes": [".odd-kbd (kbd.css)"]
       },
       "api": null,
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "gap",
+        "parity": "ok",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "KB1",
+          "check": "api",
+          "finding": "Figma State Default (a chord, Ctrl + K) and Sequence (G then P) map to kbd.odd-kbd for each key, with the author's text between the keys.",
+          "proposal": "None."
+        },
+        {
+          "id": "KB2",
+          "check": "visual",
+          "finding": "Matching: color.surface.default, a border.width.default border in color.border.default, radius.sm, and the code type (14 px) in color.text.secondary. Size: Figma's caps are 32 px tall (32 x 32 for a letter, 52 x 32 for Ctrl); the recipe's cap is its code line plus the border, about 23 px, at least 1.75em wide.",
+          "proposal": "Decision D1."
+        },
+        {
+          "id": "KB3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares Default (the cap and both keys' text); Sequence is the same recipe with other text.",
+          "proposal": "None."
+        },
+        {
+          "id": "KB4",
+          "check": "a11y",
+          "finding": "A kbd element, not focusable and not drawn as a button (Figma: \"without making it look clickable\"); forced colours draw its border.",
+          "proposal": "None."
+        },
+        {
+          "id": "KB5",
+          "check": "docs",
+          "finding": "No example of the recipe; the docs site uses it in its own pages.",
+          "proposal": "An example of a chord and a sequence where the recipes are shown."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "Key cap size: the recipe's compact cap (about 23 px) or Figma's 32 px cap?",
+          "options": [
+            "Keep the compact cap, recorded as a deliberate difference: key caps sit in running text and menu rows, where a 32 px cap would push the lines apart.",
+            "Figma's 32 px cap, with padding from the space tokens, and Figma binds it."
+          ],
+          "recommendation": "The first, unless key caps are meant to stand alone, larger than text.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "The recipe draws Figma's key caps with Figma's tokens, but smaller: about 23 px tall where Figma draws 32 px (D1). Figma binds no size, so the parity test cannot see it."
     },
     {
       "order": 14,
@@ -1303,17 +1347,50 @@
         "recipes": [".odd-link (link.css)"]
       },
       "api": null,
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "gap",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "LK1",
+          "check": "api",
+          "finding": "Figma State Default, Hover, and Focus map to a.odd-link and the browser states. Figma draws a 16 px external-link icon after the text; the recipe leaves an icon to the author.",
+          "proposal": "Guidance and an example: an odd-icon (size sm) after the text, and words saying a link opens a new tab."
+        },
+        {
+          "id": "LK2",
+          "check": "visual",
+          "finding": "Matching: color.link in the UI type, no underline at rest, an underline on hover and keyboard focus, and the focus ring (focus.width, color.focus.ring). Inside running text (p, li) the recipe always underlines, so links there do not rely on colour (WCAG 1.4.1); Figma draws no link in running text.",
+          "proposal": "None."
+        },
+        {
+          "id": "LK3",
+          "check": "parity",
+          "finding": "The link family is not compared with Figma; recipes-css.browser.test.ts checks the colour, the hover underline, and the focus ring.",
+          "proposal": "Compare the three states in figma-parity.browser.test.ts."
+        },
+        {
+          "id": "LK4",
+          "check": "a11y",
+          "finding": "A native link. Outside running text it has no underline at rest, as Figma draws it. Not yet measured: color.link against each surface, in light and dark.",
+          "proposal": "Measure in the accessibility pass."
+        },
+        {
+          "id": "LK5",
+          "check": "docs",
+          "finding": "No example of the recipe; the docs site uses it in its own pages.",
+          "proposal": "An example of a link alone, in running text, and with an external-link icon."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The recipe draws Figma's three states with Figma's tokens. No parity test compares it with Figma, and no example shows it, nor the external-link icon Figma draws after the text."
     },
     {
       "order": 15,
