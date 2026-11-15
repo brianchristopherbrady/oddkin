@@ -2110,5 +2110,93 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       differences.push(...state('Disabled', [target('Button / Disabled')]));
       expectNone(differences);
     });
+
+    // Figma's MobileSurface: the sheet, at its 390 × 844 frame.
+    it(`Sheet (${mode})`, async () => {
+      inMode(mode);
+      await page.viewport(390, 844);
+      try {
+        const SHEET = 'Oddkin/AI/ContextPicker/MobileSurface';
+        const { el, answer, search } = await open((el) => {
+          el.presentation = 'sheet';
+          el.commit = 'confirm';
+          el.value = [brief, checklist];
+        });
+        await search('launch');
+        await answer({
+          items: [brief, checklist, { ...brief, id: 'interviews', label: 'Launch interviews' }],
+          sources: complete('drive', 'wiki'),
+        });
+        const dialog = shadow(el, '[part="surface"]');
+        const box = dialog.getBoundingClientRect();
+        expect([box.width, box.height]).toEqual([390, 844]);
+        const targets: Target[] = [
+          {
+            layer: ['Mobile dialog header'],
+            el: shadow(el, '.header'),
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+          {
+            layer: ['Mobile scope'],
+            el: shadow(el, '.scope-row'),
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+          {
+            layer: layer(SHEET, '3 matches'),
+            el: shadow(el, '.status-line'),
+            kind: 'text',
+          },
+          {
+            layer: ['Mobile results · scrollable'],
+            el: shadow(el, '.collection'),
+            kind: 'frame',
+            gap: 'row-gap',
+          },
+          {
+            layer: ['Pinned mobile footer'],
+            el: shadow(el, '.footer'),
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+        ];
+        await transitions(targets);
+        const differences = [
+          // The fill is the dialog's; the padding and gap are its content's.
+          ...compare(SHEET, {}, [{ layer: [], el: dialog, kind: 'frame' }]).filter(
+            (line) => !/ padding(Left|Top) \(/.test(line),
+          ),
+          ...compare(SHEET, {}, [
+            {
+              layer: [],
+              el: shadow(el, '.content'),
+              kind: 'frame',
+              gap: 'row-gap',
+              fields: [
+                ['paddingRight', 'padding-inline-end'],
+                ['paddingBottom', 'padding-block-end'],
+              ],
+            },
+          ]).filter((line) => !/ fills \(/.test(line)),
+          ...compare(SHEET, {}, targets),
+          ...button(named(el, 'Close'), 'ghost', 'Close'),
+          ...button(named(el, 'Selected (2)'), 'ghost', 'Selected (2)'),
+          ...button(named(el, 'Cancel'), 'ghost', 'Cancel'),
+          ...button(named(el, 'Add 2'), 'primary', 'Add 2'),
+        ];
+        // The title in the title type (parity.ts compares only Figma's pixel line heights).
+        const title = getComputedStyle(shadow(el, '.title'));
+        expect([title.fontSize, title.fontWeight]).toEqual(['20px', '600']);
+        // The content 16 px in: Figma's 358 wide.
+        expect(shadow(el, '.header').getBoundingClientRect().width).toBe(358);
+        // The scope and Selected share their row.
+        const [scope, selected] = [shadow(el, 'select.scope'), named(el, 'Selected (2)')!];
+        expect(scope.getBoundingClientRect().width).toBe(selected.getBoundingClientRect().width);
+        expectNone(differences);
+      } finally {
+        await page.viewport(1024, 800);
+      }
+    });
   }
 });

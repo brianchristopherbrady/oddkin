@@ -644,6 +644,76 @@ describe('odd-context-picker', () => {
     expect(icon(1).querySelector('odd-icon')!.getAttribute('src')).toBe(folder);
   });
 
+  it('presentation="sheet": a full-screen modal dialog with the same search, list, and choice', async () => {
+    const h = await mount((el) => (el.presentation = 'sheet'));
+    const toggles: string[] = [];
+    h.el.addEventListener('toggle', (e) => toggles.push((e as ToggleEvent).newState));
+    await open(h);
+    const surface = $(h.el, '[part="surface"]') as HTMLDialogElement;
+    expect(surface.localName).toBe('dialog');
+    expect(surface.matches(':modal')).toBe(true);
+    const box = surface.getBoundingClientRect();
+    expect([box.width, box.height]).toEqual([window.innerWidth, window.innerHeight]);
+    expect(h.el.shadowRoot!.activeElement).toBe($(h.el, '[part="search"]'));
+    expect(h.queries).toHaveLength(1);
+    await h.answer([brief, checklist]);
+    expect(names(h.el)).toEqual(['Launch brief', 'Release checklist']);
+    expect($$(h.el, '.collection .status-line').map((p) => p.textContent)).toEqual([
+      'Selections stay when you change search or source.',
+    ]);
+    options(h.el)[0]!.click();
+    await settle(h.el);
+    expect(h.el.value).toEqual([brief]);
+    await userEvent.keyboard('{Escape}');
+    await settle(h.el);
+    expect(h.el.open).toBe(false);
+    expect(surface.open).toBe(false);
+    expect(h.el.shadowRoot!.activeElement).toBe($(h.el, '[part="trigger"]'));
+    expect(toggles).toEqual(['open', 'closed']);
+    // A close request the dialog handles itself (a system back gesture) closes the picker too.
+    await open(h);
+    surface.close();
+    await settle(h.el);
+    expect(h.el.open).toBe(false);
+    expect(toggles).toEqual(['open', 'closed', 'open', 'closed']);
+  });
+
+  it('a presentation set while open applies once it closes', async () => {
+    const h = await mount();
+    await open(h);
+    h.el.presentation = 'sheet';
+    await settle(h.el);
+    const popover = $(h.el, '[part="surface"]')!;
+    expect(popover.localName, 'the popover stays while open').toBe('div');
+    expect(popover.matches(':popover-open')).toBe(true);
+    expect($$(h.el, '.collection .status-line'), 'no sheet hint in the popover').toHaveLength(0);
+    h.el.open = false;
+    await settle(h.el);
+    expect($(h.el, '[part="surface"]')!.localName).toBe('dialog');
+    await open(h);
+    expect(($(h.el, '[part="surface"]') as HTMLDialogElement).open).toBe(true);
+    h.el.presentation = 'popover';
+    await settle(h.el);
+    expect($(h.el, '[part="surface"]')!.localName, 'the sheet stays while open').toBe('dialog');
+    $$(h.el, '[part="footer"] button').at(-1)!.click();
+    await settle(h.el);
+    expect(h.el.open).toBe(false);
+    expect($(h.el, '[part="surface"]')!.localName).toBe('div');
+    // The new popover is placed against the trigger.
+    await open(h);
+    const [trigger, popup] = [$(h.el, '[part="trigger"]')!, $(h.el, '[part="surface"]')!];
+    expect(
+      Math.abs(popup.getBoundingClientRect().top - trigger.getBoundingClientRect().bottom),
+    ).toBeLessThanOrEqual(12);
+    h.el.open = false;
+    await settle(h.el);
+    // Set and opened at once: the sheet shows.
+    h.el.presentation = 'sheet';
+    h.el.open = true;
+    await settle(h.el);
+    expect(($(h.el, '[part="surface"]') as HTMLDialogElement).open).toBe(true);
+  });
+
   it('disabled: the trigger is off and nothing opens', async () => {
     const h = await mount((el) => (el.disabled = true));
     expect(($(h.el, '[part="trigger"]') as HTMLButtonElement).disabled).toBe(true);

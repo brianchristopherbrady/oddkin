@@ -238,4 +238,13 @@ export default defineExamples('odd-context-picker', {
       host(scope, element);
     },
   },
+  sheet: {
+    label: 'A full-screen sheet the host chooses',
+    props: { sources, multiple: true, commit: 'confirm', presentation: 'sheet' },
+    guidance:
+      'With `presentation="sheet"` the picker opens a full-screen modal dialog with the same search, list, and choice. The host chooses it, for example in its own phone layout; the picker never chooses it by width, and a change while it is open applies after it closes. Escape, Close, Cancel, and Add N return focus to the trigger.',
+    fixture({ scope, element }) {
+      host(scope, element);
+    },
+  },
 });

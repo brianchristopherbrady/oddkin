@@ -16,7 +16,10 @@ import { contextPickerRecipeStyles } from './context-picker.recipe.styles.js';
  * most, a single choice's indicator round with its dot (as the radio group draws it);
  * the query's match in the link colour; feedback `space.md` in, its title in the UI type and its
  * text in the field's small type; the loading placeholders; the count that pushes the footer's
- * buttons to the end. The arrangement is the layout recipe.
+ * buttons to the end. The sheet (Figma MobileSurface) fills the viewport, its content `space.md`
+ * in (or the safe area) and `space.sm` apart, the title in the title type, the scope row and the
+ * collection's parts and rows `space.xs` apart, and the scope and Selected sharing the row. The
+ * arrangement is the layout recipe.
  */
 export const contextPickerStyles = css`
   ${contextPickerRecipeStyles}
@@ -36,6 +39,34 @@ export const contextPickerStyles = css`
     inline-size: 26rem;
     block-size: 30rem;
     overflow: hidden;
+  }
+  .fullscreen {
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: none;
+    max-block-size: none;
+    border: 0;
+    border-radius: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+    overflow: hidden;
+  }
+  .fullscreen[open] {
+    display: flex;
+  }
+  .fullscreen .content {
+    gap: ${token('space.sm')};
+    padding: ${token('space.md')};
+  }
+  .fullscreen .title {
+    font-size: ${token('type.title.size')};
+    line-height: ${token('type.title.line-height')};
+  }
+  .fullscreen :is(.scope-row, .collection, .results) {
+    gap: ${token('space.xs')};
+  }
+  .fullscreen .scope-row > * {
+    flex: 1 1 40%;
   }
   .content {
     flex: 1 1 auto;

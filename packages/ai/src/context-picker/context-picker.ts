@@ -55,6 +55,7 @@ export const CONTEXT_PICKER_STRINGS = {
   limitReached: 'Limit reached',
   review: '{count} selected · across all sources',
   noneSelected: 'Nothing selected yet.',
+  keepHint: 'Selections stay when you change search or source.',
   done: 'Done',
   cancel: 'Cancel',
   apply: 'Add {count}',
@@ -79,6 +80,12 @@ export const contextPickerToggleEvent = event('toggle', {
 export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string =>
   `${r.sourceId}\u001f${r.id}`;
 
+/** Whether a surface shows: the open popover, or the open dialog of the sheet. */
+const showing = (surface: HTMLElement): boolean =>
+  surface.localName === 'dialog'
+    ? (surface as HTMLDialogElement).open
+    : surface.matches(':popover-open');
+
 /**
  * Find and choose the resources sent with a request, from the sources the host connects: a
  * button opens a search with a separate list of results; the host answers each search, owns the
@@ -87,17 +94,19 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  * Choosing proposes a change (`odd-context-change`): unless a handler cancels it, it becomes
  * `value`. With `commit="confirm"` changes stay a draft until Add N, and Cancel, Close, Escape, or
  * leaving the surface discards them. `trigger="icon"` draws the trigger as a plus button, and
- * `icons` gives resources an icon by their `kind`.
+ * `icons` gives resources an icon by their `kind`. `presentation="sheet"` opens a full-screen
+ * modal dialog instead of the anchored surface: the host chooses it, never the width, and a change
+ * while open waits until it closes.
  *
  * @slot actions - Host actions in the surface's footer, e.g. upload or connect a source.
  * @csspart trigger - The button that opens the surface.
- * @csspart surface - The non-modal dialog, anchored to the trigger in the top layer.
+ * @csspart surface - The non-modal dialog anchored to the trigger in the top layer, or the full-screen modal dialog of the sheet.
  * @csspart search - The search field.
  * @csspart browse - The sources list, or Back and where it goes, while browsing.
  * @csspart results - The listbox of results, or of the chosen resources in review.
  * @csspart option - Each result.
  * @csspart footer - The count, host actions, and Done (or Cancel and Add N).
- * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the icon trigger is named by its text, which its tooltip shows on hover and focus (and adds no description). The surface is a non-modal `dialog` named by its title. The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
+ * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the icon trigger is named by its text, which its tooltip shows on hover and focus (and adds no description). The surface is a non-modal `dialog` named by its title; the sheet is a modal one (the page behind it inert). The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
  * @keyboard Enter or Space on the trigger opens it and focuses the search. Down Arrow or Tab moves into the results; Up, Down, Home, and End move; Space or Enter chooses. Escape, Close, and Done close and return focus to the trigger; Tab or a press outside closes and leaves focus there.
  * @useFor Choosing documents, pages, or records from connected sources as context for a request.
  * @notFor Uploading, connecting accounts, or fetching content (the host's); showing the chosen context (compose chips or rows outside).
@@ -136,6 +145,12 @@ export class OddkinContextPicker extends OddkinElement.with({
   icons: prop.object<Readonly<Record<string, string>>>({
     description: 'Icon URLs by resource `kind`; other resources show the document icon.',
   }),
+  presentation: prop.enum(['popover', 'sheet'], {
+    default: 'popover',
+    reflect: true,
+    description:
+      '`sheet`: a full-screen modal dialog. A change while open applies after it closes.',
+  }),
   strings: prop.object<Partial<typeof CONTEXT_PICKER_STRINGS>>({
     description: 'Localized string overrides.',
   }),
@@ -150,6 +165,8 @@ export class OddkinContextPicker extends OddkinElement.with({
 
   /** @internal The search text. */
   readonly _query = signal('');
+  /** @internal The presentation shown: `presentation`, applied only while closed. */
+  readonly _presentation = signal<'popover' | 'sheet'>('popover');
   /** @internal The source searched, or '' for all of them. */
   readonly _scope = signal('');
   /** @internal `selected`: the chosen resources in review instead of the results. */
@@ -269,12 +286,19 @@ export class OddkinContextPicker extends OddkinElement.with({
   }
 
   #show(): void {
+    if (this._presentation.peek() !== this.presentation) {
+      // A presentation chosen while closed: show its surface once it is rendered.
+      this._presentation.value = this.presentation;
+      void this.updateComplete.then(() => this.open && this.#show());
+      return;
+    }
     const surface = this._surface();
     const byPerson = this.#byPerson;
     this.#byPerson = false;
-    if (!surface || surface.matches(':popover-open')) return;
+    if (!surface || showing(surface)) return;
     this._view.value = 'results';
-    surface.showPopover();
+    if (surface.localName === 'dialog') (surface as HTMLDialogElement).showModal();
+    else surface.showPopover();
     // Opened from script, the host shows what it wants through `results`; a person asks.
     if (byPerson) this.#request(this._query.peek());
     else {
@@ -294,9 +318,11 @@ export class OddkinContextPicker extends OddkinElement.with({
     this.#append = undefined;
     this.#listbox.setActive(-1);
     const surface = this._surface();
-    if (surface?.matches(':popover-open')) surface.hidePopover();
+    if (surface?.localName === 'dialog') (surface as HTMLDialogElement).close();
+    else if (surface?.matches(':popover-open')) surface.hidePopover();
     if (this.#returnFocus) this._trigger()?.focus();
     this.#returnFocus = false;
+    this._presentation.value = this.presentation;
   }
 
   // ---- Searching ----
@@ -618,6 +644,12 @@ export class OddkinContextPicker extends OddkinElement.with({
     const { newState } = event as ToggleEvent;
     if (newState === 'closed' && this.open) this.open = false;
   };
+  /** @internal The sheet closed itself (a close request), not through `open`. */
+  readonly _onSheetClose = (): void => this._close(true);
+
+  protected override connected(): void {
+    this._presentation.value = this.presentation;
+  }
 
   protected override mounted(scope: Scope): void {
     const root = this.shadowRoot;
@@ -626,18 +658,25 @@ export class OddkinContextPicker extends OddkinElement.with({
     if (polite && assertive)
       this.#announcer = scope.use(new LiveAnnouncer({ regions: () => ({ polite, assertive }) }));
     scope.use(this.#listbox);
-    scope.use(
-      new PositionController({
-        anchor: () => this._trigger(),
-        surface: () => this._surface(),
-        offset: 8,
-        viewportMargin: 16,
-        onPlace: ({ availableHeight, availableWidth }) => {
-          const style = this._surface()?.style;
-          style?.setProperty('--_overlay-max-block-size', `${availableHeight}px`);
-          style?.setProperty('--_overlay-max-inline-size', `${availableWidth}px`);
-        },
-      }),
+    // Placed while the anchored surface is open; a new presentation renders a new surface.
+    scope.effect(
+      (run) => {
+        void this._presentation.value;
+        run.use(
+          new PositionController({
+            anchor: () => this._trigger(),
+            surface: () => this._surface(),
+            offset: 8,
+            viewportMargin: 16,
+            onPlace: ({ availableHeight, availableWidth }) => {
+              const style = this._surface()?.style;
+              style?.setProperty('--_overlay-max-block-size', `${availableHeight}px`);
+              style?.setProperty('--_overlay-max-inline-size', `${availableWidth}px`);
+            },
+          }),
+        );
+      },
+      { phase: 'post', name: '<odd-context-picker> position' },
     );
     let wasOpen = false;
     scope.effect(() => {

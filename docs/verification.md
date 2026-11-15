@@ -6672,3 +6672,19 @@ The owner's answers of 2026-11-14 to N2 and N3 (row 35): the trigger's icon-only
 | e2e | `e2e-when-free.mjs 2 ... e2e/workbench-catalog.spec.ts --grep=context.picker --workers=2` | 6 passed: the picker's previews in light and dark (its module graph now has the tooltip and icon) and its generated snippets, in three engines |
 | Size | `node scripts/check-size.mjs` | Exit 0: `ai:styles` 5,619 of 5,632 (the square trigger, one rule); `ai-chat` 69,222, `ai-response` 28,926, `ai-headless` 14,909 |
 | Not done | — | The full-screen sheet and the expanded browser (the row's next landings); real assistive technology |
+
+## 2026-11-14 — P1.8, row 35, landing 2: the context picker's full-screen sheet (round 11, Agent 2)
+
+The owner's answer of 2026-11-14 to N1, first half: the full-screen sheet is the host's choice, applied when the picker opens, never chosen by width. Figma: `Oddkin/AI/ContextPicker/MobileSurface` (779:2665), read through the Figma MCP (read-only) on 2026-11-14.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The element | `packages/ai/test/context-picker.browser.test.ts` | 38 cases. New: the sheet is a modal `dialog` the size of the viewport, focuses the search, asks, lists, and chooses as the popover does, shows its hint, closes on Escape with focus back on the trigger, and closes the picker when the dialog closes itself; a presentation set while the popover or the sheet is open waits until it closes; set together with `open`, the sheet shows at once; the popover shown after the sheet is placed against the trigger |
+| Figma parity | `figma-parity.browser.test.ts`, "Sheet" at 390 × 844 in light and dark | Against `MobileSurface`: the dialog's fill (surface.raised); its content's padding (space.md) and gap (space.sm); the header, scope row, results, and footer gaps; the status text; Close, Selected (2), Cancel, and Add 2 as Figma's md buttons; the title 20 px semibold; the header 358 px wide; the scope and Selected of equal width. Not compared: the buttons' 44 px height (unbound; the picker keeps md, 40 px) |
+| Responsiveness | `layout.browser.test.ts`: an open popover and an open sheet while the window goes 1024, 390, 320, and 1024 px wide | The same surface stays (the sheet modal and the size of the window), with the query, its focus, and the choice; one toggle event |
+| Three engines | `browser-set.mjs` on the 12 `packages/ai/test/*.browser.test.ts` files | Chromium 504 passed, 4 skipped; Firefox and WebKit 502 passed, 6 skipped each |
+| Probes | `mutate.mjs` in Chromium, 12 probes | 12 killed: applying at open, modality, closing the dialog, applying after close, the dialog's own close, placing a new popover, the full height, the gap, the title type, the rows' gap, the shared scope row, the hint |
+| Repository | `npm run verify:metadata` after the AI contract test in three engines; `npm run typecheck`; `npm run lint` after `npm run compat`; `npx vitest run --project node`; `node scripts/list-diagnostics.mjs --check`; `npm run verify:packs` | Exit 0 each: 493 AI facts verified; node 142 files, 1,770 passed; 514 diagnostics, 0 flagged |
+| e2e | `e2e-when-free.mjs 2 ... e2e/workbench-catalog.spec.ts --grep=context.picker --workers=2` | 6 passed in three engines (the sheet example included) |
+| Size | `node scripts/check-size.mjs` | `ai:styles` 5,755 of 5,632 (+123: the sheet's rules), so `BUDGET` to Agent 1 for 5,760; the other AI budgets unchanged |
+| Not done | — | The expanded browser (the row's next landing); the sheet on a phone with a software keyboard; real assistive technology |

@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 
 // The arrangements of the AI elements' layout recipes (layout-recipes.md §14), measured from the
@@ -1623,6 +1623,67 @@ describe('continuity', () => {
         expect(el.value.map((r) => r.id)).toEqual(['r0']);
         expect(chips.children).toHaveLength(1);
         expect(density(content, buttonsOf(el))).toEqual(first);
+      }
+    },
+  );
+
+  // The presentation is the host's choice, never the width's (row 35): the window narrows to a
+  // phone's and widens again while each presentation is open; it stays, with the work in it.
+  const VIEWPORTS = [
+    [1024, 768],
+    [390, 844],
+    [320, 640],
+    [1024, 768],
+  ] as const;
+  it.each(['popover', 'sheet'] as const)(
+    'odd-context-picker keeps its %s and the work in it as the window narrows and widens',
+    async (presentation) => {
+      const el = await mount<Picker>(
+        'odd-context-picker',
+        () => import('../src/context-picker/context-picker.define.js'),
+        (e) => {
+          e.sources = [
+            { id: 'drive', label: 'Drive' },
+            { id: 'wiki', label: 'Wiki' },
+          ];
+          e.multiple = true;
+          e.presentation = presentation;
+          e.value = [library[0]!];
+        },
+      );
+      el.addEventListener('odd-context-query', ({ detail }) => {
+        el.results = {
+          requestId: detail.requestId,
+          items: library.filter((r) => r.label.toLowerCase().includes(detail.query.toLowerCase())),
+        };
+      });
+      const toggles: string[] = [];
+      el.addEventListener('toggle', (event) => toggles.push((event as ToggleEvent).newState));
+      $(el, '[part="trigger"]').click();
+      await settle(el);
+      const surface = $(el, '[part="surface"]');
+      const search = $(el, '[part="search"]') as HTMLInputElement;
+      await userEvent.fill(search, 'launch');
+      await new Promise((resolve) => setTimeout(resolve, 260));
+      await settle(el);
+      const before = [window.innerWidth, window.innerHeight] as const;
+      try {
+        for (const [width, height] of VIEWPORTS) {
+          await page.viewport(width, height);
+          await frames();
+          expect($(el, '[part="surface"]')).toBe(surface);
+          if (presentation === 'sheet') {
+            expect(surface.matches(':modal')).toBe(true);
+            const box = surface.getBoundingClientRect();
+            expect([box.width, box.height]).toEqual([width, height]);
+          } else expect(surface.matches(':popover-open')).toBe(true);
+          expect(search.value).toBe('launch');
+          expect(el.shadowRoot!.activeElement).toBe(search);
+          expect(el.value.map((r) => r.id)).toEqual(['r0']);
+          expect(toggles).toEqual(['open']);
+        }
+      } finally {
+        await page.viewport(...before);
       }
     },
   );
