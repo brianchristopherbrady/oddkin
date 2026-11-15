@@ -44,8 +44,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | audited | ok | gap | gap | ? | ok | ok |
 | 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | audited | gap | gap | ok | ? | ok | gap |
 | 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
-| 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | audited | ok | ok | ok | gap | ok | ok |
-| 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | audited | ok | ok | ok | ? | ok | gap |
+| 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | fixing | ok | ok | ok | ? | ok | ok |
+| 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | fixing | ok | ok | ok | ? | ok | ok |
 | 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | audited | ok | ok | ok | ? | ok | ok |
 | 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | audited | ok | ok | gap | gap | ok | gap |
 | 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | audited | gap | ok | gap | ? | ok | gap |
@@ -53,9 +53,9 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | audited | gap | gap | gap | ok | ok | gap |
 | 12 | [input](#12-input) | input (159:1024) | `odd-input` | audited | gap | gap | ok | ? | ok | ok |
 | 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | audited | ok | gap | ok | ok | ok | gap |
-| 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | audited | ok | ok | gap | ? | ok | gap |
+| 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | fixing | ok | ok | ok | ? | ok | gap |
 | 15 | [number](#15-number) | number (159:1097) | `odd-input` | audited | ok | gap | ok | ? | ok | ok |
-| 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | audited | ok | ok | gap | ? | ok | ok |
+| 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | fixing | ok | ok | ok | ? | ok | ok |
 | 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | audited | ok | ok | ok | ? | ok | ok |
 | 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | audited | ok | ok | ok | ? | ok | ok |
 | 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | audited | ok | ok | ok | ? | ok | ok |
@@ -205,7 +205,7 @@ Code: `odd-checkbox` (packages/components/src/checkbox/).
 
 ## 5. chip
 
-Status: audited (2026-11-15). The API, tokens, and parity cover all four Figma states. One accessibility gap: the remove button is 20 x 20 px, below target.min (24 px).
+Status: fixing (2026-11-15). The API, tokens, and parity cover all four Figma states. One accessibility gap: the remove button is 20 x 20 px, below target.min (24 px).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -222,13 +222,13 @@ Code: `odd-chip` (packages/components/src/chip/).
 | CH1 | api | Figma draws only the removable chip: State Default, Selected, Disabled, and Focus (on the remove button) map to removable, selected, disabled, and keyboard focus. The code also has a plain chip without remove, which Figma does not draw. | None; Figma could add the plain chip. |
 | CH2 | visual | Matching: control.radius, color.surface.sunken (color.selection.background with color.selection.foreground text when selected), control.gap, the control.height.sm minimum height, control.padding.inline.sm padding, the border.width.default border, the UI type, and the 16 px close glyph. | None. |
 | CH3 | parity | figma-parity.browser.test.ts compares all four states (surface, gap, text, focus ring); the collections parity test compares chips inside the multiselect. | None. |
-| CH4 | a11y | The remove button is 20 x 20 px (icon.size.md), below target.min (24 px). WCAG 2.2 Target Size (2.5.8, AA) then holds only through its spacing exception, which depends on what sits around the chip. Figma draws the 16 px glyph without a target. | A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph. |
+| CH4 | a11y | The remove button is 20 x 20 px (icon.size.md), below target.min (24 px). WCAG 2.2 Target Size (2.5.8, AA) then holds only through its spacing exception, which depends on what sits around the chip. Figma draws the 16 px glyph without a target. | A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph. Fixed: 2026-11-15: the remove button is a target.min (24 px) target centred on the 16 px glyph, taking only the glyph's room (Figma's spacing unchanged); display.browser.test.ts checks it in three engines. |
 | CH5 | responsive | A chip is at most as wide as its parent and wraps long text (min-inline-size: 0, overflow-wrap: anywhere). | None. |
 | CH6 | docs | Examples cover removable, plain, selected, and disabled chips. | None. |
 
 ## 6. copyButton
 
-Status: audited (2026-11-15). The API and look match Figma, with one deliberate difference (the owner's): a successful copy is confirmed in a small popover, where Figma writes it inline. One docs gap: no example copies from another element (from).
+Status: fixing (2026-11-15). The API and look match Figma, with one deliberate difference (the owner's): a successful copy is confirmed in a small popover, where Figma writes it inline. One docs gap: no example copies from another element (from).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -246,7 +246,7 @@ Code: `odd-copy-button` (packages/components/src/copy-button/).
 | CP2 | visual | Figma draws the small (button/sm) button with the copy glyph, "Copied to clipboard." in color.text.secondary, and "Could not copy. Select the text." in color.danger.foreground. The code matches; the success message is in a popover (owner, 2026-11-07), recorded in the parity test. | None. |
 | CP3 | parity | figma-parity.display.browser.test.ts compares the button frame and the outcome message for the copied and refused copies. | None. |
 | CP4 | a11y | The outcome is announced (odd-announce); the button is named by label or its default text. Not yet measured: the contrast of the outcome text in light and dark. | Measure in the accessibility pass. |
-| CP5 | docs | Examples copy a value, use their own label, and show disabled; none copies the text of another element with from, which the guidance describes. | Add an example with from. |
+| CP5 | docs | Examples copy a value, use their own label, and show disabled; none copies the text of another element with from, which the guidance describes. | Add an example with from. Fixed: 2026-11-15: the fromElement example copies the text of a code element by ID. |
 
 ## 7. disclosure
 
@@ -429,7 +429,7 @@ Decisions for the owner:
 
 ## 14. link
 
-Status: audited (2026-11-15). The recipe draws Figma's three states with Figma's tokens. No parity test compares it with Figma, and no example shows it, nor the external-link icon Figma draws after the text.
+Status: fixing (2026-11-15). The recipe draws Figma's three states with Figma's tokens. No parity test compares it with Figma, and no example shows it, nor the external-link icon Figma draws after the text.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -441,7 +441,7 @@ Code: `.odd-link (link.css)`.
 | --- | --- | --- | --- |
 | LK1 | api | Figma State Default, Hover, and Focus map to a.odd-link and the browser states. Figma draws a 16 px external-link icon after the text; the recipe leaves an icon to the author. | Guidance and an example: an odd-icon (size sm) after the text, and words saying a link opens a new tab. |
 | LK2 | visual | Matching: color.link in the UI type, no underline at rest, an underline on hover and keyboard focus, and the focus ring (focus.width, color.focus.ring). Inside running text (p, li) the recipe always underlines, so links there do not rely on colour (WCAG 1.4.1); Figma draws no link in running text. | None. |
-| LK3 | parity | The link family is not compared with Figma; recipes-css.browser.test.ts checks the colour, the hover underline, and the focus ring. | Compare the three states in figma-parity.browser.test.ts. |
+| LK3 | parity | The link family is not compared with Figma; recipes-css.browser.test.ts checks the colour, the hover underline, and the focus ring. | Compare the three states in figma-parity.browser.test.ts. Fixed: 2026-11-15: figma-parity.browser.test.ts compares Default, Hover, and Focus (colour, type, focus ring) and the underline on hover and focus. |
 | LK4 | a11y | A native link. Outside running text it has no underline at rest, as Figma draws it. Not yet measured: color.link against each surface, in light and dark. | Measure in the accessibility pass. |
 | LK5 | docs | No example of the recipe; the docs site uses it in its own pages. | An example of a link alone, in running text, and with an external-link icon. |
 
@@ -468,7 +468,7 @@ Code: `odd-input` (packages/components/src/input/). odd-input type="number".
 
 ## 16. progress
 
-Status: audited (2026-11-15). The API and look match both Figma states. The parity test compares Determinate only; the indeterminate animation uses raw timing rather than motion tokens.
+Status: fixing (2026-11-15). The API and look match both Figma states. The parity test compares Determinate only; the indeterminate animation uses raw timing rather than motion tokens.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -484,7 +484,7 @@ Code: `odd-progress` (packages/components/src/progress/).
 | --- | --- | --- | --- |
 | PR1 | api | Figma Determinate and Indeterminate map to value set or unset, with label, description, and the value text ("64%"); max, and renderValue for custom value text. | None. |
 | PR2 | visual | Matching: an 8 px track (space.xs, overridable with --odd-progress-height) in color.surface.sunken with radius.sm, the indicator in color.action.default, the label in the UI type, the value text and description in color.text.secondary. The indeterminate indicator slides on a raw 1.6 s ease-in-out, not the motion tokens. | Time the slide with motion tokens, or record why it needs its own timing. |
-| PR3 | parity | figma-parity.browser.test.ts compares Determinate (track, indicator, label, value text, description); Indeterminate is not compared. | Compare Indeterminate (track, indicator fill, label, description; no value text). |
+| PR3 | parity | figma-parity.browser.test.ts compares Determinate (track, indicator, label, value text, description); Indeterminate is not compared. | Compare Indeterminate (track, indicator fill, label, description; no value text). Fixed: 2026-11-15: figma-parity.browser.test.ts compares Indeterminate (track, indicator, label, description) and checks it shows no value text. |
 | PR4 | a11y | Unknown progress shows no percentage, as Figma's review row requires; reduced motion stops the slide and right-to-left reverses it; forced colours have their own styles. Not yet measured: color.action.default against the sunken track. | Measure in the accessibility pass. |
 | PR5 | docs | Examples cover determinate, indeterminate, a fraction of one, and custom value text. | None. |
 

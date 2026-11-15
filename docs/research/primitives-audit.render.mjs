@@ -84,7 +84,9 @@ export function render(audit) {
     if (p.findings.length) {
       out.push('', '| Finding | Check | What | Proposal |', '| --- | --- | --- | --- |');
       for (const f of p.findings)
-        out.push(`| ${f.id} | ${f.check} | ${cell(f.finding)} | ${cell(f.proposal)} |`);
+        out.push(
+          `| ${f.id} | ${f.check} | ${cell(f.finding)} | ${cell(f.proposal)}${f.fixed ? ` Fixed: ${cell(f.fixed)}` : ''} |`,
+        );
     }
     if (p.decisions.length) {
       out.push('', 'Decisions for the owner:', '');

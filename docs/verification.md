@@ -6705,3 +6705,18 @@ The owner's answer of 2026-11-14 to N1, second half: the expanded browser opens 
 | e2e | `e2e-when-free.mjs 2 ...`: `e2e/workbench-catalog.spec.ts --grep=context.picker`; `e2e/docs.spec.ts --grep=catalog.card` | 6 passed and 3 passed, in three engines |
 | Size | `node scripts/check-size.mjs` | `ai:styles` 5,919 of 5,632 (+164 over landing 2: the browser's rules and four recipe regions), so `BUDGET` to Agent 1 for 5,952 with landing 2; the other AI budgets unchanged |
 | Not done | — | Figma's Favorites (no source capability) and the phone's Change source button; the browser on a phone with a software keyboard; real assistive technology |
+
+## 2026-11-15 — Item 11: the primitives audit, and its first fixes (round 11, Agent 1)
+
+The owner's request of 2026-11-15: refine the base primitives before the AI components, in alphabetical order, with a matrix people and agents can read. `docs/research/primitives-audit.json` (rendered as `primitives-audit.md`) records the 29 standalone components of Figma page 02 (`158:22`), each checked against Figma (the live file and the committed snapshot, which matched: 104 families) for API, visual, parity, accessibility, responsiveness, and docs; 13 decisions wait for the owner. The fixes below need none.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The matrix | `tests/docs/primitives-audit.test.ts` | 3 passed: alphabetical order, the statuses it defines, the Markdown rendered from the JSON |
+| Chip remove target (CH4) | `display.browser.test.ts`, "gives the remove button the minimum target, centred on its glyph and taking only its room" | The button is 24 x 24 (`target.min`) around the 16 px glyph, which keeps Figma's place: the chip's padding and border after it |
+| Probe | `.tmp/mutant-chip-target.mjs`: the old 20 px box, in Chromium | Killed: `[20, 20]` for `[24, 24]` |
+| Link parity (LK3) | `figma-parity.browser.test.ts`, link Default, Hover, Focus | Colour, type, the focus ring, and the underline on hover and focus only |
+| Progress parity (PR3) | `figma-parity.browser.test.ts`, Indeterminate | Track, indicator, label, description; no value text |
+| Copy button example (CP5) | `fromElement` in `copy-button.examples.ts` | Copies the text of a `code` element named by `from`; the examples test renders it |
+| Three engines | `.tmp/engines.mjs` on display, both component parity files with collections, combobox, examples, accessibility, continuity, and the AI context picker and its parity | Chromium 509 passed; Firefox 493 passed, 16 skipped; WebKit 502 passed, 7 skipped |
+| Node | `npx vitest run --project node` after `npm run build` | 143 files, 1,773 passed, 2 skipped |

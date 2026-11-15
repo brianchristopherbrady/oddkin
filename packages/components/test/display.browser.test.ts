@@ -290,6 +290,23 @@ describe('odd-chip', () => {
     expect(el.shadowRoot!.activeElement).toBe(part(el, 'remove'));
     expect(getComputedStyle(part(el, 'base')).outlineStyle).toBe('solid');
   });
+
+  it('gives the remove button the minimum target, centred on its glyph and taking only its room', async () => {
+    const el = await mount<Chip>('<odd-chip removable>Design systems</odd-chip>');
+    const remove = part(el, 'remove').getBoundingClientRect();
+    const glyph = part(el, 'remove').querySelector('svg')!.getBoundingClientRect();
+    const target = parseFloat(themeValue('inline-size', '--odd-target-min'));
+    const icon = parseFloat(themeValue('inline-size', '--odd-icon-size-sm'));
+    expect([remove.width, remove.height]).toEqual([target, target]);
+    expect([glyph.width, glyph.height]).toEqual([icon, icon]);
+    expect(glyph.left + glyph.width / 2).toBeCloseTo(remove.left + remove.width / 2, 1);
+    expect(glyph.top + glyph.height / 2).toBeCloseTo(remove.top + remove.height / 2, 1);
+    // Figma's room: the padding (inside the chip's border) after the glyph, not after the target.
+    const base = part(el, 'base').getBoundingClientRect();
+    const padding = parseFloat(themeValue('padding-inline-end', '--odd-control-padding-inline-sm'));
+    const border = parseFloat(themeValue('padding-top', '--odd-border-width-default'));
+    expect(base.right - glyph.right).toBeCloseTo(padding + border, 1);
+  });
 });
 
 describe('odd-alert', () => {

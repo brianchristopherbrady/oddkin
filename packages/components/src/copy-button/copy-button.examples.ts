@@ -1,3 +1,4 @@
+import { html } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-copy-button> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './copy-button.js';
@@ -16,6 +17,19 @@ export default defineExamples('odd-copy-button', {
     label: 'Own label',
     props: { value: 'https://oddkin.dev/docs', label: 'Copy link' },
     guidance: 'Say what it copies when there are several copy buttons nearby.',
+  },
+  fromElement: {
+    label: 'Copy what another element shows',
+    props: { from: 'copy-invite-link', label: 'Copy invite link' },
+    guidance:
+      'Name the element by ID with `from`, and the button copies its text when pressed, so what is copied is always what people see.',
+    fixture({ element, mount }) {
+      const parts = mount(
+        html`<div><code id="copy-invite-link">https://oddkin.dev/join/ws_83f2a9</code></div>`,
+      );
+      element.before(...parts.children);
+      parts.remove();
+    },
   },
   disabled: { label: 'Disabled', props: { value: 'ws_83f2a9', disabled: true } },
   disabledFalse: {

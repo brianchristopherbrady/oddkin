@@ -586,12 +586,12 @@
         "cssProperties": ["--odd-chip-radius"],
         "events": ["odd-chip-remove"]
       },
-      "status": "audited",
+      "status": "fixing",
       "checks": {
         "api": "ok",
         "visual": "ok",
         "parity": "ok",
-        "a11y": "gap",
+        "a11y": "unknown",
         "responsive": "ok",
         "docs": "ok"
       },
@@ -618,7 +618,8 @@
           "id": "CH4",
           "check": "a11y",
           "finding": "The remove button is 20 x 20 px (icon.size.md), below target.min (24 px). WCAG 2.2 Target Size (2.5.8, AA) then holds only through its spacing exception, which depends on what sits around the chip. Figma draws the 16 px glyph without a target.",
-          "proposal": "A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph."
+          "proposal": "A remove target of target.min (24 px), centred on the 16 px glyph, inside the chip's 32 px height; Figma draws the target around the glyph.",
+          "fixed": "2026-11-15: the remove button is a target.min (24 px) target centred on the 16 px glyph, taking only the glyph's room (Figma's spacing unchanged); display.browser.test.ts checks it in three engines."
         },
         {
           "id": "CH5",
@@ -667,14 +668,14 @@
         "cssProperties": [],
         "events": ["odd-copy", "odd-announce"]
       },
-      "status": "audited",
+      "status": "fixing",
       "checks": {
         "api": "ok",
         "visual": "ok",
         "parity": "ok",
         "a11y": "unknown",
         "responsive": "ok",
-        "docs": "gap"
+        "docs": "ok"
       },
       "findings": [
         {
@@ -705,7 +706,8 @@
           "id": "CP5",
           "check": "docs",
           "finding": "Examples copy a value, use their own label, and show disabled; none copies the text of another element with from, which the guidance describes.",
-          "proposal": "Add an example with from."
+          "proposal": "Add an example with from.",
+          "fixed": "2026-11-15: the fromElement example copies the text of a code element by ID."
         }
       ],
       "decisions": [],
@@ -1347,11 +1349,11 @@
         "recipes": [".odd-link (link.css)"]
       },
       "api": null,
-      "status": "audited",
+      "status": "fixing",
       "checks": {
         "api": "ok",
         "visual": "ok",
-        "parity": "gap",
+        "parity": "ok",
         "a11y": "unknown",
         "responsive": "ok",
         "docs": "gap"
@@ -1373,7 +1375,8 @@
           "id": "LK3",
           "check": "parity",
           "finding": "The link family is not compared with Figma; recipes-css.browser.test.ts checks the colour, the hover underline, and the focus ring.",
-          "proposal": "Compare the three states in figma-parity.browser.test.ts."
+          "proposal": "Compare the three states in figma-parity.browser.test.ts.",
+          "fixed": "2026-11-15: figma-parity.browser.test.ts compares Default, Hover, and Focus (colour, type, focus ring) and the underline on hover and focus."
         },
         {
           "id": "LK4",
@@ -1521,11 +1524,11 @@
         "cssProperties": ["--odd-progress-height"],
         "events": []
       },
-      "status": "audited",
+      "status": "fixing",
       "checks": {
         "api": "ok",
         "visual": "ok",
-        "parity": "gap",
+        "parity": "ok",
         "a11y": "unknown",
         "responsive": "ok",
         "docs": "ok"
@@ -1547,7 +1550,8 @@
           "id": "PR3",
           "check": "parity",
           "finding": "figma-parity.browser.test.ts compares Determinate (track, indicator, label, value text, description); Indeterminate is not compared.",
-          "proposal": "Compare Indeterminate (track, indicator fill, label, description; no value text)."
+          "proposal": "Compare Indeterminate (track, indicator fill, label, description; no value text).",
+          "fixed": "2026-11-15: figma-parity.browser.test.ts compares Indeterminate (track, indicator, label, description) and checks it shows no value text."
         },
         {
           "id": "PR4",

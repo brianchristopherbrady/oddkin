@@ -163,7 +163,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/checkbox-group/checkbox-group.structural.styles.js (checkboxGroupStructuralStyles)` | yes | 15 |
 | `packages/components/dist/checkbox-group/checkbox-group.styles.js (checkboxGroupStyles)` | yes | 1 |
 | `packages/components/dist/chip/chip.structural.styles.js (chipStructuralStyles)` | yes | 32 |
-| `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
+| `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 29 |
 | `packages/components/dist/color-picker/color-picker.recipe.styles.js (colorPickerRecipeStyles)` | yes | 15 |
 | `packages/components/dist/color-picker/color-picker.structural.styles.js (colorPickerStructuralStyles)` | yes | 71 |
 | `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 42 |

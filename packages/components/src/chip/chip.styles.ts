@@ -3,7 +3,8 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * Oddkin's default chip: Figma `chip` (sunken surface, `control/height/sm`, `control/radius`,
- * selection colours when selected, the focus ring around the chip).
+ * selection colours when selected, the focus ring around the chip). The remove button is a target
+ * of the minimum size centred on its 16px glyph, taking only the glyph's room, as Figma draws it.
  */
 export const chipStyles = css`
   .chip {
@@ -25,8 +26,9 @@ export const chipStyles = css`
     outline-offset: ${token('focus.offset')};
   }
   .remove {
-    min-inline-size: ${token('icon.size.md')};
-    min-block-size: ${token('icon.size.md')};
+    inline-size: ${token('target.min')};
+    block-size: ${token('target.min')};
+    margin: calc((${token('icon.size.sm')} - ${token('target.min')}) / 2);
     border-radius: ${token('radius.sm')};
     font-size: ${token('icon.size.sm')};
   }

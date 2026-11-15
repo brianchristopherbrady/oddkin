@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { server } from 'vitest/browser';
 import {
   compare,
@@ -271,6 +271,23 @@ describe('Figma parity: odd-progress (progress)', () => {
     ];
     expectNone(compare('Oddkin/Common/progress', { State: 'Determinate' }, targets));
   });
+
+  it('Indeterminate', async () => {
+    const el = mount(
+      '<odd-progress label="Preparing upload" description="Please wait…"></odd-progress>',
+    );
+    await settle(el);
+    const frame = ['Progress / Indeterminate'];
+    const targets: Target[] = [
+      { layer: [...frame, 'Surface'], el: shadowPart(el, 'track'), kind: 'frame' },
+      { layer: [...frame, 'Surface [2]'], el: shadowPart(el, 'indicator'), kind: 'frame' },
+      { layer: [...frame, 'Preparing upload'], el: shadowPart(el, 'label'), kind: 'text' },
+      { layer: [...frame, 'Please wait…'], el: shadowPart(el, 'description'), kind: 'text' },
+    ];
+    expectNone(compare('Oddkin/Common/progress', { State: 'Indeterminate' }, targets));
+    // Unknown progress never shows a percentage (Figma's review row).
+    expect(shadowPart(el, 'value-text').textContent!.trim()).toBe('');
+  });
 });
 
 describe('Figma parity: odd-spinner (spinner)', () => {
@@ -332,9 +349,27 @@ describe('Figma parity: odd-avatar (avatar)', () => {
     });
 });
 
-describe('Figma parity: CSS recipes (typography, keyboardKey, List)', () => {
+describe('Figma parity: CSS recipes (typography, keyboardKey, link, List)', () => {
   // base.css gives the page its primary text colour, which primary type roles inherit.
-  useRecipeStyles(['base', 'typography', 'kbd', 'list']);
+  useRecipeStyles(['base', 'typography', 'kbd', 'link', 'list']);
+
+  for (const state of ['Default', 'Hover', 'Focus'])
+    it(`link ${state}`, async () => {
+      const root = mount('<div><a class="odd-link" href="#docs">Read the documentation</a></div>');
+      const link = root.querySelector('a')!;
+      await interact(state, link);
+      const frame = [`Link / ${state}`];
+      const targets: Target[] = [
+        { layer: [...frame, 'Read the documentation'], el: link, kind: 'text' },
+      ];
+      if (state === 'Focus') targets.push({ layer: [...frame, 'Surface'], el: link, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/link', { State: state }, targets));
+      // Figma underlines the link on hover and keyboard focus only.
+      expect(getComputedStyle(link).textDecorationLine).toBe(
+        state === 'Default' ? 'none' : 'underline',
+      );
+    });
 
   const TYPE: [string, string][] = [
     ['display', 'Made for the browser.'],
