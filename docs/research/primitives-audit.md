@@ -1,0 +1,540 @@
+# Base primitives audit
+
+<!-- Generated from primitives-audit.json by primitives-audit.render.mjs. Edit the JSON, then run: node docs/research/primitives-audit.render.mjs --write -->
+
+The owner, 2026-11-15: refine the primitives before the AI components, in alphabetical order. Started 2026-11-15, Agent 1 (packages/components). [primitives-audit.json](./primitives-audit.json) holds the same data for agents.
+
+## Scope
+
+The standalone components on Figma page 02 · Primitives (158:22), in alphabetical order of their Figma names, with the element or CSS recipe that implements each.
+
+Not in this audit:
+
+- AI components: Paused by the owner on 2026-11-15 until the primitives are refined.
+- Composed components (Figma page 03 · Composed components, 356:62): Built from primitives; audited after them.
+- Parts of composed components drawn on page 02: calendar Day, CheckboxOption, color Swatch, CommandItem, GridCell, GridColumnHeader, GridSelection, ListboxOption, ListboxSurface, MenuItem, multiselect parts, NavigationItem, oneTimeCode Cell, Splitter: Audited with the component that owns them.
+- Layout primitives (Oddkin/Layout/*, page 02, frame 07 · Layout): Their own contract (layout.css); audited after the component primitives.
+- Implementation reference specimens (odd-button/*, odd-input/* on page 02): Reference renders, read with the button and input rows.
+- odd-status-marker: No Figma family: to audit once it is drawn, or with the composed components that use it.
+
+## Checks
+
+| Check | Question |
+| --- | --- |
+| API | Every Figma property maps to an attribute, a slot, a CSS custom property, or a browser state, with Figma's default. |
+| Visual | Every token Figma binds reaches the styles, in light and dark. |
+| Parity | The Figma parity tests compare every variant and state Figma draws. |
+| Accessibility | Role and name, the contrast of every colour pair, the focus ring, the target size, forced colours. |
+| Responsive | It follows docs/architecture/responsiveness.md in the space its parent grants. |
+| Docs | An example shows each API value, with guidance for people and agents. |
+
+Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, audited, decided, fixing, done.
+
+## Matrix
+
+| # | Primitive | Figma | Code | Status | API | Visual | Parity | Accessibility | Responsive | Docs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | audited | gap | gap | gap | ? | ok | gap |
+| 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | not started | ? | ? | ? | ? | ? | ? |
+| 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | not started | ? | ? | ? | ? | ? | ? |
+| 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | not started | ? | ? | ? | ? | ? | ? |
+| 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | not started | ? | ? | ? | ? | ? | ? |
+| 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | not started | ? | ? | ? | ? | ? | ? |
+| 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | not started | ? | ? | ? | ? | ? | ? |
+| 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
+| 12 | [input](#12-input) | input (159:1024) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
+| 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 15 | [number](#15-number) | number (159:1097) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
+| 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | not started | ? | ? | ? | ? | ? | ? |
+| 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | not started | ? | ? | ? | ? | ? | ? |
+| 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | not started | ? | ? | ? | ? | ? | ? |
+| 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | not started | ? | ? | ? | ? | ? | ? |
+| 20 | [search](#20-search) | search (159:1144) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
+| 21 | [skeleton](#21-skeleton) | skeleton (161:1959) | `odd-skeleton` | not started | ? | ? | ? | ? | ? | ? |
+| 22 | [slider](#22-slider) | slider (159:1287) | `odd-slider` | not started | ? | ? | ? | ? | ? | ? |
+| 23 | [spinner](#23-spinner) | spinner (161:1939) | `odd-spinner` | not started | ? | ? | ? | ? | ? | ? |
+| 24 | [stat](#24-stat) | stat (555:2908) | `odd-stat` | not started | ? | ? | ? | ? | ? | ? |
+| 25 | [switch](#25-switch) | switch (159:1258) | `odd-switch` | not started | ? | ? | ? | ? | ? | ? |
+| 26 | [textarea](#26-textarea) | textarea (159:1056) | `odd-textarea` | not started | ? | ? | ? | ? | ? | ? |
+| 27 | [toggleButton](#27-togglebutton) | toggleButton (159:501) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
+| 28 | [tooltip](#28-tooltip) | tooltip (160:2470) | `odd-tooltip` | not started | ? | ? | ? | ? | ? | ? |
+| 29 | [typography](#29-typography) | typography (162:2080) | `typography.css` | not started | ? | ? | ? | ? | ? | ? |
+
+## 1. avatar
+
+Status: audited (2026-11-15). Figma draws five preset backgrounds, a custom HEX background, and four corner radii (Oddkin/Common/avatar/Appearance, 374:1576; the review row 374:1580). odd-avatar has neither: it always draws a sunken circle with primary-text initials. Sizes match.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/avatar | 162:2022 | 2 | State: Group, Initials |
+| Oddkin/Common/avatar/Appearance | 374:1576 | 24 | Background: Brand, Custom, Danger, Neutral, Success, Warning; Shape: Circle, Rounded, Small radius, Square |
+| Oddkin/Common/AvatarItem | 257:886 | 1 | — |
+
+Code: `odd-avatar` (packages/components/src/avatar/), `.odd-avatar-group (avatar-group.css)`.
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `label: string = ""`, `src: string = ""`, `size: sm \| md \| lg = md` | `(default)` | `base`, `image` | `--odd-avatar-size` | — |
+
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| AV1 | api | Figma Background (Neutral, Brand, Success, Warning, Danger) has no attribute. Figma binds Neutral color.neutral.surface with color.neutral.foreground initials; Brand color.action.default with color.text.on-action; Success, Warning, and Danger color.<tone>.surface with color.<tone>.foreground. Every token exists. | A colour attribute (decision D1), each value drawing Figma's pair of tokens. |
+| AV2 | api | Figma Background=Custom takes any HEX fill on the avatar, with the initials colour overridable on its own. The element offers only ::part(base). | CSS custom properties --odd-avatar-background and --odd-avatar-color (per instance through style, for example a colour from user data). The guidance says the author owns the contrast of a custom pair. |
+| AV3 | api | Figma Shape (Square radius.none, Small radius radius.sm, Rounded radius.md, Circle radius.full) has no attribute; avatar.structural.styles.ts hard-codes border-radius: 50%. | A shape attribute (decision D2), and --odd-avatar-radius for any other radius. |
+| AV4 | visual | Two Figma families disagree on the default look. avatar/Appearance draws Neutral as color.neutral.surface with color.neutral.foreground, and 32 px initials in the UI type. The older avatar State=Initials (the one the parity test compares) binds color.surface.sunken with color.text.primary, and the code follows it, with the small type at size sm. | Decision D3. Then the default draws the current family and the other is updated in Figma. |
+| AV5 | visual | Figma's AvatarItem draws a border.width.strong ring in color.surface.default on every avatar. The code rings avatars only inside .odd-avatar-group, as a box-shadow in color.canvas. | Keep the ring for groups only, where it separates overlapping avatars (on the default surface a lone avatar's ring cannot be seen), recorded as a deliberate difference; draw it in Figma's color.surface.default. |
+| AV6 | visual | Sizes match: Figma Small 32, Medium 40, Large 48 px are control.height.sm, md, and lg; size is sm, md, or lg. | None. |
+| AV7 | parity | The parity tests compare only avatar State=Initials (md and sm) and the multiselect avatars view. Not compared: the 24 Appearance variants, the Group variant (.odd-avatar-group and .odd-avatar-group-more), the ring. | Compare every Background and Shape variant, and the group, in light and dark, with the fix. |
+| AV8 | a11y | Not yet measured: the contrast of each preset's initials on its fill, in light and dark. Forced colours: the element draws a 1px CanvasText border, which must follow every shape. | Measure each pair (at least 4.5:1 for the initials) with the fix. |
+| AV9 | docs | Examples cover sizes, a picture, an overflow count, an avatar beside a name, and name versus label; none shows a colour, a shape, a custom colour, or a group. | An example per new value, one with a custom colour, and a group with its overflow avatar. |
+| AV10 | figma | For the owner, in Figma: (a) the review row's "Large · 12 px" is an instance of Shape=Rounded with its radius overridden to radius.lg, and there is no Large shape; (b) the Appearance set's default variant is Square, while AvatarItem and the older family are circles; (c) Custom's initials bind repo/ref/neutral/0, a reference colour, not a role token. | Decide (a) and (b) with D2; bind (c) to a role, or leave the custom foreground to the author. |
+
+Decisions for the owner:
+
+- **D1: The colour attribute: name and values.** Open.
+  1. tone="neutral | brand | info | success | warning | danger": ADR 0045's meaning-colour name, with brand added for the avatar and info kept so it matches odd-badge and odd-alert (Figma has no Info avatar yet).
+  2. tone with ADR 0045's values only (no brand), and the brand look stays the .odd-avatar-group-more recipe.
+  - Recommendation: The first: one attribute with the vocabulary's name, every Figma preset reachable, the same tones as odd-badge; ADR 0045 records brand as an avatar tone.
+- **D2: The shape attribute: name, values, and default.** Open.
+  1. shape="circle | rounded | small-radius | square", Figma's Shape values, default circle (today's look and AvatarItem's).
+  2. radius="none | sm | md | full", the radius token names.
+  - Recommendation: The first: Figma's property name and values, as button's appearance follows Figma; default circle. Any other radius (the review row's 12 px) through --odd-avatar-radius.
+- **D3: Which Figma avatar is current: avatar/Appearance (the one linked on 2026-11-15) or the older avatar State=Initials?** Open.
+  1. avatar/Appearance; the older Initials variant is updated or removed in Figma.
+  2. The older avatar.
+  - Recommendation: avatar/Appearance: Neutral becomes color.neutral.surface with color.neutral.foreground, and 32 px initials keep the UI type.
+
+## 2. badge
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/badge | 159:582 | 6 | State: Count, Danger, Info, Neutral, Success, Warning |
+
+Code: `odd-badge` (packages/components/src/badge/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `tone: neutral \| info \| success \| warning \| danger = neutral`, `no-marker: boolean = false` | `(default)` | `base`, `marker` | `--odd-badge-radius` | — |
+
+Not audited yet.
+
+## 3. button
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/button | 159:439 | 18 | Appearance: ghost, primary, secondary; Size: md; State: Default, Disabled, Focus, Hover, Loading, Pressed |
+| Oddkin/Common/button/sm | 181:2332 | 18 | Appearance: ghost, primary, secondary; Size: sm; State: Default, Disabled, Focus, Hover, Loading, Pressed |
+| Oddkin/Common/button/lg | 181:2390 | 18 | Appearance: ghost, primary, secondary; Size: lg; State: Default, Disabled, Focus, Hover, Loading, Pressed |
+
+Code: `odd-button` (packages/components/src/button/), `.odd-button (button.css)`.
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 4. checkbox
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/checkbox | 159:1181 | 15 | Selection: Checked, Mixed, Unchecked; State: Default, Disabled, Focus, Hover, Invalid |
+
+Code: `odd-checkbox` (packages/components/src/checkbox/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false`, `indeterminate: boolean = false` | `(default)` | `control`, `description`, `error`, `field`, `label` | — | `input`, `change` |
+
+Not audited yet.
+
+## 5. chip
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/chip | 159:612 | 4 | State: Default, Disabled, Focus, Selected |
+
+Code: `odd-chip` (packages/components/src/chip/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `removable: boolean = false`, `selected: boolean = false`, `disabled: boolean = false` | `(default)` | `base`, `remove` | `--odd-chip-radius` | `odd-chip-remove` |
+
+Not audited yet.
+
+## 6. copyButton
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/copyButton | 555:2984 | 5 | State: Copied, Default, Disabled, Error, Focus |
+
+Code: `odd-copy-button` (packages/components/src/copy-button/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `value: string = ""`, `from: string = ""`, `label: string = ""`, `disabled: boolean = false` | — | `base`, `button`, `confirmation`, `fallback`, `status` | — | `odd-copy`, `odd-announce` |
+
+Not audited yet.
+
+## 7. disclosure
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/Disclosure | 160:1501 | 3 | State: Closed, Expanded, Focus |
+
+Code: `odd-disclosure` (packages/components/src/disclosure/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `label: string = ""`, `open: boolean = false`, `name: string = ""`, `disabled: boolean = false` | `(default)`, `summary` | `base`, `content`, `label`, `marker`, `summary` | `--odd-disclosure-background`, `--odd-disclosure-radius` | `toggle` |
+
+Not audited yet.
+
+## 8. divider
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/divider | 162:2069 | 2 | State: Horizontal, Labelled |
+
+Code: `.odd-divider (divider.css)`.
+
+Not audited yet.
+
+## 9. field
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/field | 159:971 | 2 | State: Invalid, Required |
+
+Code: `.odd-field (field.css)`. The field look every form control shares (controlStyles).
+
+Not audited yet.
+
+## 10. icon
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/icon | 162:2058 | 2 | State: Default, Sizes |
+
+Code: `odd-icon` (packages/components/src/icon/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `src: string = ""`, `label: string = ""`, `size: sm \| md \| lg = md` | `(default)` | `base` | `--odd-icon-size` | — |
+
+Not audited yet.
+
+## 11. iconButton
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/iconButton | 159:471 | 5 | State: Default, Disabled, Focus, Hover, Pressed |
+
+Code: `odd-button` (packages/components/src/button/). An icon-only odd-button.
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 12. input
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/input | 159:1024 | 8 | State: Disabled, Empty, Filled, Focus, Hover, Invalid, Password, Read only |
+
+Code: `odd-input` (packages/components/src/input/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 13. keyboardKey
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/keyboardKey | 162:2097 | 2 | State: Default, Sequence |
+
+Code: `.odd-kbd (kbd.css)`.
+
+Not audited yet.
+
+## 14. link
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/link | 159:549 | 3 | State: Default, Focus, Hover |
+
+Code: `.odd-link (link.css)`.
+
+Not audited yet.
+
+## 15. number
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/number | 159:1097 | 6 | State: Default, Disabled, Focus, Invalid, Maximum, Minimum |
+
+Code: `odd-input` (packages/components/src/input/). odd-input type="number".
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 16. progress
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/progress | 161:1916 | 2 | State: Determinate, Indeterminate |
+
+Code: `odd-progress` (packages/components/src/progress/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `value: number \| undefined = undefined`, `max: number = 1`, `label: string = ""`, `description: string = ""` | — | `base`, `description`, `indicator`, `label`, `track`, `value-text` | `--odd-progress-height` | — |
+
+Not audited yet.
+
+## 17. radio
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/radio | 159:1209 | 10 | Selection: Checked, Unchecked; State: Default, Disabled, Focus, Hover, Invalid |
+
+Code: `odd-radio-group` (packages/components/src/radio-group/). No standalone radio element: radios render inside odd-radio-group.
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `required: boolean = false`, `orientation: vertical \| horizontal = vertical` | — | `control`, `description`, `error`, `field`, `group`, `label`, `option`, `option-description` | — | `input`, `change` |
+
+Not audited yet.
+
+## 18. rating
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/rating | 555:2787 | 6 | State: Disabled, Empty, Focus, Invalid, Read only, Selected |
+| Oddkin/Common/rating/Item | 555:2595 | 5 | State: Disabled off, Disabled on, Focus, Off, On |
+
+Code: `odd-rating` (packages/components/src/rating/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `required: boolean = false`, `max: number = 5`, `readonly: boolean = false` | — | `control`, `description`, `error`, `field`, `label`, `option`, `value` | — | `input`, `change` |
+
+Not audited yet.
+
+## 19. relativeTime
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/relativeTime | 555:3030 | 5 | State: Absolute detail, Future, Past, Recent, Unavailable |
+
+Code: `odd-relative-time` (packages/components/src/relative-time/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `datetime: string = ""`, `detail: boolean = false` | — | `base`, `detail`, `time` | — | — |
+
+Not audited yet.
+
+## 20. search
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/search | 159:1144 | 6 | State: Disabled, Empty, Filled, Focus, Inline, Inline focus |
+
+Code: `odd-input` (packages/components/src/input/). odd-input type="search".
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 21. skeleton
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/skeleton | 161:1959 | 2 | State: Default, List |
+
+Code: `odd-skeleton` (packages/components/src/skeleton/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `shape: circle \| rect \| text = text`, `lines: number = 1` | — | `base`, `line` | `--odd-skeleton-color` | — |
+
+Not audited yet.
+
+## 22. slider
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/slider | 159:1287 | 3 | State: Default, Disabled, Focus |
+
+Code: `odd-slider` (packages/components/src/slider/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `min: number = 0`, `max: number = 100`, `step: number = 1` | — | `control`, `description`, `error`, `field`, `fill`, `label`, `max-label`, `min-label`, `output`, `thumb`, `track` | — | `input`, `change` |
+
+Not audited yet.
+
+## 23. spinner
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/spinner | 161:1939 | 2 | State: Default, Inline |
+
+Code: `odd-spinner` (packages/components/src/spinner/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `label: string = ""`, `size: sm \| md \| lg = md` | `(default)` | `base`, `indicator` | `--odd-spinner-color` | — |
+
+Not audited yet.
+
+## 24. stat
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/stat | 555:2908 | 5 | State: Decrease, Increase, Loading, Neutral, Unavailable |
+
+Code: `odd-stat` (packages/components/src/stat/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `label: string = ""`, `value: string = ""`, `trend: none \| increase \| decrease = none`, `loading: boolean = false` | `(default)` | `base`, `context`, `label`, `placeholder`, `value` | — | — |
+
+Not audited yet.
+
+## 25. switch
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/switch | 159:1258 | 8 | Value: Off, On; State: Default, Disabled, Focus, Hover |
+
+Code: `odd-switch` (packages/components/src/switch/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false` | `(default)` | `control`, `description`, `error`, `field`, `label`, `state`, `thumb` | — | `input`, `change` |
+
+Not audited yet.
+
+## 26. textarea
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/textarea | 159:1056 | 5 | State: Disabled, Empty, Filled, Focus, Invalid |
+
+Code: `odd-textarea` (packages/components/src/textarea/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `rows: number = 4`, `resize: none \| vertical \| auto = vertical` | — | `control`, `count`, `description`, `error`, `field`, `label` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius`, `--odd-textarea-max-height` | `input`, `change` |
+
+Not audited yet.
+
+## 27. toggleButton
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/toggleButton | 159:501 | 8 | Value: Off, On; State: Default, Disabled, Focus, Hover |
+
+Code: `odd-button` (packages/components/src/button/). odd-button toggle.
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
+
+Not audited yet.
+
+## 28. tooltip
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/tooltip | 160:2470 | 2 | State: Default, Description |
+
+Code: `odd-tooltip` (packages/components/src/tooltip/).
+
+| Attributes | Slots | Parts | CSS properties | Events |
+| --- | --- | --- | --- | --- |
+| `anchor: string = ""`, `side: inline-end \| inline-start \| block-end \| block-start = block-start`, `align: center \| start \| end = center`, `open: boolean = false` | `(default)` | `base` | `--odd-tooltip-max-inline-size` | — |
+
+Not audited yet.
+
+## 29. typography
+
+Status: not started.
+
+| Figma family | Id | Variants | Properties |
+| --- | --- | --- | --- |
+| Oddkin/Common/typography | 162:2080 | 1 | State: Default |
+
+Code: `typography.css`.
+
+Not audited yet.

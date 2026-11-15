@@ -1,0 +1,1573 @@
+{
+  "$comment": "The base primitives audit. Edit this file; primitives-audit.md is rendered from it (node docs/research/primitives-audit.render.mjs --write).",
+  "title": "Base primitives audit",
+  "started": "2026-11-15",
+  "requestedBy": "The owner, 2026-11-15: refine the primitives before the AI components, in alphabetical order.",
+  "lane": "Agent 1 (packages/components)",
+  "figmaFile": "E7LfRysny8V3qU24tv082i",
+  "scope": {
+    "includes": "The standalone components on Figma page 02 · Primitives (158:22), in alphabetical order of their Figma names, with the element or CSS recipe that implements each.",
+    "excludes": [
+      {
+        "what": "AI components",
+        "why": "Paused by the owner on 2026-11-15 until the primitives are refined."
+      },
+      {
+        "what": "Composed components (Figma page 03 · Composed components, 356:62)",
+        "why": "Built from primitives; audited after them."
+      },
+      {
+        "what": "Parts of composed components drawn on page 02: calendar Day, CheckboxOption, color Swatch, CommandItem, GridCell, GridColumnHeader, GridSelection, ListboxOption, ListboxSurface, MenuItem, multiselect parts, NavigationItem, oneTimeCode Cell, Splitter",
+        "why": "Audited with the component that owns them."
+      },
+      {
+        "what": "Layout primitives (Oddkin/Layout/*, page 02, frame 07 · Layout)",
+        "why": "Their own contract (layout.css); audited after the component primitives."
+      },
+      {
+        "what": "Implementation reference specimens (odd-button/*, odd-input/* on page 02)",
+        "why": "Reference renders, read with the button and input rows."
+      },
+      {
+        "what": "odd-status-marker",
+        "why": "No Figma family: to audit once it is drawn, or with the composed components that use it."
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "api",
+      "name": "API",
+      "question": "Every Figma property maps to an attribute, a slot, a CSS custom property, or a browser state, with Figma's default."
+    },
+    {
+      "id": "visual",
+      "name": "Visual",
+      "question": "Every token Figma binds reaches the styles, in light and dark."
+    },
+    {
+      "id": "parity",
+      "name": "Parity",
+      "question": "The Figma parity tests compare every variant and state Figma draws."
+    },
+    {
+      "id": "a11y",
+      "name": "Accessibility",
+      "question": "Role and name, the contrast of every colour pair, the focus ring, the target size, forced colours."
+    },
+    {
+      "id": "responsive",
+      "name": "Responsive",
+      "question": "It follows docs/architecture/responsiveness.md in the space its parent grants."
+    },
+    {
+      "id": "docs",
+      "name": "Docs",
+      "question": "An example shows each API value, with guidance for people and agents."
+    }
+  ],
+  "statuses": {
+    "row": ["not started", "audited", "decided", "fixing", "done"],
+    "check": ["ok", "gap", "n/a", "unknown"],
+    "finding": ["api", "visual", "parity", "a11y", "responsive", "docs", "figma"]
+  },
+  "primitives": [
+    {
+      "order": 1,
+      "name": "avatar",
+      "figma": [
+        {
+          "family": "Oddkin/Common/avatar",
+          "id": "162:2022",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Group", "Initials"]
+          }
+        },
+        {
+          "family": "Oddkin/Common/avatar/Appearance",
+          "id": "374:1576",
+          "frame": "Definitions · Content & feedback",
+          "variants": 24,
+          "axes": {
+            "Background": ["Brand", "Custom", "Danger", "Neutral", "Success", "Warning"],
+            "Shape": ["Circle", "Rounded", "Small radius", "Square"]
+          }
+        },
+        {
+          "family": "Oddkin/Common/AvatarItem",
+          "id": "257:886",
+          "frame": "Definitions · Selection value parts",
+          "variants": 1,
+          "axes": {}
+        }
+      ],
+      "code": {
+        "element": "odd-avatar",
+        "source": "packages/components/src/avatar/",
+        "recipes": [".odd-avatar-group (avatar-group.css)"]
+      },
+      "api": {
+        "attributes": ["label: string = \"\"", "src: string = \"\"", "size: sm | md | lg = md"],
+        "slots": ["(default)"],
+        "parts": ["base", "image"],
+        "cssProperties": ["--odd-avatar-size"],
+        "events": []
+      },
+      "status": "audited",
+      "checks": {
+        "api": "gap",
+        "visual": "gap",
+        "parity": "gap",
+        "a11y": "unknown",
+        "responsive": "ok",
+        "docs": "gap"
+      },
+      "findings": [
+        {
+          "id": "AV1",
+          "check": "api",
+          "finding": "Figma Background (Neutral, Brand, Success, Warning, Danger) has no attribute. Figma binds Neutral color.neutral.surface with color.neutral.foreground initials; Brand color.action.default with color.text.on-action; Success, Warning, and Danger color.<tone>.surface with color.<tone>.foreground. Every token exists.",
+          "proposal": "A colour attribute (decision D1), each value drawing Figma's pair of tokens."
+        },
+        {
+          "id": "AV2",
+          "check": "api",
+          "finding": "Figma Background=Custom takes any HEX fill on the avatar, with the initials colour overridable on its own. The element offers only ::part(base).",
+          "proposal": "CSS custom properties --odd-avatar-background and --odd-avatar-color (per instance through style, for example a colour from user data). The guidance says the author owns the contrast of a custom pair."
+        },
+        {
+          "id": "AV3",
+          "check": "api",
+          "finding": "Figma Shape (Square radius.none, Small radius radius.sm, Rounded radius.md, Circle radius.full) has no attribute; avatar.structural.styles.ts hard-codes border-radius: 50%.",
+          "proposal": "A shape attribute (decision D2), and --odd-avatar-radius for any other radius."
+        },
+        {
+          "id": "AV4",
+          "check": "visual",
+          "finding": "Two Figma families disagree on the default look. avatar/Appearance draws Neutral as color.neutral.surface with color.neutral.foreground, and 32 px initials in the UI type. The older avatar State=Initials (the one the parity test compares) binds color.surface.sunken with color.text.primary, and the code follows it, with the small type at size sm.",
+          "proposal": "Decision D3. Then the default draws the current family and the other is updated in Figma."
+        },
+        {
+          "id": "AV5",
+          "check": "visual",
+          "finding": "Figma's AvatarItem draws a border.width.strong ring in color.surface.default on every avatar. The code rings avatars only inside .odd-avatar-group, as a box-shadow in color.canvas.",
+          "proposal": "Keep the ring for groups only, where it separates overlapping avatars (on the default surface a lone avatar's ring cannot be seen), recorded as a deliberate difference; draw it in Figma's color.surface.default."
+        },
+        {
+          "id": "AV6",
+          "check": "visual",
+          "finding": "Sizes match: Figma Small 32, Medium 40, Large 48 px are control.height.sm, md, and lg; size is sm, md, or lg.",
+          "proposal": "None."
+        },
+        {
+          "id": "AV7",
+          "check": "parity",
+          "finding": "The parity tests compare only avatar State=Initials (md and sm) and the multiselect avatars view. Not compared: the 24 Appearance variants, the Group variant (.odd-avatar-group and .odd-avatar-group-more), the ring.",
+          "proposal": "Compare every Background and Shape variant, and the group, in light and dark, with the fix."
+        },
+        {
+          "id": "AV8",
+          "check": "a11y",
+          "finding": "Not yet measured: the contrast of each preset's initials on its fill, in light and dark. Forced colours: the element draws a 1px CanvasText border, which must follow every shape.",
+          "proposal": "Measure each pair (at least 4.5:1 for the initials) with the fix."
+        },
+        {
+          "id": "AV9",
+          "check": "docs",
+          "finding": "Examples cover sizes, a picture, an overflow count, an avatar beside a name, and name versus label; none shows a colour, a shape, a custom colour, or a group.",
+          "proposal": "An example per new value, one with a custom colour, and a group with its overflow avatar."
+        },
+        {
+          "id": "AV10",
+          "check": "figma",
+          "finding": "For the owner, in Figma: (a) the review row's \"Large · 12 px\" is an instance of Shape=Rounded with its radius overridden to radius.lg, and there is no Large shape; (b) the Appearance set's default variant is Square, while AvatarItem and the older family are circles; (c) Custom's initials bind repo/ref/neutral/0, a reference colour, not a role token.",
+          "proposal": "Decide (a) and (b) with D2; bind (c) to a role, or leave the custom foreground to the author."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "The colour attribute: name and values.",
+          "options": [
+            "tone=\"neutral | brand | info | success | warning | danger\": ADR 0045's meaning-colour name, with brand added for the avatar and info kept so it matches odd-badge and odd-alert (Figma has no Info avatar yet).",
+            "tone with ADR 0045's values only (no brand), and the brand look stays the .odd-avatar-group-more recipe."
+          ],
+          "recommendation": "The first: one attribute with the vocabulary's name, every Figma preset reachable, the same tones as odd-badge; ADR 0045 records brand as an avatar tone.",
+          "answer": null
+        },
+        {
+          "id": "D2",
+          "question": "The shape attribute: name, values, and default.",
+          "options": [
+            "shape=\"circle | rounded | small-radius | square\", Figma's Shape values, default circle (today's look and AvatarItem's).",
+            "radius=\"none | sm | md | full\", the radius token names."
+          ],
+          "recommendation": "The first: Figma's property name and values, as button's appearance follows Figma; default circle. Any other radius (the review row's 12 px) through --odd-avatar-radius.",
+          "answer": null
+        },
+        {
+          "id": "D3",
+          "question": "Which Figma avatar is current: avatar/Appearance (the one linked on 2026-11-15) or the older avatar State=Initials?",
+          "options": [
+            "avatar/Appearance; the older Initials variant is updated or removed in Figma.",
+            "The older avatar."
+          ],
+          "recommendation": "avatar/Appearance: Neutral becomes color.neutral.surface with color.neutral.foreground, and 32 px initials keep the UI type.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "Figma draws five preset backgrounds, a custom HEX background, and four corner radii (Oddkin/Common/avatar/Appearance, 374:1576; the review row 374:1580). odd-avatar has neither: it always draws a sunken circle with primary-text initials. Sizes match."
+    },
+    {
+      "order": 2,
+      "name": "badge",
+      "figma": [
+        {
+          "family": "Oddkin/Common/badge",
+          "id": "159:582",
+          "frame": "Definitions · Actions",
+          "variants": 6,
+          "axes": {
+            "State": ["Count", "Danger", "Info", "Neutral", "Success", "Warning"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-badge",
+        "source": "packages/components/src/badge/"
+      },
+      "api": {
+        "attributes": [
+          "tone: neutral | info | success | warning | danger = neutral",
+          "no-marker: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["base", "marker"],
+        "cssProperties": ["--odd-badge-radius"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 3,
+      "name": "button",
+      "figma": [
+        {
+          "family": "Oddkin/Common/button",
+          "id": "159:439",
+          "frame": "Definitions · Actions",
+          "variants": 18,
+          "axes": {
+            "Appearance": ["ghost", "primary", "secondary"],
+            "Size": ["md"],
+            "State": ["Default", "Disabled", "Focus", "Hover", "Loading", "Pressed"]
+          }
+        },
+        {
+          "family": "Oddkin/Common/button/sm",
+          "id": "181:2332",
+          "frame": "Definitions · Actions",
+          "variants": 18,
+          "axes": {
+            "Appearance": ["ghost", "primary", "secondary"],
+            "Size": ["sm"],
+            "State": ["Default", "Disabled", "Focus", "Hover", "Loading", "Pressed"]
+          }
+        },
+        {
+          "family": "Oddkin/Common/button/lg",
+          "id": "181:2390",
+          "frame": "Definitions · Actions",
+          "variants": 18,
+          "axes": {
+            "Appearance": ["ghost", "primary", "secondary"],
+            "Size": ["lg"],
+            "State": ["Default", "Disabled", "Focus", "Hover", "Loading", "Pressed"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-button",
+        "source": "packages/components/src/button/",
+        "recipes": [".odd-button (button.css)"]
+      },
+      "api": {
+        "attributes": [
+          "appearance: primary | secondary | ghost = secondary",
+          "size: sm | md | lg = md",
+          "type: button | submit | reset = button",
+          "disabled: boolean = false",
+          "loading: boolean = false",
+          "full-width: boolean = false",
+          "toggle: boolean = false",
+          "pressed: boolean = false",
+          "name: string = \"\"",
+          "value: string = \"\"",
+          "formaction: string | undefined = undefined",
+          "formmethod: string | undefined = undefined",
+          "formenctype: string | undefined = undefined",
+          "formtarget: string | undefined = undefined",
+          "formnovalidate: boolean = false",
+          "label: string = \"\""
+        ],
+        "slots": ["(default)", "end", "start"],
+        "parts": ["control", "spinner"],
+        "cssProperties": [
+          "--odd-button-background",
+          "--odd-button-border-color",
+          "--odd-button-color",
+          "--odd-button-height",
+          "--odd-button-padding-inline",
+          "--odd-button-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 4,
+      "name": "checkbox",
+      "figma": [
+        {
+          "family": "Oddkin/Common/checkbox",
+          "id": "159:1181",
+          "frame": "Definitions · Fields & controls",
+          "variants": 15,
+          "axes": {
+            "Selection": ["Checked", "Mixed", "Unchecked"],
+            "State": ["Default", "Disabled", "Focus", "Hover", "Invalid"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-checkbox",
+        "source": "packages/components/src/checkbox/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "checked: boolean = false",
+          "value: string = on",
+          "required: boolean = false",
+          "indeterminate: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["control", "description", "error", "field", "label"],
+        "cssProperties": [],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 5,
+      "name": "chip",
+      "figma": [
+        {
+          "family": "Oddkin/Common/chip",
+          "id": "159:612",
+          "frame": "Definitions · Actions",
+          "variants": 4,
+          "axes": {
+            "State": ["Default", "Disabled", "Focus", "Selected"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-chip",
+        "source": "packages/components/src/chip/"
+      },
+      "api": {
+        "attributes": [
+          "removable: boolean = false",
+          "selected: boolean = false",
+          "disabled: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["base", "remove"],
+        "cssProperties": ["--odd-chip-radius"],
+        "events": ["odd-chip-remove"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 6,
+      "name": "copyButton",
+      "figma": [
+        {
+          "family": "Oddkin/Common/copyButton",
+          "id": "555:2984",
+          "frame": "Definitions · Display utilities",
+          "variants": 5,
+          "axes": {
+            "State": ["Copied", "Default", "Disabled", "Error", "Focus"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-copy-button",
+        "source": "packages/components/src/copy-button/"
+      },
+      "api": {
+        "attributes": [
+          "value: string = \"\"",
+          "from: string = \"\"",
+          "label: string = \"\"",
+          "disabled: boolean = false"
+        ],
+        "slots": [],
+        "parts": ["base", "button", "confirmation", "fallback", "status"],
+        "cssProperties": [],
+        "events": ["odd-copy", "odd-announce"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 7,
+      "name": "disclosure",
+      "figma": [
+        {
+          "family": "Oddkin/Common/Disclosure",
+          "id": "160:1501",
+          "frame": "Definitions · Content & feedback",
+          "variants": 3,
+          "axes": {
+            "State": ["Closed", "Expanded", "Focus"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-disclosure",
+        "source": "packages/components/src/disclosure/"
+      },
+      "api": {
+        "attributes": [
+          "label: string = \"\"",
+          "open: boolean = false",
+          "name: string = \"\"",
+          "disabled: boolean = false"
+        ],
+        "slots": ["(default)", "summary"],
+        "parts": ["base", "content", "label", "marker", "summary"],
+        "cssProperties": ["--odd-disclosure-background", "--odd-disclosure-radius"],
+        "events": ["toggle"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 8,
+      "name": "divider",
+      "figma": [
+        {
+          "family": "Oddkin/Common/divider",
+          "id": "162:2069",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Horizontal", "Labelled"]
+          }
+        }
+      ],
+      "code": {
+        "recipes": [".odd-divider (divider.css)"]
+      },
+      "api": null,
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 9,
+      "name": "field",
+      "figma": [
+        {
+          "family": "Oddkin/Common/field",
+          "id": "159:971",
+          "frame": "Definitions · Fields & controls",
+          "variants": 2,
+          "axes": {
+            "State": ["Invalid", "Required"]
+          }
+        }
+      ],
+      "code": {
+        "recipes": [".odd-field (field.css)"],
+        "note": "The field look every form control shares (controlStyles)."
+      },
+      "api": null,
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 10,
+      "name": "icon",
+      "figma": [
+        {
+          "family": "Oddkin/Common/icon",
+          "id": "162:2058",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Default", "Sizes"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-icon",
+        "source": "packages/components/src/icon/"
+      },
+      "api": {
+        "attributes": ["src: string = \"\"", "label: string = \"\"", "size: sm | md | lg = md"],
+        "slots": ["(default)"],
+        "parts": ["base"],
+        "cssProperties": ["--odd-icon-size"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 11,
+      "name": "iconButton",
+      "figma": [
+        {
+          "family": "Oddkin/Common/iconButton",
+          "id": "159:471",
+          "frame": "Definitions · Actions",
+          "variants": 5,
+          "axes": {
+            "State": ["Default", "Disabled", "Focus", "Hover", "Pressed"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-button",
+        "source": "packages/components/src/button/",
+        "note": "An icon-only odd-button."
+      },
+      "api": {
+        "attributes": [
+          "appearance: primary | secondary | ghost = secondary",
+          "size: sm | md | lg = md",
+          "type: button | submit | reset = button",
+          "disabled: boolean = false",
+          "loading: boolean = false",
+          "full-width: boolean = false",
+          "toggle: boolean = false",
+          "pressed: boolean = false",
+          "name: string = \"\"",
+          "value: string = \"\"",
+          "formaction: string | undefined = undefined",
+          "formmethod: string | undefined = undefined",
+          "formenctype: string | undefined = undefined",
+          "formtarget: string | undefined = undefined",
+          "formnovalidate: boolean = false",
+          "label: string = \"\""
+        ],
+        "slots": ["(default)", "end", "start"],
+        "parts": ["control", "spinner"],
+        "cssProperties": [
+          "--odd-button-background",
+          "--odd-button-border-color",
+          "--odd-button-color",
+          "--odd-button-height",
+          "--odd-button-padding-inline",
+          "--odd-button-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 12,
+      "name": "input",
+      "figma": [
+        {
+          "family": "Oddkin/Common/input",
+          "id": "159:1024",
+          "frame": "Definitions · Fields & controls",
+          "variants": 8,
+          "axes": {
+            "State": [
+              "Disabled",
+              "Empty",
+              "Filled",
+              "Focus",
+              "Hover",
+              "Invalid",
+              "Password",
+              "Read only"
+            ]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-input",
+        "source": "packages/components/src/input/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "minlength: number | undefined = undefined",
+          "maxlength: number | undefined = undefined",
+          "placeholder: string = \"\"",
+          "autocomplete: string = \"\"",
+          "required: boolean = false",
+          "readonly: boolean = false",
+          "type: number | search | time | text | url | email | password | tel | date | datetime-local | month | week = text",
+          "min: string | undefined = undefined",
+          "max: string | undefined = undefined",
+          "step: string | undefined = undefined",
+          "pattern: string | undefined = undefined"
+        ],
+        "slots": [],
+        "parts": [
+          "clear",
+          "control",
+          "decrement",
+          "description",
+          "error",
+          "field",
+          "icon",
+          "increment",
+          "label",
+          "stepper"
+        ],
+        "cssProperties": [
+          "--odd-field-background",
+          "--odd-field-border-color",
+          "--odd-field-height",
+          "--odd-field-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 13,
+      "name": "keyboardKey",
+      "figma": [
+        {
+          "family": "Oddkin/Common/keyboardKey",
+          "id": "162:2097",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Default", "Sequence"]
+          }
+        }
+      ],
+      "code": {
+        "recipes": [".odd-kbd (kbd.css)"]
+      },
+      "api": null,
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 14,
+      "name": "link",
+      "figma": [
+        {
+          "family": "Oddkin/Common/link",
+          "id": "159:549",
+          "frame": "Definitions · Actions",
+          "variants": 3,
+          "axes": {
+            "State": ["Default", "Focus", "Hover"]
+          }
+        }
+      ],
+      "code": {
+        "recipes": [".odd-link (link.css)"]
+      },
+      "api": null,
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 15,
+      "name": "number",
+      "figma": [
+        {
+          "family": "Oddkin/Common/number",
+          "id": "159:1097",
+          "frame": "Definitions · Additional form controls",
+          "variants": 6,
+          "axes": {
+            "State": ["Default", "Disabled", "Focus", "Invalid", "Maximum", "Minimum"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-input",
+        "source": "packages/components/src/input/",
+        "note": "odd-input type=\"number\"."
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "minlength: number | undefined = undefined",
+          "maxlength: number | undefined = undefined",
+          "placeholder: string = \"\"",
+          "autocomplete: string = \"\"",
+          "required: boolean = false",
+          "readonly: boolean = false",
+          "type: number | search | time | text | url | email | password | tel | date | datetime-local | month | week = text",
+          "min: string | undefined = undefined",
+          "max: string | undefined = undefined",
+          "step: string | undefined = undefined",
+          "pattern: string | undefined = undefined"
+        ],
+        "slots": [],
+        "parts": [
+          "clear",
+          "control",
+          "decrement",
+          "description",
+          "error",
+          "field",
+          "icon",
+          "increment",
+          "label",
+          "stepper"
+        ],
+        "cssProperties": [
+          "--odd-field-background",
+          "--odd-field-border-color",
+          "--odd-field-height",
+          "--odd-field-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 16,
+      "name": "progress",
+      "figma": [
+        {
+          "family": "Oddkin/Common/progress",
+          "id": "161:1916",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Determinate", "Indeterminate"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-progress",
+        "source": "packages/components/src/progress/"
+      },
+      "api": {
+        "attributes": [
+          "value: number | undefined = undefined",
+          "max: number = 1",
+          "label: string = \"\"",
+          "description: string = \"\""
+        ],
+        "slots": [],
+        "parts": ["base", "description", "indicator", "label", "track", "value-text"],
+        "cssProperties": ["--odd-progress-height"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 17,
+      "name": "radio",
+      "figma": [
+        {
+          "family": "Oddkin/Common/radio",
+          "id": "159:1209",
+          "frame": "Definitions · Fields & controls",
+          "variants": 10,
+          "axes": {
+            "Selection": ["Checked", "Unchecked"],
+            "State": ["Default", "Disabled", "Focus", "Hover", "Invalid"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-radio-group",
+        "source": "packages/components/src/radio-group/",
+        "note": "No standalone radio element: radios render inside odd-radio-group."
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "required: boolean = false",
+          "orientation: vertical | horizontal = vertical"
+        ],
+        "slots": [],
+        "parts": [
+          "control",
+          "description",
+          "error",
+          "field",
+          "group",
+          "label",
+          "option",
+          "option-description"
+        ],
+        "cssProperties": [],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 18,
+      "name": "rating",
+      "figma": [
+        {
+          "family": "Oddkin/Common/rating",
+          "id": "555:2787",
+          "frame": "Definitions · Additional form controls",
+          "variants": 6,
+          "axes": {
+            "State": ["Disabled", "Empty", "Focus", "Invalid", "Read only", "Selected"]
+          }
+        },
+        {
+          "family": "Oddkin/Common/rating/Item",
+          "id": "555:2595",
+          "frame": "Definitions · Additional form controls",
+          "variants": 5,
+          "axes": {
+            "State": ["Disabled off", "Disabled on", "Focus", "Off", "On"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-rating",
+        "source": "packages/components/src/rating/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "required: boolean = false",
+          "max: number = 5",
+          "readonly: boolean = false"
+        ],
+        "slots": [],
+        "parts": ["control", "description", "error", "field", "label", "option", "value"],
+        "cssProperties": [],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 19,
+      "name": "relativeTime",
+      "figma": [
+        {
+          "family": "Oddkin/Common/relativeTime",
+          "id": "555:3030",
+          "frame": "Definitions · Display utilities",
+          "variants": 5,
+          "axes": {
+            "State": ["Absolute detail", "Future", "Past", "Recent", "Unavailable"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-relative-time",
+        "source": "packages/components/src/relative-time/"
+      },
+      "api": {
+        "attributes": ["datetime: string = \"\"", "detail: boolean = false"],
+        "slots": [],
+        "parts": ["base", "detail", "time"],
+        "cssProperties": [],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 20,
+      "name": "search",
+      "figma": [
+        {
+          "family": "Oddkin/Common/search",
+          "id": "159:1144",
+          "frame": "Definitions · Fields & controls",
+          "variants": 6,
+          "axes": {
+            "State": ["Disabled", "Empty", "Filled", "Focus", "Inline", "Inline focus"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-input",
+        "source": "packages/components/src/input/",
+        "note": "odd-input type=\"search\"."
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "minlength: number | undefined = undefined",
+          "maxlength: number | undefined = undefined",
+          "placeholder: string = \"\"",
+          "autocomplete: string = \"\"",
+          "required: boolean = false",
+          "readonly: boolean = false",
+          "type: number | search | time | text | url | email | password | tel | date | datetime-local | month | week = text",
+          "min: string | undefined = undefined",
+          "max: string | undefined = undefined",
+          "step: string | undefined = undefined",
+          "pattern: string | undefined = undefined"
+        ],
+        "slots": [],
+        "parts": [
+          "clear",
+          "control",
+          "decrement",
+          "description",
+          "error",
+          "field",
+          "icon",
+          "increment",
+          "label",
+          "stepper"
+        ],
+        "cssProperties": [
+          "--odd-field-background",
+          "--odd-field-border-color",
+          "--odd-field-height",
+          "--odd-field-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 21,
+      "name": "skeleton",
+      "figma": [
+        {
+          "family": "Oddkin/Common/skeleton",
+          "id": "161:1959",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Default", "List"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-skeleton",
+        "source": "packages/components/src/skeleton/"
+      },
+      "api": {
+        "attributes": ["shape: circle | rect | text = text", "lines: number = 1"],
+        "slots": [],
+        "parts": ["base", "line"],
+        "cssProperties": ["--odd-skeleton-color"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 22,
+      "name": "slider",
+      "figma": [
+        {
+          "family": "Oddkin/Common/slider",
+          "id": "159:1287",
+          "frame": "Definitions · Fields & controls",
+          "variants": 3,
+          "axes": {
+            "State": ["Default", "Disabled", "Focus"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-slider",
+        "source": "packages/components/src/slider/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "min: number = 0",
+          "max: number = 100",
+          "step: number = 1"
+        ],
+        "slots": [],
+        "parts": [
+          "control",
+          "description",
+          "error",
+          "field",
+          "fill",
+          "label",
+          "max-label",
+          "min-label",
+          "output",
+          "thumb",
+          "track"
+        ],
+        "cssProperties": [],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 23,
+      "name": "spinner",
+      "figma": [
+        {
+          "family": "Oddkin/Common/spinner",
+          "id": "161:1939",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Default", "Inline"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-spinner",
+        "source": "packages/components/src/spinner/"
+      },
+      "api": {
+        "attributes": ["label: string = \"\"", "size: sm | md | lg = md"],
+        "slots": ["(default)"],
+        "parts": ["base", "indicator"],
+        "cssProperties": ["--odd-spinner-color"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 24,
+      "name": "stat",
+      "figma": [
+        {
+          "family": "Oddkin/Common/stat",
+          "id": "555:2908",
+          "frame": "Definitions · Display utilities",
+          "variants": 5,
+          "axes": {
+            "State": ["Decrease", "Increase", "Loading", "Neutral", "Unavailable"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-stat",
+        "source": "packages/components/src/stat/"
+      },
+      "api": {
+        "attributes": [
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "trend: none | increase | decrease = none",
+          "loading: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["base", "context", "label", "placeholder", "value"],
+        "cssProperties": [],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 25,
+      "name": "switch",
+      "figma": [
+        {
+          "family": "Oddkin/Common/switch",
+          "id": "159:1258",
+          "frame": "Definitions · Fields & controls",
+          "variants": 8,
+          "axes": {
+            "Value": ["Off", "On"],
+            "State": ["Default", "Disabled", "Focus", "Hover"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-switch",
+        "source": "packages/components/src/switch/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "checked: boolean = false",
+          "value: string = on",
+          "required: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["control", "description", "error", "field", "label", "state", "thumb"],
+        "cssProperties": [],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 26,
+      "name": "textarea",
+      "figma": [
+        {
+          "family": "Oddkin/Common/textarea",
+          "id": "159:1056",
+          "frame": "Definitions · Fields & controls",
+          "variants": 5,
+          "axes": {
+            "State": ["Disabled", "Empty", "Filled", "Focus", "Invalid"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-textarea",
+        "source": "packages/components/src/textarea/"
+      },
+      "api": {
+        "attributes": [
+          "name: string | undefined = undefined",
+          "disabled: boolean = false",
+          "description: string = \"\"",
+          "error: string = \"\"",
+          "label: string = \"\"",
+          "value: string = \"\"",
+          "minlength: number | undefined = undefined",
+          "maxlength: number | undefined = undefined",
+          "placeholder: string = \"\"",
+          "autocomplete: string = \"\"",
+          "required: boolean = false",
+          "readonly: boolean = false",
+          "rows: number = 4",
+          "resize: none | vertical | auto = vertical"
+        ],
+        "slots": [],
+        "parts": ["control", "count", "description", "error", "field", "label"],
+        "cssProperties": [
+          "--odd-field-background",
+          "--odd-field-border-color",
+          "--odd-field-height",
+          "--odd-field-radius",
+          "--odd-textarea-max-height"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 27,
+      "name": "toggleButton",
+      "figma": [
+        {
+          "family": "Oddkin/Common/toggleButton",
+          "id": "159:501",
+          "frame": "Definitions · Actions",
+          "variants": 8,
+          "axes": {
+            "Value": ["Off", "On"],
+            "State": ["Default", "Disabled", "Focus", "Hover"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-button",
+        "source": "packages/components/src/button/",
+        "note": "odd-button toggle."
+      },
+      "api": {
+        "attributes": [
+          "appearance: primary | secondary | ghost = secondary",
+          "size: sm | md | lg = md",
+          "type: button | submit | reset = button",
+          "disabled: boolean = false",
+          "loading: boolean = false",
+          "full-width: boolean = false",
+          "toggle: boolean = false",
+          "pressed: boolean = false",
+          "name: string = \"\"",
+          "value: string = \"\"",
+          "formaction: string | undefined = undefined",
+          "formmethod: string | undefined = undefined",
+          "formenctype: string | undefined = undefined",
+          "formtarget: string | undefined = undefined",
+          "formnovalidate: boolean = false",
+          "label: string = \"\""
+        ],
+        "slots": ["(default)", "end", "start"],
+        "parts": ["control", "spinner"],
+        "cssProperties": [
+          "--odd-button-background",
+          "--odd-button-border-color",
+          "--odd-button-color",
+          "--odd-button-height",
+          "--odd-button-padding-inline",
+          "--odd-button-radius"
+        ],
+        "events": ["input", "change"]
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 28,
+      "name": "tooltip",
+      "figma": [
+        {
+          "family": "Oddkin/Common/tooltip",
+          "id": "160:2470",
+          "frame": "Definitions · Content & feedback",
+          "variants": 2,
+          "axes": {
+            "State": ["Default", "Description"]
+          }
+        }
+      ],
+      "code": {
+        "element": "odd-tooltip",
+        "source": "packages/components/src/tooltip/"
+      },
+      "api": {
+        "attributes": [
+          "anchor: string = \"\"",
+          "side: inline-end | inline-start | block-end | block-start = block-start",
+          "align: center | start | end = center",
+          "open: boolean = false"
+        ],
+        "slots": ["(default)"],
+        "parts": ["base"],
+        "cssProperties": ["--odd-tooltip-max-inline-size"],
+        "events": []
+      },
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    },
+    {
+      "order": 29,
+      "name": "typography",
+      "figma": [
+        {
+          "family": "Oddkin/Common/typography",
+          "id": "162:2080",
+          "frame": "Definitions · Content & feedback",
+          "variants": 1,
+          "axes": {
+            "State": ["Default"]
+          }
+        }
+      ],
+      "code": {
+        "recipes": ["typography.css"]
+      },
+      "api": null,
+      "status": "not started",
+      "checks": {
+        "api": "unknown",
+        "visual": "unknown",
+        "parity": "unknown",
+        "a11y": "unknown",
+        "responsive": "unknown",
+        "docs": "unknown"
+      },
+      "findings": [],
+      "decisions": []
+    }
+  ]
+}
