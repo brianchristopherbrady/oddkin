@@ -1851,17 +1851,55 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "gap",
+        "visual": "gap",
+        "parity": "ok",
+        "a11y": "gap",
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "SR1",
+          "check": "api",
+          "finding": "Figma State Empty, Filled, Focus, and Disabled map to placeholder, value (with the clear button), keyboard focus, and disabled. Inline and Inline focus draw the field without a label or help text, as the context picker uses it.",
+          "proposal": "Decision D1 for the inline field."
+        },
+        {
+          "id": "SR2",
+          "check": "a11y",
+          "finding": "odd-input names its control only with its visible label (label for=\"control\"); with no label the field has no accessible name, and a placeholder is not one. The context picker's inline search is its own input with aria-label.",
+          "proposal": "Decision D1."
+        },
+        {
+          "id": "SR3",
+          "check": "visual",
+          "finding": "Matching: the field tokens, the 20 px search and clear glyphs (icon.size.md), and the text 40 px in. Figma's help text (\"Search by name or description.\") is below the control; the code draws the description above.",
+          "proposal": "Field decision D1."
+        },
+        {
+          "id": "SR4",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares Empty, Filled, Focus, and Disabled, and the field glyphs; the AI parity test compares the context picker's search with Inline focus.",
+          "proposal": "Compare Inline with odd-input once D1 exists."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "A field named without a visible label (Figma's Inline search, a search in a toolbar or a picker): how?",
+          "options": [
+            "A hide-label attribute on every form control: label stays the accessible name, drawn only for assistive technology.",
+            "The author puts a visible label elsewhere and points to it (aria-labelledby across the shadow boundary does not work today)."
+          ],
+          "recommendation": "The first: one attribute, the name always present, and the analyzer can warn when label is empty. The context picker can then use odd-input for its search.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "odd-input type=\"search\" matches the four labelled states (its glyphs fixed to 20 px on 2026-11-14, item 10). Figma's Inline search has no visible label, and odd-input cannot name a field without showing its label (D1). As with the input, Figma draws the help text below the control (field D1)."
     },
     {
       "order": 21,
@@ -1888,17 +1926,44 @@
         "cssProperties": ["--odd-skeleton-color"],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "SK1",
+          "check": "api",
+          "finding": "Figma Default (a 40 px circle beside two lines, then three lines) and List (rows of a 32 px circle and two lines) are compositions of shape=\"circle\", shape=\"text\" with lines, and shape=\"rect\".",
+          "proposal": "None."
+        },
+        {
+          "id": "SK2",
+          "check": "visual",
+          "finding": "Matching: color.border.default (overridable with --odd-skeleton-color), radius.sm, and radius.full for circles. The pulse runs on a raw 1.6 s ease-in-out, not the motion tokens, and stops under reduced motion.",
+          "proposal": "Time the pulse with motion tokens, or record why it needs its own timing (as for progress, PR2)."
+        },
+        {
+          "id": "SK3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares Default; List is the same shapes in rows.",
+          "proposal": "None."
+        },
+        {
+          "id": "SK4",
+          "check": "docs",
+          "finding": "Examples show a text line, a rectangle, and a circle; none composes them as Figma's Default (a person row) or List does.",
+          "proposal": "An example of each composition."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The API draws Figma's placeholders, and the parity test compares Default. Figma's Default and List are compositions of circles and lines, which no example shows; the pulse uses raw timing rather than motion tokens."
     },
     {
       "order": 22,
@@ -1947,17 +2012,38 @@
         "cssProperties": [],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "SL1",
+          "check": "api",
+          "finding": "Figma State Default, Focus, and Disabled map to the slider, keyboard focus, and disabled; the label, the value (\"60%\"), and the endpoints (\"25%\", \"100%\") come from label, value, min, max, and renderValue for formatting.",
+          "proposal": "None."
+        },
+        {
+          "id": "SL2",
+          "check": "visual",
+          "finding": "Matching: a 4 px track (radius.xs) in color.border.strong, the fill in color.action.default (color.text.disabled when disabled), a 20 px thumb on color.surface.default ringed in color.action.default, the focus ring, and the label, value, and endpoint colours.",
+          "proposal": "None."
+        },
+        {
+          "id": "SL3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all three states.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the three Figma states map to the API, with the value and the labelled endpoints Figma's review row asks for, and are compared."
     },
     {
       "order": 23,

@@ -58,9 +58,9 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | audited | ok | ok | ok | ? | ok | ok |
 | 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | audited | ok | ok | ok | ? | ok | ok |
 | 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | audited | ok | ok | ok | ? | ok | ok |
-| 20 | [search](#20-search) | search (159:1144) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
-| 21 | [skeleton](#21-skeleton) | skeleton (161:1959) | `odd-skeleton` | not started | ? | ? | ? | ? | ? | ? |
-| 22 | [slider](#22-slider) | slider (159:1287) | `odd-slider` | not started | ? | ? | ? | ? | ? | ? |
+| 20 | [search](#20-search) | search (159:1144) | `odd-input` | audited | gap | gap | ok | gap | ok | ok |
+| 21 | [skeleton](#21-skeleton) | skeleton (161:1959) | `odd-skeleton` | audited | ok | ok | ok | ok | ok | gap |
+| 22 | [slider](#22-slider) | slider (159:1287) | `odd-slider` | audited | ok | ok | ok | ? | ok | ok |
 | 23 | [spinner](#23-spinner) | spinner (161:1939) | `odd-spinner` | not started | ? | ? | ? | ? | ? | ? |
 | 24 | [stat](#24-stat) | stat (555:2908) | `odd-stat` | not started | ? | ? | ? | ? | ? | ? |
 | 25 | [switch](#25-switch) | switch (159:1258) | `odd-switch` | not started | ? | ? | ? | ? | ? | ? |
@@ -552,7 +552,7 @@ Code: `odd-relative-time` (packages/components/src/relative-time/).
 
 ## 20. search
 
-Status: not started.
+Status: audited (2026-11-15). odd-input type="search" matches the four labelled states (its glyphs fixed to 20 px on 2026-11-14, item 10). Figma's Inline search has no visible label, and odd-input cannot name a field without showing its label (D1). As with the input, Figma draws the help text below the control (field D1).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -564,11 +564,23 @@ Code: `odd-input` (packages/components/src/input/). odd-input type="search".
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| SR1 | api | Figma State Empty, Filled, Focus, and Disabled map to placeholder, value (with the clear button), keyboard focus, and disabled. Inline and Inline focus draw the field without a label or help text, as the context picker uses it. | Decision D1 for the inline field. |
+| SR2 | a11y | odd-input names its control only with its visible label (label for="control"); with no label the field has no accessible name, and a placeholder is not one. The context picker's inline search is its own input with aria-label. | Decision D1. |
+| SR3 | visual | Matching: the field tokens, the 20 px search and clear glyphs (icon.size.md), and the text 40 px in. Figma's help text ("Search by name or description.") is below the control; the code draws the description above. | Field decision D1. |
+| SR4 | parity | figma-parity.forms.browser.test.ts compares Empty, Filled, Focus, and Disabled, and the field glyphs; the AI parity test compares the context picker's search with Inline focus. | Compare Inline with odd-input once D1 exists. |
+
+Decisions for the owner:
+
+- **D1: A field named without a visible label (Figma's Inline search, a search in a toolbar or a picker): how?** Open.
+  1. A hide-label attribute on every form control: label stays the accessible name, drawn only for assistive technology.
+  2. The author puts a visible label elsewhere and points to it (aria-labelledby across the shadow boundary does not work today).
+  - Recommendation: The first: one attribute, the name always present, and the analyzer can warn when label is empty. The context picker can then use odd-input for its search.
 
 ## 21. skeleton
 
-Status: not started.
+Status: audited (2026-11-15). The API draws Figma's placeholders, and the parity test compares Default. Figma's Default and List are compositions of circles and lines, which no example shows; the pulse uses raw timing rather than motion tokens.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -580,11 +592,16 @@ Code: `odd-skeleton` (packages/components/src/skeleton/).
 | --- | --- | --- | --- | --- |
 | `shape: circle \| rect \| text = text`, `lines: number = 1` | — | `base`, `line` | `--odd-skeleton-color` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| SK1 | api | Figma Default (a 40 px circle beside two lines, then three lines) and List (rows of a 32 px circle and two lines) are compositions of shape="circle", shape="text" with lines, and shape="rect". | None. |
+| SK2 | visual | Matching: color.border.default (overridable with --odd-skeleton-color), radius.sm, and radius.full for circles. The pulse runs on a raw 1.6 s ease-in-out, not the motion tokens, and stops under reduced motion. | Time the pulse with motion tokens, or record why it needs its own timing (as for progress, PR2). |
+| SK3 | parity | figma-parity.browser.test.ts compares Default; List is the same shapes in rows. | None. |
+| SK4 | docs | Examples show a text line, a rectangle, and a circle; none composes them as Figma's Default (a person row) or List does. | An example of each composition. |
 
 ## 22. slider
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the three Figma states map to the API, with the value and the labelled endpoints Figma's review row asks for, and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -596,7 +613,11 @@ Code: `odd-slider` (packages/components/src/slider/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `min: number = 0`, `max: number = 100`, `step: number = 1` | — | `control`, `description`, `error`, `field`, `fill`, `label`, `max-label`, `min-label`, `output`, `thumb`, `track` | — | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| SL1 | api | Figma State Default, Focus, and Disabled map to the slider, keyboard focus, and disabled; the label, the value ("60%"), and the endpoints ("25%", "100%") come from label, value, min, max, and renderValue for formatting. | None. |
+| SL2 | visual | Matching: a 4 px track (radius.xs) in color.border.strong, the fill in color.action.default (color.text.disabled when disabled), a 20 px thumb on color.surface.default ringed in color.action.default, the focus ring, and the label, value, and endpoint colours. | None. |
+| SL3 | parity | figma-parity.forms.browser.test.ts compares all three states. | None. |
 
 ## 23. spinner
 
