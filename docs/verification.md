@@ -6691,7 +6691,7 @@ The owner's answer of 2026-11-14 to N1, first half: the full-screen sheet is the
 
 ## 2026-11-14 — P1.8, row 35, landing 3: the context picker's expanded browser (round 11, Agent 2)
 
-The owner's answer of 2026-11-14 to N1, second half: the expanded browser opens only from the person's Browse all action, Browse… (Figma's footer button. Corrected on 2026-11-15 by Agent 1: no layer in the file is named "Browse all resources…", and "Browse all" was Agent 1's wording). Figma: `Oddkin/AI/ContextPicker/ExpandedBrowser` (777:1837; Desktop 776:1344, Mobile 776:1556), read through the Figma MCP (read-only) on 2026-11-14.
+The owner's answer of 2026-11-14 to N1, second half: the expanded browser opens only from the person's Browse all action, Browse… (Figma's layer "Browse all resources…"). Figma: `Oddkin/AI/ContextPicker/ExpandedBrowser` (777:1837; Desktop 776:1344, Mobile 776:1556), read through the Figma MCP (read-only) on 2026-11-14.
 
 | Check | Command | Result |
 | --- | --- | --- |
