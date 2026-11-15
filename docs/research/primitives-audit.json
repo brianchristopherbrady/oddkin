@@ -1452,17 +1452,44 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "gap",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "NB1",
+          "check": "api",
+          "finding": "Figma State Default, Focus, Disabled, Minimum, Maximum, and Invalid map to value, keyboard focus, disabled, a value at min or max, and error; the stepper is part of type=\"number\".",
+          "proposal": "None."
+        },
+        {
+          "id": "NB2",
+          "check": "visual",
+          "finding": "Matching: the field (control.height.md, control.radius, color.border.strong), the stepper (a color.surface.sunken segment of two 40 px buttons with 16 px minus and plus glyphs), and the danger border and message when invalid. Figma's help text (\"1–50 seats available.\") is below the control; the code draws the description above.",
+          "proposal": "Field decision D1."
+        },
+        {
+          "id": "NB3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all six states: label, surface, value, the stepper, and both buttons.",
+          "proposal": "None."
+        },
+        {
+          "id": "NB4",
+          "check": "docs",
+          "finding": "odd-input's number example shows the stepper with min and max.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "odd-input type=\"number\" matches Figma's six states, its stepper included, and the parity test compares them all. As with the input, Figma draws the help text below the control (field D1)."
     },
     {
       "order": 16,
@@ -1494,17 +1521,50 @@
         "cssProperties": ["--odd-progress-height"],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "gap",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "PR1",
+          "check": "api",
+          "finding": "Figma Determinate and Indeterminate map to value set or unset, with label, description, and the value text (\"64%\"); max, and renderValue for custom value text.",
+          "proposal": "None."
+        },
+        {
+          "id": "PR2",
+          "check": "visual",
+          "finding": "Matching: an 8 px track (space.xs, overridable with --odd-progress-height) in color.surface.sunken with radius.sm, the indicator in color.action.default, the label in the UI type, the value text and description in color.text.secondary. The indeterminate indicator slides on a raw 1.6 s ease-in-out, not the motion tokens.",
+          "proposal": "Time the slide with motion tokens, or record why it needs its own timing."
+        },
+        {
+          "id": "PR3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares Determinate (track, indicator, label, value text, description); Indeterminate is not compared.",
+          "proposal": "Compare Indeterminate (track, indicator fill, label, description; no value text)."
+        },
+        {
+          "id": "PR4",
+          "check": "a11y",
+          "finding": "Unknown progress shows no percentage, as Figma's review row requires; reduced motion stops the slide and right-to-left reverses it; forced colours have their own styles. Not yet measured: color.action.default against the sunken track.",
+          "proposal": "Measure in the accessibility pass."
+        },
+        {
+          "id": "PR5",
+          "check": "docs",
+          "finding": "Examples cover determinate, indeterminate, a fraction of one, and custom value text.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The API and look match both Figma states. The parity test compares Determinate only; the indeterminate animation uses raw timing rather than motion tokens."
     },
     {
       "order": 17,

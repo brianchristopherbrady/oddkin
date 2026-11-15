@@ -53,8 +53,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 12 | [input](#12-input) | input (159:1024) | `odd-input` | audited | gap | gap | ok | ? | ok | ok |
 | 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | audited | ok | gap | ok | ok | ok | gap |
 | 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | audited | ok | ok | gap | ? | ok | gap |
-| 15 | [number](#15-number) | number (159:1097) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
-| 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | not started | ? | ? | ? | ? | ? | ? |
+| 15 | [number](#15-number) | number (159:1097) | `odd-input` | audited | ok | gap | ok | ? | ok | ok |
+| 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | audited | ok | ok | gap | ? | ok | ok |
 | 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | not started | ? | ? | ? | ? | ? | ? |
 | 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | not started | ? | ? | ? | ? | ? | ? |
 | 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | not started | ? | ? | ? | ? | ? | ? |
@@ -446,7 +446,7 @@ Code: `.odd-link (link.css)`.
 
 ## 15. number
 
-Status: not started.
+Status: audited (2026-11-15). odd-input type="number" matches Figma's six states, its stepper included, and the parity test compares them all. As with the input, Figma draws the help text below the control (field D1).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -458,11 +458,16 @@ Code: `odd-input` (packages/components/src/input/). odd-input type="number".
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| NB1 | api | Figma State Default, Focus, Disabled, Minimum, Maximum, and Invalid map to value, keyboard focus, disabled, a value at min or max, and error; the stepper is part of type="number". | None. |
+| NB2 | visual | Matching: the field (control.height.md, control.radius, color.border.strong), the stepper (a color.surface.sunken segment of two 40 px buttons with 16 px minus and plus glyphs), and the danger border and message when invalid. Figma's help text ("1–50 seats available.") is below the control; the code draws the description above. | Field decision D1. |
+| NB3 | parity | figma-parity.forms.browser.test.ts compares all six states: label, surface, value, the stepper, and both buttons. | None. |
+| NB4 | docs | odd-input's number example shows the stepper with min and max. | None. |
 
 ## 16. progress
 
-Status: not started.
+Status: audited (2026-11-15). The API and look match both Figma states. The parity test compares Determinate only; the indeterminate animation uses raw timing rather than motion tokens.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -474,7 +479,13 @@ Code: `odd-progress` (packages/components/src/progress/).
 | --- | --- | --- | --- | --- |
 | `value: number \| undefined = undefined`, `max: number = 1`, `label: string = ""`, `description: string = ""` | — | `base`, `description`, `indicator`, `label`, `track`, `value-text` | `--odd-progress-height` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| PR1 | api | Figma Determinate and Indeterminate map to value set or unset, with label, description, and the value text ("64%"); max, and renderValue for custom value text. | None. |
+| PR2 | visual | Matching: an 8 px track (space.xs, overridable with --odd-progress-height) in color.surface.sunken with radius.sm, the indicator in color.action.default, the label in the UI type, the value text and description in color.text.secondary. The indeterminate indicator slides on a raw 1.6 s ease-in-out, not the motion tokens. | Time the slide with motion tokens, or record why it needs its own timing. |
+| PR3 | parity | figma-parity.browser.test.ts compares Determinate (track, indicator, label, value text, description); Indeterminate is not compared. | Compare Indeterminate (track, indicator fill, label, description; no value text). |
+| PR4 | a11y | Unknown progress shows no percentage, as Figma's review row requires; reduced motion stops the slide and right-to-left reverses it; forced colours have their own styles. Not yet measured: color.action.default against the sunken track. | Measure in the accessibility pass. |
+| PR5 | docs | Examples cover determinate, indeterminate, a fraction of one, and custom value text. | None. |
 
 ## 17. radio
 
