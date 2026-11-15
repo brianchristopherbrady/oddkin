@@ -9,15 +9,33 @@ const sources: ContextSource[] = [
   { id: 'records', label: 'Records' },
 ];
 
+const launchBrief: ContextResource = {
+  sourceId: 'drive',
+  id: 'launch-brief',
+  label: 'Launch brief',
+  type: 'document',
+  path: 'Product / Launch',
+  description: '2h ago',
+};
+const customerInterviews: ContextResource = {
+  sourceId: 'drive',
+  id: 'customer-interviews',
+  label: 'Customer interviews',
+  type: 'document',
+  path: 'Research',
+  description: '3 days ago',
+};
+const product: ContextResource = {
+  sourceId: 'drive',
+  id: 'product',
+  label: 'Product',
+  type: 'folder',
+  description: 'Open collection',
+  container: true,
+};
+
 const library: ContextResource[] = [
-  {
-    sourceId: 'drive',
-    id: 'launch-brief',
-    label: 'Launch brief',
-    type: 'document',
-    path: 'Product / Launch',
-    description: '2h ago',
-  },
+  launchBrief,
   {
     sourceId: 'wiki',
     id: 'release-checklist',
@@ -26,14 +44,7 @@ const library: ContextResource[] = [
     path: 'Platform team',
     description: 'Yesterday',
   },
-  {
-    sourceId: 'drive',
-    id: 'customer-interviews',
-    label: 'Customer interviews',
-    type: 'document',
-    path: 'Research',
-    description: '3 days ago',
-  },
+  customerInterviews,
   {
     sourceId: 'records',
     id: 'acme-renewal',
@@ -73,14 +84,7 @@ type Picker = HTMLElementTagNameMap['odd-context-picker'];
 /** What each container holds, by the container's id (a source's top level by the source's id). */
 const folders: Record<string, ContextResource[]> = {
   drive: [
-    {
-      sourceId: 'drive',
-      id: 'product',
-      label: 'Product',
-      type: 'folder',
-      description: 'Open collection',
-      container: true,
-    },
+    product,
     {
       sourceId: 'drive',
       id: 'research',
@@ -220,10 +224,8 @@ export default defineExamples('odd-context-picker', {
       multiple: true,
       open: true,
       icons: { folder: folderIcon },
-      results: {
-        requestId: 'recent',
-        items: [folders['drive']![0]!, library[0]!, library[2]!],
-      },
+      // Named constants: the analyzer reads example values statically and cannot follow an index.
+      results: { requestId: 'recent', items: [product, launchBrief, customerInterviews] },
     },
     guidance:
       'When a source has `browse`, Browse… opens the expanded browser: a modal dialog that keeps the search, scope, location, and draft, lists the sources beside the collection, and reviews the choice as removable chips. Browsing asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it, here in the surface itself, and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person browses: this example opens Product from the recent resources as one would. A resource’s `kind` picks its icon from `icons` (URLs the page may load); others show the document icon.',
