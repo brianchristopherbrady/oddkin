@@ -17,6 +17,11 @@ Not in this audit:
 - Implementation reference specimens (odd-button/*, odd-input/* on page 02): Reference renders, read with the button and input rows.
 - odd-status-marker: No Figma family: to audit once it is drawn, or with the composed components that use it.
 
+## Notes
+
+- The Figma snapshot (design/figma/components.json) matched the live Primitives page on 2026-11-15: the same 104 families, names, and variant counts. The page also has six top-level review frames (354:11578 to 354:11589, 685:3157) and 19 "Review row" frames; each audit reads its rows there too.
+- Figma's review rows label Button and Text input SHIPPED and every other primitive DESIGN, though all are built. A row could turn SHIPPED when its primitive is done here.
+
 ## Checks
 
 | Check | Question |
@@ -35,8 +40,8 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | # | Primitive | Figma | Code | Status | API | Visual | Parity | Accessibility | Responsive | Docs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | audited | gap | gap | gap | ? | ok | gap |
-| 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | not started | ? | ? | ? | ? | ? | ? |
-| 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | not started | ? | ? | ? | ? | ? | ? |
+| 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | audited | ok | gap | gap | ? | ok | ok |
+| 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | audited | gap | gap | ok | ? | ok | gap |
 | 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | not started | ? | ? | ? | ? | ? | ? |
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | not started | ? | ? | ? | ? | ? | ? |
 | 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | not started | ? | ? | ? | ? | ? | ? |
@@ -98,7 +103,7 @@ Decisions for the owner:
 - **D1: The colour attribute: name and values.** Open.
   1. tone="neutral | brand | info | success | warning | danger": ADR 0045's meaning-colour name, with brand added for the avatar and info kept so it matches odd-badge and odd-alert (Figma has no Info avatar yet).
   2. tone with ADR 0045's values only (no brand), and the brand look stays the .odd-avatar-group-more recipe.
-  - Recommendation: The first: one attribute with the vocabulary's name, every Figma preset reachable, the same tones as odd-badge; ADR 0045 records brand as an avatar tone.
+  - Recommendation: The first. odd-badge and odd-alert already take tone through the shared tone styles (packages/components/src/styles/tone.styles.ts), which draw neutral, info, success, warning, and danger with the same color.<tone>.surface and color.<tone>.foreground pairs Figma's avatar presets bind; only brand is new, and ADR 0045 records it as an avatar tone.
 - **D2: The shape attribute: name, values, and default.** Open.
   1. shape="circle | rounded | small-radius | square", Figma's Shape values, default circle (today's look and AvatarItem's).
   2. radius="none | sm | md | full", the radius token names.
@@ -110,7 +115,7 @@ Decisions for the owner:
 
 ## 2. badge
 
-Status: not started.
+Status: audited (2026-11-15). The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -122,11 +127,27 @@ Code: `odd-badge` (packages/components/src/badge/).
 | --- | --- | --- | --- | --- |
 | `tone: neutral \| info \| success \| warning \| danger = neutral`, `no-marker: boolean = false` | `(default)` | `base`, `marker` | `--odd-badge-radius` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| BG1 | api | Figma State (Neutral, Info, Success, Warning, Danger, Count) maps to tone (neutral \| info \| success \| warning \| danger) and no-marker for Count. Figma's glyphs match toneGlyph: info for Neutral and Info, checkCircle for Success, warning for Warning and Danger. | None. |
+| BG2 | visual | Gap between glyph and text: Figma 8 px (the glyph at x8 to 24, the text at x32), the code space.2xs (4 px). | Decision D1. |
+| BG3 | visual | Height: Figma 28 px, the 18 px text 5 px from the top and bottom (5 px is not a token). The code: space.3xs (2 px) above and below the 18 px line, 22 px. Count: Figma a fixed 44 px box, the code about 30 px (space.xs either side of the digits). | Decision D1. |
+| BG4 | visual | Matching: color.<tone>.surface and color.<tone>.foreground, radius.sm (overridable with --odd-badge-radius), the 16 px glyph (icon.size.sm), 8 px before it (space.xs), and the Status type (font.size.xs, font.weight.medium, line height 150%). | None. |
+| BG5 | parity | The parity test compares fills, radius, and text for all six states; it cannot compare the gap or the height, which Figma does not bind (BG6). | Once Figma binds them, compare itemSpacing and padding (fields), and the height. |
+| BG6 | figma | For the owner, in Figma: each badge Surface is a fixed 120 x 28 frame (Count 44 x 28) with no auto layout, so its padding, gap, and size are positions rather than tokens, and its width does not follow the text. | Auto layout on Surface: padding space.2xs and space.xs, gap from D1, hugging the text. |
+| BG7 | a11y | Not yet measured: the contrast of each tone's foreground on its surface, in light and dark. The badge has no role and is read as text; its glyph is the non-colour marker; forced colours draw a 1px CanvasText border. | Measure the five pairs with the fix. |
+| BG8 | responsive | The badge is at most as wide as its parent and wraps long words (overflow-wrap: anywhere). | None. |
+
+Decisions for the owner:
+
+- **D1: Badge spacing: Figma's look (8 px gap, 28 px tall, unbound) or the code's (4 px, 22 px)?** Open.
+  1. Figma's, in tokens: gap space.xs (8 px), padding space.2xs (4 px) above and below, 26 px tall (the nearest token height to 28); Figma's Surface gets the same auto layout.
+  2. The code's compact badge (space.2xs gap, space.3xs padding), and Figma is redrawn to match.
+  - Recommendation: The first: Figma's spacing, expressed in tokens, with Figma bound to the same tokens so the parity test locks it.
 
 ## 3. button
 
-Status: not started.
+Status: audited (2026-11-15). The closest to Figma so far: every appearance, size, and state matches, and the parity test compares all 54 in three engines. Two gaps: the default appearance (Figma primary, the code secondary), and the leading icon, which Figma draws at 16 px while the start slot leaves an odd-icon at its 20 px default.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -140,7 +161,24 @@ Code: `odd-button` (packages/components/src/button/), `.odd-button (button.css)`
 | --- | --- | --- | --- | --- |
 | `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| BT1 | api | Figma's properties map: Appearance (primary, secondary, ghost) to appearance; Size (the button, button/sm, and button/lg sets) to size; State Disabled and Loading to disabled and loading, Hover, Pressed, and Focus to browser states; Label to the default slot; Icon with Show icon to the start slot. The code adds type, full-width, toggle, pressed, label (an icon-only name), and the form attributes. | None. |
+| BT2 | api | The default appearance: Figma's sets default to primary; odd-button defaults to secondary. | Decision D1. |
+| BT3 | visual | Figma's Leading icon is 16 x 16 at every size (icon.size.sm), 8 px (control.gap) before the label. The start and end slots do not size their content, so an odd-icon there is 20 px (its md default) unless the author sets size="sm". | Size an odd-icon in the start and end slots to icon.size.sm, and compare Show icon in the parity test. |
+| BT4 | visual | Matching: sm, md, and lg are 32, 40, and 48 px with 8, 12, and 16 px inline padding and the 8 px control.gap; labels 14, 14, and 16 px; primary on color.action.default, secondary on color.surface.default, ghost without a fill; Disabled keeps the appearance at 50% opacity (Figma's review 685:3157). | None. |
+| BT5 | parity | figma-parity.browser.test.ts compares every Appearance, Size, and State (54 cases: frame, gap, label, focus ring) in Chromium, Firefox, and WebKit; Pressed is skipped in Firefox, which applies no :active while Space is held. The .odd-button recipe is the same stylesheet (styles.test.ts), with its own styling test. | Add the leading icon (BT3). |
+| BT6 | figma | For the owner: the 50% disabled opacity is a raw value in Figma and in the code; no opacity token exists. | An opacity token for disabled controls, with the tokens lane, or accept the raw value. |
+| BT7 | a11y | A native button: keyboard, focus, and name from the platform; the focus ring is compared with Figma; label names an icon-only button (button.browser.test.ts); a disabled control is exempt from contrast. Not yet measured: each appearance's label contrast in light and dark. | Measure with the fix. |
+| BT8 | responsive | Long labels wrap (min-inline-size: 0, overflow-wrap: anywhere); full-width fills the parent; the catalog sweep at 240 px found no overflow (responsiveness-behavior-matrix.md). | None. |
+| BT9 | docs | Examples cover the appearances, sizes, disabled, loading, toggle, full width, and a form submit; none shows a leading icon or an icon-only button. | Add both, the icon-only one named by label. |
+
+Decisions for the owner:
+
+- **D1: The default appearance: Figma's primary or the code's secondary?** Open.
+  1. Keep secondary, and set the Figma sets' default variant to secondary: an unmarked button is an ordinary action, and the one primary action in a view is chosen on purpose.
+  2. Change the code to primary, as Figma has it.
+  - Recommendation: Keep secondary (the first). Changing it would restyle every button written without appearance in pages that already use Oddkin.
 
 ## 4. checkbox
 

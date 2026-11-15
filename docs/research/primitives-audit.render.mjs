@@ -26,6 +26,7 @@ export function render(audit) {
     '',
     ...audit.scope.excludes.map((e) => `- ${e.what}: ${e.why}`),
     '',
+    ...(audit.notes?.length ? ['## Notes', '', ...audit.notes.map((n) => `- ${n}`), ''] : []),
     '## Checks',
     '',
     '| Check | Question |',
