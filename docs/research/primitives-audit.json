@@ -894,7 +894,7 @@
         {
           "id": "FD1",
           "check": "api",
-          "finding": "Figma's anatomy (review row: \"Label, description, control, validation. Required state is written as well as marked.\"): the label \"Email address (required)\", a description above the control, the control, and a line below it, \"We never share your address.\" (secondary), which the error replaces when invalid. The code has the label, the description above, the control, and the error below; a valid field shows nothing below.",
+          "finding": "Figma's anatomy (review row: \"Label, description, control, validation. Required state is written as well as marked.\"): the label \"Email address (required)\", a description above the control, the control, and a line below it, \"We never share your address.\" (secondary), which the error replaces when invalid. The code has the label, the description above, the control, and the error below; a valid field shows nothing below. Figma disagrees with itself: its input family (159:1024) draws the help text below the control.",
           "proposal": "Decision D1."
         },
         {
@@ -931,12 +931,12 @@
       "decisions": [
         {
           "id": "D1",
-          "question": "The line below the control in a valid field: a second help text, or not drawn?",
+          "question": "Where help text sits: above the control (Figma's field anatomy, 159:971, and the code) or below it (Figma's input, search, and other fields, 159:1024)?",
           "options": [
-            "One description, above the control, and only the error below it; Figma's line below is redrawn as part of the description.",
-            "A second help text below the control (a new attribute and slot on every form control), replaced by the error when invalid."
+            "Above the control, for every form control: Figma's field order, read before typing; Figma's input and other field specimens are redrawn with the help above.",
+            "Below the control, replaced by the error when invalid: Figma's input specimens; every form control moves its description."
           ],
-          "recommendation": "The first: people and screen readers meet the description before they type, and every form control keeps one description.",
+          "recommendation": "Above (the first): people and screen readers meet the help before they type, the error appears where the help was, and nothing in the code changes.",
           "answer": null
         },
         {
@@ -979,17 +979,44 @@
         "cssProperties": ["--odd-icon-size"],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "ok",
+        "parity": "gap",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "IC1",
+          "check": "api",
+          "finding": "Figma State Default (20 px) and Sizes (16, 20, 24 px) map to size sm, md (default), and lg. The code also takes an SVG as content or a URL (src), and label for a meaningful icon.",
+          "proposal": "None."
+        },
+        {
+          "id": "IC2",
+          "check": "parity",
+          "finding": "The icon family is not compared with Figma: its instances bind no size or colour. display.browser.test.ts checks each size against the icon.size tokens.",
+          "proposal": "None needed; Figma could bind the icon sizes to icon.size tokens."
+        },
+        {
+          "id": "IC3",
+          "check": "a11y",
+          "finding": "Decorative by default (hidden from assistive technology); with label it is an image with that name, as Figma's review row asks (\"decorative icons stay silent\").",
+          "proposal": "None."
+        },
+        {
+          "id": "IC4",
+          "check": "docs",
+          "finding": "Examples cover a decorative icon, a labelled one, the three sizes, and an icon from a URL.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The API and sizes match Figma: 20 px by default (icon.size.md), 16 and 24 px as size sm and lg. Figma binds no token on its icon specimens, so the parity tests cannot compare them; display.browser.test.ts checks the three sizes."
     },
     {
       "order": 11,
@@ -1041,17 +1068,61 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "gap",
+        "visual": "gap",
+        "parity": "gap",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "IB1",
+          "check": "api",
+          "finding": "Figma State (Default, Hover, Pressed, Focus, Disabled) maps to odd-button and browser states, and label names it (button.browser.test.ts). There is no icon-only form: the code relies on the author.",
+          "proposal": "An icon-only odd-button, square at every size, its label required: decision D1."
+        },
+        {
+          "id": "IB2",
+          "check": "visual",
+          "finding": "Figma: a 40 x 40 surface (control.height.md) with control.radius, color.surface.default (hover and pressed color.surface.hover), a border.width.default border in color.border.strong, and a 20 px icon (icon.size.md); the focus ring around it. Its colours are the secondary button's. The code: no square form; the context picker's private rule draws a 16 px icon (icon.size.sm).",
+          "proposal": "With D1: square at control.height, the icon at icon.size.md, and the context picker using it."
+        },
+        {
+          "id": "IB3",
+          "check": "parity",
+          "finding": "The iconButton family is not compared with Figma.",
+          "proposal": "Compare all five states once the icon-only form exists."
+        },
+        {
+          "id": "IB4",
+          "check": "a11y",
+          "finding": "Figma's review row: \"a required accessible name\"; the label attribute gives it, and its visible name is the icon, so a tooltip can show the label (as the context picker's icon trigger does).",
+          "proposal": "With D1, warn in development when an icon-only button has no label."
+        },
+        {
+          "id": "IB5",
+          "check": "docs",
+          "finding": "No example shows an icon-only button (also BT9).",
+          "proposal": "An example with D1."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "The icon-only button: how does an author ask for it?",
+          "options": [
+            "An attribute on odd-button (for example icon-only), square at its size with the icon at icon.size.md and label required.",
+            "Automatic: odd-button becomes square when its only content is an icon and it has a label."
+          ],
+          "recommendation": "The first: an explicit attribute is predictable for people and agents, and the analyzer can require label with it. The context picker then uses it instead of its own rule.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "Figma draws a square 40 x 40 button with a 20 px icon. odd-button has no icon-only form: with only an icon it keeps the text padding, so it is not square, and the context picker adds its own .odd-button.icon rule (square, but a 16 px icon). Nothing compares it with Figma."
     },
     {
       "order": 12,
@@ -1121,17 +1192,68 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "gap",
+        "visual": "gap",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "IN1",
+          "check": "api",
+          "finding": "Figma State Empty, Filled, Invalid, Disabled, Read only, and Password map to placeholder, value, error, disabled, readonly, and type=\"password\"; Hover and Focus are browser states. The code adds the other native types and constraints.",
+          "proposal": "None."
+        },
+        {
+          "id": "IN2",
+          "check": "api",
+          "finding": "Figma's Password variant draws an eye icon (Icon · eye, 20 px) at the end of the field: a control to show the password. odd-input has none.",
+          "proposal": "Decision D1."
+        },
+        {
+          "id": "IN3",
+          "check": "visual",
+          "finding": "Figma's input draws the help text (\"We never share your email.\") below the control, where the error replaces it; odd-input draws its description above the control. Figma's own field anatomy (field, 159:971) and the code put it above.",
+          "proposal": "Field decision D1 decides it for every form control."
+        },
+        {
+          "id": "IN4",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares all eight states (field, label, description, surface, text, error, focus ring); the description is compared by its tokens, not its position.",
+          "proposal": "Compare positions too once field D1 is decided."
+        },
+        {
+          "id": "IN5",
+          "check": "responsive",
+          "finding": "The field fills its parent and wraps long labels, help, and errors (min-inline-size: 0, overflow-wrap: anywhere).",
+          "proposal": "None."
+        },
+        {
+          "id": "IN6",
+          "check": "docs",
+          "finding": "Examples cover the default, description, required, invalid, disabled, read-only, password, number, search, date, time, constraints, and a form.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "Show password: should type=\"password\" draw Figma's eye control?",
+          "options": [
+            "Yes: a toggle button at the end of the field, named \"Show password\" and \"Hide password\", switching the control between password and text; on by default, with an attribute to leave it out.",
+            "Yes, but only when the author asks for it with an attribute.",
+            "No: Figma's eye is removed."
+          ],
+          "recommendation": "The first: seeing the password lets people check what they typed before they submit, and it is what Figma draws.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "Seven of Figma's eight states match and the parity test compares all eight. Two gaps: Figma's Password variant has a show-password eye that odd-input lacks (D1), and Figma draws the help text below the control, where the code puts it above (field D1)."
     },
     {
       "order": 13,

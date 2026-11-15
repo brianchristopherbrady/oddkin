@@ -48,9 +48,9 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | audited | ok | ok | ok | ? | ok | ok |
 | 8 | [divider](#8-divider) | divider (162:2069) | `.odd-divider (divider.css)` | audited | ok | ok | gap | gap | ok | gap |
 | 9 | [field](#9-field) | field (159:971) | `.odd-field (field.css)` | audited | gap | ok | gap | ? | ok | gap |
-| 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | not started | ? | ? | ? | ? | ? | ? |
-| 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
-| 12 | [input](#12-input) | input (159:1024) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
+| 10 | [icon](#10-icon) | icon (162:2058) | `odd-icon` | audited | ok | ok | gap | ok | ok | ok |
+| 11 | [iconButton](#11-iconbutton) | iconButton (159:471) | `odd-button` | audited | gap | gap | gap | ok | ok | gap |
+| 12 | [input](#12-input) | input (159:1024) | `odd-input` | audited | gap | gap | ok | ? | ok | ok |
 | 13 | [keyboardKey](#13-keyboardkey) | keyboardKey (162:2097) | `.odd-kbd (kbd.css)` | not started | ? | ? | ? | ? | ? | ? |
 | 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | not started | ? | ? | ? | ? | ? | ? |
 | 15 | [number](#15-number) | number (159:1097) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
@@ -301,7 +301,7 @@ Code: `.odd-field (field.css)`. The field look every form control shares (contro
 
 | Finding | Check | What | Proposal |
 | --- | --- | --- | --- |
-| FD1 | api | Figma's anatomy (review row: "Label, description, control, validation. Required state is written as well as marked."): the label "Email address (required)", a description above the control, the control, and a line below it, "We never share your address." (secondary), which the error replaces when invalid. The code has the label, the description above, the control, and the error below; a valid field shows nothing below. | Decision D1. |
+| FD1 | api | Figma's anatomy (review row: "Label, description, control, validation. Required state is written as well as marked."): the label "Email address (required)", a description above the control, the control, and a line below it, "We never share your address." (secondary), which the error replaces when invalid. The code has the label, the description above, the control, and the error below; a valid field shows nothing below. Figma disagrees with itself: its input family (159:1024) draws the help text below the control. | Decision D1. |
 | FD2 | api | Required: the code sets the native required state, which assistive technology announces, but writes nothing in the label; Figma writes "(required)". | Decision D2. |
 | FD3 | visual | Matching: the UI type label in color.text.primary, the small type description in color.text.secondary, the control (control.radius, color.surface.default, a border.width.default border in color.border.strong, control.height.md, body text), and the error in color.danger.foreground with the danger border. | None. |
 | FD4 | parity | The field family is not compared; the input family's parity test covers the same anatomy for odd-input, and recipes-css.browser.test.ts checks that .odd-field draws native markup exactly like odd-input. | Compare the field family (Required and Invalid) once D1 and D2 are decided. |
@@ -310,10 +310,10 @@ Code: `.odd-field (field.css)`. The field look every form control shares (contro
 
 Decisions for the owner:
 
-- **D1: The line below the control in a valid field: a second help text, or not drawn?** Open.
-  1. One description, above the control, and only the error below it; Figma's line below is redrawn as part of the description.
-  2. A second help text below the control (a new attribute and slot on every form control), replaced by the error when invalid.
-  - Recommendation: The first: people and screen readers meet the description before they type, and every form control keeps one description.
+- **D1: Where help text sits: above the control (Figma's field anatomy, 159:971, and the code) or below it (Figma's input, search, and other fields, 159:1024)?** Open.
+  1. Above the control, for every form control: Figma's field order, read before typing; Figma's input and other field specimens are redrawn with the help above.
+  2. Below the control, replaced by the error when invalid: Figma's input specimens; every form control moves its description.
+  - Recommendation: Above (the first): people and screen readers meet the help before they type, the error appears where the help was, and nothing in the code changes.
 - **D2: Writing the required state, as Figma does.** Open.
   1. Every form control writes a localized "(required)" after its label when required; the word is hidden from assistive technology, which already announces the required state.
   2. The author writes it in the label text; the guidance says so.
@@ -322,7 +322,7 @@ Decisions for the owner:
 
 ## 10. icon
 
-Status: not started.
+Status: audited (2026-11-15). The API and sizes match Figma: 20 px by default (icon.size.md), 16 and 24 px as size sm and lg. Figma binds no token on its icon specimens, so the parity tests cannot compare them; display.browser.test.ts checks the three sizes.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -334,11 +334,16 @@ Code: `odd-icon` (packages/components/src/icon/).
 | --- | --- | --- | --- | --- |
 | `src: string = ""`, `label: string = ""`, `size: sm \| md \| lg = md` | `(default)` | `base` | `--odd-icon-size` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| IC1 | api | Figma State Default (20 px) and Sizes (16, 20, 24 px) map to size sm, md (default), and lg. The code also takes an SVG as content or a URL (src), and label for a meaningful icon. | None. |
+| IC2 | parity | The icon family is not compared with Figma: its instances bind no size or colour. display.browser.test.ts checks each size against the icon.size tokens. | None needed; Figma could bind the icon sizes to icon.size tokens. |
+| IC3 | a11y | Decorative by default (hidden from assistive technology); with label it is an image with that name, as Figma's review row asks ("decorative icons stay silent"). | None. |
+| IC4 | docs | Examples cover a decorative icon, a labelled one, the three sizes, and an icon from a URL. | None. |
 
 ## 11. iconButton
 
-Status: not started.
+Status: audited (2026-11-15). Figma draws a square 40 x 40 button with a 20 px icon. odd-button has no icon-only form: with only an icon it keeps the text padding, so it is not square, and the context picker adds its own .odd-button.icon rule (square, but a 16 px icon). Nothing compares it with Figma.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -350,11 +355,24 @@ Code: `odd-button` (packages/components/src/button/). An icon-only odd-button.
 | --- | --- | --- | --- | --- |
 | `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| IB1 | api | Figma State (Default, Hover, Pressed, Focus, Disabled) maps to odd-button and browser states, and label names it (button.browser.test.ts). There is no icon-only form: the code relies on the author. | An icon-only odd-button, square at every size, its label required: decision D1. |
+| IB2 | visual | Figma: a 40 x 40 surface (control.height.md) with control.radius, color.surface.default (hover and pressed color.surface.hover), a border.width.default border in color.border.strong, and a 20 px icon (icon.size.md); the focus ring around it. Its colours are the secondary button's. The code: no square form; the context picker's private rule draws a 16 px icon (icon.size.sm). | With D1: square at control.height, the icon at icon.size.md, and the context picker using it. |
+| IB3 | parity | The iconButton family is not compared with Figma. | Compare all five states once the icon-only form exists. |
+| IB4 | a11y | Figma's review row: "a required accessible name"; the label attribute gives it, and its visible name is the icon, so a tooltip can show the label (as the context picker's icon trigger does). | With D1, warn in development when an icon-only button has no label. |
+| IB5 | docs | No example shows an icon-only button (also BT9). | An example with D1. |
+
+Decisions for the owner:
+
+- **D1: The icon-only button: how does an author ask for it?** Open.
+  1. An attribute on odd-button (for example icon-only), square at its size with the icon at icon.size.md and label required.
+  2. Automatic: odd-button becomes square when its only content is an icon and it has a label.
+  - Recommendation: The first: an explicit attribute is predictable for people and agents, and the analyzer can require label with it. The context picker then uses it instead of its own rule.
 
 ## 12. input
 
-Status: not started.
+Status: audited (2026-11-15). Seven of Figma's eight states match and the parity test compares all eight. Two gaps: Figma's Password variant has a show-password eye that odd-input lacks (D1), and Figma draws the help text below the control, where the code puts it above (field D1).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -366,7 +384,22 @@ Code: `odd-input` (packages/components/src/input/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `type: number \| search \| time \| text \| url \| email \| password \| tel \| date \| datetime-local \| month \| week = text`, `min: string \| undefined = undefined`, `max: string \| undefined = undefined`, `step: string \| undefined = undefined`, `pattern: string \| undefined = undefined` | — | `clear`, `control`, `decrement`, `description`, `error`, `field`, `icon`, `increment`, `label`, `stepper` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| IN1 | api | Figma State Empty, Filled, Invalid, Disabled, Read only, and Password map to placeholder, value, error, disabled, readonly, and type="password"; Hover and Focus are browser states. The code adds the other native types and constraints. | None. |
+| IN2 | api | Figma's Password variant draws an eye icon (Icon · eye, 20 px) at the end of the field: a control to show the password. odd-input has none. | Decision D1. |
+| IN3 | visual | Figma's input draws the help text ("We never share your email.") below the control, where the error replaces it; odd-input draws its description above the control. Figma's own field anatomy (field, 159:971) and the code put it above. | Field decision D1 decides it for every form control. |
+| IN4 | parity | figma-parity.browser.test.ts compares all eight states (field, label, description, surface, text, error, focus ring); the description is compared by its tokens, not its position. | Compare positions too once field D1 is decided. |
+| IN5 | responsive | The field fills its parent and wraps long labels, help, and errors (min-inline-size: 0, overflow-wrap: anywhere). | None. |
+| IN6 | docs | Examples cover the default, description, required, invalid, disabled, read-only, password, number, search, date, time, constraints, and a form. | None. |
+
+Decisions for the owner:
+
+- **D1: Show password: should type="password" draw Figma's eye control?** Open.
+  1. Yes: a toggle button at the end of the field, named "Show password" and "Hide password", switching the control between password and text; on by default, with an attribute to leave it out.
+  2. Yes, but only when the author asks for it with an attribute.
+  3. No: Figma's eye is removed.
+  - Recommendation: The first: seeing the password lets people check what they typed before they submit, and it is what Figma draws.
 
 ## 13. keyboardKey
 
