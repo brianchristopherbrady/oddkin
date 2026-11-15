@@ -9,6 +9,8 @@ import {
   overlaySurfaceStructuralStyles,
   overlaySurfaceStyles,
 } from '@oddkin/components/styles';
+import { iconDefinition } from '@oddkin/components/icon';
+import { tooltipDefinition } from '@oddkin/components/tooltip';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinContextPicker } from './context-picker.js';
@@ -32,4 +34,6 @@ export const contextPickerDefinition = compose({
     controlIndicatorStyles,
     contextPickerStyles,
   ],
+  // The icon trigger's tooltip, and resource icons by kind.
+  dependencies: { icon: iconDefinition, tooltip: tooltipDefinition },
 });

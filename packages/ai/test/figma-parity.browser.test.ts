@@ -1681,6 +1681,24 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       );
     });
 
+    it(`Resource type: the document icon, and the icon of a kind (${mode})`, async () => {
+      inMode(mode);
+      const folder =
+        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E%3Crect width="20" height="16"/%3E%3C/svg%3E';
+      const { el, answer } = await open((el) => (el.icons = { folder }));
+      await answer({
+        items: [brief, { ...brief, id: 'folder', label: 'Launch folder', kind: 'folder' }],
+        sources: complete('drive', 'wiki', 'records'),
+      });
+      // Figma's ResourceType: a 20 px icon in each row.
+      for (const row of rows(el)) {
+        const icon = row.querySelector('.option-icon > *')!.getBoundingClientRect();
+        expect([icon.width, icon.height]).toEqual([20, 20]);
+      }
+      expect(rows(el)[0]!.querySelector('.option-icon svg')).not.toBeNull();
+      expect(rows(el)[1]!.querySelector('.option-icon odd-icon')!.getAttribute('src')).toBe(folder);
+    });
+
     it(`Resource rows: hover, focus, single, unavailable, limit (${mode})`, async () => {
       inMode(mode);
       const meta = 'Drive · Product / Launch · Updated 2h ago';
@@ -2048,6 +2066,49 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       expect(trigger.textContent!.trim()).toBe('Add context');
       expect(trigger.querySelector('svg'), 'the text form has no icon').toBeNull();
       expectNone(button(trigger, 'secondary', 'Add context'));
+    });
+
+    it(`Trigger, icon form (${mode})`, async () => {
+      await import('../src/context-picker/context-picker.define.js');
+      inMode(mode);
+      const el = mount('<odd-context-picker trigger="icon"></odd-context-picker>') as Picker;
+      await settle(el);
+      const trigger = shadow(el, '[part="trigger"]');
+      const target = (frame: string): Target => ({ layer: [frame], el: trigger, kind: 'frame' });
+      // Figma's icon trigger is the secondary md button in a 40 px square frame; its instance
+      // keeps a text button's inline padding around an empty label (66 px wide), so the inline
+      // padding is not compared: the picker draws a square of the control height instead.
+      const state = (name: string, targets: Target[]) =>
+        compare(
+          'Oddkin/Common/button',
+          { Appearance: 'secondary', Size: 'md', State: name },
+          targets,
+        )
+          .filter((line) => !/ padding(Left|Right) \(/.test(line))
+          .map((line) => `icon trigger: ${line}`);
+      const differences = state('Default', [target('Button / Secondary')]);
+      const box = trigger.getBoundingClientRect();
+      expect([box.width, box.height]).toEqual([40, 40]);
+      // Figma's Oddkin/Icon/plus, 16 px, centred.
+      const glyph = trigger.querySelector('svg')!.getBoundingClientRect();
+      expect([glyph.width, glyph.height]).toEqual([16, 16]);
+      expect(glyph.left - box.left).toBe(box.right - glyph.right);
+      await userEvent.hover(trigger);
+      await transitions([target('Button / Hover')]);
+      differences.push(...state('Hover', [target('Button / Hover')]));
+      await userEvent.unhover(trigger);
+      await userEvent.keyboard('{Tab}');
+      if (!trigger.matches(':focus-visible')) trigger.focus();
+      await transitions([target('Button / Focus')]);
+      differences.push(
+        ...state('Focus', [{ layer: ['Button / Focus', 'Surface'], el: trigger, kind: 'ring' }]),
+      );
+      trigger.blur();
+      el.disabled = true;
+      await settle(el);
+      await transitions([target('Button / Disabled')]);
+      differences.push(...state('Disabled', [target('Button / Disabled')]));
+      expectNone(differences);
     });
   }
 });

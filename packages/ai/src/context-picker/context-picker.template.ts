@@ -1,8 +1,14 @@
-import { checkGlyph, fileGlyph, searchGlyph } from '@oddkin/components/styles';
+import { checkGlyph, fileGlyph, plusGlyph, searchGlyph } from '@oddkin/components/styles';
 import { html, nothing, repeat } from '@oddkin/core/template';
 import type { ContextResource } from '../contracts/types.js';
 import { format, formatNumber, langOf } from '../internal/strings.js';
 import { resourceKey, type OddkinContextPicker } from './context-picker.js';
+
+/**
+ * The icon trigger is named by the text its tooltip shows, so the tooltip adds no description:
+ * odd-tooltip describes an anchor through this hook when it has one (component-contracts.md §2.4).
+ */
+const noDescription = () => {};
 
 /** The label with the query's first match marked. */
 const highlighted = (label: string, query: string) => {
@@ -13,14 +19,17 @@ const highlighted = (label: string, query: string) => {
 };
 
 /**
- * Anatomy: the `trigger`; the `surface` (title and Close, `search`, the scope and Selected, the
- * status line, the collection that scrolls: `browse`, the `results` listbox, Load more, a retry or
- * feedback block; the `footer`); two live regions.
+ * Anatomy: the `trigger` (with its tooltip in the icon form); the `surface` (title and Close,
+ * `search`, the scope and Selected, the status line, the collection that scrolls: `browse`, the
+ * `results` listbox, Load more, a retry or feedback block; the `footer`); two live regions.
  */
 export const contextPickerTemplate = (host: OddkinContextPicker) => {
   const t = host._strings;
   const lang = langOf(host);
   const n = (value: number) => formatNumber(value, lang);
+  const name = host.label || t.add;
+  const iconTrigger = host.trigger === 'icon';
+  const icons = host.icons;
   const query = host._query.value;
   const reviewing = host._view.value === 'selected';
   const chosen = host._chosen.value;
@@ -136,16 +145,20 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
 
   return html`<button
       part="trigger"
-      class="odd-button"
+      id="trigger"
+      class=${iconTrigger ? 'odd-button icon' : 'odd-button'}
       type="button"
+      aria-label=${iconTrigger ? name : null}
       aria-haspopup="dialog"
       aria-expanded=${host.open ? 'true' : 'false'}
       aria-controls="surface"
       ?disabled=${host.disabled}
+      ._describe=${noDescription}
       @click=${host._onTrigger}
     >
-      ${host.label || t.add}
+      ${iconTrigger ? plusGlyph : name}
     </button>
+    ${iconTrigger ? html`<odd-tooltip anchor="trigger">${name}</odd-tooltip>` : nothing}
     <div
       part="surface"
       id="surface"
@@ -307,7 +320,13 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
                         : html`<span class="indicator-mark indicator-check indicator-dot"></span>`
                     }</span
                   >
-                  <span class="option-icon" aria-hidden="true">${fileGlyph}</span>
+                  <span class="option-icon" aria-hidden="true"
+                    >${
+                      r.kind && icons?.[r.kind]
+                        ? html`<odd-icon src=${icons[r.kind]}></odd-icon>`
+                        : fileGlyph
+                    }</span
+                  >
                   <span class="option-label">
                     <span class="name">${highlighted(r.label, reviewing ? '' : query)}</span>
                     <span class="option-description">${meta}</span>

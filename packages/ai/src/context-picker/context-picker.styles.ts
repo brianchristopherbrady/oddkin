@@ -6,7 +6,8 @@ import { contextPickerRecipeStyles } from './context-picker.recipe.styles.js';
  * The C07 look (Figma page 767:2, `Oddkin/AI/ContextPicker/*`) on the shared sheets: the overlay
  * surface, the field control for the search and the scope, option rows with the control indicator,
  * and native buttons (md: secondary Done and Retry, ghost Close, Selected, Browse, Cancel, and the
- * browse buttons, primary Add N). Here only what they leave: the surface 26rem wide and 30rem tall
+ * browse buttons, primary Add N). Here only what they leave: the icon trigger square, its plus at
+ * the small icon size; the surface 26rem wide and 30rem tall
  * (the shared surface keeps it within the room the placement leaves), its content `space.xs` in,
  * with only the collection scrolling (its buttons' focus rings inset, as its rows' are, so it clips
  * none); the title in the AI title type; the search field `space.2xs` in on every side, so its focus
@@ -24,6 +25,11 @@ export const contextPickerStyles = css`
   }
   .odd-button {
     font-weight: ${token('type.ui.weight')};
+  }
+  .odd-button.icon {
+    aspect-ratio: 1;
+    padding-inline: 0;
+    font-size: ${token('icon.size.sm')};
   }
   .surface:popover-open {
     display: flex;

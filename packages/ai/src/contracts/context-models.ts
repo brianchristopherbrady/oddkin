@@ -27,6 +27,9 @@ const contextResourceSchema = m.object(
       minLength: 1,
       description: 'What it is, in the host’s words: document, page, account.',
     }),
+    kind: m.optional(
+      m.string({ minLength: 1, description: 'A stable key for its icon (the picker’s `icons`).' }),
+    ),
     path: m.optional(m.string({ description: 'Where it is, e.g. "Product / Launch".' })),
     description: m.optional(m.string({ description: 'Useful metadata, e.g. "2h ago".' })),
     unavailable: m.optional(

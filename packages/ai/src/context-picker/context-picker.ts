@@ -86,7 +86,8 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  *
  * Choosing proposes a change (`odd-context-change`): unless a handler cancels it, it becomes
  * `value`. With `commit="confirm"` changes stay a draft until Add N, and Cancel, Close, Escape, or
- * leaving the surface discards them.
+ * leaving the surface discards them. `trigger="icon"` draws the trigger as a plus button, and
+ * `icons` gives resources an icon by their `kind`.
  *
  * @slot actions - Host actions in the surface's footer, e.g. upload or connect a source.
  * @csspart trigger - The button that opens the surface.
@@ -96,7 +97,7 @@ export const resourceKey = (r: Pick<ContextResource, 'sourceId' | 'id'>): string
  * @csspart results - The listbox of results, or of the chosen resources in review.
  * @csspart option - Each result.
  * @csspart footer - The count, host actions, and Done (or Cancel and Add N).
- * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the surface is a non-modal `dialog` named by its title. The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
+ * @a11y The trigger has `aria-haspopup="dialog"` and `aria-expanded`; the icon trigger is named by its text, which its tooltip shows on hover and focus (and adds no description). The surface is a non-modal `dialog` named by its title. The search field controls a separate listbox whose options carry no controls: name (label, type, source), description (path, metadata, why it is unavailable). Focus never chooses. Searching and the number of results are announced politely, a new failure once, and an accepted change with the new count.
  * @keyboard Enter or Space on the trigger opens it and focuses the search. Down Arrow or Tab moves into the results; Up, Down, Home, and End move; Space or Enter chooses. Escape, Close, and Done close and return focus to the trigger; Tab or a press outside closes and leaves focus there.
  * @useFor Choosing documents, pages, or records from connected sources as context for a request.
  * @notFor Uploading, connecting accounts, or fetching content (the host's); showing the chosen context (compose chips or rows outside).
@@ -123,7 +124,18 @@ export class OddkinContextPicker extends OddkinElement.with({
   }),
   open: prop.boolean({ reflect: true, description: 'Whether the surface is open.' }),
   disabled: prop.boolean({ reflect: true, description: 'Prevents opening and choosing.' }),
-  label: prop.string({ default: '', description: 'The trigger’s text (default `strings.add`).' }),
+  label: prop.string({
+    default: '',
+    description: 'The trigger’s text (default `strings.add`); the icon trigger’s name and tooltip.',
+  }),
+  trigger: prop.enum(['text', 'icon'], {
+    default: 'text',
+    reflect: true,
+    description: '`icon`: a plus button named by `label`, which shows as its tooltip.',
+  }),
+  icons: prop.object<Readonly<Record<string, string>>>({
+    description: 'Icon URLs by resource `kind`; other resources show the document icon.',
+  }),
   strings: prop.object<Partial<typeof CONTEXT_PICKER_STRINGS>>({
     description: 'Localized string overrides.',
   }),

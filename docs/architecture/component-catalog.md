@@ -265,7 +265,7 @@ implementation references now sit on Primitives; the 48 AI definitions remain on
 
 ### 4.1 The context picker on the C07 design (page 06, 767:2; 2026-11-13)
 
-`packages/ai/test/figma-parity.browser.test.ts` ("odd-context-picker (page 06)") compares, in light and dark and in Chromium, Firefox, and WebKit: the surface with `Oddkin/Common/popover` (Picker) and `Oddkin/AI/ContextPicker/Surface` (search results, loading, search failure, partial failure, searching, confirm, selected review, browse sources, browse nested), its rows with `ResourceRow` (default, hover, focus, selected, unavailable, limit reached, single, long text; pressed in Chromium, which can hold the pointer down), its feedback with `Feedback` (loading, search failure, no matches, no resources), and every button with `Oddkin/Common/button` in the appearance drawn, md.
+`packages/ai/test/figma-parity.browser.test.ts` ("odd-context-picker (page 06)") compares, in light and dark and in Chromium, Firefox, and WebKit: the surface with `Oddkin/Common/popover` (Picker) and `Oddkin/AI/ContextPicker/Surface` (search results, loading, search failure, partial failure, searching, confirm, selected review, browse sources, browse nested), its rows with `ResourceRow` (default, hover, focus, selected, unavailable, limit reached, single, long text; pressed in Chromium, which can hold the pointer down), its feedback with `Feedback` (loading, search failure, no matches, no resources), the 20 px icon of `ResourceType` (the document icon, or the host's icon for a resource's `kind`), the icon form of `Trigger` (default, hover, focus, disabled) with the secondary md button, and every button with `Oddkin/Common/button` in the appearance drawn, md.
 
 Deliberate differences:
 
@@ -277,8 +277,9 @@ Deliberate differences:
 - A failed search says "Try searching again", for one source or several, and a host's message replaces it; Figma's text names one source.
 - The empty search shows its placeholder in the field's placeholder colour, as `odd-input` does; Figma draws it in the primary text colour.
 - Buttons hug their labels and the content fills the surface; Figma's buttons have fixed widths, and its content leaves 4 px under the footer.
+- The icon trigger is a square of the control height around its 16 px plus; Figma's instance keeps a text button's inline padding around an empty label (66 px wide in its 40 px frame). Its text stays its name and shows as an `odd-tooltip`, which adds no description (owner, 2026-11-14).
 
-Not built (owner's decision asked, 2026-11-13): the expanded browser (`ExpandedBrowser`) and the full-screen dialog below 480 px (`MobileSurface`), since a resize may not open a dialog or change an open interaction (responsiveness.md); the trigger's icon form; an icon per resource type. `SelectedChip`, `SelectedOverflow`, and `SelectedAttachment` are host compositions: the Context for a request pattern (`packages/ai/patterns`).
+Not built yet (owner, 2026-11-14: Agent 2's item 35): the full-screen sheet (`MobileSurface`), which the host chooses and which is never chosen by width (responsiveness.md), and the expanded browser (`ExpandedBrowser`), a modal opened by the person's Browse all. `SelectedChip`, `SelectedOverflow`, and `SelectedAttachment` are host compositions: the Context for a request pattern (`packages/ai/patterns`).
 
 ## 5. Icons
 
@@ -636,6 +637,7 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | `odd-citation` | `odd-popover` | The source preview is a complete odd-popover widget the marker opens, anchored to it; the marker and its working note stay in the citation's own tree. |
 | `odd-combobox` | `odd-avatar` | Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options). The avatars view nests odd-avatar, a complete widget with no ID relationship across the boundary. |
 | `odd-command-palette` | `odd-icon` | Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them). |
+| `odd-context-picker` | `odd-icon`, `odd-tooltip` | The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are. |
 | `odd-conversation` | `odd-activity`, `odd-message` | Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness. |
 | `odd-date-picker` | `odd-calendar` | The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings. |
 | `odd-menu` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
@@ -653,7 +655,7 @@ Status: **approved** (2026-10-24). 296 references; controller 20, deferred 18, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (51) has no element dependency.
+Every other element (50) has no element dependency.
 
 #### Shared homes
 

@@ -31,7 +31,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C04 | Citations/sources | `odd-citation`, `odd-sources` | — | `odd-popover`; native `button`/links |
 | C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | `odd-disclosure` (Details) |
 | C06 | Action approval | `odd-action-approval` | `ConversationController.decide` | `odd-button` |
-| C07 | Context selection | `odd-context-picker` | host sources, results, and chosen resources (`ContextSourceModel`, `ContextResultsModel`, `ContextResourceModel`) | an anchored non-modal dialog: search, scope, a separate listbox, Browse and Load more (Figma C07, page 767:2) |
+| C07 | Context selection | `odd-context-picker` | host sources, results, and chosen resources (`ContextSourceModel`, `ContextResultsModel`, `ContextResourceModel`) | an anchored non-modal dialog: search, scope, a separate listbox, Browse and Load more; a text or plus trigger (`trigger="icon"`, its name shown as a tooltip) and icons by resource `kind` (`icons`) (Figma C07, page 767:2) |
 | C08 | Agent activity/plans | `odd-activity`, `odd-task-plan` | `isActive`, attempt records | native lists |
 | C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers, `odd-copy-button` |
 | C10 | Inline assistance | `odd-inline-assist` | `captureSelection`, `DocumentSession` | APG toolbar pattern |
@@ -214,7 +214,7 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request; `controllerIntents` routes them to `answer()` and `skip()` |
 | `odd-change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
 | `odd-assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
-| `odd-context-query` | `{requestId, query, sourceIds, location?, cursor?, signal}` | no | Find resources; the host answers with `results` carrying the `requestId`; a newer request aborts `signal`. With `location` (`{sourceId, id?}`: a source's top level, or inside one of its containers) list what is there; with `cursor` (the `nextCursor` of the results shown) answer the next page, which the picker appends. A resource with `container` opens its contents and is never chosen itself; a folder reference is an ordinary resource |
+| `odd-context-query` | `{requestId, query, sourceIds, location?, cursor?, signal}` | no | Find resources; the host answers with `results` carrying the `requestId`; a newer request aborts `signal`. With `location` (`{sourceId, id?}`: a source's top level, or inside one of its containers) list what is there; with `cursor` (the `nextCursor` of the results shown) answer the next page, which the picker appends. A resource with `container` opens its contents and is never chosen itself; a folder reference is an ordinary resource. A resource's optional `kind` picks its icon from the picker's `icons` (URLs by kind; others show the document icon) |
 | `odd-context-change` | `{value, reason: 'add' \| 'remove' \| 'replace' \| 'apply'}` | yes | A proposed selection, applied to `value` unless cancelled: cancel to refuse it, or to set `value` later (the picker then announces nothing and stays open) |
 | `odd-plan-input-request` | `planId`, `stepId` | no | Request |
 | `odd-voice-transcript` | `text` | no | Completed locally (final transcript chosen) |

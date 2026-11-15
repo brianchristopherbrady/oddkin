@@ -596,6 +596,54 @@ describe('odd-context-picker', () => {
     expect(document.activeElement).toBe(after);
   });
 
+  it('the icon trigger: a plus button named by its label, which shows as its tooltip', async () => {
+    const h = await mount((el) => {
+      el.trigger = 'icon';
+      el.label = 'Attach context';
+    });
+    const trigger = $(h.el, '[part="trigger"]') as HTMLButtonElement;
+    expect(trigger.getAttribute('aria-label')).toBe('Attach context');
+    expect(trigger.textContent!.trim(), 'only the plus').toBe('');
+    expect(trigger.querySelector('svg')).not.toBeNull();
+    const tip = $(h.el, 'odd-tooltip') as HTMLElementTagNameMap['odd-tooltip'];
+    expect(tip.textContent!.trim()).toBe('Attach context');
+    // Focus shows the tooltip; it repeats the name, so it adds no description.
+    trigger.focus();
+    await settle(h.el);
+    expect(tip.open).toBe(true);
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    await userEvent.keyboard('{Escape}');
+    await settle(h.el);
+    expect(tip.open).toBe(false);
+    trigger.click();
+    await settle(h.el);
+    expect(h.el.open).toBe(true);
+    // The text form: the text, and no tooltip.
+    h.el.open = false;
+    h.el.trigger = 'text';
+    await settle(h.el);
+    expect(trigger.hasAttribute('aria-label')).toBe(false);
+    expect(trigger.textContent!.trim()).toBe('Attach context');
+    expect($(h.el, 'odd-tooltip')).toBeNull();
+  });
+
+  it('a resource shows the icon `icons` gives its kind; others show the document icon', async () => {
+    const folder =
+      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E%3Crect width="20" height="16"/%3E%3C/svg%3E';
+    const h = await mount((el) => (el.icons = { folder }));
+    await open(h);
+    await h.answer([{ ...folderRef, kind: 'folder' }, { ...brief, kind: 'sheet' }, checklist]);
+    const icon = (i: number) => options(h.el)[i]!.querySelector('.option-icon')!;
+    expect(icon(0).querySelector('odd-icon')!.getAttribute('src')).toBe(folder);
+    expect(icon(1).querySelector('svg')).not.toBeNull();
+    expect(icon(2).querySelector('svg')).not.toBeNull();
+    // A new map applies to the rows shown.
+    h.el.icons = { sheet: folder };
+    await settle(h.el);
+    expect(icon(0).querySelector('odd-icon')).toBeNull();
+    expect(icon(1).querySelector('odd-icon')!.getAttribute('src')).toBe(folder);
+  });
+
   it('disabled: the trigger is off and nothing opens', async () => {
     const h = await mount((el) => (el.disabled = true));
     expect(($(h.el, '[part="trigger"]') as HTMLButtonElement).disabled).toBe(true);

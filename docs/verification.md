@@ -6656,3 +6656,19 @@ The two gaps the verifier of Agent 2's item 34 found in Agent 1's lane (`eb7e7ed
 | Size | `node scripts/check-size.mjs` | Exit 0: `components:shared` 3,499 B of 3,520, `components:recipes` 2,746 of 2,752, `ai:styles` 5,595 of 5,632; no budget changes |
 | Gate | `gate-light.mjs eb7e7ed8 --size` with the 8 node files | Pass on `eb7e7ed8`: typecheck, lint (after `npm run compat` regenerated the matrix, whose feature counts change for the five edited sheets), the 8 node files (65 passed), and size, exit 0 each |
 | Not done | — | e2e: no e2e test measures field glyphs (checked by search) |
+
+## 2026-11-14 — P1.8, row 35, landing 1: the context picker's icon trigger and icons by resource kind (round 11, Agent 2)
+
+The owner's answers of 2026-11-14 to N2 and N3 (row 35): the trigger's icon-only form keeps its text as the accessible name and shows it as a tooltip; a resource's optional kind maps to a host icon, with a default. Figma: `Oddkin/AI/ContextPicker/Trigger` (770:162, Form=Icon) and `ResourceType` (769:333), read through the Figma MCP (read-only) on 2026-11-14; evidence in the a2 worktree's `.tmp/fidelity/odd-context-picker/figma/r35-*`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The element | `packages/ai/test/context-picker.browser.test.ts` | 36 cases. New: the icon trigger is named by its label, holds only the plus, and its tooltip shows the label on focus and hides on Escape, with no `aria-describedby`; the text form returns the text and removes the tooltip. A resource whose `kind` is in `icons` shows that `odd-icon`; an unmapped kind and no kind show the document icon; a new map applies to the rows shown |
+| Figma parity | `figma-parity.browser.test.ts`: "Trigger, icon form" and "Resource type" in light and dark | The icon trigger against `Oddkin/Common/button` secondary md in Default, Hover, Focus (ring), and Disabled: fills, strokes, radius, and gap match; inline padding is not compared (Figma's instance keeps a text button's padding around an empty label, 66 px wide in its 40 px frame), and the trigger is the frame's 40 × 40 with a centred 16 px plus. Each row's icon is 20 × 20, the document icon or the kind's |
+| Three engines | `browser-set.mjs` on the 12 `packages/ai/test/*.browser.test.ts` files | Chromium 498 passed, 4 skipped; Firefox and WebKit 496 passed, 6 skipped each |
+| Contract records | `browser-set.mjs packages/components/test/contract.browser.test.ts` (stale after main's field glyph change), then `npm run verify:metadata` | 830 passed, 50 skipped in each engine; verify exit 0: 2,222 component facts and 488 AI facts verified in three engines; vocabulary 0 findings (`trigger`, `icons`) |
+| Probes | `mutate.mjs` in Chromium, 8 probes | 8 killed: the describe hook, the name, the plus, the tooltip, the square, the padding, the plus size, the kind mapping |
+| Repository | `npm run typecheck`; `npm run lint` after `npm run compat`; `npx vitest run --project node`; `node scripts/list-diagnostics.mjs --check`; `npm run verify:packs` | Exit 0 each; node 142 files, 1,770 passed (the reuse map lists the picker's `odd-icon` and `odd-tooltip`); 514 diagnostics, 0 flagged |
+| e2e | `e2e-when-free.mjs 2 ... e2e/workbench-catalog.spec.ts --grep=context.picker --workers=2` | 6 passed: the picker's previews in light and dark (its module graph now has the tooltip and icon) and its generated snippets, in three engines |
+| Size | `node scripts/check-size.mjs` | Exit 0: `ai:styles` 5,619 of 5,632 (the square trigger, one rule); `ai-chat` 69,222, `ai-response` 28,926, `ai-headless` 14,909 |
+| Not done | — | The full-screen sheet and the expanded browser (the row's next landings); real assistive technology |

@@ -2749,7 +2749,10 @@
       "reason": "Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them)."
     },
     "odd-container": { "dependencies": [] },
-    "odd-context-picker": { "dependencies": [] },
+    "odd-context-picker": {
+      "dependencies": ["odd-icon", "odd-tooltip"],
+      "reason": "The icon trigger's tooltip is a complete odd-tooltip anchored to it, which shows the trigger's name and adds no description; a resource's kind icon is an odd-icon drawing the host's URL, as menu and command palette icons are."
+    },
     "odd-conversation": {
       "dependencies": ["odd-activity", "odd-message"],
       "reason": "Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness."

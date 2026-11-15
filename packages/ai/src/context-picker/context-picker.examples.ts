@@ -106,6 +106,7 @@ const folders: Record<string, ContextResource[]> = {
       id: 'launch-folder',
       label: 'Launch folder',
       type: 'folder',
+      kind: 'folder',
       description: 'Folder reference · contents not selected',
     },
     {
@@ -126,6 +127,9 @@ const folders: Record<string, ContextResource[]> = {
     },
   ],
 };
+/** A folder icon for resources of kind `folder` (any SVG URL the page may load). */
+const folderIcon =
+  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="black" stroke-width="1.5" stroke-linejoin="round"%3E%3Cpath d="M2.75 5h4.5l1.5 1.75h8.5v8.5H2.75z"/%3E%3C/svg%3E';
 /** The host: answers each search from `library` after a short delay; every change applies. */
 function host(scope: Scope, element: Picker): void {
   scope.listen<GlobalEventHandlersEventMap['odd-context-query']>(
@@ -215,13 +219,23 @@ export default defineExamples('odd-context-picker', {
       ],
       multiple: true,
       open: true,
+      icons: { folder: folderIcon },
     },
     guidance:
-      'A source with `browse` can be opened with Browse…: the picker asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person opens the browser; this example presses Browse… as one would.',
+      'A source with `browse` can be opened with Browse…: the picker asks `odd-context-query` with a `location` (a source, or a container inside it) and shows what the host answers. A resource with `container` opens to show what is inside it and is never chosen itself; a folder reference is an ordinary resource, chosen on its own, and says so in its description. A `nextCursor` in `results` gives Load more. Only a person opens the browser; this example presses Browse… as one would. A resource’s `kind` picks its icon from `icons` (URLs the page may load); others show the document icon.',
     async fixture({ scope, element }) {
       host(scope, element);
       await element.updateComplete;
       element.shadowRoot!.querySelector<HTMLButtonElement>('[part~="footer"] button')!.click();
+    },
+  },
+  iconTrigger: {
+    label: 'A plus button where the text does not fit',
+    props: { sources, multiple: true, trigger: 'icon' },
+    guidance:
+      'With `trigger="icon"` the trigger is a plus button. Its text (`label`, by default Add context) stays its accessible name and shows as its tooltip on hover and focus.',
+    fixture({ scope, element }) {
+      host(scope, element);
     },
   },
 });
