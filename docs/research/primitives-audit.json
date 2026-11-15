@@ -2296,17 +2296,38 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "TA1",
+          "check": "api",
+          "finding": "Figma State Empty, Filled, Focus, Invalid, and Disabled map to placeholder, value, keyboard focus, error, and disabled; the count (\"0 / 500 characters\") is maxlength. The code adds rows, resize (none, vertical, auto to grow with its content), readonly, and description.",
+          "proposal": "None."
+        },
+        {
+          "id": "TA2",
+          "check": "visual",
+          "finding": "Matching: the field tokens, body text, the secondary placeholder, the count in the small type below the field (replaced by the error when invalid), and the focus ring.",
+          "proposal": "None."
+        },
+        {
+          "id": "TA3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all five states.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the five Figma states, with the character count below the field, map to the API and are compared."
     },
     {
       "order": 27,
@@ -2359,17 +2380,56 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "gap",
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "TG1",
+          "check": "api",
+          "finding": "Figma Value (Off, On) and State (Default, Hover, Focus, Disabled) map to toggle with pressed, browser states, and disabled; input and change report a flip by the user.",
+          "proposal": "None."
+        },
+        {
+          "id": "TG2",
+          "check": "visual",
+          "finding": "Matching: off as the secondary button, on in color.selection.background with color.selection.foreground text and no border, the 20 px icon, and the focus ring.",
+          "proposal": "None."
+        },
+        {
+          "id": "TG3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all eight variants.",
+          "proposal": "None."
+        },
+        {
+          "id": "TG4",
+          "check": "a11y",
+          "finding": "Assistive technology hears the state (aria-pressed). Seen, a pressed toggle differs from an unpressed one by its colours and its missing border. Figma's review row says to \"pair colour with an inset marker\", but its On variant has no marker; it writes \"· on\" in the label, which is the author's text.",
+          "proposal": "Decision D1."
+        }
+      ],
+      "decisions": [
+        {
+          "id": "D1",
+          "question": "How does a pressed toggle show its state without relying on colour?",
+          "options": [
+            "The button draws a marker when pressed (for example an inset bar along its bottom edge in color.selection.foreground), and Figma's On variants draw it too.",
+            "The author changes the label when pressed, as Figma's \"Bold · on\" does; the guidance says so.",
+            "Leave it: the colours and the border change are enough."
+          ],
+          "recommendation": "The first: the review row asks for it, it needs nothing from each author, and it holds in every appearance and in forced colours.",
+          "answer": null
+        }
+      ],
+      "audited": "2026-11-15",
+      "summary": "odd-button toggle with pressed matches Figma's eight variants, and the parity test compares them. One gap: a pressed toggle shows its state mostly by colour; the inset marker Figma's review row asks for is drawn by neither Figma nor the code (D1)."
     },
     {
       "order": 28,
@@ -2401,17 +2461,44 @@
         "cssProperties": ["--odd-tooltip-max-inline-size"],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
-        "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "api": "gap",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "ok",
+        "responsive": "ok",
+        "docs": "gap"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "TT1",
+          "check": "api",
+          "finding": "Figma State Default (one line) maps to the tooltip's text; Description (a UI-type title and a small secondary line) has no API: the parity test notes that the second line is the author's markup.",
+          "proposal": "A description attribute, drawn in the small type and color.text.secondary below the text, as the form controls take description."
+        },
+        {
+          "id": "TT2",
+          "check": "visual",
+          "finding": "Matching: color.surface.raised with a border.width.default border in color.border.default, control.radius, and the UI type in color.text.primary.",
+          "proposal": "None."
+        },
+        {
+          "id": "TT3",
+          "check": "a11y",
+          "finding": "The tooltip describes its anchor and never names it, as the review row asks (\"never the only accessible label\"); an anchor that wants no description opts out (the context picker's icon trigger).",
+          "proposal": "None."
+        },
+        {
+          "id": "TT4",
+          "check": "docs",
+          "finding": "Examples show a tooltip on a button and beside its control; none shows Figma's Description.",
+          "proposal": "An example with TT1."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "The tooltip matches Figma's Default. Figma's Description variant adds a second, smaller line in color.text.secondary, which the tooltip leaves to the author's markup."
     },
     {
       "order": 29,
@@ -2431,21 +2518,43 @@
         "recipes": ["typography.css"]
       },
       "api": null,
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "TY1",
+          "check": "api",
+          "finding": "Figma's eight roles (Display, Section, Card title, Body, UI, Small, Eyebrow, Code) map to the typography.css classes and the type tokens.",
+          "proposal": "None."
+        },
+        {
+          "id": "TY2",
+          "check": "visual",
+          "finding": "Matching: each role's size, weight, and line height, with Small, Eyebrow, and Code in color.text.secondary (recipes-css.browser.test.ts checks the same).",
+          "proposal": "None."
+        },
+        {
+          "id": "TY3",
+          "check": "parity",
+          "finding": "figma-parity.browser.test.ts compares all eight roles.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the typography recipe gives Figma's eight text roles, and the parity test compares them."
     }
   ],
   "notes": [
     "The Figma snapshot (design/figma/components.json) matched the live Primitives page on 2026-11-15: the same 104 families, names, and variant counts. The page also has six top-level review frames (354:11578 to 354:11589, 685:3157) and 19 \"Review row\" frames; each audit reads its rows there too.",
-    "Figma's review rows label Button and Text input SHIPPED and every other primitive DESIGN, though all are built. A row could turn SHIPPED when its primitive is done here."
+    "Figma's review rows label Button and Text input SHIPPED and every other primitive DESIGN, though all are built. A row could turn SHIPPED when its primitive is done here.",
+    "First pass complete on 2026-11-15: all 29 primitives audited. The accessibility check is open (?) for most: contrast is measured in one pass across every primitive, in light and dark, after the owner's decisions."
   ]
 }

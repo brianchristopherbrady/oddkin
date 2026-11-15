@@ -21,6 +21,7 @@ Not in this audit:
 
 - The Figma snapshot (design/figma/components.json) matched the live Primitives page on 2026-11-15: the same 104 families, names, and variant counts. The page also has six top-level review frames (354:11578 to 354:11589, 685:3157) and 19 "Review row" frames; each audit reads its rows there too.
 - Figma's review rows label Button and Text input SHIPPED and every other primitive DESIGN, though all are built. A row could turn SHIPPED when its primitive is done here.
+- First pass complete on 2026-11-15: all 29 primitives audited. The accessibility check is open (?) for most: contrast is measured in one pass across every primitive, in light and dark, after the owner's decisions.
 
 ## Checks
 
@@ -64,10 +65,10 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 23 | [spinner](#23-spinner) | spinner (161:1939) | `odd-spinner` | audited | ok | gap | gap | ok | ok | ok |
 | 24 | [stat](#24-stat) | stat (555:2908) | `odd-stat` | audited | ok | ok | ok | ? | ok | ok |
 | 25 | [switch](#25-switch) | switch (159:1258) | `odd-switch` | audited | ok | ok | ok | ? | ok | ok |
-| 26 | [textarea](#26-textarea) | textarea (159:1056) | `odd-textarea` | not started | ? | ? | ? | ? | ? | ? |
-| 27 | [toggleButton](#27-togglebutton) | toggleButton (159:501) | `odd-button` | not started | ? | ? | ? | ? | ? | ? |
-| 28 | [tooltip](#28-tooltip) | tooltip (160:2470) | `odd-tooltip` | not started | ? | ? | ? | ? | ? | ? |
-| 29 | [typography](#29-typography) | typography (162:2080) | `typography.css` | not started | ? | ? | ? | ? | ? | ? |
+| 26 | [textarea](#26-textarea) | textarea (159:1056) | `odd-textarea` | audited | ok | ok | ok | ? | ok | ok |
+| 27 | [toggleButton](#27-togglebutton) | toggleButton (159:501) | `odd-button` | audited | ok | ok | ok | gap | ok | ok |
+| 28 | [tooltip](#28-tooltip) | tooltip (160:2470) | `odd-tooltip` | audited | gap | ok | ok | ok | ok | gap |
+| 29 | [typography](#29-typography) | typography (162:2080) | `typography.css` | audited | ok | ok | ok | ? | ok | ok |
 
 ## 1. avatar
 
@@ -689,7 +690,7 @@ Code: `odd-switch` (packages/components/src/switch/).
 
 ## 26. textarea
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the five Figma states, with the character count below the field, map to the API and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -701,11 +702,15 @@ Code: `odd-textarea` (packages/components/src/textarea/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `minlength: number \| undefined = undefined`, `maxlength: number \| undefined = undefined`, `placeholder: string = ""`, `autocomplete: string = ""`, `required: boolean = false`, `readonly: boolean = false`, `rows: number = 4`, `resize: none \| vertical \| auto = vertical` | — | `control`, `count`, `description`, `error`, `field`, `label` | `--odd-field-background`, `--odd-field-border-color`, `--odd-field-height`, `--odd-field-radius`, `--odd-textarea-max-height` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| TA1 | api | Figma State Empty, Filled, Focus, Invalid, and Disabled map to placeholder, value, keyboard focus, error, and disabled; the count ("0 / 500 characters") is maxlength. The code adds rows, resize (none, vertical, auto to grow with its content), readonly, and description. | None. |
+| TA2 | visual | Matching: the field tokens, body text, the secondary placeholder, the count in the small type below the field (replaced by the error when invalid), and the focus ring. | None. |
+| TA3 | parity | figma-parity.forms.browser.test.ts compares all five states. | None. |
 
 ## 27. toggleButton
 
-Status: not started.
+Status: audited (2026-11-15). odd-button toggle with pressed matches Figma's eight variants, and the parity test compares them. One gap: a pressed toggle shows its state mostly by colour; the inset marker Figma's review row asks for is drawn by neither Figma nor the code (D1).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -717,11 +722,24 @@ Code: `odd-button` (packages/components/src/button/). odd-button toggle.
 | --- | --- | --- | --- | --- |
 | `appearance: primary \| secondary \| ghost = secondary`, `size: sm \| md \| lg = md`, `type: button \| submit \| reset = button`, `disabled: boolean = false`, `loading: boolean = false`, `full-width: boolean = false`, `toggle: boolean = false`, `pressed: boolean = false`, `name: string = ""`, `value: string = ""`, `formaction: string \| undefined = undefined`, `formmethod: string \| undefined = undefined`, `formenctype: string \| undefined = undefined`, `formtarget: string \| undefined = undefined`, `formnovalidate: boolean = false`, `label: string = ""` | `(default)`, `end`, `start` | `control`, `spinner` | `--odd-button-background`, `--odd-button-border-color`, `--odd-button-color`, `--odd-button-height`, `--odd-button-padding-inline`, `--odd-button-radius` | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| TG1 | api | Figma Value (Off, On) and State (Default, Hover, Focus, Disabled) map to toggle with pressed, browser states, and disabled; input and change report a flip by the user. | None. |
+| TG2 | visual | Matching: off as the secondary button, on in color.selection.background with color.selection.foreground text and no border, the 20 px icon, and the focus ring. | None. |
+| TG3 | parity | figma-parity.forms.browser.test.ts compares all eight variants. | None. |
+| TG4 | a11y | Assistive technology hears the state (aria-pressed). Seen, a pressed toggle differs from an unpressed one by its colours and its missing border. Figma's review row says to "pair colour with an inset marker", but its On variant has no marker; it writes "· on" in the label, which is the author's text. | Decision D1. |
+
+Decisions for the owner:
+
+- **D1: How does a pressed toggle show its state without relying on colour?** Open.
+  1. The button draws a marker when pressed (for example an inset bar along its bottom edge in color.selection.foreground), and Figma's On variants draw it too.
+  2. The author changes the label when pressed, as Figma's "Bold · on" does; the guidance says so.
+  3. Leave it: the colours and the border change are enough.
+  - Recommendation: The first: the review row asks for it, it needs nothing from each author, and it holds in every appearance and in forced colours.
 
 ## 28. tooltip
 
-Status: not started.
+Status: audited (2026-11-15). The tooltip matches Figma's Default. Figma's Description variant adds a second, smaller line in color.text.secondary, which the tooltip leaves to the author's markup.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -733,11 +751,16 @@ Code: `odd-tooltip` (packages/components/src/tooltip/).
 | --- | --- | --- | --- | --- |
 | `anchor: string = ""`, `side: inline-end \| inline-start \| block-end \| block-start = block-start`, `align: center \| start \| end = center`, `open: boolean = false` | `(default)` | `base` | `--odd-tooltip-max-inline-size` | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| TT1 | api | Figma State Default (one line) maps to the tooltip's text; Description (a UI-type title and a small secondary line) has no API: the parity test notes that the second line is the author's markup. | A description attribute, drawn in the small type and color.text.secondary below the text, as the form controls take description. |
+| TT2 | visual | Matching: color.surface.raised with a border.width.default border in color.border.default, control.radius, and the UI type in color.text.primary. | None. |
+| TT3 | a11y | The tooltip describes its anchor and never names it, as the review row asks ("never the only accessible label"); an anchor that wants no description opts out (the context picker's icon trigger). | None. |
+| TT4 | docs | Examples show a tooltip on a button and beside its control; none shows Figma's Description. | An example with TT1. |
 
 ## 29. typography
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the typography recipe gives Figma's eight text roles, and the parity test compares them.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -745,4 +768,8 @@ Status: not started.
 
 Code: `typography.css`.
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| TY1 | api | Figma's eight roles (Display, Section, Card title, Body, UI, Small, Eyebrow, Code) map to the typography.css classes and the type tokens. | None. |
+| TY2 | visual | Matching: each role's size, weight, and line height, with Small, Eyebrow, and Code in color.text.secondary (recipes-css.browser.test.ts checks the same). | None. |
+| TY3 | parity | figma-parity.browser.test.ts compares all eight roles. | None. |
