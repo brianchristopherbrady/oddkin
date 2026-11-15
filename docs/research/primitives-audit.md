@@ -55,9 +55,9 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 14 | [link](#14-link) | link (159:549) | `.odd-link (link.css)` | audited | ok | ok | gap | ? | ok | gap |
 | 15 | [number](#15-number) | number (159:1097) | `odd-input` | audited | ok | gap | ok | ? | ok | ok |
 | 16 | [progress](#16-progress) | progress (161:1916) | `odd-progress` | audited | ok | ok | gap | ? | ok | ok |
-| 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | not started | ? | ? | ? | ? | ? | ? |
-| 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | not started | ? | ? | ? | ? | ? | ? |
-| 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | not started | ? | ? | ? | ? | ? | ? |
+| 17 | [radio](#17-radio) | radio (159:1209) | `odd-radio-group` | audited | ok | ok | ok | ? | ok | ok |
+| 18 | [rating](#18-rating) | rating (555:2787), rating/Item (555:2595) | `odd-rating` | audited | ok | ok | ok | ? | ok | ok |
+| 19 | [relativeTime](#19-relativetime) | relativeTime (555:3030) | `odd-relative-time` | audited | ok | ok | ok | ? | ok | ok |
 | 20 | [search](#20-search) | search (159:1144) | `odd-input` | not started | ? | ? | ? | ? | ? | ? |
 | 21 | [skeleton](#21-skeleton) | skeleton (161:1959) | `odd-skeleton` | not started | ? | ? | ? | ? | ? | ? |
 | 22 | [slider](#22-slider) | slider (159:1287) | `odd-slider` | not started | ? | ? | ? | ? | ? | ? |
@@ -489,7 +489,7 @@ Code: `odd-progress` (packages/components/src/progress/).
 
 ## 17. radio
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found. A radio exists only inside odd-radio-group, as Figma's review row describes it ("one choice within a named group"); all ten variants match and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -501,11 +501,16 @@ Code: `odd-radio-group` (packages/components/src/radio-group/). No standalone ra
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `required: boolean = false`, `orientation: vertical \| horizontal = vertical` | — | `control`, `description`, `error`, `field`, `group`, `label`, `option`, `option-description` | — | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| RD1 | api | Figma Selection (Unchecked, Checked) and State (Default, Hover, Focus, Invalid, Disabled), its Label text, and its Show validation hint map to the group's options (children or the options property), value, error, disabled (the group's or an option's), and browser states. The group adds label, description, required, orientation, and option descriptions. | None. |
+| RD2 | visual | Matching: the 20 px circle (radius.full) with a border.width.default border in color.border.strong, the surface, hover, and sunken fills, color.selection.background with an 8 px color.selection.foreground dot when checked, the danger border when invalid, the space.sm gap, and the label colours. | None. |
+| RD3 | parity | figma-parity.forms.browser.test.ts compares all ten variants. | None. |
+| RD4 | responsive | Options stack, or wrap in a row with orientation="horizontal". | None. |
 
 ## 18. rating
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the six Figma states and the five star states map to the API and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -518,11 +523,16 @@ Code: `odd-rating` (packages/components/src/rating/).
 | --- | --- | --- | --- | --- |
 | `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `label: string = ""`, `value: string = ""`, `required: boolean = false`, `max: number = 5`, `readonly: boolean = false` | — | `control`, `description`, `error`, `field`, `label`, `option`, `value` | — | `input`, `change` |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| RT1 | api | Figma State Empty, Selected, Focus, Invalid, Disabled, and Read only map to value, keyboard focus, error, disabled, and readonly; rating/Item Off, On, Focus, Disabled off, and Disabled on are each star. The code adds max (5 by default), named options, required, and description. | None. |
+| RT2 | visual | Matching: 32 px star targets space.2xs apart, a 20 px star (color.border.strong outline when off, color.action.default when on, color.text.disabled when disabled), the value text ("3 of 5", "Not rated") space.sm after the stars, and the focus ring. | None. |
+| RT3 | parity | figma-parity.forms.browser.test.ts compares the six rating states and the five star states. | None. |
+| RT4 | responsive | The stars and value wrap in the width the parent grants. | None. |
 
 ## 19. relativeTime
 
-Status: not started.
+Status: audited (2026-11-15). No gaps found: the five Figma states map to datetime and detail and are compared.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -534,7 +544,11 @@ Code: `odd-relative-time` (packages/components/src/relative-time/).
 | --- | --- | --- | --- | --- |
 | `datetime: string = ""`, `detail: boolean = false` | — | `base`, `detail`, `time` | — | — |
 
-Not audited yet.
+| Finding | Check | What | Proposal |
+| --- | --- | --- | --- |
+| TM1 | api | Figma State Recent, Past, and Future follow datetime; Absolute detail is detail; Unavailable is a missing or invalid datetime. | None. |
+| TM2 | visual | Matching: the 16 px clock glyph space.xs before the relative text in color.text.secondary, and the absolute time in color.text.primary with detail. | None. |
+| TM3 | parity | figma-parity.display.browser.test.ts compares all five states. | None. |
 
 ## 20. search
 

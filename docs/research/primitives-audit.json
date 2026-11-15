@@ -1611,17 +1611,44 @@
         "cssProperties": [],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "RD1",
+          "check": "api",
+          "finding": "Figma Selection (Unchecked, Checked) and State (Default, Hover, Focus, Invalid, Disabled), its Label text, and its Show validation hint map to the group's options (children or the options property), value, error, disabled (the group's or an option's), and browser states. The group adds label, description, required, orientation, and option descriptions.",
+          "proposal": "None."
+        },
+        {
+          "id": "RD2",
+          "check": "visual",
+          "finding": "Matching: the 20 px circle (radius.full) with a border.width.default border in color.border.strong, the surface, hover, and sunken fills, color.selection.background with an 8 px color.selection.foreground dot when checked, the danger border when invalid, the space.sm gap, and the label colours.",
+          "proposal": "None."
+        },
+        {
+          "id": "RD3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares all ten variants.",
+          "proposal": "None."
+        },
+        {
+          "id": "RD4",
+          "check": "responsive",
+          "finding": "Options stack, or wrap in a row with orientation=\"horizontal\".",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found. A radio exists only inside odd-radio-group, as Figma's review row describes it (\"one choice within a named group\"); all ten variants match and are compared."
     },
     {
       "order": 18,
@@ -1667,17 +1694,44 @@
         "cssProperties": [],
         "events": ["input", "change"]
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "RT1",
+          "check": "api",
+          "finding": "Figma State Empty, Selected, Focus, Invalid, Disabled, and Read only map to value, keyboard focus, error, disabled, and readonly; rating/Item Off, On, Focus, Disabled off, and Disabled on are each star. The code adds max (5 by default), named options, required, and description.",
+          "proposal": "None."
+        },
+        {
+          "id": "RT2",
+          "check": "visual",
+          "finding": "Matching: 32 px star targets space.2xs apart, a 20 px star (color.border.strong outline when off, color.action.default when on, color.text.disabled when disabled), the value text (\"3 of 5\", \"Not rated\") space.sm after the stars, and the focus ring.",
+          "proposal": "None."
+        },
+        {
+          "id": "RT3",
+          "check": "parity",
+          "finding": "figma-parity.forms.browser.test.ts compares the six rating states and the five star states.",
+          "proposal": "None."
+        },
+        {
+          "id": "RT4",
+          "check": "responsive",
+          "finding": "The stars and value wrap in the width the parent grants.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the six Figma states and the five star states map to the API and are compared."
     },
     {
       "order": 19,
@@ -1704,17 +1758,38 @@
         "cssProperties": [],
         "events": []
       },
-      "status": "not started",
+      "status": "audited",
       "checks": {
-        "api": "unknown",
-        "visual": "unknown",
-        "parity": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
         "a11y": "unknown",
-        "responsive": "unknown",
-        "docs": "unknown"
+        "responsive": "ok",
+        "docs": "ok"
       },
-      "findings": [],
-      "decisions": []
+      "findings": [
+        {
+          "id": "TM1",
+          "check": "api",
+          "finding": "Figma State Recent, Past, and Future follow datetime; Absolute detail is detail; Unavailable is a missing or invalid datetime.",
+          "proposal": "None."
+        },
+        {
+          "id": "TM2",
+          "check": "visual",
+          "finding": "Matching: the 16 px clock glyph space.xs before the relative text in color.text.secondary, and the absolute time in color.text.primary with detail.",
+          "proposal": "None."
+        },
+        {
+          "id": "TM3",
+          "check": "parity",
+          "finding": "figma-parity.display.browser.test.ts compares all five states.",
+          "proposal": "None."
+        }
+      ],
+      "decisions": [],
+      "audited": "2026-11-15",
+      "summary": "No gaps found: the five Figma states map to datetime and detail and are compared."
     },
     {
       "order": 20,
