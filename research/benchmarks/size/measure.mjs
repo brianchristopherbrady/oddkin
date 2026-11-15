@@ -459,7 +459,9 @@ export const CSS_BUDGETS = {
   // 5,632 from 2026-11-14 (row 34; Agent 1, requested by Agent 2 in the lanes): measured 5,595 with
   // odd-context-picker on the owner's C07 design (browse, paging, chip overflow and review): the
   // other AI sheets are 5,075, the picker's about 520.
-  'ai:styles': 5632,
+  // 5,952 from 2026-11-15 (row 35; Agent 1, requested by Agent 2 in the lanes): measured 5,919
+  // with the picker's icon trigger (5,619), full-screen sheet (+136), and expanded browser (+164).
+  'ai:styles': 5952,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */
