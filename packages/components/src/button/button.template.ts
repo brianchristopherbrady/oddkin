@@ -4,8 +4,9 @@ import type { OddkinButton } from './button.js';
 
 /**
  * Anatomy: a native `<button part="control">` (focus target, keyboard activation, accessible
- * name from the default slot or `label`), a `part="spinner"` shown while loading, and
- * `start`, default, and `end` slots. Alternative templates must keep these relationships.
+ * name from the default slot or `label`), a `part="spinner"` centred over the content while
+ * loading (the content keeps its size and name, undrawn), and `start`, default, and `end` slots.
+ * Alternative templates must keep these relationships.
  */
 export const buttonTemplate = (button: OddkinButton) =>
   html`<button

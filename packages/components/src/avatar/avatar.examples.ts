@@ -18,7 +18,8 @@ export default defineExamples('odd-avatar', {
       label: 'Noah Diaz',
       src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" fill="%23b8c4d9"/%3E%3Ccircle cx="20" cy="16" r="7" fill="%235f6b80"/%3E%3Cpath d="M6 40a14 14 0 0 1 28 0" fill="%235f6b80"/%3E%3C/svg%3E',
     },
-    guidance: 'If the picture fails to load, the initials of `label` show instead.',
+    guidance:
+      'The initials of `label` show while the picture loads, and stay if it fails, in the same circle.',
   },
   overflow: {
     label: 'Overflow count',

@@ -1,7 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { cdp, server, userEvent } from 'vitest/browser';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { flush } from '@oddkin/core/reactive';
+import { scopeStats } from '@oddkin/core/scope';
 import { alertDefinition } from '../src/alert/index.js';
 import { avatarDefinition } from '../src/avatar/index.js';
 import { iconDefinition } from '../src/icon/index.js';
@@ -209,6 +210,24 @@ describe('odd-skeleton', () => {
 });
 
 describe('odd-avatar', () => {
+  type Avatar = HTMLElementTagNameMap['odd-avatar'];
+  const PICTURE =
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" fill="%23b8c4d9"/%3E%3C/svg%3E';
+  const OTHER =
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" fill="%235f6b80"/%3E%3C/svg%3E';
+  const BROKEN = 'data:image/png;base64,broken';
+  const image = (el: Element) => el.shadowRoot!.querySelector<HTMLImageElement>('[part="image"]');
+  const initials = (el: Element) => el.shadowRoot!.querySelector('.initials')?.textContent?.trim();
+  /** In-scope value of a theme custom property, resolved inside `scope`. */
+  const resolveIn = (scope: Element, property: string, variable: string) => {
+    const probe = document.createElement('div');
+    probe.style.setProperty(property, `var(${variable})`);
+    scope.append(probe);
+    const value = getComputedStyle(probe).getPropertyValue(property);
+    probe.remove();
+    return value;
+  };
+
   it('shows the initials of its label and is an image named by it', async () => {
     const tag = probeTag(avatarDefinition);
     const el = await mount(`<${tag} label="Amelia  Rose Morgan"></${tag}>`);
@@ -222,18 +241,268 @@ describe('odd-avatar', () => {
     expect(semantics(el)).toEqual({ role: null, label: null, hidden: 'true' });
   });
 
-  it('shows a picture, falls back to the initials when it fails, and retries a new src', async () => {
-    const el = await mount<HTMLElementTagNameMap['odd-avatar']>(
-      '<odd-avatar label="Jo Lee" src="data:image/png;base64,broken"></odd-avatar>',
-    );
-    await expect
-      .poll(() => el.shadowRoot!.querySelector('.initials')?.textContent?.trim())
-      .toBe('JL');
-    el.src =
-      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4"/%3E';
-    await settle(el);
-    expect(el.shadowRoot!.querySelector('[part="image"]')).not.toBeNull();
+  it('AV-A1: keeps the initials in the same circle until the picture loads, and after it fails', async () => {
+    const el = await mount<Avatar>('<odd-avatar label="Jo Lee"></odd-avatar>');
+    const field = document.createElement('input');
+    field.value = 'Draft note';
+    container.append(field);
+    field.focus();
+    field.setSelectionRange(2, 5);
+    const base = part(el, 'base');
+    const box = base.getBoundingClientRect().toJSON();
+    el.src = PICTURE;
+    flush();
+    // Read in the task that requests it: no load event can have run yet.
+    expect(initials(el)).toBe('JL');
+    expect(image(el)!.hidden).toBe(true);
+    expect(base.getBoundingClientRect().toJSON()).toEqual(box);
+    await expect.poll(() => image(el)?.hidden).toBe(false);
+    expect(el.shadowRoot!.querySelector('.initials')).toBeNull();
+    expect(image(el)!.getBoundingClientRect().width).toBe(box.width);
+    expect(base.getBoundingClientRect().toJSON()).toEqual(box);
+    el.src = BROKEN;
+    flush();
+    expect(initials(el)).toBe('JL');
+    expect(image(el)!.hidden).toBe(true);
+    await expect.poll(() => image(el)).toBe(null);
+    expect(initials(el)).toBe('JL');
+    expect(base.getBoundingClientRect().toJSON()).toEqual(box);
+    expect(document.activeElement).toBe(field);
+    expect([field.value, field.selectionStart, field.selectionEnd]).toEqual(['Draft note', 2, 5]);
   });
+
+  it('AV-A2: commits only the current source; reconnecting neither retries nor leaks', async () => {
+    const el = await mount<Avatar>('<odd-avatar label="Jo Lee"></odd-avatar>');
+    // A picture replaced before it settles never shows for the source that replaced it.
+    const shown: string[] = [];
+    const watch = new MutationObserver(() => {
+      const img = image(el);
+      if (img && !img.hidden) shown.push(img.getAttribute('src')!);
+    });
+    watch.observe(el.shadowRoot!, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['hidden'],
+    });
+    el.src = PICTURE;
+    flush();
+    const first = image(el)!;
+    el.src = BROKEN;
+    flush();
+    // Each source has its own image: the replaced one leaves with its listeners.
+    expect(image(el)).not.toBe(first);
+    expect(first.isConnected).toBe(false);
+    await expect.poll(() => image(el)).toBe(null);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    watch.disconnect();
+    expect(shown).toEqual([]);
+    expect(initials(el)).toBe('JL');
+    // A failing source replaced before it settles cannot fail the source that replaced it.
+    el.src = 'data:image/png;base64,alsobroken';
+    flush();
+    el.src = PICTURE;
+    flush();
+    await expect.poll(() => image(el)?.hidden).toBe(false);
+    // Reconnecting keeps the picture: no new request or listener, scopes back to baseline.
+    const loaded = image(el)!;
+    let loads = 0;
+    loaded.addEventListener('load', () => loads++);
+    const before = scopeStats();
+    for (let i = 0; i < 5; i++) {
+      el.remove();
+      container.append(el);
+      await settle(el);
+    }
+    expect(scopeStats()).toEqual(before);
+    expect(image(el)).toBe(loaded);
+    expect(loaded.hidden).toBe(false);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(loads).toBe(0);
+    // A failed source stays failed across reconnects: no automatic retry.
+    el.src = BROKEN;
+    await expect.poll(() => image(el)).toBe(null);
+    el.remove();
+    container.append(el);
+    await settle(el);
+    expect(image(el)).toBe(null);
+    // Setting it again after another source is an explicit retry.
+    el.src = '';
+    flush();
+    el.src = BROKEN;
+    flush();
+    expect(image(el)).not.toBe(null);
+    await expect.poll(() => image(el)).toBe(null);
+    // A source set while disconnected is requested on reconnect, the initials meanwhile.
+    el.remove();
+    el.src = OTHER;
+    container.append(el);
+    flush();
+    expect(initials(el)).toBe('JL');
+    await expect.poll(() => image(el)?.hidden).toBe(false);
+  });
+
+  it('AV-A3: one meaningful name, or hidden when decorative; never a focus stop', async () => {
+    const tag = probeTag(avatarDefinition);
+    const el = await mount<HTMLElement & { label: string }>(
+      `<${tag} label="Amelia Morgan"></${tag}>`,
+    );
+    expect(semantics(el)).toEqual({ role: 'img', label: 'Amelia Morgan', hidden: null });
+    for (const label of ['', '   ', '\u00a0\t']) {
+      el.label = label;
+      await settle(el);
+      expect(semantics(el), JSON.stringify(label)).toEqual({
+        role: null,
+        label: null,
+        hidden: 'true',
+      });
+      // The canonical property keeps the host's value.
+      expect(el.label).toBe(label);
+    }
+    el.label = 'Amelia Morgan';
+    await settle(el);
+    expect(semantics(el).label).toBe('Amelia Morgan');
+    el.focus();
+    expect(document.activeElement).not.toBe(el);
+    const focusable = 'a, button, input, select, textarea, [tabindex]';
+    expect(el.shadowRoot!.querySelectorAll(focusable)).toHaveLength(0);
+  });
+
+  it('AV-A4: keeps its size and identity while the parent narrows and widens', async () => {
+    const name = 'Amelia Morgan-Santamaría Wolfeschlegelsteinhausenbergerdorff';
+    const row = await mount(
+      `<div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--odd-space-sm);
+        box-sizing: border-box; inline-size: 640px; padding: var(--odd-space-md)">
+        <odd-avatar label="${name}"></odd-avatar>
+        <span class="name" style="flex: 1 1 8rem; min-inline-size: 0; overflow-wrap: anywhere">${name}</span>
+        <odd-button>View profile</odd-button>
+      </div>`,
+    );
+    const avatar = row.querySelector<Avatar>('odd-avatar')!;
+    const button = row.querySelector('odd-button')!;
+    await settle(avatar);
+    await settle(button);
+    const diameter = part(avatar, 'base').getBoundingClientRect().width;
+    button.focus();
+    const control = button.shadowRoot!.activeElement;
+    expect(control).not.toBe(null);
+    for (const width of [640, 240, 640]) {
+      row.style.inlineSize = `${width}px`;
+      await new Promise(requestAnimationFrame);
+      expect(row.querySelector('odd-avatar')).toBe(avatar);
+      expect(part(avatar, 'base').getBoundingClientRect().width, `${width}`).toBe(diameter);
+      expect(row.scrollWidth, `${width}`).toBeLessThanOrEqual(row.clientWidth + 1);
+      const text = row.querySelector<HTMLElement>('.name')!;
+      expect(text.scrollWidth, `${width}`).toBeLessThanOrEqual(text.clientWidth + 1);
+      expect(button.getBoundingClientRect().right).toBeLessThanOrEqual(
+        row.getBoundingClientRect().right + 0.5,
+      );
+      expect(document.activeElement).toBe(button);
+      expect(button.shadowRoot!.activeElement).toBe(control);
+    }
+    expect(avatar.label).toBe(name);
+  });
+
+  it('AV-A5: takes its diameter, paint, and type from the scope; --odd-avatar-size wins', async () => {
+    for (const scope of [
+      'data-odd-mode="light"',
+      'data-odd-mode="dark"',
+      'data-odd-density="compact"',
+    ])
+      for (const size of ['sm', 'md', 'lg'] as const) {
+        const wrapper = await mount(
+          `<div ${scope}><odd-avatar size="${size}" label="Amelia Morgan"></odd-avatar></div>`,
+        );
+        const el = wrapper.firstElementChild!;
+        await settle(el);
+        const base = part(el, 'base');
+        const style = getComputedStyle(base);
+        const at = `${scope} ${size}`;
+        expect(`${base.getBoundingClientRect().width}px`, at).toBe(
+          resolveIn(wrapper, 'inline-size', `--odd-control-height-${size}`),
+        );
+        expect(style.backgroundColor, at).toBe(
+          resolveIn(wrapper, 'background-color', '--odd-color-surface-sunken'),
+        );
+        expect(style.color, at).toBe(resolveIn(wrapper, 'color', '--odd-color-text-primary'));
+        const type = size === 'sm' ? 'small' : 'ui';
+        expect([style.fontSize, style.fontWeight], at).toEqual([
+          resolveIn(wrapper, 'font-size', `--odd-type-${type}-size`),
+          resolveIn(wrapper, 'font-weight', `--odd-type-${type}-weight`),
+        ]);
+        container.remove();
+      }
+    const wrapper = await mount(
+      '<div data-odd-density="compact"><odd-avatar size="sm" label="Amelia Morgan" style="--odd-avatar-size: 3.5rem"></odd-avatar></div>',
+    );
+    await settle(wrapper.firstElementChild!);
+    expect(part(wrapper.firstElementChild!, 'base').getBoundingClientRect().width).toBe(56);
+  });
+
+  it('AV-A6: keeps a localized fallback readable right to left and at twice the text size', async () => {
+    const wrapper = await mount(
+      '<div dir="rtl" lang="ar" style="display: flex; gap: 12px"><odd-avatar label="ليلى إبراهيم">لي</odd-avatar><span>ليلى إبراهيم — فريق التصميم</span></div>',
+    );
+    const el = wrapper.querySelector<Avatar>('odd-avatar')!;
+    await settle(el);
+    expect(el.label).toBe('ليلى إبراهيم');
+    expect(el.shadowRoot!.querySelector('slot')!.assignedNodes()[0]!.textContent).toBe('لي');
+    // The marker leads at the logical start: the right edge.
+    expect(el.getBoundingClientRect().left).toBeGreaterThan(
+      wrapper.querySelector('span')!.getBoundingClientRect().left,
+    );
+    const fits = () => {
+      const circle = part(el, 'base').getBoundingClientRect();
+      const text = el.shadowRoot!.querySelector('.initials')!.getBoundingClientRect();
+      return (
+        text.left >= circle.left - 0.5 &&
+        text.right <= circle.right + 0.5 &&
+        text.top >= circle.top - 0.5 &&
+        text.bottom <= circle.bottom + 0.5
+      );
+    };
+    expect(fits()).toBe(true);
+    const before = part(el, 'base').getBoundingClientRect().width;
+    document.documentElement.style.fontSize = '200%';
+    try {
+      await new Promise(requestAnimationFrame);
+      expect(part(el, 'base').getBoundingClientRect().width).toBeCloseTo(before * 2, 0);
+      expect(fits()).toBe(true);
+    } finally {
+      document.documentElement.style.fontSize = '';
+    }
+    // Without slotted content, the first letters of the first and last words.
+    el.textContent = '';
+    await settle(el);
+    expect(el.shadowRoot!.querySelector('.initials')!.textContent!.trim()).toBe('لإ');
+  });
+
+  it.runIf(server.browser === 'chromium')(
+    'keeps the circle and its initials visible in forced colours',
+    async () => {
+      const session = cdp();
+      await session.send('Emulation.setEmulatedMedia', {
+        features: [{ name: 'forced-colors', value: 'active' }],
+      });
+      try {
+        const el = await mount('<odd-avatar label="Amelia Morgan"></odd-avatar>');
+        const style = getComputedStyle(part(el, 'base'));
+        const probe = document.createElement('span');
+        probe.style.color = 'CanvasText';
+        container.append(probe);
+        const canvasText = getComputedStyle(probe).color;
+        expect([style.borderTopWidth, style.borderTopStyle, style.borderTopColor]).toEqual([
+          '1px',
+          'solid',
+          canvasText,
+        ]);
+        expect(style.borderTopLeftRadius).toBe('50%');
+        expect(getComputedStyle(el.shadowRoot!.querySelector('.initials')!).color).toBe(canvasText);
+      } finally {
+        await session.send('Emulation.setEmulatedMedia', { features: [] });
+      }
+    },
+  );
 
   it('lets content replace the initials, and sizes from the control heights', async () => {
     const el = await mount('<odd-avatar label="3 more" size="sm">+3</odd-avatar>');

@@ -115,45 +115,50 @@
         "cssProperties": ["--odd-avatar-size"],
         "events": []
       },
-      "status": "audited",
+      "status": "done",
       "checks": {
-        "api": "gap",
-        "visual": "gap",
-        "parity": "gap",
-        "a11y": "unknown",
+        "api": "ok",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "ok",
         "responsive": "ok",
-        "docs": "gap"
+        "docs": "ok"
       },
       "findings": [
         {
           "id": "AV1",
           "check": "api",
           "finding": "Figma Background (Neutral, Brand, Success, Warning, Danger) has no attribute. Figma binds Neutral color.neutral.surface with color.neutral.foreground initials; Brand color.action.default with color.text.on-action; Success, Warning, and Danger color.<tone>.surface with color.<tone>.foreground. Every token exists.",
-          "proposal": "A colour attribute (decision D1), each value drawing Figma's pair of tokens."
+          "proposal": "A colour attribute (decision D1), each value drawing Figma's pair of tokens.",
+          "fixed": "2026-11-17: declined by the specification (decision AV-D1: no new public property); ::part(base) and --odd-avatar-size remain."
         },
         {
           "id": "AV2",
           "check": "api",
           "finding": "Figma Background=Custom takes any HEX fill on the avatar, with the initials colour overridable on its own. The element offers only ::part(base).",
-          "proposal": "CSS custom properties --odd-avatar-background and --odd-avatar-color (per instance through style, for example a colour from user data). The guidance says the author owns the contrast of a custom pair."
+          "proposal": "CSS custom properties --odd-avatar-background and --odd-avatar-color (per instance through style, for example a colour from user data). The guidance says the author owns the contrast of a custom pair.",
+          "fixed": "2026-11-17: declined by the specification (decision AV-D1: no new public property); ::part(base) and --odd-avatar-size remain."
         },
         {
           "id": "AV3",
           "check": "api",
           "finding": "Figma Shape (Square radius.none, Small radius radius.sm, Rounded radius.md, Circle radius.full) has no attribute; avatar.structural.styles.ts hard-codes border-radius: 50%.",
-          "proposal": "A shape attribute (decision D2), and --odd-avatar-radius for any other radius."
+          "proposal": "A shape attribute (decision D2), and --odd-avatar-radius for any other radius.",
+          "fixed": "2026-11-17: declined by the specification (decision AV-D1: no new public property); ::part(base) and --odd-avatar-size remain."
         },
         {
           "id": "AV4",
           "check": "visual",
           "finding": "Two Figma families disagree on the default look. avatar/Appearance draws Neutral as color.neutral.surface with color.neutral.foreground, and 32 px initials in the UI type. The older avatar State=Initials (the one the parity test compares) binds color.surface.sunken with color.text.primary, and the code follows it, with the small type at size sm.",
-          "proposal": "Decision D3. Then the default draws the current family and the other is updated in Figma."
+          "proposal": "Decision D3. Then the default draws the current family and the other is updated in Figma.",
+          "fixed": "2026-11-17: the canonical family is Oddkin/Primitives/Avatar (1388:45), which matches the code (D3); the snapshot holds it and the parity test compares it."
         },
         {
           "id": "AV5",
           "check": "visual",
           "finding": "Figma's AvatarItem draws a border.width.strong ring in color.surface.default on every avatar. The code rings avatars only inside .odd-avatar-group, as a box-shadow in color.canvas.",
-          "proposal": "Keep the ring for groups only, where it separates overlapping avatars (on the default surface a lone avatar's ring cannot be seen), recorded as a deliberate difference; draw it in Figma's color.surface.default."
+          "proposal": "Keep the ring for groups only, where it separates overlapping avatars (on the default surface a lone avatar's ring cannot be seen), recorded as a deliberate difference; draw it in Figma's color.surface.default.",
+          "fixed": "2026-11-17: the specification keeps the ring to the group recipe and each consumer's own view, in color.canvas (its token map); a lone avatar has none."
         },
         {
           "id": "AV6",
@@ -165,25 +170,41 @@
           "id": "AV7",
           "check": "parity",
           "finding": "The parity tests compare only avatar State=Initials (md and sm) and the multiselect avatars view. Not compared: the 24 Appearance variants, the Group variant (.odd-avatar-group and .odd-avatar-group-more), the ring.",
-          "proposal": "Compare every Background and Shape variant, and the group, in light and dark, with the fix."
+          "proposal": "Compare every Background and Shape variant, and the group, in light and dark, with the fix.",
+          "fixed": "2026-11-17: figma-parity.browser.test.ts compares all 18 variants of Oddkin/Primitives/Avatar (Size x State: fill, radius, diameter, initials type, the picture frame) in three engines; the avatars view keeps its AvatarItem comparison."
         },
         {
           "id": "AV8",
           "check": "a11y",
           "finding": "Not yet measured: the contrast of each preset's initials on its fill, in light and dark. Forced colours: the element draws a 1px CanvasText border, which must follow every shape.",
-          "proposal": "Measure each pair (at least 4.5:1 for the initials) with the fix."
+          "proposal": "Measure each pair (at least 4.5:1 for the initials) with the fix.",
+          "fixed": "2026-11-17: the initials measure 13.38:1 on color.surface.sunken in light and 17.01:1 in dark; in forced colours the circle keeps a 1px CanvasText border and CanvasText initials (display.browser.test.ts, Chromium)."
         },
         {
           "id": "AV9",
           "check": "docs",
           "finding": "Examples cover sizes, a picture, an overflow count, an avatar beside a name, and name versus label; none shows a colour, a shape, a custom colour, or a group.",
-          "proposal": "An example per new value, one with a custom colour, and a group with its overflow avatar."
+          "proposal": "An example per new value, one with a custom colour, and a group with its overflow avatar.",
+          "fixed": "2026-11-17: colour and shape are declined, and every API value (label, src, size, the slot) has an example; the picture example says the initials show while it loads and if it fails. The group is a CSS recipe, checked by recipes-css.browser.test.ts."
         },
         {
           "id": "AV10",
           "check": "figma",
           "finding": "For the owner, in Figma: (a) the review row's \"Large · 12 px\" is an instance of Shape=Rounded with its radius overridden to radius.lg, and there is no Large shape; (b) the Appearance set's default variant is Square, while AvatarItem and the older family are circles; (c) Custom's initials bind repo/ref/neutral/0, a reference colour, not a role token.",
-          "proposal": "Decide (a) and (b) with D2; bind (c) to a role, or leave the custom foreground to the author."
+          "proposal": "Decide (a) and (b) with D2; bind (c) to a role, or leave the custom foreground to the author.",
+          "fixed": "2026-11-17: moot: the specification declines shapes and custom colours, and supersedes avatar/Appearance (AV11)."
+        },
+        {
+          "id": "AV11",
+          "check": "figma",
+          "finding": "Page 158:22 still holds the superseded avatar families: avatar (162:2022) and avatar/Appearance (374:1576, 24 variants of colours and shapes the specification declines). AvatarItem (257:886) is the multiselect avatars view, compared by its own parity test.",
+          "proposal": "For the owner: remove avatar and avatar/Appearance, or mark them historical; keep AvatarItem."
+        },
+        {
+          "id": "AV12",
+          "check": "figma",
+          "finding": "Oddkin/Primitives/Avatar's default variant is Size=sm (the first in the set); the API defaults to md, as the specification's contract says.",
+          "proposal": "For the owner: make Size=md the default variant, or accept the difference."
         }
       ],
       "decisions": [
@@ -195,7 +216,7 @@
             "tone with ADR 0045's values only (no brand), and the brand look stays the .odd-avatar-group-more recipe."
           ],
           "recommendation": "The first. odd-badge and odd-alert already take tone through the shared tone styles (packages/components/src/styles/tone.styles.ts), which draw neutral, info, success, warning, and danger with the same color.<tone>.surface and color.<tone>.foreground pairs Figma's avatar presets bind; only brand is new, and ADR 0045 records it as an avatar tone.",
-          "answer": null
+          "answer": "2026-11-17, the owner's specification (page 1388:2, decision AV-D1, which adds no public property): no colour attribute. The avatar keeps one look, color.surface.sunken with color.text.primary initials."
         },
         {
           "id": "D2",
@@ -205,7 +226,7 @@
             "radius=\"none | sm | md | full\", the radius token names."
           ],
           "recommendation": "The first: Figma's property name and values, as button's appearance follows Figma; default circle. Any other radius (the review row's 12 px) through --odd-avatar-radius.",
-          "answer": null
+          "answer": "2026-11-17, the same decision: no shape attribute; the avatar stays a circle."
         },
         {
           "id": "D3",
@@ -215,11 +236,11 @@
             "The older avatar."
           ],
           "recommendation": "avatar/Appearance: Neutral becomes color.neutral.surface with color.neutral.foreground, and 32 px initials keep the UI type.",
-          "answer": null
+          "answer": "2026-11-17, page 1388:2: Oddkin/Primitives/Avatar (1388:45) is canonical, the look the code draws (color.surface.sunken, color.text.primary, the Small type at sm, UI at md and lg). The older families on page 158:22 are superseded (AV11)."
         }
       ],
       "audited": "2026-11-15",
-      "summary": "Figma draws five preset backgrounds, a custom HEX background, and four corner radii (Oddkin/Common/avatar/Appearance, 374:1576; the review row 374:1580). odd-avatar has neither: it always draws a sunken circle with primary-text initials. Sizes match."
+      "summary": "Figma draws five preset backgrounds, a custom HEX background, and four corner radii (Oddkin/Common/avatar/Appearance, 374:1576; the review row 374:1580). odd-avatar has neither: it always draws a sunken circle with primary-text initials. Sizes match. Outcome (2026-11-17): the owner's specification (page 1388:2) keeps one look and the circle, so the colour and shape attributes are declined; Oddkin/Primitives/Avatar is canonical and matches. The initials now show while a picture loads and if it fails, and only the current source can commit. Left for the owner in Figma: AV11 and AV12."
     },
     {
       "order": 2,
@@ -249,12 +270,12 @@
         "cssProperties": ["--odd-badge-radius"],
         "events": []
       },
-      "status": "audited",
+      "status": "done",
       "checks": {
         "api": "ok",
-        "visual": "gap",
-        "parity": "gap",
-        "a11y": "unknown",
+        "visual": "ok",
+        "parity": "ok",
+        "a11y": "ok",
         "responsive": "ok",
         "docs": "ok"
       },
@@ -269,13 +290,15 @@
           "id": "BG2",
           "check": "visual",
           "finding": "Gap between glyph and text: Figma 8 px (the glyph at x8 to 24, the text at x32), the code space.2xs (4 px).",
-          "proposal": "Decision D1."
+          "proposal": "Decision D1.",
+          "fixed": "2026-11-17: page 1395:2 binds the surface to space.2xs (gap), space.3xs and space.xs (padding) and radius.sm, as the code draws it (D1); Count is a separate composition (159:581)."
         },
         {
           "id": "BG3",
           "check": "visual",
           "finding": "Height: Figma 28 px, the 18 px text 5 px from the top and bottom (5 px is not a token). The code: space.3xs (2 px) above and below the 18 px line, 22 px. Count: Figma a fixed 44 px box, the code about 30 px (space.xs either side of the digits).",
-          "proposal": "Decision D1."
+          "proposal": "Decision D1.",
+          "fixed": "2026-11-17: page 1395:2 binds the surface to space.2xs (gap), space.3xs and space.xs (padding) and radius.sm, as the code draws it (D1); Count is a separate composition (159:581)."
         },
         {
           "id": "BG4",
@@ -287,25 +310,42 @@
           "id": "BG5",
           "check": "parity",
           "finding": "The parity test compares fills, radius, and text for all six states; it cannot compare the gap or the height, which Figma does not bind (BG6).",
-          "proposal": "Once Figma binds them, compare itemSpacing and padding (fields), and the height."
+          "proposal": "Once Figma binds them, compare itemSpacing and padding (fields), and the height.",
+          "fixed": "2026-11-17: parity compares each Tone with and without the marker (fills, radius, text, the gap, the inline-end and block-end padding) and the Count composition, in three engines."
         },
         {
           "id": "BG6",
           "check": "figma",
           "finding": "For the owner, in Figma: each badge Surface is a fixed 120 x 28 frame (Count 44 x 28) with no auto layout, so its padding, gap, and size are positions rather than tokens, and its width does not follow the text.",
-          "proposal": "Auto layout on Surface: padding space.2xs and space.xs, gap from D1, hugging the text."
+          "proposal": "Auto layout on Surface: padding space.2xs and space.xs, gap from D1, hugging the text.",
+          "fixed": "2026-11-17: page 1395:2 binds the surface to space.2xs (gap), space.3xs and space.xs (padding) and radius.sm, as the code draws it (D1); Count is a separate composition (159:581)."
         },
         {
           "id": "BG7",
           "check": "a11y",
           "finding": "Not yet measured: the contrast of each tone's foreground on its surface, in light and dark. The badge has no role and is read as text; its glyph is the non-colour marker; forced colours draw a 1px CanvasText border.",
-          "proposal": "Measure the five pairs with the fix."
+          "proposal": "Measure the five pairs with the fix.",
+          "fixed": "2026-11-17: the five tone pairs measure 4.59 to 5.86:1 in light and 6.83 to 9.92:1 in dark; forced colours keep the 1px CanvasText border (badge.browser.test.ts B-A6, Chromium)."
         },
         {
           "id": "BG8",
           "check": "responsive",
           "finding": "The badge is at most as wide as its parent and wraps long words (overflow-wrap: anywhere).",
           "proposal": "None."
+        },
+        {
+          "id": "BG9",
+          "check": "visual",
+          "finding": "Badges with and without a glyph sat about 2.5 px apart in a row: the host was a line box taller than the 22 px surface.",
+          "proposal": "Make the host exactly its surface.",
+          "fixed": "2026-11-17: the surface is display: flex inside the inline-block host; badge.browser.test.ts B-L1 checks a row of both and a badge inline in text."
+        },
+        {
+          "id": "BG10",
+          "check": "visual",
+          "finding": "The tone glyphs drew their circle and triangle at about 12 px inside the 16 px marker; Figma's library icons span 14 to 15 px.",
+          "proposal": "Draw them from the canonical icons in design/icons/general.",
+          "fixed": "2026-11-17: info, check-circle, and warning follow information.svg, check-circle.svg, and warning.svg (glyphs.test.ts), for the badge, alert, toast, status marker, and validation summary."
         }
       ],
       "decisions": [
@@ -317,11 +357,11 @@
             "The code's compact badge (space.2xs gap, space.3xs padding), and Figma is redrawn to match."
           ],
           "recommendation": "The first: Figma's spacing, expressed in tokens, with Figma bound to the same tokens so the parity test locks it.",
-          "answer": null
+          "answer": "2026-11-17, the owner's specification (page 1395:2): the code's compact badge, space.2xs gap, space.3xs block and space.xs inline padding, 22 px tall. The Tone variants now bind those tokens."
         }
       ],
       "audited": "2026-11-15",
-      "summary": "The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it."
+      "summary": "The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it. Outcome (2026-11-17): the owner's specification (page 1395:2) keeps the code's compact spacing and binds it in Figma, so parity now compares the gap and padding; the glyphs follow the canonical icons and a row of badges aligns."
     },
     {
       "order": 3,
@@ -397,14 +437,14 @@
         ],
         "events": ["input", "change"]
       },
-      "status": "audited",
+      "status": "fixing",
       "checks": {
-        "api": "gap",
+        "api": "ok",
         "visual": "gap",
         "parity": "ok",
-        "a11y": "unknown",
+        "a11y": "ok",
         "responsive": "ok",
-        "docs": "gap"
+        "docs": "ok"
       },
       "findings": [
         {
@@ -417,7 +457,8 @@
           "id": "BT2",
           "check": "api",
           "finding": "The default appearance: Figma's sets default to primary; odd-button defaults to secondary.",
-          "proposal": "Decision D1."
+          "proposal": "Decision D1.",
+          "fixed": "2026-11-17: decided (D1): secondary stays the default; Figma's sets still default to primary (BT11)."
         },
         {
           "id": "BT3",
@@ -441,13 +482,15 @@
           "id": "BT6",
           "check": "figma",
           "finding": "For the owner: the 50% disabled opacity is a raw value in Figma and in the code; no opacity token exists.",
-          "proposal": "An opacity token for disabled controls, with the tokens lane, or accept the raw value."
+          "proposal": "An opacity token for disabled controls, with the tokens lane, or accept the raw value.",
+          "fixed": "2026-11-17: the specification's token map treats the 0.5 disabled opacity as a structural value, not a missing token."
         },
         {
           "id": "BT7",
           "check": "a11y",
           "finding": "A native button: keyboard, focus, and name from the platform; the focus ring is compared with Figma; label names an icon-only button (button.browser.test.ts); a disabled control is exempt from contrast. Not yet measured: each appearance's label contrast in light and dark.",
-          "proposal": "Measure with the fix."
+          "proposal": "Measure with the fix.",
+          "fixed": "2026-11-17: every appearance and state measures at least 5.40:1 (dark primary pressed); the pressed toggle 5.48:1 in light and 7.28:1 in dark. In forced colours a pressed toggle keeps Highlight, also while loading (button.browser.test.ts, Chromium). A disabled control is exempt."
         },
         {
           "id": "BT8",
@@ -459,7 +502,21 @@
           "id": "BT9",
           "check": "docs",
           "finding": "Examples cover the appearances, sizes, disabled, loading, toggle, full width, and a form submit; none shows a leading icon or an icon-only button.",
-          "proposal": "Add both, the icon-only one named by label."
+          "proposal": "Add both, the icon-only one named by label.",
+          "fixed": "2026-11-17: the leadingIcon example (the canonical plus, 16 px, in the start slot) and the iconOnly example (named by label); examples.browser.test.ts checks the icon size, the control.gap before the words, and both names."
+        },
+        {
+          "id": "BT10",
+          "check": "visual",
+          "finding": "Page 1398:2 draws Loading as a spinner centred over the label, which keeps its room undrawn, and keeps a pressed toggle's selection colours while loading.",
+          "proposal": "Centre the spinner over the content; keep the content and its name; keep the pressed paint under aria-disabled.",
+          "fixed": "2026-11-17: button.structural.styles.ts, button.styles.ts, and button.css; button.browser.test.ts B-A2 and B-A3 and the parity Loading cases check it in three engines."
+        },
+        {
+          "id": "BT11",
+          "check": "figma",
+          "finding": "Figma's three button sets default to Appearance=primary; the API keeps secondary (D1).",
+          "proposal": "For the owner: make secondary the sets' default variant, or accept the difference."
         }
       ],
       "decisions": [
@@ -471,11 +528,21 @@
             "Change the code to primary, as Figma has it."
           ],
           "recommendation": "Keep secondary (the first). Changing it would restyle every button written without appearance in pages that already use Oddkin.",
+          "answer": "2026-11-17, the owner's specification (page 1398:2): the default stays secondary (its contract: appearance primary, secondary, or ghost, default secondary)."
+        },
+        {
+          "id": "D2",
+          "question": "An odd-icon in the start or end slot: does the button size it to icon.size.sm (Figma draws 16 px at every size), or does the author set size=\"sm\"?",
+          "options": [
+            "The author sets size=\"sm\" (the leadingIcon example); icons stay author content, as the specification says.",
+            "The button sizes a slotted odd-icon through --odd-icon-size (a few bytes in the button bundle)."
+          ],
+          "recommendation": "The first: the specification keeps icon artwork author content, and the example shows the size.",
           "answer": null
         }
       ],
       "audited": "2026-11-15",
-      "summary": "The closest to Figma so far: every appearance, size, and state matches, and the parity test compares all 54 in three engines. Two gaps: the default appearance (Figma primary, the code secondary), and the leading icon, which Figma draws at 16 px while the start slot leaves an odd-icon at its 20 px default."
+      "summary": "The closest to Figma so far: every appearance, size, and state matches, and the parity test compares all 54 in three engines. Two gaps: the default appearance (Figma primary, the code secondary), and the leading icon, which Figma draws at 16 px while the start slot leaves an odd-icon at its 20 px default. Outcome (2026-11-17): the owner's specification (page 1398:2) keeps secondary as the default; loading now centres the spinner over the kept label and a pressed toggle keeps its colours. Open: the leading icon's size (BT3, decision D2)."
     },
     {
       "order": 4,

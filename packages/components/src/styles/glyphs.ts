@@ -132,27 +132,30 @@ export const fileGlyph = /* @__PURE__ */ glyph(
       <path d="M5 3h6l4 4v10H5zM11 3v4h4" />
     </svg>`,
 );
+/** Information (design/icons/general/information.svg). */
 export const infoGlyph = /* @__PURE__ */ glyph(
   () =>
     html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-      <circle cx="10" cy="10" r="7" />
-      <path d="M10 9v5" />
-      <circle class="dot" cx="10" cy="6.5" r="1" />
+      <circle cx="10" cy="10" r="8" />
+      <path d="M10 9v6" />
+      <circle class="dot" cx="10" cy="5.05" r="0.75" />
     </svg>`,
 );
+/** Warning (design/icons/general/warning.svg, its 0.944 scale applied). */
 export const warningGlyph = /* @__PURE__ */ glyph(
   () =>
     html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M10 3.5l7 12.5H3z" />
-      <path d="M10 8.5V12" />
-      <circle class="dot" cx="10" cy="14" r="0.9" />
+      <path d="M10 2.44L18.5 17.56H1.5z" />
+      <path d="M10 7.17v4.72" />
+      <circle class="dot" cx="10" cy="14.77" r="0.75" />
     </svg>`,
 );
+/** A check in a circle (design/icons/general/check-circle.svg, its inner 0.6 scale applied). */
 export const checkCircleGlyph = /* @__PURE__ */ glyph(
   () =>
     html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-      <circle cx="10" cy="10" r="7" />
-      <path d="M7 10.25l2 2 4-4.5" />
+      <circle cx="10" cy="10" r="8.5" />
+      <path d="M5.8 10l3 3 5.4-6" />
     </svg>`,
 );
 /** The rating star (design/icons/general/star.svg); filled with `fill: currentColor` when on. */

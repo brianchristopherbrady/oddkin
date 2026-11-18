@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { server } from 'vitest/browser';
+import { flush } from '@oddkin/core/reactive';
 import {
   compare,
+  deliberate,
   expectNone,
   figma,
   interact,
@@ -43,14 +45,20 @@ describe('Figma parity: odd-button (button, button/sm, button/lg)', () => {
           const el = mount(`<odd-button ${attributes}>Label</odd-button>`);
           await settle(el);
           const control = el.shadowRoot!.querySelector<HTMLElement>('[part="control"]')!;
+          const label = el.shadowRoot!.querySelector<HTMLElement>('.label')!;
           const index = variantIndex(family, values);
           const frame = layersOf(family, index).find((l) => l.path.length === 1)!.path;
+          // Disabled mutes the whole control; Loading draws the spinner over a transparent label.
           const targets: Target[] = [
-            { layer: frame, el: control, kind: 'frame', gap: 'column-gap' },
-            { layer: [...frame, 'Label'], el: control, kind: 'text' },
+            { layer: frame, el: control, kind: 'frame', gap: 'column-gap', opacityOf: control },
+            { layer: [...frame, 'Label'], el: control, kind: 'text', opacityOf: label },
           ];
           if (state === 'Focus')
-            targets.push({ layer: [...frame, 'Surface'], el: control, kind: 'ring' });
+            targets.push({
+              layer: [...frame, 'Focus ring \u00b7 decorative'],
+              el: control,
+              kind: 'ring',
+            });
           await interact(state, control);
           await transitions(targets);
           const differences = compare(`Oddkin/Common/${set}`, values, targets);
@@ -161,28 +169,53 @@ describe('Figma parity: odd-card (card)', () => {
     });
 });
 
-const BADGES: Record<string, { attributes: string; text: string }> = {
-  Neutral: { attributes: '', text: 'Draft' },
-  Info: { attributes: 'tone="info"', text: 'Info' },
-  Success: { attributes: 'tone="success"', text: 'Success' },
-  Warning: { attributes: 'tone="warning"', text: 'Warning' },
-  Danger: { attributes: 'tone="danger"', text: 'Danger' },
-  Count: { attributes: 'no-marker', text: '12' },
+// Page 1395:2: Tone is `tone`; Show marker is `!noMarker` (a property, not a variant); Label is the
+// slotted text. The words are the page's specimens.
+const BADGES: Record<string, string> = {
+  neutral: 'Draft',
+  info: 'In review',
+  success: 'Ready',
+  warning: 'Needs review',
+  danger: 'Failed',
 };
 
-describe('Figma parity: odd-badge (badge)', () => {
-  for (const [state, spec] of Object.entries(BADGES))
-    it(state, async () => {
-      const el = mount(`<odd-badge ${spec.attributes}>${spec.text}</odd-badge>`);
-      await settle(el);
-      const base = el.shadowRoot!.querySelector<HTMLElement>('[part="base"]')!;
-      const surface = [`Badge / ${state}`, 'Surface'];
-      const targets: Target[] = [
-        { layer: surface, el: base, kind: 'frame' },
-        { layer: [...surface, spec.text], el: base, kind: 'text' },
-      ];
-      expectNone(compare('Oddkin/Common/badge', { State: state }, targets));
-    });
+describe('Figma parity: odd-badge (badge, Count content)', () => {
+  for (const [tone, text] of Object.entries(BADGES))
+    for (const marker of [true, false])
+      it(`${tone}${marker ? '' : ', no marker'}`, async () => {
+        const el = mount(
+          `<odd-badge tone="${tone}"${marker ? '' : ' no-marker'}>${text}</odd-badge>`,
+        );
+        await settle(el);
+        const base = el.shadowRoot!.querySelector<HTMLElement>('[part="base"]')!;
+        const targets: Target[] = [
+          {
+            layer: [],
+            el: base,
+            kind: 'frame',
+            gap: 'column-gap',
+            fields: [
+              ['paddingRight', 'padding-inline-end'],
+              ['paddingBottom', 'padding-block-end'],
+            ],
+          },
+          { layer: ['Draft'], el: base, kind: 'text' },
+        ];
+        expectNone(compare('Oddkin/Common/badge', { Tone: tone }, targets));
+      });
+
+  // The count composition the page keeps beside the set (159:581): a count is slot content.
+  it('Count content', async () => {
+    const el = mount('<odd-badge no-marker>12</odd-badge>');
+    await settle(el);
+    const base = el.shadowRoot!.querySelector<HTMLElement>('[part="base"]')!;
+    const surface = ['Badge / Count', 'Surface'];
+    const targets: Target[] = [
+      { layer: surface, el: base, kind: 'frame' },
+      { layer: [...surface, '12'], el: base, kind: 'text' },
+    ];
+    expectNone(compare('Count content \u00b7 historical composition', {}, targets));
+  });
 });
 
 const ALERTS: Record<string, { tone: string; title: string; message: string }> = {
@@ -334,19 +367,56 @@ describe('Figma parity: odd-empty-state (emptyState)', () => {
   });
 });
 
-describe('Figma parity: odd-avatar (avatar)', () => {
-  for (const [initials, size] of [
-    ['AM', 'md'],
-    ['SK', 'sm'],
-  ] as const)
-    it(`Initials ${initials} (${size})`, async () => {
-      const el = mount(`<odd-avatar size="${size}">${initials}</odd-avatar>`);
-      await settle(el);
-      const targets: Target[] = [
-        { layer: ['Avatar / Initials', initials], el: shadowPart(el, 'base'), kind: 'text' },
-      ];
-      expectNone(compare('Oddkin/Common/avatar', { State: 'Initials' }, targets));
-    });
+// Page 1388:2: Size is `size`; State is coverage, reached through label, slot, and src. Loading,
+// Error, and Decorative draw the same initials as Fallback; Empty is the bare circle.
+deliberate([
+  /^Oddkin\/Primitives\/Avatar .* (top|bottom)(Left|Right)Radius \(--odd-radius-full\): border-(start|end)-(start|end)-radius 50%/,
+  'odd-avatar draws its circle with 50% of its own size; radius.full (9999px) draws the same circle.',
+]);
+
+const AVATAR_IMAGE =
+  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" fill="%23b8c4d9"/%3E%3C/svg%3E';
+
+describe('Figma parity: odd-avatar (Primitives/Avatar)', () => {
+  const MARKUP: Record<string, string> = {
+    Fallback: 'label="Amelia Morgan"',
+    Loading: `label="Amelia Morgan" src='${AVATAR_IMAGE}'`,
+    Image: `label="Amelia Morgan" src='${AVATAR_IMAGE}'`,
+    Error: 'label="Amelia Morgan" src="data:image/png;base64,broken"',
+    Decorative: '',
+    Empty: '',
+  };
+  for (const size of ['sm', 'md', 'lg'])
+    for (const [state, attributes] of Object.entries(MARKUP))
+      it(`${size} ${state}`, async () => {
+        const content = state === 'Decorative' ? 'AM' : '';
+        const el = mount(`<odd-avatar size="${size}" ${attributes}>${content}</odd-avatar>`);
+        const base = shadowPart(el, 'base');
+        const image = () => el.shadowRoot!.querySelector<HTMLImageElement>('[part="image"]');
+        // Loading is read in the task that renders it: no load event can have run yet.
+        if (state === 'Loading') flush();
+        else await settle(el);
+        if (state === 'Image') await expect.poll(() => image()?.hidden).toBe(false);
+        if (state === 'Error') await expect.poll(() => image()).toBe(null);
+        const targets: Target[] = [{ layer: [], el: base, kind: 'frame' }];
+        if (state === 'Image')
+          targets.push({
+            layer: ['image \u00b7 authored SVG fixture'],
+            el: image()!,
+            kind: 'frame',
+          });
+        else if (state !== 'Empty') targets.push({ layer: ['AM'], el: base, kind: 'text' });
+        const differences = compare(
+          'Oddkin/Primitives/Avatar',
+          { Size: size, State: state },
+          targets,
+        );
+        if (state === 'Loading') expect(image()?.hidden, 'the picture waits, hidden').toBe(true);
+        expect(el.shadowRoot!.querySelector('.initials') !== null, 'initials').toBe(
+          state !== 'Image',
+        );
+        expectNone(differences);
+      });
 });
 
 describe('Figma parity: CSS recipes (typography, keyboardKey, link, List)', () => {

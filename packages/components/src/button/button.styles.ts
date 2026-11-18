@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
-/** Oddkin's default visual styles: semantic tokens through documented component variables. */
+/**
+ * Oddkin's default visual styles: semantic tokens through documented component variables. A
+ * pressed toggle keeps the selection colours while loading or disabled.
+ */
 export const buttonStyles = css`
   button {
     min-block-size: max(
@@ -74,8 +77,9 @@ export const buttonStyles = css`
   /* A pressed toggle (Figma toggleButton On) takes the selection colours in every appearance. As
      specific as the hover and active rules, and later, so they leave it unchanged. */
   :host([toggle]) button[aria-pressed='true']:enabled:not([aria-disabled='true']),
+  :host([toggle]) button[aria-pressed='true'][aria-disabled='true'],
   :host([toggle]) button[aria-pressed='true']:disabled {
-    border-color: transparent;
+    border-color: ${token('color.selection.background')};
     background: ${token('color.selection.background')};
     color: ${token('color.selection.foreground')};
   }

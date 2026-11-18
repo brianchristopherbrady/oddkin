@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { userEvent, page } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { scopeStats } from '@oddkin/core/scope';
@@ -9,6 +9,7 @@ import card from '../src/card/card.examples.js';
 import input from '../src/input/input.examples.js';
 import sideNav from '../src/side-nav/side-nav.examples.js';
 import { exampleSets } from './catalog.js';
+import { loadTheme, themeValue } from './probe.js';
 import './register.js';
 
 const mounted: MountedExample<Element>[] = [];
@@ -251,6 +252,33 @@ describe('authored examples', () => {
     const { element, root } = await mount(button, 'inForm');
     await userEvent.click(element);
     await output(root).toBe('project=Atlas&intent=create');
+  });
+
+  it("button leadingIcon draws Figma's leading icon; iconOnly is named by its label", async () => {
+    const unload = await loadTheme();
+    try {
+      const { element } = await mount(button, 'leadingIcon');
+      const icon = element.querySelector('odd-icon')!;
+      expect(icon.slot).toBe('start');
+      const box = icon.getBoundingClientRect();
+      const size = parseFloat(themeValue('inline-size', '--odd-icon-size-sm'));
+      expect([box.width, box.height]).toEqual([size, size]);
+      // control.gap between the icon and the words, as Figma's Show icon draws it.
+      const words = element.shadowRoot!.querySelector('.label')!.getBoundingClientRect();
+      const gap = parseFloat(themeValue('column-gap', '--odd-control-gap'));
+      expect(words.left - box.right).toBeCloseTo(gap, 1);
+      // The icon is decorative: the words alone name the button.
+      expect(page.getByRole('button', { name: 'New project', exact: true }).element()).toBe(
+        element.shadowRoot!.querySelector('button'),
+      );
+      const only = await mount(button, 'iconOnly');
+      const control = only.element.shadowRoot!.querySelector('button')!;
+      expect(page.getByRole('button', { name: 'Close', exact: true }).element()).toBe(control);
+      const target = parseFloat(themeValue('min-block-size', '--odd-target-min'));
+      expect(control.getBoundingClientRect().width).toBeGreaterThanOrEqual(target);
+    } finally {
+      unload();
+    }
   });
 
   it('input inForm blocks an empty submission, then submits the typed address', async () => {

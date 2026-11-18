@@ -116,6 +116,8 @@ describe('component examples', () => {
     const uses: Record<string, string[]> = {
       'odd-alert/danger': ['component:odd-button'],
       'odd-button/inForm': ['component:odd-input'],
+      'odd-button/leadingIcon': ['component:odd-icon'],
+      'odd-button/iconOnly': ['component:odd-icon'],
       'odd-card/headed': ['component:odd-button'],
       'odd-checkbox/inForm': ['component:odd-button'],
       'odd-checkbox-group/inForm': ['component:odd-button'],

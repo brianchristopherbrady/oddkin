@@ -27,11 +27,11 @@ export const changeEvent = event('change', {
  * Where native submit-button semantics matter, style a native `<button class="odd-button">`
  * with `@oddkin/components/css/button.css`, which looks the same.
  *
- * @slot - The label. Its text is the button's accessible name.
- * @slot start - Content before the label, such as an icon.
- * @slot end - Content after the label.
+ * @slot - The label. Its text is the button's accessible name. Text and icons only: no links or controls inside a button.
+ * @slot start - Content before the label, such as an icon (not interactive).
+ * @slot end - Content after the label (not interactive).
  * @csspart control - The native button.
- * @csspart spinner - The loading indicator.
+ * @csspart spinner - The loading indicator, centred over the content.
  * @cssprop --odd-button-radius - Corner radius.
  * @cssprop --odd-button-background - Background colour.
  * @cssprop --odd-button-color - Text colour.
@@ -66,7 +66,8 @@ export class OddkinButton extends OddkinElement.with({
   disabled: prop.boolean({ reflect: true, description: 'Prevents interaction and focus.' }),
   loading: prop.boolean({
     reflect: true,
-    description: 'Shows a spinner and ignores activation; the button stays focusable.',
+    description:
+      'Shows a spinner over the content, keeping its size, and ignores activation; the button stays focusable.',
   }),
   fullWidth: prop.boolean({
     attribute: 'full-width',

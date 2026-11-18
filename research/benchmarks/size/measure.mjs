@@ -94,7 +94,9 @@ export const BUDGETS = {
   // 28,928 from 2026-11-11 (row 29; Agent 1, 01:15): measured 28,927 (+74) with odd-copy-button's
   // confirmation following its button (a ResizeObserver on the button and the boxes around it,
   // released with the element's scope).
-  'ai-response': 28928,
+  // 28,992 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 28,950 (+24) with
+  // odd-button's loading overlay (Figma page 1398:2) and a pressed toggle kept selected while loading.
+  'ai-response': 28992,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -172,7 +174,10 @@ export const BUDGETS = {
   // 69,299 (+268) with pages 13 and 14's behaviour: the question's validation (a blank Other beside
   // other choices, one message per problem, focus and description on the control to correct,
   // Other's field shown only while chosen) and the checkpoint's changed confirmation.
-  'ai-chat': 69312,
+  // 69,376 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 69,347 (+48) with
+  // odd-button's loading overlay (Figma page 1398:2), a pressed toggle kept selected while loading,
+  // and the tone glyphs drawn from the canonical icons.
+  'ai-chat': 69376,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -382,7 +387,9 @@ export const CSS_BUDGETS = {
   'components:progress': 768, // 695
   'components:skeleton': 512, // 413
   'components:spinner': 384, // 319
-  'components:button': 1280, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
+  // 1,408 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 1,347 (+69) with the loading
+  // overlay (spinner over the transparent content, Figma page 1398:2) and pressed-while-loading paint.
+  'components:button': 1408, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   // 576: measured 511 on 2026-10-26 with the number field's stepper (Figma `number`: the sunken
   // segment inside the border, its two buttons, and the text's end padding); 290 on 2026-10-23

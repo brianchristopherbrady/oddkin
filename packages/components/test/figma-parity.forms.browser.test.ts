@@ -100,26 +100,24 @@ describe('Figma parity: toggleButton', () => {
       Hover: '',
       Focus: '',
       Disabled: ' disabled',
+      Loading: ' loading',
     }))
       it(`${value}/${state}`, async () => {
         const pressed = value === 'On' ? ' pressed' : '';
         const el = mount(`<odd-button toggle${pressed}${attribute}>Bold</odd-button>`);
         await settle(el);
         const control = shadowPart(el, 'control');
+        const label = el.shadowRoot!.querySelector('.label')!;
         await interact(state, control);
         await settle(el);
-        const named = value === 'On' || state === 'Default' || state === 'Hover';
-        const root = `Toggle button / ${named ? value : state}`;
+        // Page 1398:2: the variant is the control; a pressed toggle keeps the selection colours
+        // when disabled (muted) and while loading (the label transparent under the spinner).
         const targets: Target[] = [
-          { layer: [root, 'Surface'], el: control, kind: 'frame' },
-          {
-            layer: [root, 'Surface', value === 'On' ? 'Bold \u00b7 on' : 'Bold'],
-            el: el.shadowRoot!.querySelector('.label')!,
-            kind: 'text',
-          },
+          { layer: [], el: control, kind: 'frame', gap: 'column-gap', opacityOf: control },
+          { layer: ['Bold'], el: label, kind: 'text', opacityOf: label },
         ];
         if (state === 'Focus')
-          targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+          targets.push({ layer: ['Focus ring \u00b7 decorative'], el: control, kind: 'ring' });
         await transitions(targets);
         expectNone(compare('Oddkin/Common/toggleButton', { Value: value, State: state }, targets));
       });

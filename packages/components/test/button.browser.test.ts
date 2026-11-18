@@ -1,7 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { cdp, page, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
+import { loadTheme } from './probe.js';
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -436,13 +437,221 @@ describe('toggle', () => {
       features: [{ name: 'forced-colors', value: 'active' }],
     });
     try {
-      const { control } = await mount('Bold', { toggle: '', pressed: '' });
+      const { el, control } = await mount('Bold', { toggle: '', pressed: '' });
       const probe = document.createElement('span');
       probe.style.color = 'Highlight';
       container.append(probe);
       expect(getComputedStyle(control).backgroundColor).toBe(getComputedStyle(probe).color);
+      // A loading toggle stays pressed.
+      el.loading = true;
+      await settle(el);
+      expect(getComputedStyle(control).backgroundColor).toBe(getComputedStyle(probe).color);
     } finally {
       await session.send('Emulation.setEmulatedMedia', { features: [] });
     }
+  });
+});
+
+// The button in its parent (page 1398:2 and its handoff acceptance B-A1 to B-A8), with the shipped
+// theme so sizes and colours are the real token values.
+describe('odd-button in its parent', () => {
+  let unload: () => void;
+  beforeAll(async () => {
+    await import('../src/button/button.define.js');
+    unload = await loadTheme();
+  });
+  afterAll(() => unload());
+  type Button = HTMLElementTagNameMap['odd-button'];
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  const resolveIn = (scope: Element, property: string, variable: string) => {
+    const probe = document.createElement('div');
+    probe.style.setProperty(property, `var(${variable})`);
+    scope.append(probe);
+    const value = getComputedStyle(probe).getPropertyValue(property);
+    probe.remove();
+    return value;
+  };
+  const control = (el: Element) => el.shadowRoot!.querySelector<HTMLButtonElement>('button')!;
+
+  it('B-A1: keeps the control, slots, focus, and pressed state while the parent narrows and widens', async () => {
+    container.innerHTML = `<div style="display: flex; flex-wrap: wrap; gap: 12px; box-sizing: border-box;
+      inline-size: 640px; padding: 16px">
+      <odd-button toggle pressed><span slot="start" aria-hidden="true">+</span>Review and publish the accessibility report<span slot="end" aria-hidden="true">&gt;</span></odd-button>
+      <odd-button>Cancel</odd-button></div>`;
+    const row = container.firstElementChild as HTMLElement;
+    const [el, cancel] = [...row.querySelectorAll<Button>('odd-button')] as [Button, Button];
+    await settle(el);
+    await settle(cancel);
+    const native = control(el);
+    const start = el.querySelector('[slot="start"]');
+    el.focus();
+    const heights: number[] = [];
+    for (const width of [640, 240, 640]) {
+      row.style.inlineSize = `${width}px`;
+      await frame();
+      expect(control(el), `${width}`).toBe(native);
+      expect(el.querySelector('[slot="start"]')).toBe(start);
+      expect(el.shadowRoot!.activeElement).toBe(native);
+      expect(el.pressed).toBe(true);
+      expect(row.scrollWidth, `${width}`).toBeLessThanOrEqual(row.clientWidth + 1);
+      expect(native.scrollWidth, `${width}`).toBeLessThanOrEqual(native.clientWidth + 1);
+      expect(cancel.getBoundingClientRect().right).toBeLessThanOrEqual(
+        row.getBoundingClientRect().right + 0.5,
+      );
+      heights.push(native.getBoundingClientRect().height);
+    }
+    // At 240 px the whole label wraps and the control grows instead of widening.
+    expect(heights[1]).toBeGreaterThan(heights[0]!);
+    expect(heights[2]).toBe(heights[0]);
+  });
+
+  it('B-A2: keeps its size, slots, name, and focus while loading; the spinner turns at the centre', async () => {
+    for (const size of ['sm', 'md', 'lg']) {
+      container.innerHTML = '';
+      const { el, control: native } = await mount(
+        '<span slot="start" aria-hidden="true">+</span>Save changes<span slot="end" aria-hidden="true">&gt;</span>',
+        { appearance: 'primary', size },
+      );
+      el.focus();
+      const before = native.getBoundingClientRect().toJSON();
+      let clicks = 0;
+      el.addEventListener('click', () => clicks++);
+      el.loading = true;
+      await settle(el);
+      expect(native.getBoundingClientRect().toJSON(), size).toEqual(before);
+      const spinner = el.shadowRoot!.querySelector<HTMLElement>('[part="spinner"]')!;
+      // Its box turns; its centre stays the control's.
+      const ring = spinner.getBoundingClientRect();
+      expect(ring.left + ring.width / 2).toBeCloseTo(before.x + before.width / 2, 0);
+      expect(ring.top + ring.height / 2).toBeCloseTo(before.y + before.height / 2, 0);
+      // Figma's busy icon: 14 px at sm and md, 16 px at lg, 1em of the label.
+      expect(spinner.offsetWidth, size).toBe(size === 'lg' ? 16 : 14);
+      expect(getComputedStyle(el.shadowRoot!.querySelector('.label')!).opacity).toBe('0');
+      for (const slotted of el.querySelectorAll('[slot]'))
+        expect(getComputedStyle(slotted).opacity).toBe('0');
+      expect(page.getByRole('button', { name: 'Save changes' }).element()).toBe(native);
+      expect(el.shadowRoot!.activeElement).toBe(native);
+      await userEvent.keyboard('{Enter}');
+      el.click();
+      expect(clicks).toBe(0);
+      el.loading = false;
+      await settle(el);
+      expect(native.getBoundingClientRect().toJSON(), size).toEqual(before);
+      expect(getComputedStyle(el.shadowRoot!.querySelector('.label')!).opacity).toBe('1');
+      expect(el.shadowRoot!.activeElement).toBe(native);
+    }
+  });
+
+  it('B-A3: a pressed toggle keeps the selection colours loading and disabled, in each scope', async () => {
+    for (const scope of [
+      'data-odd-mode="light"',
+      'data-odd-mode="dark"',
+      'data-odd-density="compact"',
+    ]) {
+      container.innerHTML = `<div ${scope}>${['', 'loading', 'disabled']
+        .map((state) => `<odd-button toggle pressed ${state}>Bold</odd-button>`)
+        .join('')}</div>`;
+      const wrapper = container.firstElementChild!;
+      const buttons = [...wrapper.querySelectorAll<Button>('odd-button')];
+      for (const el of buttons) await settle(el);
+      const background = resolveIn(wrapper, 'background-color', '--odd-color-selection-background');
+      const foreground = resolveIn(wrapper, 'color', '--odd-color-selection-foreground');
+      const height = resolveIn(wrapper, 'min-height', '--odd-control-height-md');
+      for (const [i, el] of buttons.entries()) {
+        const style = getComputedStyle(control(el));
+        const at = `${scope} ${['pressed', 'loading', 'disabled'][i]}`;
+        expect(
+          [style.backgroundColor, style.borderTopColor, style.color, style.minHeight],
+          at,
+        ).toEqual([background, background, foreground, height]);
+        expect(style.opacity, at).toBe(i === 2 ? '0.5' : '1');
+      }
+    }
+  });
+
+  it('B-A6: an icon-only button keeps its label as its name while loading, at least the target size', async () => {
+    const { el, control: native } = await mount(
+      '<svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"></svg>',
+      { label: 'Bold', toggle: '' },
+    );
+    el.loading = true;
+    await settle(el);
+    expect(page.getByRole('button', { name: 'Bold' }).element()).toBe(native);
+    const box = native.getBoundingClientRect();
+    const target = parseFloat(resolveIn(container, 'min-height', '--odd-target-min'));
+    expect(box.width).toBeGreaterThanOrEqual(target);
+    expect(box.height).toBeGreaterThanOrEqual(target);
+  });
+
+  it('B-A7: the host’s status and retry, in a bounded parent, keep the draft beside them', async () => {
+    container.innerHTML = `<section aria-label="Save status" style="block-size: 176px; overflow-y: auto;
+      inline-size: 640px"><p role="status">Could not save. Your changes are retained. ${'Retry is a host action. '.repeat(8)}</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px"><textarea>Draft text</textarea>
+      <odd-button>Try again</odd-button></div></section>`;
+    const reader = container.querySelector('section')!;
+    const textarea = container.querySelector('textarea')!;
+    const retry = container.querySelector<Button>('odd-button')!;
+    await settle(retry);
+    textarea.focus();
+    textarea.setSelectionRange(2, 6);
+    for (const width of [640, 240, 640]) {
+      reader.style.inlineSize = `${width}px`;
+      retry.loading = width === 240;
+      await settle(retry);
+      await frame();
+      expect(container.querySelector('textarea')).toBe(textarea);
+      expect([textarea.value, textarea.selectionStart, textarea.selectionEnd]).toEqual([
+        'Draft text',
+        2,
+        6,
+      ]);
+      expect(document.activeElement).toBe(textarea);
+      expect(reader.scrollWidth).toBeLessThanOrEqual(reader.clientWidth + 1);
+    }
+    retry.focus();
+    expect(retry.shadowRoot!.activeElement).toBe(control(retry));
+    retry.scrollIntoView({ block: 'nearest' });
+    await frame();
+    const box = reader.getBoundingClientRect();
+    const last = retry.getBoundingClientRect();
+    expect(last.bottom).toBeLessThanOrEqual(box.bottom + 0.5);
+    expect(last.top).toBeGreaterThanOrEqual(box.top - 0.5);
+  });
+
+  it('B-A8: removed with a toggle or a submission queued, it acts on neither and reconnects at baseline', async () => {
+    const { el } = await mount('Bold', { toggle: '' });
+    const before = scopeStats();
+    const events: string[] = [];
+    for (const type of ['input', 'change']) el.addEventListener(type, () => events.push(type));
+    // The click flips pressed at once and queues input and change for the next task.
+    el.click();
+    el.remove();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(events).toEqual([]);
+    container.append(el);
+    await settle(el);
+    // The flip is kept; reconnecting dispatches nothing and adds nothing.
+    expect(el.pressed).toBe(true);
+    expect(events).toEqual([]);
+    expect(scopeStats()).toEqual(before);
+    const form = document.createElement('form');
+    form.innerHTML = '<odd-button type="submit" name="intent" value="save">Save</odd-button>';
+    container.append(form);
+    const submit = form.querySelector<Button>('odd-button')!;
+    await settle(submit);
+    let submits = 0;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submits++;
+    });
+    submit.click();
+    submit.remove();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(submits).toBe(0);
+    form.append(submit);
+    await settle(submit);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(submits).toBe(0);
+    expect(form.querySelectorAll('button')).toHaveLength(0);
   });
 });

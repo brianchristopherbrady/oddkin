@@ -8,7 +8,7 @@ export const badgeStructuralStyles = css`
     max-inline-size: 100%;
   }
   .badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     max-inline-size: 100%;
     overflow-wrap: anywhere;

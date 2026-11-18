@@ -6,8 +6,8 @@ import { token } from '@oddkin/tokens/refs';
  * forms that need native submit-button semantics (the button is the submitter and can be the
  * default button for Enter). `data-appearance` (`primary`, `secondary`, `ghost`; default
  * secondary), `data-size` (`sm`, `md`, `lg`; default md), and `data-full-width` mirror the
- * element's attributes, and `aria-pressed` draws a pressed toggle; the same `--odd-button-*`
- * variables apply. Published as
+ * element's attributes, and `aria-pressed` draws a pressed toggle (kept under `aria-disabled` and
+ * `disabled`); the same `--odd-button-*` variables apply. Published as
  * `@oddkin/components/css/button.css` in the `odd.components` layer; kept equal to the element's
  * computed styles by `styling.browser.test.ts`. No loading state: use `aria-disabled` and your
  * own progress text.
@@ -95,8 +95,9 @@ export const nativeButtonStyles = css`
   }
   /* The pressed state twice: as specific as the hover and active rules, and later. */
   .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+  .odd-button[aria-pressed='true'][aria-disabled='true'],
   .odd-button[aria-pressed='true']:disabled {
-    border-color: transparent;
+    border-color: ${token('color.selection.background')};
     background: ${token('color.selection.background')};
     color: ${token('color.selection.foreground')};
   }
@@ -113,7 +114,8 @@ export const nativeButtonStyles = css`
       color: GrayText;
       border-color: GrayText;
     }
-    .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']) {
+    .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+    .odd-button[aria-pressed='true'][aria-pressed='true'][aria-disabled='true'] {
       border-color: Highlight;
       background: Highlight;
       color: HighlightText;

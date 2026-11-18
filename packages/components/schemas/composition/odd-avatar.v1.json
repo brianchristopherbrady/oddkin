@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/odd-avatar.v1.json",
   "title": "odd-avatar",
-  "description": "A person or group marker: a picture (`src`) or, without one or when it fails to load, the initials of `label`. Content placed inside replaces the initials (a \"+3\" overflow count).",
+  "description": "A person or group marker: the initials of `label`, replaced by a picture (`src`) once it has loaded. The initials show while the picture loads and stay when it fails, in the same circle. Content placed inside replaces the initials (a \"+3\" overflow count).",
   "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
   "type": "object",
   "additionalProperties": false,
@@ -32,7 +32,7 @@
           "type": "string",
           "format": "uri-reference",
           "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)",
-          "description": "Picture URL; the initials show without it.",
+          "description": "Picture URL; the initials show without it, while it loads, and if it fails.",
           "default": ""
         },
         "size": {

@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained. The tool call's approved redesign added by Agent 1 for the parity tests (Figma page 10, 900:2) (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 1 family (33 definitions), transferred in 1 slice with verified length 19037 and FNV-1a 4095638199; appended after the existing families, with its page. Every other family and every component id retained. The context picker's owner design (C07, Figma page 06, 767:2) added by Agent 1 for the parity tests (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 19 families (78 definitions), transferred in 5 slices, each verified by its length and FNV-1a, joined to 108863 characters; appended after the existing families, with their page. Every other family and every component id retained. Oddkin/Common/search gained State=Inline and Inline focus (775:3405, 775:3422), which the C07 context picker draws (row 34 verifier V6) (2026-11-14, Figma MCP session 4c7ebbb4-6e0c-40b4-a6c7-a2210e3e1fe4): read-only components.export.js filtered to 1 families (6 definitions), transferred in 1 slice(s) with verified length 14351 and FNV-1a 2284742357; each replaced in place by id. Every other family and every component id retained.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained. The change review's approved redesign added by Agent 1 for the parity tests (Figma page 11, 908:6118) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 1 family (20 definitions), transferred in 1 slice with verified length 10370 and FNV-1a 1535871646; appended after the existing families, with its page. Every other family and every component id retained. The tool call's approved redesign added by Agent 1 for the parity tests (Figma page 10, 900:2) (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 1 family (33 definitions), transferred in 1 slice with verified length 19037 and FNV-1a 4095638199; appended after the existing families, with its page. Every other family and every component id retained. The context picker's owner design (C07, Figma page 06, 767:2) added by Agent 1 for the parity tests (2026-11-10, Figma MCP session 67c816ae-18a9-4d8a-a07f-2f1890d0d479): read-only components.export.js filtered to 19 families (78 definitions), transferred in 5 slices, each verified by its length and FNV-1a, joined to 108863 characters; appended after the existing families, with their page. Every other family and every component id retained. Oddkin/Common/search gained State=Inline and Inline focus (775:3405, 775:3422), which the C07 context picker draws (row 34 verifier V6) (2026-11-14, Figma MCP session 4c7ebbb4-6e0c-40b4-a6c7-a2210e3e1fe4): read-only components.export.js filtered to 1 families (6 definitions), transferred in 1 slice(s) with verified length 14351 and FNV-1a 2284742357; each replaced in place by id. Every other family and every component id retained. Avatar, badge, and button specification pages (2026-11-17, Figma MCP session 71644cb7-87e5-4909-9931-5e918bce4b70): the owner moved Oddkin/Common/badge, button, button/sm, button/lg, and toggleButton to pages 1395:2 and 1398:2 and refined them (badge Tone variants with Show marker and Label properties; the loading spinner over a transparent label; toggle Loading variants), moved the badge Count variant 159:581 out of the set into its own component, and added Oddkin/Primitives/Avatar 1388:45 on page 1388:2. Read-only components.export.js filtered to 7 families, transferred in 3 slices with verified length 62604 and FNV-1a 730869388; each existing family replaced in place by id and the two new ones added. The older avatar families on page 158:22 (162:2022, 257:886, 374:1576) are unchanged here.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
@@ -14,7 +14,10 @@
     { "id": "805:4", "name": "09 · AI · Action approval · Interaction spec" },
     { "id": "908:6118", "name": "11 · AI · Change review · Interaction spec" },
     { "id": "900:2", "name": "10 · AI · Tool call · Interaction spec" },
-    { "id": "767:2", "name": "06 · Context picker · Interaction spec" }
+    { "id": "767:2", "name": "06 · Context picker · Interaction spec" },
+    { "id": "1388:2", "name": "Primitive · Avatar · Specification" },
+    { "id": "1395:2", "name": "Primitive · Badge · Specification" },
+    { "id": "1398:2", "name": "Primitive · Button · Specification" }
   ],
   "families": [
     {
@@ -2469,26 +2472,107 @@
     {
       "id": "159:582",
       "name": "Oddkin/Common/badge",
-      "page": "158:22",
-      "frame": "Definitions · Actions",
+      "page": "1395:2",
+      "frame": "Oddkin/Common/badge",
       "kind": "COMPONENT_SET",
-      "description": "Passive status or count. Use words and a marker; do not style it as an action. Design proposal; not a promised custom-element API.",
+      "description": "Passive, noninteractive status/count. Tone maps to the existing tone property; Show marker maps to !noMarker. Label is default-slot content. Count is content, not a sixth tone. No automatic announcements or overlay.",
       "properties": [
+        { "name": "Label", "type": "TEXT", "defaultValue": "Draft" },
+        { "name": "Show marker", "type": "BOOLEAN", "defaultValue": true },
         {
-          "name": "State",
+          "name": "Tone",
           "type": "VARIANT",
-          "defaultValue": "Neutral",
-          "variantOptions": ["Neutral", "Success", "Warning", "Danger", "Count", "Info"]
+          "defaultValue": "neutral",
+          "variantOptions": ["neutral", "info", "success", "warning", "danger"]
         }
       ],
       "variants": [
-        { "id": "159:581", "name": "State=Count", "values": { "State": "Count" } },
-        { "id": "159:577", "name": "State=Danger", "values": { "State": "Danger" } },
-        { "id": "499:2513", "name": "State=Info", "values": { "State": "Info" } },
-        { "id": "159:556", "name": "State=Neutral", "values": { "State": "Neutral" } },
-        { "id": "159:563", "name": "State=Success", "values": { "State": "Success" } },
-        { "id": "159:570", "name": "State=Warning", "values": { "State": "Warning" } }
+        { "id": "159:577", "name": "Tone=danger", "values": { "Tone": "danger" } },
+        { "id": "499:2513", "name": "Tone=info", "values": { "Tone": "info" } },
+        { "id": "159:556", "name": "Tone=neutral", "values": { "Tone": "neutral" } },
+        { "id": "159:563", "name": "Tone=success", "values": { "Tone": "success" } },
+        { "id": "159:570", "name": "Tone=warning", "values": { "Tone": "warning" } }
       ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "fills": [
+              { "value": "Oddkin · Component roles/color/danger/surface", "variants": [0] },
+              { "value": "Oddkin · Component roles/color/info/surface", "variants": [1] },
+              { "value": "Oddkin · Component roles/color/neutral/surface", "variants": [2] },
+              { "value": "Oddkin · Component roles/color/success/surface", "variants": [3] },
+              { "value": "Oddkin · Component roles/color/warning/surface", "variants": [4] }
+            ],
+            "itemSpacing": ["Oddkin · AI density scopes/space/2xs"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/3xs"],
+            "paddingLeft": ["Oddkin · AI density scopes/space/xs"],
+            "paddingRight": ["Oddkin · AI density scopes/space/xs"],
+            "paddingTop": ["Oddkin · AI density scopes/space/3xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Draft"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": [
+              { "value": "Oddkin · Component roles/color/danger/foreground", "variants": [0] },
+              { "value": "Oddkin · Component roles/color/info/foreground", "variants": [1] },
+              { "value": "Oddkin · Component roles/color/neutral/foreground", "variants": [2] },
+              { "value": "Oddkin · Component roles/color/success/foreground", "variants": [3] },
+              { "value": "Oddkin · Component roles/color/warning/foreground", "variants": [4] }
+            ],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        { "path": ["marker"], "types": ["INSTANCE"], "properties": { "visible": ["Show marker"] } }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Icon/checkCircle",
+          "sourceId": "159:339",
+          "count": 1,
+          "variants": [],
+          "overriddenFields": ["boundVariables", "height", "name", "strokes", "width"]
+        },
+        {
+          "source": "Oddkin/Icon/info",
+          "sourceId": "159:333",
+          "count": 2,
+          "variants": [],
+          "overriddenFields": ["boundVariables", "height", "name", "strokes", "width"]
+        },
+        {
+          "source": "Oddkin/Icon/warning",
+          "sourceId": "159:336",
+          "count": 2,
+          "variants": [],
+          "overriddenFields": ["boundVariables", "height", "name", "strokes", "width"]
+        }
+      ]
+    },
+    {
+      "id": "159:581",
+      "name": "Count content · historical composition",
+      "page": "1395:2",
+      "frame": "Count content · historical composition",
+      "kind": "COMPONENT",
+      "description": "Count is slot content, not a tone or state. Canonical passive Badge is in the Tone family.",
+      "properties": [
+        { "name": "Label", "type": "TEXT", "defaultValue": "Draft" },
+        { "name": "Show marker", "type": "BOOLEAN", "defaultValue": true }
+      ],
+      "variants": [{ "id": "159:581", "name": "Count content · historical composition" }],
       "layers": [
         {
           "path": [],
@@ -2508,7 +2592,6 @@
         {
           "path": ["Badge / Count"],
           "types": ["FRAME"],
-          "in": [0],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
             "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
@@ -2519,7 +2602,6 @@
         {
           "path": ["Badge / Count", "Surface"],
           "types": ["FRAME"],
-          "in": [0],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
             "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
@@ -2531,206 +2613,8 @@
         {
           "path": ["Badge / Count", "Surface", "12"],
           "types": ["TEXT"],
-          "in": [0],
           "bound": {
             "fills": ["Oddkin · Component roles/color/neutral/foreground"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
-            "textStyle": ["Oddkin/Component/Status"]
-          }
-        },
-        {
-          "path": ["Badge / Danger"],
-          "types": ["FRAME"],
-          "in": [1],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Badge / Danger", "Surface"],
-          "types": ["FRAME"],
-          "in": [1],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
-            "fills": ["Oddkin · Component roles/color/danger/surface"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
-          }
-        },
-        {
-          "path": ["Badge / Danger", "Surface", "Danger"],
-          "types": ["TEXT"],
-          "in": [1],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/danger/foreground"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
-            "textStyle": ["Oddkin/Component/Status"]
-          }
-        },
-        {
-          "path": ["Badge / Danger", "Surface", "Icon · warning"],
-          "types": ["INSTANCE"],
-          "in": [1]
-        },
-        {
-          "path": ["Badge / Info"],
-          "types": ["FRAME"],
-          "in": [2],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Badge / Info", "Surface"],
-          "types": ["FRAME"],
-          "in": [2],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
-            "fills": ["Oddkin · Component roles/color/info/surface"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
-          }
-        },
-        { "path": ["Badge / Info", "Surface", "Icon · info"], "types": ["INSTANCE"], "in": [2] },
-        {
-          "path": ["Badge / Info", "Surface", "Info"],
-          "types": ["TEXT"],
-          "in": [2],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/info/foreground"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
-            "textStyle": ["Oddkin/Component/Status"]
-          }
-        },
-        {
-          "path": ["Badge / Neutral"],
-          "types": ["FRAME"],
-          "in": [3],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Badge / Neutral", "Surface"],
-          "types": ["FRAME"],
-          "in": [3],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
-            "fills": ["Oddkin · Component roles/color/neutral/surface"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
-          }
-        },
-        {
-          "path": ["Badge / Neutral", "Surface", "Draft"],
-          "types": ["TEXT"],
-          "in": [3],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/neutral/foreground"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
-            "textStyle": ["Oddkin/Component/Status"]
-          }
-        },
-        { "path": ["Badge / Neutral", "Surface", "Icon · info"], "types": ["INSTANCE"], "in": [3] },
-        {
-          "path": ["Badge / Success"],
-          "types": ["FRAME"],
-          "in": [4],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Badge / Success", "Surface"],
-          "types": ["FRAME"],
-          "in": [4],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
-            "fills": ["Oddkin · Component roles/color/success/surface"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
-          }
-        },
-        {
-          "path": ["Badge / Success", "Surface", "Icon · checkCircle"],
-          "types": ["INSTANCE"],
-          "in": [4]
-        },
-        {
-          "path": ["Badge / Success", "Surface", "Success"],
-          "types": ["TEXT"],
-          "in": [4],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/success/foreground"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
-            "textStyle": ["Oddkin/Component/Status"]
-          }
-        },
-        {
-          "path": ["Badge / Warning"],
-          "types": ["FRAME"],
-          "in": [5],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Badge / Warning", "Surface"],
-          "types": ["FRAME"],
-          "in": [5],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
-            "fills": ["Oddkin · Component roles/color/warning/surface"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
-            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
-          }
-        },
-        {
-          "path": ["Badge / Warning", "Surface", "Icon · warning"],
-          "types": ["INSTANCE"],
-          "in": [5]
-        },
-        {
-          "path": ["Badge / Warning", "Surface", "Warning"],
-          "types": ["TEXT"],
-          "in": [5],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/warning/foreground"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
             "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
@@ -2739,37 +2623,251 @@
           }
         }
       ],
-      "instances": [
+      "instances": []
+    },
+    {
+      "id": "1388:45",
+      "name": "Oddkin/Primitives/Avatar",
+      "page": "1388:2",
+      "frame": "Oddkin/Primitives/Avatar",
+      "kind": "COMPONENT_SET",
+      "description": "Intrinsic display primitive. Existing label, src, size and fallback slot. State is design coverage, not a public property. Loading fallback and whitespace-label normalization are proposed internal refinements. Source packages/components/src/avatar.",
+      "properties": [
+        { "name": "Initials / fallback content", "type": "TEXT", "defaultValue": "AM" },
         {
-          "source": "Oddkin/Icon/checkCircle",
-          "sourceId": "159:339",
-          "count": 1,
-          "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
+          "name": "Size",
+          "type": "VARIANT",
+          "defaultValue": "sm",
+          "variantOptions": ["sm", "md", "lg"]
         },
         {
-          "source": "Oddkin/Icon/info",
-          "sourceId": "159:333",
-          "count": 2,
-          "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
-        },
-        {
-          "source": "Oddkin/Icon/warning",
-          "sourceId": "159:336",
-          "count": 2,
-          "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Fallback",
+          "variantOptions": ["Fallback", "Loading", "Image", "Error", "Decorative", "Empty"]
         }
-      ]
+      ],
+      "variants": [
+        {
+          "id": "1388:42",
+          "name": "Size=lg, State=Decorative",
+          "values": { "Size": "lg", "State": "Decorative" }
+        },
+        {
+          "id": "1388:44",
+          "name": "Size=lg, State=Empty",
+          "values": { "Size": "lg", "State": "Empty" }
+        },
+        {
+          "id": "1388:40",
+          "name": "Size=lg, State=Error",
+          "values": { "Size": "lg", "State": "Error" }
+        },
+        {
+          "id": "1388:31",
+          "name": "Size=lg, State=Fallback",
+          "values": { "Size": "lg", "State": "Fallback" }
+        },
+        {
+          "id": "1388:35",
+          "name": "Size=lg, State=Image",
+          "values": { "Size": "lg", "State": "Image" }
+        },
+        {
+          "id": "1388:33",
+          "name": "Size=lg, State=Loading",
+          "values": { "Size": "lg", "State": "Loading" }
+        },
+        {
+          "id": "1388:28",
+          "name": "Size=md, State=Decorative",
+          "values": { "Size": "md", "State": "Decorative" }
+        },
+        {
+          "id": "1388:30",
+          "name": "Size=md, State=Empty",
+          "values": { "Size": "md", "State": "Empty" }
+        },
+        {
+          "id": "1388:26",
+          "name": "Size=md, State=Error",
+          "values": { "Size": "md", "State": "Error" }
+        },
+        {
+          "id": "1388:17",
+          "name": "Size=md, State=Fallback",
+          "values": { "Size": "md", "State": "Fallback" }
+        },
+        {
+          "id": "1388:21",
+          "name": "Size=md, State=Image",
+          "values": { "Size": "md", "State": "Image" }
+        },
+        {
+          "id": "1388:19",
+          "name": "Size=md, State=Loading",
+          "values": { "Size": "md", "State": "Loading" }
+        },
+        {
+          "id": "1388:14",
+          "name": "Size=sm, State=Decorative",
+          "values": { "Size": "sm", "State": "Decorative" }
+        },
+        {
+          "id": "1388:16",
+          "name": "Size=sm, State=Empty",
+          "values": { "Size": "sm", "State": "Empty" }
+        },
+        {
+          "id": "1388:12",
+          "name": "Size=sm, State=Error",
+          "values": { "Size": "sm", "State": "Error" }
+        },
+        {
+          "id": "1388:3",
+          "name": "Size=sm, State=Fallback",
+          "values": { "Size": "sm", "State": "Fallback" }
+        },
+        {
+          "id": "1388:7",
+          "name": "Size=sm, State=Image",
+          "values": { "Size": "sm", "State": "Image" }
+        },
+        {
+          "id": "1388:5",
+          "name": "Size=sm, State=Loading",
+          "values": { "Size": "sm", "State": "Loading" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/full"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/full"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "height": [
+              {
+                "value": "Oddkin · AI density scopes/control/height/lg",
+                "variants": [0, 1, 2, 3, 4, 5]
+              },
+              {
+                "value": "Oddkin · AI density scopes/control/height/md",
+                "variants": [6, 7, 8, 9, 10, 11]
+              },
+              {
+                "value": "Oddkin · AI density scopes/control/height/sm",
+                "variants": [12, 13, 14, 15, 16, 17]
+              }
+            ],
+            "topLeftRadius": ["Oddkin · Component roles/radius/full"],
+            "topRightRadius": ["Oddkin · Component roles/radius/full"],
+            "width": [
+              {
+                "value": "Oddkin · AI density scopes/control/height/lg",
+                "variants": [0, 1, 2, 3, 4, 5]
+              },
+              {
+                "value": "Oddkin · AI density scopes/control/height/md",
+                "variants": [6, 7, 8, 9, 10, 11]
+              },
+              {
+                "value": "Oddkin · AI density scopes/control/height/sm",
+                "variants": [12, 13, 14, 15, 16, 17]
+              }
+            ]
+          }
+        },
+        {
+          "path": ["AM"],
+          "types": ["TEXT"],
+          "in": [0, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/small/size",
+                "variants": [12, 14, 15, 17]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/ui/size",
+                "variants": [0, 2, 3, 5, 6, 8, 9, 11]
+              }
+            ],
+            "fontWeight": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/small/weight",
+                "variants": [12, 14, 15, 17]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/ui/weight",
+                "variants": [0, 2, 3, 5, 6, 8, 9, 11]
+              }
+            ],
+            "letterSpacing": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/small/letter-spacing",
+                "variants": [12, 14, 15, 17]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/ui/letter-spacing",
+                "variants": [0, 2, 3, 5, 6, 8, 9, 11]
+              }
+            ],
+            "textStyle": [
+              { "value": "Oddkin/Small", "variants": [12, 14, 15, 17] },
+              { "value": "Oddkin/UI", "variants": [0, 2, 3, 5, 6, 8, 9, 11] }
+            ]
+          },
+          "properties": { "characters": ["Initials / fallback content"] }
+        },
+        {
+          "path": ["image · authored SVG fixture"],
+          "types": ["FRAME"],
+          "in": [4, 10, 16],
+          "bound": {
+            "height": [
+              { "value": "Oddkin · AI density scopes/control/height/lg", "variants": [4] },
+              { "value": "Oddkin · AI density scopes/control/height/md", "variants": [10] },
+              { "value": "Oddkin · AI density scopes/control/height/sm", "variants": [16] }
+            ],
+            "width": [
+              { "value": "Oddkin · AI density scopes/control/height/lg", "variants": [4] },
+              { "value": "Oddkin · AI density scopes/control/height/md", "variants": [10] },
+              { "value": "Oddkin · AI density scopes/control/height/sm", "variants": [16] }
+            ]
+          }
+        },
+        {
+          "path": ["image · authored SVG fixture", "Vector"],
+          "types": ["VECTOR"],
+          "in": [4, 10, 16],
+          "literals": { "fills": ["#b8c4d9"] }
+        },
+        {
+          "path": ["image · authored SVG fixture", "Vector [2]"],
+          "types": ["VECTOR"],
+          "in": [4, 10, 16],
+          "literals": { "fills": ["#5f6b80"] }
+        },
+        {
+          "path": ["image · authored SVG fixture", "Vector [3]"],
+          "types": ["VECTOR"],
+          "in": [4, 10, 16],
+          "literals": { "fills": ["#5f6b80"] }
+        }
+      ],
+      "instances": []
     },
     {
       "id": "159:439",
       "name": "Oddkin/Common/button",
-      "page": "158:22",
-      "frame": "Definitions · Actions",
+      "page": "1398:2",
+      "frame": "Oddkin/Common/button",
       "kind": "COMPONENT_SET",
-      "description": "ODDKIN IMPLEMENTATION TYPE: Web component.\nFigma asset: Oddkin/Common/button.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nPrimary, secondary and ghost actions. Small 32 / medium 40 / large 48 px; focus and busy states.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
+      "description": "Existing OddkinButton family and variant IDs, refined to intrinsic auto-layout/minimum height. State is browser/local-state coverage, not a public State prop. Loading allocation reservation is PROPOSED; existing loading remains focusable aria-disabled. No business outcome is stored here.",
       "properties": [
         {
           "name": "Appearance",
@@ -2904,13 +3002,16 @@
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
             "fills": ["Oddkin · Component roles/color/action/default"],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           }
@@ -2946,20 +3047,23 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [7] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [13] }
             ],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [13] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           },
-          "literals": { "opacity": [0.5], "strokeWeight": [{ "value": 1, "variants": [13] }] }
+          "literals": { "opacity": [0.5] }
         },
         {
           "path": ["Button / Disabled", "Label"],
@@ -2995,31 +3099,35 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [8] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [14] }
             ],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [14] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           }
+        },
+        {
+          "path": ["Button / Focus", "Focus ring · decorative"],
+          "types": ["FRAME"],
+          "in": [2, 8, 14],
+          "bound": {
+            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
+            "strokes": ["Oddkin · Component roles/color/focus/ring"]
+          },
+          "literals": { "cornerRadius": [12] }
         },
         {
           "path": ["Button / Focus", "Label"],
@@ -3045,35 +3153,22 @@
           "properties": { "mainComponent": ["Icon"], "visible": ["Show icon"] }
         },
         {
-          "path": ["Button / Focus", "Surface"],
-          "types": ["FRAME"],
-          "in": [2, 8, 14],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
-            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
-            "strokes": ["Oddkin · Component roles/color/focus/ring"],
-            "topLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "topRightRadius": ["Oddkin · Component roles/card/radius"]
-          }
-        },
-        {
           "path": ["Button / Ghost"],
           "types": ["FRAME"],
           "in": [0],
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           }
@@ -3109,25 +3204,16 @@
               { "value": "Oddkin · Component roles/color/action/hover", "variants": [9] },
               { "value": "Oddkin · Component roles/color/surface/hover", "variants": [3, 15] }
             ],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [15] }
             ],
@@ -3169,25 +3255,16 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [10] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [16] }
             ],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/space/md"],
-            "paddingRight": ["Oddkin · Component roles/space/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [16] }
             ],
@@ -3211,6 +3288,7 @@
             "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
             "textStyle": ["Oddkin/UI"]
           },
+          "literals": { "opacity": [0] },
           "properties": { "characters": ["Label"] }
         },
         {
@@ -3224,25 +3302,16 @@
               { "value": "Oddkin · Component roles/color/action/pressed", "variants": [11] },
               { "value": "Oddkin · Component roles/color/surface/sunken", "variants": [5, 17] }
             ],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [17] }
             ],
@@ -3281,13 +3350,12 @@
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
             "fills": ["Oddkin · Component roles/color/surface/default"],
-            "height": ["Oddkin · Component roles/control/height/md"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/md"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
             "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
             "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
             "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
@@ -3331,17 +3399,17 @@
           "sourceId": "159:363",
           "count": 3,
           "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
+          "overriddenFields": ["height", "layoutPositioning", "name", "strokes", "width"]
         }
       ]
     },
     {
       "id": "181:2390",
       "name": "Oddkin/Common/button/lg",
-      "page": "158:22",
-      "frame": "Definitions · Actions",
+      "page": "1398:2",
+      "frame": "Oddkin/Common/button/lg",
       "kind": "COMPONENT_SET",
-      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/button/lg.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nCanonical lg button family. All appearance and interaction states; original variant IDs preserved.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
+      "description": "Existing OddkinButton family and variant IDs, refined to intrinsic auto-layout/minimum height. State is browser/local-state coverage, not a public State prop. Loading allocation reservation is PROPOSED; existing loading remains focusable aria-disabled. No business outcome is stored here.",
       "properties": [
         {
           "name": "Appearance",
@@ -3479,31 +3547,35 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [8] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [14] }
             ],
-            "height": ["Oddkin · Component roles/control/height/lg"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/lg"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/lg"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [14] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           }
+        },
+        {
+          "path": ["Button / Focus", "Focus ring · decorative"],
+          "types": ["FRAME"],
+          "in": [2, 8, 14],
+          "bound": {
+            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
+            "strokes": ["Oddkin · Component roles/color/focus/ring"]
+          },
+          "literals": { "cornerRadius": [12] }
         },
         {
           "path": ["Button / Focus", "Label"],
@@ -3519,25 +3591,10 @@
             "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
             "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
             "textStyle": ["Oddkin/Component/Button/lg"]
-          }
+          },
+          "properties": { "characters": ["Label"] }
         },
         { "path": ["Button / Focus", "Leading icon"], "types": ["INSTANCE"], "in": [2, 8, 14] },
-        {
-          "path": ["Button / Focus", "Surface"],
-          "types": ["FRAME"],
-          "in": [2, 8, 14],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
-            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
-            "strokes": ["Oddkin · Component roles/color/focus/ring"],
-            "topLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "topRightRadius": ["Oddkin · Component roles/card/radius"]
-          }
-        },
         {
           "path": ["Button / Hover"],
           "types": ["FRAME"],
@@ -3549,25 +3606,16 @@
               { "value": "Oddkin · Component roles/color/action/hover", "variants": [9] },
               { "value": "Oddkin · Component roles/color/surface/hover", "variants": [3, 15] }
             ],
-            "height": ["Oddkin · Component roles/control/height/lg"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/lg"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/lg"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [15] }
             ],
@@ -3589,7 +3637,8 @@
             "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
             "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
             "textStyle": ["Oddkin/Component/Button/lg"]
-          }
+          },
+          "properties": { "characters": ["Label"] }
         },
         { "path": ["Button / Hover", "Leading icon"], "types": ["INSTANCE"], "in": [3, 9, 15] },
         {
@@ -3603,25 +3652,16 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [6, 7] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [12, 13] }
             ],
-            "height": ["Oddkin · Component roles/control/height/lg"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/lg"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/lg"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [12, 13] }
             ],
@@ -3645,7 +3685,7 @@
             "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
             "textStyle": ["Oddkin/Component/Button/lg"]
           },
-          "properties": { "characters": [{ "value": "Label", "variants": [0, 6, 12] }] }
+          "properties": { "characters": ["Label"] }
         },
         {
           "path": ["Button / Large", "Leading icon"],
@@ -3667,25 +3707,16 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [10] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [16] }
             ],
-            "height": ["Oddkin · Component roles/control/height/lg"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/lg"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/lg"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [16] }
             ],
@@ -3708,7 +3739,9 @@
             "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
             "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
             "textStyle": ["Oddkin/Component/Button/lg"]
-          }
+          },
+          "literals": { "opacity": [0] },
+          "properties": { "characters": ["Label"] }
         },
         {
           "path": ["Button / Pressed"],
@@ -3721,25 +3754,16 @@
               { "value": "Oddkin · Component roles/color/action/pressed", "variants": [11] },
               { "value": "Oddkin · Component roles/color/surface/sunken", "variants": [5, 17] }
             ],
-            "height": ["Oddkin · Component roles/control/height/lg"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/lg"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/lg"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/lg"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/lg"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [17] }
             ],
@@ -3761,7 +3785,8 @@
             "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
             "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
             "textStyle": ["Oddkin/Component/Button/lg"]
-          }
+          },
+          "properties": { "characters": ["Label"] }
         },
         { "path": ["Button / Pressed", "Leading icon"], "types": ["INSTANCE"], "in": [5, 11, 17] }
       ],
@@ -3778,17 +3803,17 @@
           "sourceId": "159:363",
           "count": 3,
           "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
+          "overriddenFields": ["height", "layoutPositioning", "name", "strokes", "width"]
         }
       ]
     },
     {
       "id": "181:2332",
       "name": "Oddkin/Common/button/sm",
-      "page": "158:22",
-      "frame": "Definitions · Actions",
+      "page": "1398:2",
+      "frame": "Oddkin/Common/button/sm",
       "kind": "COMPONENT_SET",
-      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/button/sm.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nCanonical sm button family. All appearance and interaction states; original variant IDs preserved.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
+      "description": "Existing OddkinButton family and variant IDs, refined to intrinsic auto-layout/minimum height. State is browser/local-state coverage, not a public State prop. Loading allocation reservation is PROPOSED; existing loading remains focusable aria-disabled. No business outcome is stored here.",
       "properties": [
         {
           "name": "Appearance",
@@ -3926,31 +3951,35 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [8] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [14] }
             ],
-            "height": ["Oddkin · Component roles/control/height/sm"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/sm"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [14] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/sm"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [14] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
           }
+        },
+        {
+          "path": ["Button / Focus", "Focus ring · decorative"],
+          "types": ["FRAME"],
+          "in": [2, 8, 14],
+          "bound": {
+            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
+            "strokes": ["Oddkin · Component roles/color/focus/ring"]
+          },
+          "literals": { "cornerRadius": [12] }
         },
         {
           "path": ["Button / Focus", "Label"],
@@ -3976,22 +4005,6 @@
           "properties": { "mainComponent": ["Icon"], "visible": ["Show icon"] }
         },
         {
-          "path": ["Button / Focus", "Surface"],
-          "types": ["FRAME"],
-          "in": [2, 8, 14],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
-            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
-            "strokes": ["Oddkin · Component roles/color/focus/ring"],
-            "topLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "topRightRadius": ["Oddkin · Component roles/card/radius"]
-          }
-        },
-        {
           "path": ["Button / Hover"],
           "types": ["FRAME"],
           "in": [3, 9, 15],
@@ -4002,25 +4015,16 @@
               { "value": "Oddkin · Component roles/color/action/hover", "variants": [9] },
               { "value": "Oddkin · Component roles/color/surface/hover", "variants": [3, 15] }
             ],
-            "height": ["Oddkin · Component roles/control/height/sm"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/sm"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [15] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/sm"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [15] }
             ],
@@ -4062,25 +4066,16 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [10] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [16] }
             ],
-            "height": ["Oddkin · Component roles/control/height/sm"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/sm"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/space/md"],
-            "paddingRight": ["Oddkin · Component roles/space/md"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [16] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/sm"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [16] }
             ],
@@ -4104,6 +4099,7 @@
             "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
             "textStyle": ["Oddkin/UI"]
           },
+          "literals": { "opacity": [0] },
           "properties": { "characters": ["Label"] }
         },
         {
@@ -4117,25 +4113,16 @@
               { "value": "Oddkin · Component roles/color/action/pressed", "variants": [11] },
               { "value": "Oddkin · Component roles/color/surface/sunken", "variants": [5, 17] }
             ],
-            "height": ["Oddkin · Component roles/control/height/sm"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/sm"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [17] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/sm"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [17] }
             ],
@@ -4177,25 +4164,16 @@
               { "value": "Oddkin · Component roles/color/action/default", "variants": [6, 7] },
               { "value": "Oddkin · Component roles/color/surface/default", "variants": [12, 13] }
             ],
-            "height": ["Oddkin · Component roles/control/height/sm"],
-            "itemSpacing": ["Oddkin · Component roles/control/gap"],
-            "minHeight": ["Oddkin · Component roles/control/height/sm"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingRight": ["Oddkin · Component roles/control/padding/inline/sm"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "strokeBottomWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeLeftWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeRightWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
-            "strokeTopWeight": [
-              { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
-            ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/sm"],
+            "paddingBottom": ["Oddkin · AI density scopes/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/sm"],
+            "paddingTop": ["Oddkin · AI density scopes/space/none"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
             "strokes": [
               { "value": "Oddkin · Component roles/color/border/strong", "variants": [12, 13] }
             ],
@@ -4241,7 +4219,7 @@
           "sourceId": "159:363",
           "count": 3,
           "variants": [],
-          "overriddenFields": ["height", "name", "strokes", "width"]
+          "overriddenFields": ["height", "layoutPositioning", "name", "strokes", "width"]
         }
       ]
     },
@@ -12241,16 +12219,16 @@
     {
       "id": "159:501",
       "name": "Oddkin/Common/toggleButton",
-      "page": "158:22",
-      "frame": "Definitions · Actions",
+      "page": "1398:2",
+      "frame": "Oddkin/Common/toggleButton",
       "kind": "COMPONENT_SET",
-      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/toggleButton.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. Set toggle and pressed on odd-button. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nAn action with a persistent pressed state; pair colour with an inset marker. Selection/value and interaction state are independent axes; original component IDs retained.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
+      "description": "Existing odd-button toggle=true composition, never a separate tag. Value maps to pressed. Label Bold stays unchanged. Selection paint persists through loading/disabled (loading paint retention is a proposed internal CSS fix).",
       "properties": [
         {
           "name": "State",
           "type": "VARIANT",
           "defaultValue": "Default",
-          "variantOptions": ["Default", "Focus", "Disabled", "Hover"]
+          "variantOptions": ["Default", "Focus", "Disabled", "Hover", "Loading"]
         },
         {
           "name": "Value",
@@ -12281,6 +12259,11 @@
           "values": { "Value": "Off", "State": "Hover" }
         },
         {
+          "id": "1398:64",
+          "name": "Value=Off, State=Loading",
+          "values": { "Value": "Off", "State": "Loading" }
+        },
+        {
           "id": "159:485",
           "name": "Value=On, State=Default",
           "values": { "Value": "On", "State": "Default" }
@@ -12299,6 +12282,11 @@
           "id": "181:2257",
           "name": "Value=On, State=Hover",
           "values": { "Value": "On", "State": "Hover" }
+        },
+        {
+          "id": "1398:70",
+          "name": "Value=On, State=Loading",
+          "values": { "Value": "On", "State": "Loading" }
         }
       ],
       "layers": [
@@ -12306,238 +12294,88 @@
           "path": [],
           "types": ["COMPONENT"],
           "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "itemSpacing": ["Oddkin · Component roles/space/none"],
-            "paddingBottom": ["Oddkin · Component roles/space/none"],
-            "paddingLeft": ["Oddkin · Component roles/space/none"],
-            "paddingRight": ["Oddkin · Component roles/space/none"],
-            "paddingTop": ["Oddkin · Component roles/space/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Toggle button / Disabled"],
-          "types": ["FRAME"],
-          "in": [1],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          },
-          "literals": { "opacity": [0.5] }
-        },
-        {
-          "path": ["Toggle button / Disabled", "Surface"],
-          "types": ["FRAME"],
-          "in": [1],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/default"],
-            "strokes": ["Oddkin · Component roles/color/border/strong"],
-            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          },
-          "literals": { "strokeWeight": [1] }
-        },
-        {
-          "path": ["Toggle button / Disabled", "Surface", "Bold"],
-          "types": ["TEXT"],
-          "in": [1],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/text/primary"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
-            "textStyle": ["Oddkin/UI"]
-          }
-        },
-        {
-          "path": ["Toggle button / Disabled", "Surface", "Icon · bold"],
-          "types": ["INSTANCE"],
-          "in": [1]
-        },
-        {
-          "path": ["Toggle button / Focus"],
-          "types": ["FRAME"],
-          "in": [2],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Toggle button / Focus", "Surface"],
-          "types": ["FRAME"],
-          "in": [2],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/default"],
-            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
-            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
-            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
-            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
-            "strokes": ["Oddkin · Component roles/color/border/strong"],
-            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
-        },
-        {
-          "path": ["Toggle button / Focus", "Surface", "Bold"],
-          "types": ["TEXT"],
-          "in": [2],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/text/primary"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
-            "textStyle": ["Oddkin/UI"]
-          }
-        },
-        {
-          "path": ["Toggle button / Focus", "Surface", "Icon · bold"],
-          "types": ["INSTANCE"],
-          "in": [2]
-        },
-        {
-          "path": ["Toggle button / Focus", "Surface [2]"],
-          "types": ["FRAME"],
-          "in": [2],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
-            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
-            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
-            "strokes": ["Oddkin · Component roles/color/focus/ring"],
-            "topLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "topRightRadius": ["Oddkin · Component roles/card/radius"]
-          }
-        },
-        {
-          "path": ["Toggle button / Off"],
-          "types": ["FRAME"],
-          "in": [0, 3],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
-        },
-        {
-          "path": ["Toggle button / Off", "Surface"],
-          "types": ["FRAME"],
-          "in": [0, 3],
-          "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
             "fills": [
-              { "value": "Oddkin · Component roles/color/surface/default", "variants": [0] },
+              {
+                "value": "Oddkin · Component roles/color/selection/background",
+                "variants": [5, 6, 7, 8, 9]
+              },
+              {
+                "value": "Oddkin · Component roles/color/surface/default",
+                "variants": [0, 1, 2, 4]
+              },
               { "value": "Oddkin · Component roles/color/surface/hover", "variants": [3] }
             ],
+            "itemSpacing": ["Oddkin · AI density scopes/control/gap"],
+            "minHeight": ["Oddkin · AI density scopes/control/height/md"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingRight": ["Oddkin · AI density scopes/control/padding/inline/md"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
             "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
             "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
             "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
             "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
-            "strokes": ["Oddkin · Component roles/color/border/strong"],
+            "strokes": [
+              {
+                "value": "Oddkin · Component roles/color/border/strong",
+                "variants": [0, 1, 2, 3, 4]
+              },
+              {
+                "value": "Oddkin · Component roles/color/selection/background",
+                "variants": [5, 6, 7, 8, 9]
+              }
+            ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
-        },
-        {
-          "path": ["Toggle button / Off", "Surface", "Bold"],
-          "types": ["TEXT"],
-          "in": [0, 3],
-          "bound": {
-            "fills": ["Oddkin · Component roles/color/text/primary"],
-            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
-            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
-            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
-            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
-            "textStyle": ["Oddkin/UI"]
-          }
-        },
-        {
-          "path": ["Toggle button / Off", "Surface", "Icon · bold"],
-          "types": ["INSTANCE"],
-          "in": [0, 3]
-        },
-        {
-          "path": ["Toggle button / On"],
-          "types": ["FRAME"],
-          "in": [4, 5, 6, 7],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
-            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
-            "topRightRadius": ["Oddkin · Component roles/radius/none"]
           },
-          "literals": { "opacity": [{ "value": 0.5, "variants": [5] }] }
+          "literals": { "opacity": [{ "value": 0.5, "variants": [1, 6] }] }
         },
         {
-          "path": ["Toggle button / On", "Surface"],
-          "types": ["FRAME"],
-          "in": [4, 5, 6, 7],
-          "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/selection/background"],
-            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
-            "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
-        },
-        {
-          "path": ["Toggle button / On", "Surface", "Bold · on"],
+          "path": ["Bold"],
           "types": ["TEXT"],
-          "in": [4, 5, 6, 7],
           "bound": {
-            "fills": ["Oddkin · Component roles/color/selection/foreground"],
+            "fills": [
+              {
+                "value": "Oddkin · Component roles/color/selection/foreground",
+                "variants": [5, 6, 7, 8, 9]
+              },
+              {
+                "value": "Oddkin · Component roles/color/text/primary",
+                "variants": [0, 1, 2, 3, 4]
+              }
+            ],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
             "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
             "textStyle": ["Oddkin/UI"]
-          }
+          },
+          "literals": { "opacity": [{ "value": 0, "variants": [4, 9] }] }
         },
         {
-          "path": ["Toggle button / On", "Surface", "Icon · bold"],
-          "types": ["INSTANCE"],
-          "in": [4, 5, 6, 7]
-        },
-        {
-          "path": ["Toggle button / On", "Surface [2]"],
-          "types": ["FRAME"],
-          "in": [6],
+          "path": ["Focus ring · decorative"],
+          "types": ["RECTANGLE"],
+          "in": [2, 7],
           "bound": {
-            "bottomLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "bottomRightRadius": ["Oddkin · Component roles/card/radius"],
             "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
             "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
             "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
             "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
-            "strokes": ["Oddkin · Component roles/color/focus/ring"],
-            "topLeftRadius": ["Oddkin · Component roles/card/radius"],
-            "topRightRadius": ["Oddkin · Component roles/card/radius"]
-          }
-        }
+            "strokes": ["Oddkin · Component roles/color/focus/ring"]
+          },
+          "literals": { "cornerRadius": [12] }
+        },
+        { "path": ["Oddkin/Icon/spinner"], "types": ["INSTANCE"], "in": [4, 9] }
       ],
       "instances": [
         {
-          "source": "Oddkin/Icon/bold",
-          "sourceId": "159:354",
-          "count": 8,
+          "source": "Oddkin/Icon/spinner",
+          "sourceId": "159:363",
+          "count": 2,
           "variants": [],
-          "overriddenFields": ["name", "strokes"]
+          "overriddenFields": ["height", "layoutPositioning", "strokes", "width"]
         }
       ]
     },

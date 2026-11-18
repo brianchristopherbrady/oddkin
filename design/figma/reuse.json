@@ -13,8 +13,8 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 152,
-    "slot": 54,
+    "style": 153,
+    "slot": 53,
     "deferred": 11,
     "controller": 20,
     "native": 7,
@@ -1321,11 +1321,11 @@
     {
       "consumer": "Oddkin/Common/toggleButton",
       "consumerId": "159:501",
-      "source": "Oddkin/Icon/bold",
-      "sourceId": "159:354",
-      "count": 8,
-      "class": "slot",
-      "reason": "The icon is the author's content; the toggle owns only its pressed state."
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 2,
+      "class": "style",
+      "reason": "The busy glyph of a loading toggle is the shared spinner module, as for every odd-button; the label stays the author's content."
     },
     {
       "consumer": "Oddkin/Layout/AspectRatio",

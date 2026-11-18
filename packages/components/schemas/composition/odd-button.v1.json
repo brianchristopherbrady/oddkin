@@ -57,7 +57,7 @@
         },
         "loading": {
           "type": "boolean",
-          "description": "Shows a spinner and ignores activation; the button stays focusable.",
+          "description": "Shows a spinner over the content, keeping its size, and ignores activation; the button stays focusable.",
           "default": false
         },
         "full-width": {

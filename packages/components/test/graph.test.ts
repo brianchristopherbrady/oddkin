@@ -153,3 +153,26 @@ describe('@oddkin/components/composition import graphs', () => {
     expect(packages).toEqual(['@oddkin/core/model']);
   });
 });
+
+// Avatar, badge, and button are intrinsic (their specifications, responsive level 0): CSS sizes
+// them in whatever space the parent grants. They read no layout context and measure nothing.
+describe('intrinsic primitives (avatar, badge, button)', () => {
+  const ALLOWED = [
+    '@oddkin/core/element',
+    '@oddkin/core/i18n',
+    '@oddkin/core/reactive',
+    '@oddkin/core/scope',
+    '@oddkin/core/styles',
+    '@oddkin/core/template',
+    '@oddkin/tokens/refs',
+  ];
+  for (const name of ['avatar', 'badge', 'button'])
+    it(`${name} loads no layout context and creates no observers`, async () => {
+      const { files, packages } = await graph(`${name}/index.js`);
+      expect(packages.filter((p) => !ALLOWED.includes(p))).toEqual([]);
+      for (const file of files)
+        expect(await readFile(resolve(dist, file), 'utf8'), file).not.toMatch(
+          /\b(Resize|Intersection|Mutation)Observer\b|matchMedia\(|getBoundingClientRect\(/,
+        );
+    });
+});

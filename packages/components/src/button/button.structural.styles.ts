@@ -2,9 +2,11 @@ import { css } from '@oddkin/core/styles';
 
 /**
  * Styles the button's layout and interaction depend on: host display, full width, content
- * alignment, and forced-colors borders (the loading indicator is `spinnerStyles`). No brand or
- * visual tokens. Keep these (after `hostStyles`) when replacing the visual styles; they do not make
- * arbitrary overrides safe.
+ * alignment, the loading overlay (the ring itself is `spinnerStyles`), and forced-colors borders.
+ * While loading, the spinner turns at the centre over the content, which keeps its size and
+ * accessible name but is not drawn; a pressed toggle stays pressed in forced colours.
+ * No brand or visual tokens. Keep these (after `hostStyles`) when replacing the visual styles;
+ * they do not make arbitrary overrides safe.
  */
 export const buttonStructuralStyles = css`
   :host {
@@ -15,6 +17,7 @@ export const buttonStructuralStyles = css`
     display: block;
   }
   button {
+    position: relative;
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -40,6 +43,15 @@ export const buttonStructuralStyles = css`
     /* Long unbroken labels (URLs, compound words, translations) wrap instead of overflowing. */
     overflow-wrap: anywhere;
   }
+  .spinner {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+  }
+  :host([loading]) .label,
+  :host([loading]) ::slotted(*) {
+    opacity: 0;
+  }
   @media (forced-colors: active) {
     button {
       border: 1px solid ButtonText;
@@ -51,7 +63,8 @@ export const buttonStructuralStyles = css`
     /* The pressed state twice: one attribute more than the skin's pressed rule, so the system
        colours win. */
     :host([toggle])
-      button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']) {
+      button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+    :host([toggle]) button[aria-pressed='true'][aria-pressed='true'][aria-disabled='true'] {
       border-color: Highlight;
       background: Highlight;
       color: HighlightText;

@@ -287,18 +287,23 @@ describe('native <button> styling path (button.css)', () => {
     }
   });
 
-  it('matches a pressed toggle, enabled, disabled, and hovered', async () => {
+  it('matches a pressed toggle, enabled, disabled, busy, and hovered', async () => {
+    // A loading odd-button is busy: the native path marks the same state with aria-disabled.
     const cases = ['primary', 'secondary', 'ghost'].flatMap((appearance) =>
-      ['', 'disabled'].map(
-        (disabled) =>
-          `<odd-button toggle pressed appearance="${appearance}" ${disabled}>Bold</odd-button>` +
-          `<button class="odd-button" aria-pressed="true" data-appearance="${appearance}" ${disabled}>Bold</button>`,
+      [
+        ['', ''],
+        ['disabled', 'disabled'],
+        ['loading', 'aria-disabled="true"'],
+      ].map(
+        ([element, native]) =>
+          `<odd-button toggle pressed appearance="${appearance}" ${element}>Bold</odd-button>` +
+          `<button class="odd-button" aria-pressed="true" data-appearance="${appearance}" ${native}>Bold</button>`,
       ),
     );
     await render(cases.join(''));
     await restPointer();
     const all = pairs();
-    expect(all).toHaveLength(6);
+    expect(all).toHaveLength(9);
     for (const [control, native] of all)
       expect(styles(native), native.outerHTML).toEqual(styles(control));
     if (!matchMedia('(hover: hover)').matches) return;

@@ -10,11 +10,13 @@ import { flush } from '@oddkin/core/reactive';
 // and text widths are not compared. DELIBERATE lists each accepted difference with its reason.
 
 type Bound = string | { value: string; variants: number[] };
+type Literal = string | number | { value: string | number; variants: number[] };
 interface Layer {
   path: string[];
   types: string[];
   in?: number[];
   bound?: Record<string, Bound[]>;
+  literals?: Record<string, Literal[]>;
 }
 export interface Family {
   name: string;
@@ -36,14 +38,12 @@ export interface Target {
   gap?: 'column-gap' | 'row-gap';
   /** More bound fields to compare, as [Figma field, CSS property] (layout: `counterAxisSpacing`, …). */
   fields?: [string, string][];
+  /** Compares this element's computed opacity with the layer's (Figma's literal, else 1). */
+  opacityOf?: Element;
 }
 
 /** Accepted differences, each with its reason (also listed in component-catalog.md §7). */
 const DELIBERATE: [RegExp, string][] = [
-  [
-    /^button\S* \S+ Button \/ Loading paddingLeft \(--odd-space-md\)/,
-    'Figma pads the loading state with space/md at every size; the code keeps the size padding, so a button keeps its width when it starts loading.',
-  ],
   [
     /^input .+ Text input \/ [^>]+ paddingLeft \(--odd-space-2xs\)/,
     'Figma insets the field frame by space/2xs to make room for its focus ring; the shared focus ring is an outline that takes no layout space.',
@@ -141,12 +141,23 @@ const boundFor = (layer: Layer, index: number, field: string): string | undefine
   }
   return undefined;
 };
+/** A value Figma sets on the layer without a variable (opacity, …), for one variant. */
+const literalFor = (layer: Layer, index: number, field: string): string | number | undefined => {
+  for (const l of layer.literals?.[field] ?? []) {
+    if (typeof l !== 'object') return l;
+    if (l.variants.includes(index)) return l.value;
+  }
+  return undefined;
+};
 // Collection naming as in packages/tokens/test/figma-parity.test.ts: component roles are token
-// paths; repository tokens are `repo/<token path>`.
+// paths; repository tokens are `repo/<token path>`. The density-scope collection re-exports the
+// density-scaled roles (space, control height, padding, gap) under their token paths; its
+// `Internal/` variables hold the compact values and are never bound directly.
 const tokenVar = (path: string) => {
   const role = /^Oddkin · Component roles\/(.+)$/.exec(path)?.[1];
   const repo = /^Oddkin · Repository tokens\/repo\/(.+)$/.exec(path)?.[1];
-  const name = role ?? repo;
+  const density = /^Oddkin · AI density scopes\/(?!Internal\/)(.+)$/.exec(path)?.[1];
+  const name = role ?? repo ?? density;
   if (!name) throw new Error(`no token mapping for ${path}`);
   return `--odd-${name.replaceAll('/', '-')}`;
 };
@@ -242,6 +253,11 @@ export function compare(familyName: string, values: Record<string, string>, targ
       // The current-row bar is the row's ::before (Figma's inner "Surface" layer).
       const bar = getComputedStyle(t.el, '::before');
       check('fills', 'background-color', bar.backgroundColor);
+    }
+    if (t.opacityOf) {
+      const expected = Number(literalFor(layer, index, 'opacity') ?? 1);
+      const actual = Number(getComputedStyle(t.opacityOf).opacity);
+      if (actual !== expected) out.push(`${at} opacity: ${actual}, Figma ${expected}`);
     }
   }
   return out.filter((line) => !DELIBERATE.some(([pattern]) => pattern.test(line)));

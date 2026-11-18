@@ -2111,7 +2111,9 @@ describe('Figma parity: odd-context-picker (page 06)', () => {
       if (!trigger.matches(':focus-visible')) trigger.focus();
       await transitions([target('Button / Focus')]);
       differences.push(
-        ...state('Focus', [{ layer: ['Button / Focus', 'Surface'], el: trigger, kind: 'ring' }]),
+        ...state('Focus', [
+          { layer: ['Button / Focus', 'Focus ring \u00b7 decorative'], el: trigger, kind: 'ring' },
+        ]),
       );
       trigger.blur();
       el.disabled = true;

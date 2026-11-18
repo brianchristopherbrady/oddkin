@@ -1,7 +1,16 @@
 import { html } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-button> into HTMLElementTagNameMap, so props are checked against the element.
-import type {} from './button.js';
+import type { OddkinButton } from './button.js';
+
+/**
+ * Moves the icon a fixture rendered into the button. The icons are canonical ones from
+ * design/icons/general, decorative, at Figma's 16 px (icon.size.sm).
+ */
+const adopt = (element: OddkinButton, host: Element) => {
+  element.prepend(host.querySelector('odd-icon')!);
+  host.remove();
+};
 
 export default defineExamples('odd-button', {
   default: { label: 'Default', slots: { default: 'Save' }, preset: true },
@@ -32,6 +41,43 @@ export default defineExamples('odd-button', {
     label: 'Large',
     props: { size: 'lg', appearance: 'primary' },
     slots: { default: 'Get started' },
+  },
+  leadingIcon: {
+    label: 'With a leading icon',
+    props: { appearance: 'primary' },
+    slots: { default: 'New project' },
+    guidance:
+      'Put a decorative 16 px icon (`odd-icon size="sm"`) in the `start` slot, before the words that name the button.',
+    fixture: ({ element, mount }) =>
+      adopt(
+        element,
+        mount(
+          html`<div>
+            <odd-icon size="sm" slot="start"
+              ><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 10h14M10 3v14" stroke-linecap="round" /></svg
+            ></odd-icon>
+          </div>`,
+        ),
+      ),
+  },
+  iconOnly: {
+    label: 'Icon only',
+    props: { label: 'Close' },
+    guidance:
+      'Without visible words, `label` names the button. The icon stays decorative; a tooltip may add the name visually.',
+    fixture: ({ element, mount }) =>
+      adopt(
+        element,
+        mount(
+          html`<div>
+            <odd-icon size="sm"
+              ><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 4l12 12M16 4L4 16" stroke-linecap="round" /></svg
+            ></odd-icon>
+          </div>`,
+        ),
+      ),
   },
   disabled: {
     label: 'Disabled',
