@@ -42,7 +42,15 @@ describe('Figma parity: odd-button (button, button/sm, button/lg)', () => {
             state === 'Disabled' ? 'disabled' : '',
             state === 'Loading' ? 'loading' : '',
           ].join(' ');
-          const el = mount(`<odd-button ${attributes}>Label</odd-button>`);
+          // Loading keeps both icons in their places, undrawn (Figma's Leading and End icon slots).
+          const icons =
+            state === 'Loading'
+              ? ['start', 'end'].map(
+                  (slot) =>
+                    `<odd-icon slot="${slot}"><svg viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" /></svg></odd-icon>`,
+                )
+              : ['', ''];
+          const el = mount(`<odd-button ${attributes}>${icons[0]}Label${icons[1]}</odd-button>`);
           await settle(el);
           const control = el.shadowRoot!.querySelector<HTMLElement>('[part="control"]')!;
           const label = el.shadowRoot!.querySelector<HTMLElement>('.label')!;
@@ -53,11 +61,86 @@ describe('Figma parity: odd-button (button, button/sm, button/lg)', () => {
             { layer: frame, el: control, kind: 'frame', gap: 'column-gap', opacityOf: control },
             { layer: [...frame, 'Label'], el: control, kind: 'text', opacityOf: label },
           ];
+          if (state === 'Loading')
+            for (const [slot, layer] of [
+              ['start', 'Leading icon slot'],
+              ['end', 'End icon slot'],
+            ] as const) {
+              const icon = el.querySelector(`[slot="${slot}"]`)!;
+              targets.push({ layer: [...frame, layer], el: icon, kind: 'frame', opacityOf: icon });
+            }
           if (state === 'Focus')
             targets.push({
               layer: [...frame, 'Focus ring \u00b7 decorative'],
               el: control,
               kind: 'ring',
+            });
+          await interact(state, control);
+          await transitions(targets);
+          const differences = compare(`Oddkin/Common/${set}`, values, targets);
+          await release(state);
+          expectNone(differences);
+        });
+});
+
+// One icon alone (odd-button's icon-only state, Figma page 1398:2): the square's fill, border,
+// radius, padding, and minimum width and height, the focus ring, and the icon kept undrawn while
+// loading; On is a pressed toggle.
+const ICON_BUTTONS = ['iconButton', 'iconButton/sm', 'iconButton/lg'];
+const ICON_STATES = [...BUTTON_STATES, 'On'];
+const ICON = '<odd-icon><svg viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" /></svg></odd-icon>';
+
+describe('Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)', () => {
+  for (const set of ICON_BUTTONS)
+    for (const appearance of ['primary', 'secondary', 'ghost'])
+      for (const state of ICON_STATES)
+        it(`${set} ${appearance} ${state}`, async (context) => {
+          if (state === 'Pressed' && server.browser === 'firefox') context.skip();
+          const family = figma.get(`Oddkin/Common/${set}`)!;
+          const size = family.variants[0]!.values['Size']!;
+          const values = { Appearance: appearance, Size: size, State: state };
+          const attributes = [
+            `appearance="${appearance}"`,
+            `size="${size}"`,
+            'label="Add"',
+            state === 'Disabled' ? 'disabled' : '',
+            state === 'Loading' ? 'loading' : '',
+            state === 'On' ? 'toggle pressed' : '',
+          ].join(' ');
+          const el = mount(`<odd-button ${attributes}>${ICON}</odd-button>`);
+          const icon = el.querySelector('odd-icon')!;
+          await settle(icon);
+          await settle(el);
+          expect(el.matches(':state(icon-only)')).toBe(true);
+          const control = shadowPart(el, 'control');
+          const frame = layersOf(family, variantIndex(family, values)).find(
+            (l) => l.path.length === 1,
+          )!.path;
+          const targets: Target[] = [
+            {
+              layer: frame,
+              el: control,
+              kind: 'frame',
+              gap: 'column-gap',
+              opacityOf: control,
+              fields: [
+                ['minHeight', 'min-height'],
+                ['minWidth', 'min-width'],
+              ],
+            },
+          ];
+          if (state === 'Focus')
+            targets.push({
+              layer: [...frame, 'Focus ring \u00b7 decorative'],
+              el: control,
+              kind: 'ring',
+            });
+          if (state === 'Loading')
+            targets.push({
+              layer: [...frame, 'Icon slot'],
+              el: icon,
+              kind: 'frame',
+              opacityOf: icon,
             });
           await interact(state, control);
           await transitions(targets);

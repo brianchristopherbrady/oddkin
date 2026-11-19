@@ -28,10 +28,9 @@ export const calendarStyles = css`
   .heading {
     color: ${token('color.text.primary')};
   }
-  .nav {
-    --odd-button-padding-inline: ${token('space.none')};
-    min-inline-size: max(${token('control.height.sm')}, ${token('target.min')});
-    font-size: ${token('icon.size.md')};
+  .nav .glyph {
+    inline-size: var(--odd-icon-size);
+    block-size: var(--odd-icon-size);
   }
   @media (hover: hover) {
     .day:not([aria-disabled='true']):not([aria-selected='true']):hover {

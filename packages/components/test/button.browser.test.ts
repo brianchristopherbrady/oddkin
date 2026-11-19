@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cdp, page, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
@@ -653,5 +653,134 @@ describe('odd-button in its parent', () => {
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(submits).toBe(0);
     expect(form.querySelectorAll('button')).toHaveLength(0);
+  });
+
+  const icon = (attributes = '') =>
+    `<odd-icon ${attributes}><svg viewBox="0 0 20 20"><path d="M4 4l12 12" /></svg></odd-icon>`;
+  const px = (scope: Element, variable: string) =>
+    parseFloat(resolveIn(scope, 'inline-size', variable));
+  const iconOnly = (el: Element) => el.matches(':state(icon-only)');
+
+  it('B-A9: one icon alone is a square at each size and density, never below the target size', async () => {
+    await import('../src/icon/icon.define.js');
+    for (const density of ['', 'data-odd-density="compact"'])
+      for (const size of ['sm', 'md', 'lg']) {
+        container.innerHTML = `<div ${density}><odd-button size="${size}" label="Close">${icon()}</odd-button>
+          <odd-button size="${size}" label="Close"><svg viewBox="0 0 20 20"></svg></odd-button></div>`;
+        const scope = container.firstElementChild!;
+        const square = Math.max(
+          px(scope, `--odd-control-height-${size}`),
+          px(scope, '--odd-target-min'),
+        );
+        for (const el of scope.querySelectorAll<Button>('odd-button')) {
+          await settle(el);
+          const box = control(el).getBoundingClientRect();
+          expect([box.width, box.height], `${density} ${size}`).toEqual([square, square]);
+          expect(iconOnly(el)).toBe(true);
+        }
+      }
+  });
+
+  it('B-A9: the state follows the content on the same node, with focus kept', async () => {
+    await import('../src/icon/icon.define.js');
+    const { el, control: native } = await mount(icon(), { label: 'Close' });
+    el.focus();
+    const square = native.getBoundingClientRect().width;
+    const text = document.createTextNode(' ');
+    el.append(text);
+    await settle(el);
+    // Whitespace beside the icon keeps it icon-only.
+    expect(iconOnly(el)).toBe(true);
+    // A template's text binding changes the text node in place.
+    text.data = 'Close';
+    await expect.poll(() => iconOnly(el)).toBe(false);
+    await frame();
+    expect(native.getBoundingClientRect().width).toBeGreaterThan(square);
+    text.data = '';
+    await expect.poll(() => iconOnly(el)).toBe(true);
+    el.append(document.createElement('span'));
+    await expect.poll(() => iconOnly(el)).toBe(false);
+    el.lastElementChild!.remove();
+    await expect.poll(() => iconOnly(el)).toBe(true);
+    // An icon in the start slot is not the default slot's content.
+    el.firstElementChild!.setAttribute('slot', 'start');
+    await expect.poll(() => iconOnly(el)).toBe(false);
+    el.firstElementChild!.removeAttribute('slot');
+    await expect.poll(() => iconOnly(el)).toBe(true);
+    await frame();
+    expect(native.getBoundingClientRect().width).toBe(square);
+    expect(control(el)).toBe(native);
+    expect(el.shadowRoot!.activeElement).toBe(native);
+  });
+
+  it('B-A10: icons take 16/16/20 px beside text and 20/20/24 px alone; --odd-icon-size overrides', async () => {
+    await import('../src/icon/icon.define.js');
+    const sizes = { sm: ['sm', 'md'], md: ['sm', 'md'], lg: ['md', 'lg'] };
+    for (const [size, [beside, alone]] of Object.entries(sizes)) {
+      container.innerHTML = `<odd-button size="${size}">${icon('slot="start"')}Save${icon('slot="end"')}</odd-button>
+        <odd-button size="${size}" label="Close">${icon()}</odd-button>
+        <odd-button size="${size}" label="Close"><svg viewBox="0 0 20 20"></svg></odd-button>
+        <odd-button size="${size}" label="Close">${icon('size="lg" style="--odd-icon-size: 12px"')}</odd-button>`;
+      const buttons = [...container.querySelectorAll<Button>('odd-button')];
+      for (const el of buttons) await settle(el);
+      for (const i of container.querySelectorAll('odd-icon')) await settle(i);
+      const edge = (el: Element) => {
+        const box = el.getBoundingClientRect();
+        expect(box.width, `${size} ${el.outerHTML}`).toBe(box.height);
+        return box.width;
+      };
+      const [text, alone1, alone2, custom] = buttons as [Button, Button, Button, Button];
+      const besideSize = px(container, `--odd-icon-size-${beside}`);
+      const aloneSize = px(container, `--odd-icon-size-${alone}`);
+      expect([...text.querySelectorAll('odd-icon')].map(edge), size).toEqual([
+        besideSize,
+        besideSize,
+      ]);
+      expect(edge(alone1.querySelector('odd-icon')!), size).toBe(aloneSize);
+      expect(edge(alone2.querySelector('svg')!), size).toBe(aloneSize);
+      expect(edge(custom.querySelector('odd-icon')!), size).toBe(12);
+      // Every icon fits its control.
+      for (const el of buttons)
+        for (const i of el.querySelectorAll('odd-icon, svg'))
+          expect(edge(i)).toBeLessThanOrEqual(control(el).getBoundingClientRect().height);
+    }
+  });
+
+  it('B-A11: an icon-only button without label warns once; with label, or with text, never', async () => {
+    await import('../src/icon/icon.define.js');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    try {
+      container.innerHTML = `<odd-button label="Close">${icon()}</odd-button>
+        <odd-button>${icon('label="Close"')}</odd-button>
+        <odd-button>${icon('slot="start"')}Close</odd-button>`;
+      const [named, unnamed, text] = [...container.querySelectorAll<Button>('odd-button')] as [
+        Button,
+        Button,
+        Button,
+      ];
+      for (const el of [named, unnamed, text]) await settle(el);
+      const codes = () =>
+        warn.mock.calls.map(([message]) => /^\[([^\]]+)\]/.exec(String(message))?.[1]);
+      // An icon's own label does not name the button.
+      expect(codes()).toEqual(['button.label.missing']);
+      expect(String(warn.mock.calls[0]![0])).toContain('<odd-button>');
+      // Once per element: reconnecting, naming and unnaming it again stay silent.
+      unnamed.remove();
+      container.append(unnamed);
+      await settle(unnamed);
+      unnamed.label = 'Close';
+      await settle(unnamed);
+      unnamed.label = '';
+      await settle(unnamed);
+      // Losing its text later makes a text button icon-only: it warns then, once.
+      text.lastChild!.remove();
+      text.firstElementChild!.removeAttribute('slot');
+      await expect.poll(() => iconOnly(text)).toBe(true);
+      named.label = 'Dismiss';
+      await settle(named);
+      expect(codes()).toEqual(['button.label.missing', 'button.label.missing']);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

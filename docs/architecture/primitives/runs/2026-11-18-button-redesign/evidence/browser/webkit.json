@@ -1,0 +1,3936 @@
+{
+  "numTotalTestSuites": 59,
+  "numPassedTestSuites": 59,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 339,
+  "numPassedTests": 335,
+  "numFailedTests": 0,
+  "numPendingTests": 4,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795062955776,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Figma parity: odd-activity"],
+          "fullName": "Figma parity: odd-activity Interrupted, resume available (light)",
+          "status": "passed",
+          "title": "Interrupted, resume available (light)",
+          "duration": 856,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-activity"],
+          "fullName": "Figma parity: odd-activity Interrupted, resume available (dark)",
+          "status": "passed",
+          "title": "Interrupted, resume available (dark)",
+          "duration": 230,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-message versions"],
+          "fullName": "Figma parity: odd-message versions Alternative 2 of 3 (light)",
+          "status": "passed",
+          "title": "Alternative 2 of 3 (light)",
+          "duration": 799,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-message versions"],
+          "fullName": "Figma parity: odd-message versions Alternative 2 of 3 (dark)",
+          "status": "passed",
+          "title": "Alternative 2 of 3 (dark)",
+          "duration": 269,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-inline-assist"],
+          "fullName": "Figma parity: odd-inline-assist Selection ready (light)",
+          "status": "passed",
+          "title": "Selection ready (light)",
+          "duration": 327,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-inline-assist"],
+          "fullName": "Figma parity: odd-inline-assist Selection ready (dark)",
+          "status": "passed",
+          "title": "Selection ready (dark)",
+          "duration": 216,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-message"],
+          "fullName": "Figma parity: odd-message Assistant, completed (light)",
+          "status": "passed",
+          "title": "Assistant, completed (light)",
+          "duration": 284,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-message"],
+          "fullName": "Figma parity: odd-message Assistant, completed (dark)",
+          "status": "passed",
+          "title": "Assistant, completed (dark)",
+          "duration": 309,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-ai-label"],
+          "fullName": "Figma parity: odd-ai-label Generated, collapsed (light)",
+          "status": "passed",
+          "title": "Generated, collapsed (light)",
+          "duration": 264,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-ai-label"],
+          "fullName": "Figma parity: odd-ai-label Generated, collapsed (dark)",
+          "status": "passed",
+          "title": "Generated, collapsed (dark)",
+          "duration": 277,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-response"],
+          "fullName": "Figma parity: odd-response Streaming (light)",
+          "status": "passed",
+          "title": "Streaming (light)",
+          "duration": 248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-response"],
+          "fullName": "Figma parity: odd-response Streaming (dark)",
+          "status": "passed",
+          "title": "Streaming (dark)",
+          "duration": 235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-transcript"],
+          "fullName": "Figma parity: odd-transcript Final and interim text (light)",
+          "status": "passed",
+          "title": "Final and interim text (light)",
+          "duration": 412,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-transcript"],
+          "fullName": "Figma parity: odd-transcript Final and interim text (dark)",
+          "status": "passed",
+          "title": "Final and interim text (dark)",
+          "duration": 289,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-usage-meter"],
+          "fullName": "Figma parity: odd-usage-meter Measured, estimated, unknown (light)",
+          "status": "passed",
+          "title": "Measured, estimated, unknown (light)",
+          "duration": 450,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-usage-meter"],
+          "fullName": "Figma parity: odd-usage-meter Measured, estimated, unknown (dark)",
+          "status": "passed",
+          "title": "Measured, estimated, unknown (dark)",
+          "duration": 317,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-model-select"],
+          "fullName": "Figma parity: odd-model-select Available model (light)",
+          "status": "passed",
+          "title": "Available model (light)",
+          "duration": 417,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-model-select"],
+          "fullName": "Figma parity: odd-model-select Available model (dark)",
+          "status": "passed",
+          "title": "Available model (dark)",
+          "duration": 322,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-sources"],
+          "fullName": "Figma parity: odd-sources One source (light)",
+          "status": "passed",
+          "title": "One source (light)",
+          "duration": 278,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-sources"],
+          "fullName": "Figma parity: odd-sources One source (dark)",
+          "status": "passed",
+          "title": "One source (dark)",
+          "duration": 299,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-response-feedback"],
+          "fullName": "Figma parity: odd-response-feedback Negative rating, drafting (light)",
+          "status": "passed",
+          "title": "Negative rating, drafting (light)",
+          "duration": 469,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-response-feedback"],
+          "fullName": "Figma parity: odd-response-feedback Negative rating, drafting (dark)",
+          "status": "passed",
+          "title": "Negative rating, drafting (dark)",
+          "duration": 399,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-voice-input"],
+          "fullName": "Figma parity: odd-voice-input Recording (light)",
+          "status": "passed",
+          "title": "Recording (light)",
+          "duration": 500,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-voice-input"],
+          "fullName": "Figma parity: odd-voice-input Recording (dark)",
+          "status": "passed",
+          "title": "Recording (dark)",
+          "duration": 368,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-citation"],
+          "fullName": "Figma parity: odd-citation Resolved, expanded inline (light)",
+          "status": "passed",
+          "title": "Resolved, expanded inline (light)",
+          "duration": 366,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-citation"],
+          "fullName": "Figma parity: odd-citation Resolved, expanded inline (dark)",
+          "status": "passed",
+          "title": "Resolved, expanded inline (dark)",
+          "duration": 332,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-conversation"],
+          "fullName": "Figma parity: odd-conversation Two-message feed (light)",
+          "status": "passed",
+          "title": "Two-message feed (light)",
+          "duration": 582,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-conversation"],
+          "fullName": "Figma parity: odd-conversation Two-message feed (dark)",
+          "status": "passed",
+          "title": "Two-message feed (dark)",
+          "duration": 420,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-prompt-input"],
+          "fullName": "Figma parity: odd-prompt-input Draft ready (light)",
+          "status": "passed",
+          "title": "Draft ready (light)",
+          "duration": 434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-prompt-input"],
+          "fullName": "Figma parity: odd-prompt-input Draft ready (dark)",
+          "status": "passed",
+          "title": "Draft ready (dark)",
+          "duration": 363,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-artifact"],
+          "fullName": "Figma parity: odd-artifact Preview, first revision (light)",
+          "status": "passed",
+          "title": "Preview, first revision (light)",
+          "duration": 287,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-artifact"],
+          "fullName": "Figma parity: odd-artifact Preview, first revision (dark)",
+          "status": "passed",
+          "title": "Preview, first revision (dark)",
+          "duration": 299,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-tool-call (page 10)"],
+          "fullName": "Figma parity: odd-tool-call (page 10) Arguments ready, not run yet, Details open (light)",
+          "status": "passed",
+          "title": "Arguments ready, not run yet, Details open (light)",
+          "duration": 318,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-tool-call (page 10)"],
+          "fullName": "Figma parity: odd-tool-call (page 10) Arguments ready, not run yet, Details open (dark)",
+          "status": "passed",
+          "title": "Arguments ready, not run yet, Details open (dark)",
+          "duration": 300,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-tool-call (page 10)"],
+          "fullName": "Figma parity: odd-tool-call (page 10) Failed, retryable, Details closed (light)",
+          "status": "passed",
+          "title": "Failed, retryable, Details closed (light)",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-tool-call (page 10)"],
+          "fullName": "Figma parity: odd-tool-call (page 10) Failed, retryable, Details closed (dark)",
+          "status": "passed",
+          "title": "Failed, retryable, Details closed (dark)",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-task-plan"],
+          "fullName": "Figma parity: odd-task-plan One done, one active (light)",
+          "status": "passed",
+          "title": "One done, one active (light)",
+          "duration": 414,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-task-plan"],
+          "fullName": "Figma parity: odd-task-plan One done, one active (dark)",
+          "status": "passed",
+          "title": "One done, one active (dark)",
+          "duration": 284,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-question"],
+          "fullName": "Figma parity: odd-question Choice, requested (light)",
+          "status": "passed",
+          "title": "Choice, requested (light)",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-question"],
+          "fullName": "Figma parity: odd-question Choice, requested (dark)",
+          "status": "passed",
+          "title": "Choice, requested (dark)",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-checkpoint"],
+          "fullName": "Figma parity: odd-checkpoint Available (light)",
+          "status": "passed",
+          "title": "Available (light)",
+          "duration": 415,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-checkpoint"],
+          "fullName": "Figma parity: odd-checkpoint Available (dark)",
+          "status": "passed",
+          "title": "Available (dark)",
+          "duration": 258,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-change-review"],
+          "fullName": "Figma parity: odd-change-review Proposed, split view (light)",
+          "status": "passed",
+          "title": "Proposed, split view (light)",
+          "duration": 460,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-change-review"],
+          "fullName": "Figma parity: odd-change-review Proposed, split view (dark)",
+          "status": "passed",
+          "title": "Proposed, split view (dark)",
+          "duration": 315,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-action-approval"],
+          "fullName": "Figma parity: odd-action-approval Requested (light)",
+          "status": "passed",
+          "title": "Requested (light)",
+          "duration": 351,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-action-approval"],
+          "fullName": "Figma parity: odd-action-approval Requested (dark)",
+          "status": "passed",
+          "title": "Requested (dark)",
+          "duration": 257,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the reason field (page 08)"],
+          "fullName": "Figma parity: the reason field (page 08) Empty, Filled, Focus, and Disabled (light)",
+          "status": "passed",
+          "title": "Empty, Filled, Focus, and Disabled (light)",
+          "duration": 377,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the reason field (page 08)"],
+          "fullName": "Figma parity: the reason field (page 08) Empty, Filled, Focus, and Disabled (dark)",
+          "status": "passed",
+          "title": "Empty, Filled, Focus, and Disabled (dark)",
+          "duration": 417,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Approval (light)",
+          "status": "passed",
+          "title": "Approval (light)",
+          "duration": 434,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Question (light)",
+          "status": "passed",
+          "title": "Question (light)",
+          "duration": 399,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Change review: accept, dismiss, undo (light)",
+          "status": "passed",
+          "title": "Change review: accept, dismiss, undo (light)",
+          "duration": 600,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Checkpoint and its confirmation (light)",
+          "status": "passed",
+          "title": "Checkpoint and its confirmation (light)",
+          "duration": 433,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Approval (dark)",
+          "status": "passed",
+          "title": "Approval (dark)",
+          "duration": 429,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Question (dark)",
+          "status": "passed",
+          "title": "Question (dark)",
+          "duration": 388,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Change review: accept, dismiss, undo (dark)",
+          "status": "passed",
+          "title": "Change review: accept, dismiss, undo (dark)",
+          "duration": 560,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: the decision row (page 08)"],
+          "fullName": "Figma parity: the decision row (page 08) Checkpoint and its confirmation (dark)",
+          "status": "passed",
+          "title": "Checkpoint and its confirmation (dark)",
+          "duration": 422,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, search results (light)",
+          "status": "passed",
+          "title": "Surface, search results (light)",
+          "duration": 974,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource type: the document icon, and the icon of a kind (light)",
+          "status": "passed",
+          "title": "Resource type: the document icon, and the icon of a kind (light)",
+          "duration": 397,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource rows: hover, focus, single, unavailable, limit (light)",
+          "status": "passed",
+          "title": "Resource rows: hover, focus, single, unavailable, limit (light)",
+          "duration": 1099,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource row, pressed (light)",
+          "status": "skipped",
+          "title": "Resource row, pressed (light)",
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Feedback: failure, no matches, loading, no resources (light)",
+          "status": "passed",
+          "title": "Feedback: failure, no matches, loading, no resources (light)",
+          "duration": 1017,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, partial failure and searching (light)",
+          "status": "passed",
+          "title": "Surface, partial failure and searching (light)",
+          "duration": 900,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, confirm and selected review (light)",
+          "status": "passed",
+          "title": "Surface, confirm and selected review (light)",
+          "duration": 390,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, browse sources and a nested collection (light)",
+          "status": "passed",
+          "title": "Surface, browse sources and a nested collection (light)",
+          "duration": 595,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Trigger, text form (light)",
+          "status": "passed",
+          "title": "Trigger, text form (light)",
+          "duration": 315,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Trigger, icon form (light)",
+          "status": "passed",
+          "title": "Trigger, icon form (light)",
+          "duration": 967,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Sheet (light)",
+          "status": "passed",
+          "title": "Sheet (light)",
+          "duration": 733,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Expanded browser, Desktop (light)",
+          "status": "passed",
+          "title": "Expanded browser, Desktop (light)",
+          "duration": 1115,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Expanded browser, Mobile (light)",
+          "status": "passed",
+          "title": "Expanded browser, Mobile (light)",
+          "duration": 960,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, search results (dark)",
+          "status": "passed",
+          "title": "Surface, search results (dark)",
+          "duration": 695,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource type: the document icon, and the icon of a kind (dark)",
+          "status": "passed",
+          "title": "Resource type: the document icon, and the icon of a kind (dark)",
+          "duration": 363,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource rows: hover, focus, single, unavailable, limit (dark)",
+          "status": "passed",
+          "title": "Resource rows: hover, focus, single, unavailable, limit (dark)",
+          "duration": 1054,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Resource row, pressed (dark)",
+          "status": "skipped",
+          "title": "Resource row, pressed (dark)",
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Feedback: failure, no matches, loading, no resources (dark)",
+          "status": "passed",
+          "title": "Feedback: failure, no matches, loading, no resources (dark)",
+          "duration": 1003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, partial failure and searching (dark)",
+          "status": "passed",
+          "title": "Surface, partial failure and searching (dark)",
+          "duration": 882,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, confirm and selected review (dark)",
+          "status": "passed",
+          "title": "Surface, confirm and selected review (dark)",
+          "duration": 418,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Surface, browse sources and a nested collection (dark)",
+          "status": "passed",
+          "title": "Surface, browse sources and a nested collection (dark)",
+          "duration": 566,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Trigger, text form (dark)",
+          "status": "passed",
+          "title": "Trigger, text form (dark)",
+          "duration": 279,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Trigger, icon form (dark)",
+          "status": "passed",
+          "title": "Trigger, icon form (dark)",
+          "duration": 1072,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Sheet (dark)",
+          "status": "passed",
+          "title": "Sheet (dark)",
+          "duration": 732,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Expanded browser, Desktop (dark)",
+          "status": "passed",
+          "title": "Expanded browser, Desktop (dark)",
+          "duration": 1186,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-context-picker (page 06)"],
+          "fullName": "Figma parity: odd-context-picker (page 06) Expanded browser, Mobile (dark)",
+          "status": "passed",
+          "title": "Expanded browser, Mobile (dark)",
+          "duration": 1162,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062959907,
+      "endTime": 1795062999811,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/ai/test/figma-parity.browser.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["imports"],
+          "fullName": "imports the foundation and the component entry register nothing",
+          "status": "passed",
+          "title": "the foundation and the component entry register nothing",
+          "duration": 374,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button renders a native button with parts, slots, and defaults",
+          "status": "passed",
+          "title": "renders a native button with parts, slots, and defaults",
+          "duration": 20,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button converts attributes and reflects appearance, size, disabled, loading, and full-width",
+          "status": "passed",
+          "title": "converts attributes and reflects appearance, size, disabled, loading, and full-width",
+          "duration": 4,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button names icon-only buttons through label",
+          "status": "passed",
+          "title": "names icon-only buttons through label",
+          "duration": 7,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button activates with click, Enter, and Space; delegates focus to the native button",
+          "status": "passed",
+          "title": "activates with click, Enter, and Space; delegates focus to the native button",
+          "duration": 812,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button ignores activation while disabled or loading; loading stays focusable",
+          "status": "passed",
+          "title": "ignores activation while disabled or loading; loading stays focusable",
+          "duration": 86,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button"],
+          "fullName": "odd-button programmatic property changes emit no events",
+          "status": "passed",
+          "title": "programmatic property changes emit no events",
+          "duration": 4,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms submits with its name and value through a temporary native submitter",
+          "status": "passed",
+          "title": "submits with its name and value through a temporary native submitter",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms runs constraint validation before submitting",
+          "status": "passed",
+          "title": "runs constraint validation before submitting",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms does not submit when the click is cancelled or the type is button",
+          "status": "passed",
+          "title": "does not submit when the click is cancelled or the type is button",
+          "duration": 665,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms resets the form with type=\"reset\"",
+          "status": "passed",
+          "title": "resets the form with type=\"reset\"",
+          "duration": 232,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms follows a disabled fieldset",
+          "status": "passed",
+          "title": "follows a disabled fieldset",
+          "duration": 20,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms passes the submission overrides to the submitter; formnovalidate skips validation",
+          "status": "passed",
+          "title": "passes the submission overrides to the submitter; formnovalidate skips validation",
+          "duration": 335,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms submits the form it is associated with as its form attribute or position changes",
+          "status": "passed",
+          "title": "submits the form it is associated with as its form attribute or position changes",
+          "duration": 734,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["forms"],
+          "fullName": "forms is never the default button for Enter in a text field (documented limitation)",
+          "status": "passed",
+          "title": "is never the default button for Enter in a text field (documented limitation)",
+          "duration": 113,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["ownership and theming"],
+          "fullName": "ownership and theming returns to baseline after reconnects and keeps nodes across theme-value changes",
+          "status": "passed",
+          "title": "returns to baseline after reconnects and keeps nodes across theme-value changes",
+          "duration": 8,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["toggle"],
+          "fullName": "toggle reports aria-pressed only with toggle, and the pressed state by role",
+          "status": "passed",
+          "title": "reports aria-pressed only with toggle, and the pressed state by role",
+          "duration": 11,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["toggle"],
+          "fullName": "toggle flips pressed on click, Enter, and Space: click sees the new state, then input and change",
+          "status": "passed",
+          "title": "flips pressed on click, Enter, and Space: click sees the new state, then input and change",
+          "duration": 272,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["toggle"],
+          "fullName": "toggle a cancelled click, disabled, or loading leaves pressed unchanged and dispatches nothing",
+          "status": "passed",
+          "title": "a cancelled click, disabled, or loading leaves pressed unchanged and dispatches nothing",
+          "duration": 276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["toggle"],
+          "fullName": "toggle programmatic pressed changes dispatch nothing",
+          "status": "passed",
+          "title": "programmatic pressed changes dispatch nothing",
+          "duration": 30,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["toggle"],
+          "fullName": "toggle draws the pressed state in forced colours",
+          "status": "skipped",
+          "title": "draws the pressed state in forced colours",
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A1: keeps the control, slots, focus, and pressed state while the parent narrows and widens",
+          "status": "passed",
+          "title": "B-A1: keeps the control, slots, focus, and pressed state while the parent narrows and widens",
+          "duration": 52,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A2: keeps its size, slots, name, and focus while loading; the spinner turns at the centre",
+          "status": "passed",
+          "title": "B-A2: keeps its size, slots, name, and focus while loading; the spinner turns at the centre",
+          "duration": 186,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A3: a pressed toggle keeps the selection colours loading and disabled, in each scope",
+          "status": "passed",
+          "title": "B-A3: a pressed toggle keeps the selection colours loading and disabled, in each scope",
+          "duration": 15,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A6: an icon-only button keeps its label as its name while loading, at least the target size",
+          "status": "passed",
+          "title": "B-A6: an icon-only button keeps its label as its name while loading, at least the target size",
+          "duration": 5,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A7: the host’s status and retry, in a bounded parent, keep the draft beside them",
+          "status": "passed",
+          "title": "B-A7: the host’s status and retry, in a bounded parent, keep the draft beside them",
+          "duration": 59,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A8: removed with a toggle or a submission queued, it acts on neither and reconnects at baseline",
+          "status": "passed",
+          "title": "B-A8: removed with a toggle or a submission queued, it acts on neither and reconnects at baseline",
+          "duration": 102,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A9: one icon alone is a square at each size and density, never below the target size",
+          "status": "passed",
+          "title": "B-A9: one icon alone is a square at each size and density, never below the target size",
+          "duration": 114,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A9: the state follows the content on the same node, with focus kept",
+          "status": "passed",
+          "title": "B-A9: the state follows the content on the same node, with focus kept",
+          "duration": 36,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A10: icons take 16/16/20 px beside text and 20/20/24 px alone; --odd-icon-size overrides",
+          "status": "passed",
+          "title": "B-A10: icons take 16/16/20 px beside text and 20/20/24 px alone; --odd-icon-size overrides",
+          "duration": 37,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-button in its parent"],
+          "fullName": "odd-button in its parent B-A11: an icon-only button without label warns once; with label, or with text, never",
+          "status": "passed",
+          "title": "B-A11: an icon-only button without label warns once; with label, or with text, never",
+          "duration": 17,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062959435,
+      "endTime": 1795062964612,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/button.browser.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["imports"],
+          "fullName": "imports the foundation and the component entry register nothing new",
+          "status": "passed",
+          "title": "the foundation and the component entry register nothing new",
+          "duration": 656,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar draws the month as a grid named by the month, in a group named by the label",
+          "status": "passed",
+          "title": "draws the month as a grid named by the month, in a group named by the label",
+          "duration": 453,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar starts weeks on the first day the language or first-day gives, with names in the language",
+          "status": "passed",
+          "title": "starts weeks on the first day the language or first-day gives, with names in the language",
+          "duration": 392,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar marks today, and the dates outside min and max or disabled by the hook",
+          "status": "passed",
+          "title": "marks today, and the dates outside min and max or disabled by the hook",
+          "duration": 320,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar keeps a YYYY-MM-DD value, as a native date input sanitizes and submits it",
+          "status": "passed",
+          "title": "keeps a YYYY-MM-DD value, as a native date input sanitizes and submits it",
+          "duration": 395,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar is required, and reports dates outside min and max, as a native date input",
+          "status": "passed",
+          "title": "is required, and reports dates outside min and max, as a native date input",
+          "duration": 369,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar marks the field touched only when focus leaves the calendar",
+          "status": "passed",
+          "title": "marks the field touched only when focus leaves the calendar",
+          "duration": 466,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar moves by the APG date grid keys and chooses with Enter and Space",
+          "status": "passed",
+          "title": "moves by the APG date grid keys and chooses with Enter and Space",
+          "duration": 1126,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar keeps focus on the Tab stop when the value moves it",
+          "status": "passed",
+          "title": "keeps focus on the Tab stop when the value moves it",
+          "duration": 409,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar swaps Left and Right in right-to-left text",
+          "status": "passed",
+          "title": "swaps Left and Right in right-to-left text",
+          "duration": 449,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar stops at min and max, and moves onto dates it cannot choose without choosing them",
+          "status": "passed",
+          "title": "stops at min and max, and moves onto dates it cannot choose without choosing them",
+          "duration": 618,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar chooses a clicked date, and follows a date of another month there",
+          "status": "passed",
+          "title": "chooses a clicked date, and follows a date of another month there",
+          "duration": 1142,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar shows other months from its buttons, keeping focus there and the date in the month",
+          "status": "passed",
+          "title": "shows other months from its buttons, keeping focus there and the date in the month",
+          "duration": 592,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar is read-only: the dates can be moved through, not chosen; submitted, not validated",
+          "status": "passed",
+          "title": "is read-only: the dates can be moved through, not chosen; submitted, not validated",
+          "duration": 468,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar chooses today and clears from its actions",
+          "status": "passed",
+          "title": "chooses today and clears from its actions",
+          "duration": 926,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar checks today again when Today is pressed: midnight may have passed",
+          "status": "passed",
+          "title": "checks today again when Today is pressed: midnight may have passed",
+          "duration": 359,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar keeps its buttons whole when narrower than the month",
+          "status": "passed",
+          "title": "keeps its buttons whole when narrower than the month",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar is one Tab stop between its month buttons and actions",
+          "status": "passed",
+          "title": "is one Tab stop between its month buttons and actions",
+          "duration": 518,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar is inactive when disabled, also by a fieldset",
+          "status": "passed",
+          "title": "is inactive when disabled, also by a fieldset",
+          "duration": 627,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar matches Figma calendar: surface, rows, cells, and their states",
+          "status": "passed",
+          "title": "matches Figma calendar: surface, rows, cells, and their states",
+          "duration": 920,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar keeps the chosen date, today, and disabled dates apart in forced colours",
+          "status": "skipped",
+          "title": "keeps the chosen date, today, and disabled dates apart in forced colours",
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-calendar"],
+          "fullName": "odd-calendar releases everything it owns when removed",
+          "status": "passed",
+          "title": "releases everything it owns when removed",
+          "duration": 365,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062960340,
+      "endTime": 1795062972211,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/calendar.browser.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel is a named carousel region of slide groups, one shown, with previous, position, slide buttons, and next",
+          "status": "passed",
+          "title": "is a named carousel region of slide groups, one shown, with previous, position, slide buttons, and next",
+          "duration": 711,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel is a region named by label, described as a carousel; a group without a label",
+          "status": "passed",
+          "title": "is a region named by label, described as a carousel; a group without a label",
+          "duration": 427,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel moves with previous, next, and the slide buttons, reporting input and change, focus staying put",
+          "status": "passed",
+          "title": "moves with previous, next, and the slide buttons, reporting input and change, focus staying put",
+          "duration": 708,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel is reached with Tab through the shown slide, then its controls; Enter and Space activate",
+          "status": "passed",
+          "title": "is reached with Tab through the shown slide, then its controls; Enter and Space activate",
+          "duration": 503,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel shows the slide `current` names, the nearest one out of range, without reporting",
+          "status": "passed",
+          "title": "shows the slide `current` names, the nearest one out of range, without reporting",
+          "duration": 313,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel follows slides added and removed",
+          "status": "passed",
+          "title": "follows slides added and removed",
+          "duration": 377,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel keeps every control on a narrow carousel, wrapping them",
+          "status": "passed",
+          "title": "keeps every control on a narrow carousel, wrapping them",
+          "duration": 232,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel draws the slide on the sunken surface and the shown slide button on the selection surface",
+          "status": "passed",
+          "title": "draws the slide on the sunken surface and the shown slide button on the selection surface",
+          "duration": 260,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel B-A13: draws previous and next as small icon-only squares with medium glyphs",
+          "status": "passed",
+          "title": "B-A13: draws previous and next as small icon-only squares with medium glyphs",
+          "duration": 251,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel takes localized strings and mirrors its arrows right to left",
+          "status": "passed",
+          "title": "takes localized strings and mirrors its arrows right to left",
+          "duration": 333,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["odd-carousel"],
+          "fullName": "odd-carousel releases everything when removed",
+          "status": "passed",
+          "title": "releases everything when removed",
+          "duration": 519,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062960308,
+      "endTime": 1795062964944,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/carousel.browser.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Default",
+          "status": "passed",
+          "title": "button primary Default",
+          "duration": 431,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Disabled",
+          "status": "passed",
+          "title": "button primary Disabled",
+          "duration": 225,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Loading",
+          "status": "passed",
+          "title": "button primary Loading",
+          "duration": 231,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Hover",
+          "status": "passed",
+          "title": "button primary Hover",
+          "duration": 568,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Pressed",
+          "status": "passed",
+          "title": "button primary Pressed",
+          "duration": 433,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button primary Focus",
+          "status": "passed",
+          "title": "button primary Focus",
+          "duration": 327,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Default",
+          "status": "passed",
+          "title": "button secondary Default",
+          "duration": 222,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Disabled",
+          "status": "passed",
+          "title": "button secondary Disabled",
+          "duration": 284,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Loading",
+          "status": "passed",
+          "title": "button secondary Loading",
+          "duration": 215,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Hover",
+          "status": "passed",
+          "title": "button secondary Hover",
+          "duration": 687,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Pressed",
+          "status": "passed",
+          "title": "button secondary Pressed",
+          "duration": 466,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button secondary Focus",
+          "status": "passed",
+          "title": "button secondary Focus",
+          "duration": 368,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Default",
+          "status": "passed",
+          "title": "button ghost Default",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Disabled",
+          "status": "passed",
+          "title": "button ghost Disabled",
+          "duration": 319,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Loading",
+          "status": "passed",
+          "title": "button ghost Loading",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Hover",
+          "status": "passed",
+          "title": "button ghost Hover",
+          "duration": 517,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Pressed",
+          "status": "passed",
+          "title": "button ghost Pressed",
+          "duration": 433,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button ghost Focus",
+          "status": "passed",
+          "title": "button ghost Focus",
+          "duration": 333,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Default",
+          "status": "passed",
+          "title": "button/sm primary Default",
+          "duration": 284,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Disabled",
+          "status": "passed",
+          "title": "button/sm primary Disabled",
+          "duration": 282,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Loading",
+          "status": "passed",
+          "title": "button/sm primary Loading",
+          "duration": 253,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Hover",
+          "status": "passed",
+          "title": "button/sm primary Hover",
+          "duration": 616,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Pressed",
+          "status": "passed",
+          "title": "button/sm primary Pressed",
+          "duration": 421,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm primary Focus",
+          "status": "passed",
+          "title": "button/sm primary Focus",
+          "duration": 313,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Default",
+          "status": "passed",
+          "title": "button/sm secondary Default",
+          "duration": 316,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Disabled",
+          "status": "passed",
+          "title": "button/sm secondary Disabled",
+          "duration": 317,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Loading",
+          "status": "passed",
+          "title": "button/sm secondary Loading",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Hover",
+          "status": "passed",
+          "title": "button/sm secondary Hover",
+          "duration": 582,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Pressed",
+          "status": "passed",
+          "title": "button/sm secondary Pressed",
+          "duration": 467,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm secondary Focus",
+          "status": "passed",
+          "title": "button/sm secondary Focus",
+          "duration": 295,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Default",
+          "status": "passed",
+          "title": "button/sm ghost Default",
+          "duration": 246,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Disabled",
+          "status": "passed",
+          "title": "button/sm ghost Disabled",
+          "duration": 243,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Loading",
+          "status": "passed",
+          "title": "button/sm ghost Loading",
+          "duration": 250,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Hover",
+          "status": "passed",
+          "title": "button/sm ghost Hover",
+          "duration": 631,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Pressed",
+          "status": "passed",
+          "title": "button/sm ghost Pressed",
+          "duration": 469,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/sm ghost Focus",
+          "status": "passed",
+          "title": "button/sm ghost Focus",
+          "duration": 316,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Default",
+          "status": "passed",
+          "title": "button/lg primary Default",
+          "duration": 332,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Disabled",
+          "status": "passed",
+          "title": "button/lg primary Disabled",
+          "duration": 283,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Loading",
+          "status": "passed",
+          "title": "button/lg primary Loading",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Hover",
+          "status": "passed",
+          "title": "button/lg primary Hover",
+          "duration": 682,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Pressed",
+          "status": "passed",
+          "title": "button/lg primary Pressed",
+          "duration": 418,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg primary Focus",
+          "status": "passed",
+          "title": "button/lg primary Focus",
+          "duration": 302,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Default",
+          "status": "passed",
+          "title": "button/lg secondary Default",
+          "duration": 291,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Disabled",
+          "status": "passed",
+          "title": "button/lg secondary Disabled",
+          "duration": 259,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Loading",
+          "status": "passed",
+          "title": "button/lg secondary Loading",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Hover",
+          "status": "passed",
+          "title": "button/lg secondary Hover",
+          "duration": 617,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Pressed",
+          "status": "passed",
+          "title": "button/lg secondary Pressed",
+          "duration": 417,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg secondary Focus",
+          "status": "passed",
+          "title": "button/lg secondary Focus",
+          "duration": 318,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Default",
+          "status": "passed",
+          "title": "button/lg ghost Default",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Disabled",
+          "status": "passed",
+          "title": "button/lg ghost Disabled",
+          "duration": 306,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Loading",
+          "status": "passed",
+          "title": "button/lg ghost Loading",
+          "duration": 245,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Hover",
+          "status": "passed",
+          "title": "button/lg ghost Hover",
+          "duration": 585,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Pressed",
+          "status": "passed",
+          "title": "button/lg ghost Pressed",
+          "duration": 424,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-button (button, button/sm, button/lg)"],
+          "fullName": "Figma parity: odd-button (button, button/sm, button/lg) button/lg ghost Focus",
+          "status": "passed",
+          "title": "button/lg ghost Focus",
+          "duration": 307,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Default",
+          "status": "passed",
+          "title": "iconButton primary Default",
+          "duration": 324,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Disabled",
+          "status": "passed",
+          "title": "iconButton primary Disabled",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Loading",
+          "status": "passed",
+          "title": "iconButton primary Loading",
+          "duration": 271,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Hover",
+          "status": "passed",
+          "title": "iconButton primary Hover",
+          "duration": 582,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Pressed",
+          "status": "passed",
+          "title": "iconButton primary Pressed",
+          "duration": 466,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary Focus",
+          "status": "passed",
+          "title": "iconButton primary Focus",
+          "duration": 309,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton primary On",
+          "status": "passed",
+          "title": "iconButton primary On",
+          "duration": 273,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Default",
+          "status": "passed",
+          "title": "iconButton secondary Default",
+          "duration": 269,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Disabled",
+          "status": "passed",
+          "title": "iconButton secondary Disabled",
+          "duration": 258,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Loading",
+          "status": "passed",
+          "title": "iconButton secondary Loading",
+          "duration": 243,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Hover",
+          "status": "passed",
+          "title": "iconButton secondary Hover",
+          "duration": 599,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Pressed",
+          "status": "passed",
+          "title": "iconButton secondary Pressed",
+          "duration": 462,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary Focus",
+          "status": "passed",
+          "title": "iconButton secondary Focus",
+          "duration": 262,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton secondary On",
+          "status": "passed",
+          "title": "iconButton secondary On",
+          "duration": 271,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Default",
+          "status": "passed",
+          "title": "iconButton ghost Default",
+          "duration": 289,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Disabled",
+          "status": "passed",
+          "title": "iconButton ghost Disabled",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Loading",
+          "status": "passed",
+          "title": "iconButton ghost Loading",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Hover",
+          "status": "passed",
+          "title": "iconButton ghost Hover",
+          "duration": 611,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Pressed",
+          "status": "passed",
+          "title": "iconButton ghost Pressed",
+          "duration": 452,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost Focus",
+          "status": "passed",
+          "title": "iconButton ghost Focus",
+          "duration": 336,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton ghost On",
+          "status": "passed",
+          "title": "iconButton ghost On",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Default",
+          "status": "passed",
+          "title": "iconButton/sm primary Default",
+          "duration": 268,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Disabled",
+          "status": "passed",
+          "title": "iconButton/sm primary Disabled",
+          "duration": 218,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Loading",
+          "status": "passed",
+          "title": "iconButton/sm primary Loading",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Hover",
+          "status": "passed",
+          "title": "iconButton/sm primary Hover",
+          "duration": 634,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Pressed",
+          "status": "passed",
+          "title": "iconButton/sm primary Pressed",
+          "duration": 466,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary Focus",
+          "status": "passed",
+          "title": "iconButton/sm primary Focus",
+          "duration": 290,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm primary On",
+          "status": "passed",
+          "title": "iconButton/sm primary On",
+          "duration": 250,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Default",
+          "status": "passed",
+          "title": "iconButton/sm secondary Default",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Disabled",
+          "status": "passed",
+          "title": "iconButton/sm secondary Disabled",
+          "duration": 300,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Loading",
+          "status": "passed",
+          "title": "iconButton/sm secondary Loading",
+          "duration": 214,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Hover",
+          "status": "passed",
+          "title": "iconButton/sm secondary Hover",
+          "duration": 616,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Pressed",
+          "status": "passed",
+          "title": "iconButton/sm secondary Pressed",
+          "duration": 442,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary Focus",
+          "status": "passed",
+          "title": "iconButton/sm secondary Focus",
+          "duration": 290,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm secondary On",
+          "status": "passed",
+          "title": "iconButton/sm secondary On",
+          "duration": 286,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Default",
+          "status": "passed",
+          "title": "iconButton/sm ghost Default",
+          "duration": 297,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Disabled",
+          "status": "passed",
+          "title": "iconButton/sm ghost Disabled",
+          "duration": 285,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Loading",
+          "status": "passed",
+          "title": "iconButton/sm ghost Loading",
+          "duration": 250,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Hover",
+          "status": "passed",
+          "title": "iconButton/sm ghost Hover",
+          "duration": 599,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Pressed",
+          "status": "passed",
+          "title": "iconButton/sm ghost Pressed",
+          "duration": 468,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost Focus",
+          "status": "passed",
+          "title": "iconButton/sm ghost Focus",
+          "duration": 302,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/sm ghost On",
+          "status": "passed",
+          "title": "iconButton/sm ghost On",
+          "duration": 294,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Default",
+          "status": "passed",
+          "title": "iconButton/lg primary Default",
+          "duration": 273,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Disabled",
+          "status": "passed",
+          "title": "iconButton/lg primary Disabled",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Loading",
+          "status": "passed",
+          "title": "iconButton/lg primary Loading",
+          "duration": 301,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Hover",
+          "status": "passed",
+          "title": "iconButton/lg primary Hover",
+          "duration": 617,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Pressed",
+          "status": "passed",
+          "title": "iconButton/lg primary Pressed",
+          "duration": 454,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary Focus",
+          "status": "passed",
+          "title": "iconButton/lg primary Focus",
+          "duration": 313,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg primary On",
+          "status": "passed",
+          "title": "iconButton/lg primary On",
+          "duration": 283,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Default",
+          "status": "passed",
+          "title": "iconButton/lg secondary Default",
+          "duration": 250,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Disabled",
+          "status": "passed",
+          "title": "iconButton/lg secondary Disabled",
+          "duration": 278,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Loading",
+          "status": "passed",
+          "title": "iconButton/lg secondary Loading",
+          "duration": 238,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Hover",
+          "status": "passed",
+          "title": "iconButton/lg secondary Hover",
+          "duration": 586,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Pressed",
+          "status": "passed",
+          "title": "iconButton/lg secondary Pressed",
+          "duration": 500,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary Focus",
+          "status": "passed",
+          "title": "iconButton/lg secondary Focus",
+          "duration": 316,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg secondary On",
+          "status": "passed",
+          "title": "iconButton/lg secondary On",
+          "duration": 288,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Default",
+          "status": "passed",
+          "title": "iconButton/lg ghost Default",
+          "duration": 271,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Disabled",
+          "status": "passed",
+          "title": "iconButton/lg ghost Disabled",
+          "duration": 274,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Loading",
+          "status": "passed",
+          "title": "iconButton/lg ghost Loading",
+          "duration": 251,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Hover",
+          "status": "passed",
+          "title": "iconButton/lg ghost Hover",
+          "duration": 600,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Pressed",
+          "status": "passed",
+          "title": "iconButton/lg ghost Pressed",
+          "duration": 450,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost Focus",
+          "status": "passed",
+          "title": "iconButton/lg ghost Focus",
+          "duration": 298,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": [
+            "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg)"
+          ],
+          "fullName": "Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) iconButton/lg ghost On",
+          "status": "passed",
+          "title": "iconButton/lg ghost On",
+          "duration": 268,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Empty",
+          "status": "passed",
+          "title": "Empty",
+          "duration": 296,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Filled",
+          "status": "passed",
+          "title": "Filled",
+          "duration": 221,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Focus",
+          "status": "passed",
+          "title": "Focus",
+          "duration": 292,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Hover",
+          "status": "passed",
+          "title": "Hover",
+          "duration": 541,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Invalid",
+          "status": "passed",
+          "title": "Invalid",
+          "duration": 248,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Disabled",
+          "status": "passed",
+          "title": "Disabled",
+          "duration": 486,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Read only",
+          "status": "passed",
+          "title": "Read only",
+          "duration": 500,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-input (input)"],
+          "fullName": "Figma parity: odd-input (input) Password",
+          "status": "passed",
+          "title": "Password",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-card (card)"],
+          "fullName": "Figma parity: odd-card (card) Default",
+          "status": "passed",
+          "title": "Default",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-card (card)"],
+          "fullName": "Figma parity: odd-card (card) Filled",
+          "status": "passed",
+          "title": "Filled",
+          "duration": 282,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) neutral",
+          "status": "passed",
+          "title": "neutral",
+          "duration": 250,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) neutral, no marker",
+          "status": "passed",
+          "title": "neutral, no marker",
+          "duration": 251,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) info",
+          "status": "passed",
+          "title": "info",
+          "duration": 256,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) info, no marker",
+          "status": "passed",
+          "title": "info, no marker",
+          "duration": 235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) success",
+          "status": "passed",
+          "title": "success",
+          "duration": 242,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) success, no marker",
+          "status": "passed",
+          "title": "success, no marker",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) warning",
+          "status": "passed",
+          "title": "warning",
+          "duration": 254,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) warning, no marker",
+          "status": "passed",
+          "title": "warning, no marker",
+          "duration": 232,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) danger",
+          "status": "passed",
+          "title": "danger",
+          "duration": 229,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) danger, no marker",
+          "status": "passed",
+          "title": "danger, no marker",
+          "duration": 290,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-badge (badge, Count content)"],
+          "fullName": "Figma parity: odd-badge (badge, Count content) Count content",
+          "status": "passed",
+          "title": "Count content",
+          "duration": 235,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-alert (alert)"],
+          "fullName": "Figma parity: odd-alert (alert) Neutral",
+          "status": "passed",
+          "title": "Neutral",
+          "duration": 261,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-alert (alert)"],
+          "fullName": "Figma parity: odd-alert (alert) Success",
+          "status": "passed",
+          "title": "Success",
+          "duration": 265,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-alert (alert)"],
+          "fullName": "Figma parity: odd-alert (alert) Warning",
+          "status": "passed",
+          "title": "Warning",
+          "duration": 233,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-alert (alert)"],
+          "fullName": "Figma parity: odd-alert (alert) Danger",
+          "status": "passed",
+          "title": "Danger",
+          "duration": 220,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-chip (chip)"],
+          "fullName": "Figma parity: odd-chip (chip) Default",
+          "status": "passed",
+          "title": "Default",
+          "duration": 244,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-chip (chip)"],
+          "fullName": "Figma parity: odd-chip (chip) Disabled",
+          "status": "passed",
+          "title": "Disabled",
+          "duration": 285,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-chip (chip)"],
+          "fullName": "Figma parity: odd-chip (chip) Focus",
+          "status": "passed",
+          "title": "Focus",
+          "duration": 328,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-chip (chip)"],
+          "fullName": "Figma parity: odd-chip (chip) Selected",
+          "status": "passed",
+          "title": "Selected",
+          "duration": 238,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-progress (progress)"],
+          "fullName": "Figma parity: odd-progress (progress) Determinate",
+          "status": "passed",
+          "title": "Determinate",
+          "duration": 205,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-progress (progress)"],
+          "fullName": "Figma parity: odd-progress (progress) Indeterminate",
+          "status": "passed",
+          "title": "Indeterminate",
+          "duration": 233,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-spinner (spinner)"],
+          "fullName": "Figma parity: odd-spinner (spinner) Default",
+          "status": "passed",
+          "title": "Default",
+          "duration": 199,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-skeleton (skeleton)"],
+          "fullName": "Figma parity: odd-skeleton (skeleton) Default",
+          "status": "passed",
+          "title": "Default",
+          "duration": 183,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-empty-state (emptyState)"],
+          "fullName": "Figma parity: odd-empty-state (emptyState) No results",
+          "status": "passed",
+          "title": "No results",
+          "duration": 234,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Fallback",
+          "status": "passed",
+          "title": "sm Fallback",
+          "duration": 241,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Loading",
+          "status": "passed",
+          "title": "sm Loading",
+          "duration": 276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Image",
+          "status": "passed",
+          "title": "sm Image",
+          "duration": 317,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Error",
+          "status": "passed",
+          "title": "sm Error",
+          "duration": 317,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Decorative",
+          "status": "passed",
+          "title": "sm Decorative",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) sm Empty",
+          "status": "passed",
+          "title": "sm Empty",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Fallback",
+          "status": "passed",
+          "title": "md Fallback",
+          "duration": 283,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Loading",
+          "status": "passed",
+          "title": "md Loading",
+          "duration": 218,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Image",
+          "status": "passed",
+          "title": "md Image",
+          "duration": 299,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Error",
+          "status": "passed",
+          "title": "md Error",
+          "duration": 286,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Decorative",
+          "status": "passed",
+          "title": "md Decorative",
+          "duration": 288,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) md Empty",
+          "status": "passed",
+          "title": "md Empty",
+          "duration": 245,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Fallback",
+          "status": "passed",
+          "title": "lg Fallback",
+          "duration": 276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Loading",
+          "status": "passed",
+          "title": "lg Loading",
+          "duration": 257,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Image",
+          "status": "passed",
+          "title": "lg Image",
+          "duration": 341,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Error",
+          "status": "passed",
+          "title": "lg Error",
+          "duration": 309,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Decorative",
+          "status": "passed",
+          "title": "lg Decorative",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-avatar (Primitives/Avatar)"],
+          "fullName": "Figma parity: odd-avatar (Primitives/Avatar) lg Empty",
+          "status": "passed",
+          "title": "lg Empty",
+          "duration": 300,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) link Default",
+          "status": "passed",
+          "title": "link Default",
+          "duration": 234,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) link Hover",
+          "status": "passed",
+          "title": "link Hover",
+          "duration": 443,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) link Focus",
+          "status": "passed",
+          "title": "link Focus",
+          "duration": 266,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) typography",
+          "status": "passed",
+          "title": "typography",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) keyboardKey",
+          "status": "passed",
+          "title": "keyboardKey",
+          "duration": 305,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: CSS recipes (typography, keyboardKey, link, List)"],
+          "fullName": "Figma parity: CSS recipes (typography, keyboardKey, link, List) List",
+          "status": "passed",
+          "title": "List",
+          "duration": 202,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-side-nav entries (NavigationItem)"],
+          "fullName": "Figma parity: odd-side-nav entries (NavigationItem) Default",
+          "status": "passed",
+          "title": "Default",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-side-nav entries (NavigationItem)"],
+          "fullName": "Figma parity: odd-side-nav entries (NavigationItem) Current",
+          "status": "passed",
+          "title": "Current",
+          "duration": 267,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-side-nav entries (NavigationItem)"],
+          "fullName": "Figma parity: odd-side-nav entries (NavigationItem) Disabled",
+          "status": "passed",
+          "title": "Disabled",
+          "duration": 292,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity: odd-side-nav entries (NavigationItem)"],
+          "fullName": "Figma parity: odd-side-nav entries (NavigationItem) Focus",
+          "status": "passed",
+          "title": "Focus",
+          "duration": 299,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062961019,
+      "endTime": 1795063020212,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/figma-parity.browser.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["narrow containers and long content (F07)"],
+          "fullName": "narrow containers and long content (F07) keeps long unbroken labels, URLs, and words inside a narrow container",
+          "status": "passed",
+          "title": "keeps long unbroken labels, URLs, and words inside a narrow container",
+          "duration": 66,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["narrow containers and long content (F07)"],
+          "fullName": "narrow containers and long content (F07) mirrors slots and spacing with direction",
+          "status": "passed",
+          "title": "mirrors slots and spacing with direction",
+          "duration": 45,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["narrow containers and long content (F07)"],
+          "fullName": "narrow containers and long content (F07) marks interactive and disabled controls with cursors",
+          "status": "passed",
+          "title": "marks interactive and disabled controls with cursors",
+          "duration": 16,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["customization across the shadow boundary (F05)"],
+          "fullName": "customization across the shadow boundary (F05) parts, component variables, and host styles override; page selectors never reach internals",
+          "status": "passed",
+          "title": "parts, component variables, and host styles override; page selectors never reach internals",
+          "duration": 21,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["text enlargement (F14)"],
+          "fullName": "text enlargement (F14) controls grow with the root font size and never clip their text",
+          "status": "passed",
+          "title": "controls grow with the root font size and never clip their text",
+          "duration": 32,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["shared primitives"],
+          "fullName": "shared primitives hide hosts and internals with the hidden attribute, even against display rules",
+          "status": "passed",
+          "title": "hide hosts and internals with the hidden attribute, even against display rules",
+          "duration": 33,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["shared primitives"],
+          "fullName": "shared primitives draw one focus ring from the focus tokens on every component",
+          "status": "passed",
+          "title": "draw one focus ring from the focus tokens on every component",
+          "duration": 22,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["shared primitives"],
+          "fullName": "shared primitives share one constructed sheet per primitive across components",
+          "status": "passed",
+          "title": "share one constructed sheet per primitive across components",
+          "duration": 26,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) matches odd-button in every appearance, size, and disabled state, in light and dark mode",
+          "status": "passed",
+          "title": "matches odd-button in every appearance, size, and disabled state, in light and dark mode",
+          "duration": 601,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) matches a pressed toggle, enabled, disabled, busy, and hovered",
+          "status": "passed",
+          "title": "matches a pressed toggle, enabled, disabled, busy, and hovered",
+          "duration": 1037,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) defaults to secondary and md, and follows component variables and full width",
+          "status": "passed",
+          "title": "defaults to secondary and md, and follows component variables and full width",
+          "duration": 387,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) draws the same focus ring and hover backgrounds",
+          "status": "passed",
+          "title": "draws the same focus ring and hover backgrounds",
+          "duration": 2264,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) B-A9, B-A10: draws the icon-only square and sizes icons as odd-button does, in each density",
+          "status": "passed",
+          "title": "B-A9, B-A10: draws the icon-only square and sizes icons as odd-button does, in each density",
+          "duration": 359,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["native <button> styling path (button.css)"],
+          "fullName": "native <button> styling path (button.css) B-A12: styles a link as the button: no underline, the same hover, muted by aria-disabled",
+          "status": "passed",
+          "title": "B-A12: styles a link as the button: no underline, the same hover, muted by aria-disabled",
+          "duration": 2074,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795062959294,
+      "endTime": 1795062966343,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/styling.browser.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+8:35:04 PM [vite-plugin-svelte] no Svelte config found at C:/SLT_Backup_10-21-2026/oddkin-a1-main - using default configuration.
+
+ RUN  v5.0.5 C:/SLT_Backup_10-21-2026/oddkin-a1-main
+
+stderr | packages/components/test/button.browser.test.ts > odd-button > names icon-only buttons through label
+[button.label.missing] <odd-button> shows only an icon and has no label: set label to name it.
+ ✓ |browser (firefox)| packages/components/test/carousel.browser.test.ts (11 tests) 6179ms
+   ✓ odd-carousel (11)
+     ✓ is a named carousel region of slide groups, one shown, with previous, position, slide buttons, and next 1035ms
+     ✓ moves with previous, next, and the slide buttons, reporting input and change, focus staying put 1701ms
+     ✓ is reached with Tab through the shown slide, then its controls; Enter and Space activate 548ms
+     ✓ shows the slide `current` names, the nearest one out of range, without reporting 440ms
+     ✓ follows slides added and removed 320ms
+     ✓ keeps every control on a narrow carousel, wrapping them 321ms
+     ✓ B-A13: draws previous and next as small icon-only squares with medium glyphs 308ms
+     ✓ takes localized strings and mirrors its arrows right to left 347ms
+     ✓ releases everything when removed 626ms
+ ✓ |browser (firefox)| packages/components/test/button.browser.test.ts (31 tests | 1 skipped) 8045ms
+   ✓ imports (1)
+     ✓ the foundation and the component entry register nothing 1662ms
+   ✓ odd-button (6)
+     ✓ activates with click, Enter, and Space; delegates focus to the native button 884ms
+   ✓ forms (8)
+     ✓ submits with its name and value through a temporary native submitter 472ms
+     ✓ runs constraint validation before submitting 590ms
+     ✓ does not submit when the click is cancelled or the type is button 558ms
+     ✓ resets the form with type="reset" 305ms
+     ✓ passes the submission overrides to the submitter; formnovalidate skips validation 604ms
+     ✓ submits the form it is associated with as its form attribute or position changes 936ms
+   ✓ toggle (5)
+     ✓ flips pressed on click, Enter, and Space: click sees the new state, then input and change 506ms
+     ✓ a cancelled click, disabled, or loading leaves pressed unchanged and dispatches nothing 509ms
+   ✓ odd-button in its parent (10)
+     ✓ B-A2: keeps its size, slots, name, and focus while loading; the spinner turns at the centre 315ms
+ ✓ |browser (firefox)| packages/components/test/styling.browser.test.ts (14 tests) 10085ms
+   ✓ native <button> styling path (button.css) (6)
+     ✓ matches odd-button in every appearance, size, and disabled state, in light and dark mode 753ms
+     ✓ matches a pressed toggle, enabled, disabled, busy, and hovered 1088ms
+     ✓ defaults to secondary and md, and follows component variables and full width 369ms
+     ✓ draws the same focus ring and hover backgrounds 3077ms
+     ✓ B-A9, B-A10: draws the icon-only square and sizes icons as odd-button does, in each density 481ms
+     ✓ B-A12: styles a link as the button: no underline, the same hover, muted by aria-disabled 2978ms
+ ✓ |browser (firefox)| packages/components/test/calendar.browser.test.ts (22 tests | 1 skipped) 15434ms
+   ✓ imports (1)
+     ✓ the foundation and the component entry register nothing new 1185ms
+   ✓ odd-calendar (21)
+     ✓ starts weeks on the first day the language or first-day gives, with names in the language 778ms
+     ✓ marks today, and the dates outside min and max or disabled by the hook 389ms
+     ✓ keeps a YYYY-MM-DD value, as a native date input sanitizes and submits it 429ms
+     ✓ is required, and reports dates outside min and max, as a native date input 339ms
+     ✓ marks the field touched only when focus leaves the calendar 478ms
+     ✓ moves by the APG date grid keys and chooses with Enter and Space 1803ms
+     ✓ keeps focus on the Tab stop when the value moves it 455ms
+     ✓ swaps Left and Right in right-to-left text 540ms
+     ✓ stops at min and max, and moves onto dates it cannot choose without choosing them 886ms
+     ✓ chooses a clicked date, and follows a date of another month there 2258ms
+     ✓ shows other months from its buttons, keeping focus there and the date in the month 927ms
+     ✓ is read-only: the dates can be moved through, not chosen; submitted, not validated 621ms
+     ✓ chooses today and clears from its actions 1700ms
+     ✓ checks today again when Today is pressed: midnight may have passed 371ms
+     ✓ keeps its buttons whole when narrower than the month 379ms
+     ✓ is inactive when disabled, also by a fieldset 380ms
+     ✓ matches Figma calendar: surface, rows, cells, and their states 649ms
+ ✓ |browser (firefox)| packages/ai/test/figma-parity.browser.test.ts (82 tests | 2 skipped) 34966ms
+   ✓ Figma parity: odd-activity (2)
+     ✓ Interrupted, resume available (light) 659ms
+   ✓ Figma parity: odd-message versions (2)
+     ✓ Alternative 2 of 3 (light) 1050ms
+   ✓ Figma parity: odd-message (2)
+     ✓ Assistant, completed (dark) 412ms
+   ✓ Figma parity: odd-ai-label (2)
+     ✓ Generated, collapsed (light) 306ms
+     ✓ Generated, collapsed (dark) 328ms
+   ✓ Figma parity: odd-response (2)
+     ✓ Streaming (light) 400ms
+     ✓ Streaming (dark) 392ms
+   ✓ Figma parity: odd-transcript (2)
+     ✓ Final and interim text (light) 586ms
+   ✓ Figma parity: odd-usage-meter (2)
+     ✓ Measured, estimated, unknown (light) 521ms
+     ✓ Measured, estimated, unknown (dark) 488ms
+   ✓ Figma parity: odd-model-select (2)
+     ✓ Available model (light) 682ms
+     ✓ Available model (dark) 338ms
+   ✓ Figma parity: odd-sources (2)
+     ✓ One source (light) 566ms
+   ✓ Figma parity: odd-response-feedback (2)
+     ✓ Negative rating, drafting (light) 568ms
+     ✓ Negative rating, drafting (dark) 483ms
+   ✓ Figma parity: odd-voice-input (2)
+     ✓ Recording (light) 567ms
+     ✓ Recording (dark) 501ms
+   ✓ Figma parity: odd-citation (2)
+     ✓ Resolved, expanded inline (light) 720ms
+     ✓ Resolved, expanded inline (dark) 673ms
+   ✓ Figma parity: odd-conversation (2)
+     ✓ Two-message feed (light) 490ms
+     ✓ Two-message feed (dark) 477ms
+   ✓ Figma parity: the reason field (page 08) (2)
+     ✓ Empty, Filled, Focus, and Disabled (dark) 315ms
+   ✓ Figma parity: the decision row (page 08) (8)
+     ✓ Change review: accept, dismiss, undo (light) 385ms
+     ✓ Change review: accept, dismiss, undo (dark) 367ms
+   ✓ Figma parity: odd-context-picker (page 06) (26)
+     ✓ Surface, search results (light) 595ms
+     ✓ Resource rows: hover, focus, single, unavailable, limit (light) 449ms
+     ✓ Feedback: failure, no matches, loading, no resources (light) 760ms
+     ✓ Surface, partial failure and searching (light) 674ms
+     ✓ Trigger, icon form (light) 529ms
+     ✓ Sheet (light) 580ms
+     ✓ Expanded browser, Desktop (light) 549ms
+     ✓ Expanded browser, Mobile (light) 446ms
+     ✓ Surface, search results (dark) 440ms
+     ✓ Resource rows: hover, focus, single, unavailable, limit (dark) 497ms
+     ✓ Feedback: failure, no matches, loading, no resources (dark) 715ms
+     ✓ Surface, partial failure and searching (dark) 668ms
+     ✓ Surface, browse sources and a nested collection (dark) 326ms
+     ✓ Trigger, icon form (dark) 555ms
+     ✓ Sheet (dark) 527ms
+     ✓ Expanded browser, Desktop (dark) 523ms
+     ✓ Expanded browser, Mobile (dark) 548ms
+ ✓ |browser (firefox)| packages/components/test/figma-parity.browser.test.ts (179 tests | 18 skipped) 38793ms
+   ✓ Figma parity: odd-button (button, button/sm, button/lg) (54)
+     ✓ button primary Loading 738ms
+     ✓ button primary Hover 663ms
+     ✓ button primary Focus 303ms
+     ✓ button secondary Default 353ms
+     ✓ button secondary Loading 366ms
+     ✓ button secondary Hover 668ms
+     ✓ button secondary Focus 491ms
+     ✓ button ghost Disabled 340ms
+     ✓ button ghost Loading 367ms
+     ✓ button ghost Hover 1031ms
+     ✓ button ghost Focus 445ms
+     ✓ button/sm primary Default 372ms
+     ✓ button/sm primary Disabled 391ms
+     ✓ button/sm primary Loading 505ms
+     ✓ button/sm primary Hover 793ms
+     ✓ button/sm primary Focus 826ms
+     ✓ button/sm secondary Default 497ms
+     ✓ button/sm secondary Disabled 315ms
+     ✓ button/sm secondary Loading 498ms
+     ✓ button/sm secondary Hover 487ms
+     ✓ button/sm ghost Hover 383ms
+     ✓ button/lg primary Hover 367ms
+     ✓ button/lg ghost Hover 343ms
+   ✓ Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) (63)
+     ✓ iconButton secondary Hover 344ms
+     ✓ iconButton ghost Hover 303ms
+     ✓ iconButton/sm secondary Hover 318ms
+     ✓ iconButton/sm ghost Hover 363ms
+     ✓ iconButton/lg secondary Hover 302ms
+
+ Test Files  6 passed (6)
+      Tests  317 passed | 22 skipped (339)
+   Start at  20:35:04
+   Duration  46.57s (tests 79%, import 14%, worker 7%)
+
+JSON report written to C:/SLT_Backup_10-21-2026/oddkin-a1-main/.tmp/pa-button/codex-browser-firefox.json

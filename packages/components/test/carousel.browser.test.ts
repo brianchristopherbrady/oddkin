@@ -261,6 +261,18 @@ describe('odd-carousel', () => {
     );
   });
 
+  it('B-A13: draws previous and next as small icon-only squares with medium glyphs', async () => {
+    const { el } = await mount();
+    const sm = parseFloat(themeValue('block-size', '--odd-control-height-sm'));
+    const glyph = parseFloat(themeValue('inline-size', '--odd-icon-size-md'));
+    for (const name of ['previous', 'next']) {
+      const box = part(el, name).getBoundingClientRect();
+      expect([box.width, box.height], name).toEqual([sm, sm]);
+      const drawn = part(el, name).querySelector('.glyph')!.getBoundingClientRect();
+      expect([drawn.width, drawn.height], name).toEqual([glyph, glyph]);
+    }
+  });
+
   it('takes localized strings and mirrors its arrows right to left', async () => {
     const { el } = await mount('label="Temas" dir="rtl"');
     el.strings = {

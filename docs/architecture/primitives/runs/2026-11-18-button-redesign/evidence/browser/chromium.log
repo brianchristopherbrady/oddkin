@@ -1,0 +1,73 @@
+8:34:34 PM [vite-plugin-svelte] no Svelte config found at C:/SLT_Backup_10-21-2026/oddkin-a1-main - using default configuration.
+
+ RUN  v5.0.5 C:/SLT_Backup_10-21-2026/oddkin-a1-main
+
+stderr | packages/components/test/button.browser.test.ts > odd-button > names icon-only buttons through label
+[button.label.missing] <odd-button> shows only an icon and has no label: set label to name it.
+ ✓ |browser (chromium)| packages/components/test/carousel.browser.test.ts (11 tests) 2472ms
+   ✓ odd-carousel (11)
+     ✓ is a region named by label, described as a carousel; a group without a label 334ms
+     ✓ moves with previous, next, and the slide buttons, reporting input and change, focus staying put 620ms
+     ✓ is reached with Tab through the shown slide, then its controls; Enter and Space activate 459ms
+ ✓ |browser (chromium)| packages/components/test/button.browser.test.ts (31 tests) 3700ms
+   ✓ imports (1)
+     ✓ the foundation and the component entry register nothing 1158ms
+   ✓ odd-button (6)
+     ✓ activates with click, Enter, and Space; delegates focus to the native button 313ms
+   ✓ forms (8)
+     ✓ does not submit when the click is cancelled or the type is button 384ms
+     ✓ resets the form with type="reset" 348ms
+ ✓ |browser (chromium)| packages/components/test/styling.browser.test.ts (14 tests) 4634ms
+   ✓ native <button> styling path (button.css) (6)
+     ✓ matches odd-button in every appearance, size, and disabled state, in light and dark mode 421ms
+     ✓ matches a pressed toggle, enabled, disabled, busy, and hovered 489ms
+     ✓ defaults to secondary and md, and follows component variables and full width 307ms
+     ✓ draws the same focus ring and hover backgrounds 1112ms
+     ✓ B-A12: styles a link as the button: no underline, the same hover, muted by aria-disabled 778ms
+ ✓ |browser (chromium)| packages/components/test/calendar.browser.test.ts (22 tests) 5807ms
+   ✓ odd-calendar (21)
+     ✓ draws the month as a grid named by the month, in a group named by the label 348ms
+     ✓ keeps a YYYY-MM-DD value, as a native date input sanitizes and submits it 430ms
+     ✓ moves by the APG date grid keys and chooses with Enter and Space 782ms
+     ✓ chooses a clicked date, and follows a date of another month there 530ms
+     ✓ chooses today and clears from its actions 351ms
+     ✓ matches Figma calendar: surface, rows, cells, and their states 334ms
+ ✓ |browser (chromium)| packages/ai/test/figma-parity.browser.test.ts (82 tests) 19341ms
+   ✓ Figma parity: odd-activity (2)
+     ✓ Interrupted, resume available (light) 490ms
+   ✓ Figma parity: odd-message versions (2)
+     ✓ Alternative 2 of 3 (light) 784ms
+   ✓ Figma parity: odd-response-feedback (2)
+     ✓ Negative rating, drafting (light) 328ms
+   ✓ Figma parity: the decision row (page 08) (8)
+     ✓ Change review: accept, dismiss, undo (light) 333ms
+     ✓ Change review: accept, dismiss, undo (dark) 331ms
+   ✓ Figma parity: odd-context-picker (page 06) (26)
+     ✓ Surface, search results (light) 542ms
+     ✓ Resource rows: hover, focus, single, unavailable, limit (light) 484ms
+     ✓ Feedback: failure, no matches, loading, no resources (light) 703ms
+     ✓ Surface, partial failure and searching (light) 619ms
+     ✓ Trigger, icon form (light) 463ms
+     ✓ Sheet (light) 423ms
+     ✓ Expanded browser, Desktop (light) 342ms
+     ✓ Expanded browser, Mobile (light) 337ms
+     ✓ Surface, search results (dark) 416ms
+     ✓ Resource rows: hover, focus, single, unavailable, limit (dark) 418ms
+     ✓ Feedback: failure, no matches, loading, no resources (dark) 733ms
+     ✓ Surface, partial failure and searching (dark) 668ms
+     ✓ Trigger, icon form (dark) 451ms
+     ✓ Sheet (dark) 398ms
+     ✓ Expanded browser, Desktop (dark) 334ms
+ ✓ |browser (chromium)| packages/components/test/figma-parity.browser.test.ts (179 tests) 23707ms
+   ✓ Figma parity: odd-button (button, button/sm, button/lg) (54)
+     ✓ button primary Hover 468ms
+   ✓ Figma parity: odd-button icon-only (iconButton, iconButton/sm, iconButton/lg) (63)
+     ✓ iconButton primary Hover 350ms
+     ✓ iconButton secondary Pressed 349ms
+
+ Test Files  6 passed (6)
+      Tests  339 passed (339)
+   Start at  20:34:35
+   Duration  26.49s (tests 88%, import 9%, worker 2%)
+
+JSON report written to C:/SLT_Backup_10-21-2026/oddkin-a1-main/.tmp/pa-button/codex-browser-chromium.json

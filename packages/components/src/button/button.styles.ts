@@ -3,7 +3,9 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * Oddkin's default visual styles: semantic tokens through documented component variables. A
- * pressed toggle keeps the selection colours while loading or disabled.
+ * pressed toggle keeps the selection colours while loading or disabled. Slotted icons take
+ * `--odd-icon-size` from the control: smaller beside text, larger alone. One icon alone
+ * (`:state(icon-only)`) makes a square at the size's height, never below the target size.
  */
 export const buttonStyles = css`
   button {
@@ -26,6 +28,12 @@ export const buttonStyles = css`
     transition-property: background-color, border-color, color;
     transition-duration: ${token('motion.duration.fast')};
     transition-timing-function: ${token('motion.easing.standard')};
+    --odd-icon-size: ${token('icon.size.sm')};
+  }
+  ::slotted(svg) {
+    flex: none;
+    inline-size: var(--odd-icon-size);
+    block-size: var(--odd-icon-size);
   }
   :host([size='sm']) button {
     min-block-size: max(
@@ -41,6 +49,28 @@ export const buttonStyles = css`
     );
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.lg')});
     font-size: ${token('type.body.size')};
+    --odd-icon-size: ${token('icon.size.md')};
+  }
+  :host(:state(icon-only)) button {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.md')}),
+      ${token('target.min')}
+    );
+    padding-inline: ${token('space.none')};
+    --odd-icon-size: ${token('icon.size.md')};
+  }
+  :host([size='sm']:state(icon-only)) button {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.sm')}),
+      ${token('target.min')}
+    );
+  }
+  :host([size='lg']:state(icon-only)) button {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.lg')}),
+      ${token('target.min')}
+    );
+    --odd-icon-size: ${token('icon.size.lg')};
   }
   :host([appearance='primary']) button {
     background: var(--odd-button-background, ${token('color.action.default')});

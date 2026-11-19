@@ -1,0 +1,5 @@
+
+> oddkin-workspace@0.0.0 typecheck
+> tsc -b && tsc -p tsconfig.tests.json && tsc -p tsconfig.jsx.json && node scripts/check-framework-types.mjs
+
+Framework typings OK: vue-tsc (strictTemplates) and svelte-check, 4 expected Svelte errors.

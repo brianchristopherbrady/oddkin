@@ -5,7 +5,7 @@ import type { OddkinButton } from './button.js';
 
 /**
  * Moves the icon a fixture rendered into the button. The icons are canonical ones from
- * design/icons/general, decorative, at Figma's 16 px (icon.size.sm).
+ * design/icons/general, decorative; the button sizes them (16 px beside text, 20 px alone).
  */
 const adopt = (element: OddkinButton, host: Element) => {
   element.prepend(host.querySelector('odd-icon')!);
@@ -47,13 +47,13 @@ export default defineExamples('odd-button', {
     props: { appearance: 'primary' },
     slots: { default: 'New project' },
     guidance:
-      'Put a decorative 16 px icon (`odd-icon size="sm"`) in the `start` slot, before the words that name the button.',
+      'Put a decorative icon in the `start` slot, before the words that name the button. The button sizes it: 16 px, or 20 px at `lg`.',
     fixture: ({ element, mount }) =>
       adopt(
         element,
         mount(
           html`<div>
-            <odd-icon size="sm" slot="start"
+            <odd-icon slot="start"
               ><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M3 10h14M10 3v14" stroke-linecap="round" /></svg
             ></odd-icon>
@@ -65,13 +65,13 @@ export default defineExamples('odd-button', {
     label: 'Icon only',
     props: { label: 'Close' },
     guidance:
-      'Without visible words, `label` names the button. The icon stays decorative; a tooltip may add the name visually.',
+      'One icon alone makes a square button with a 20 px icon. Without visible words, `label` names the button; the icon stays decorative, and a tooltip may show the name.',
     fixture: ({ element, mount }) =>
       adopt(
         element,
         mount(
           html`<div>
-            <odd-icon size="sm"
+            <odd-icon
               ><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M4 4l12 12M16 4L4 16" stroke-linecap="round" /></svg
             ></odd-icon>

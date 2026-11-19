@@ -1,0 +1,1220 @@
+[
+  {
+    "id": "1456:1676",
+    "name": "Icons · both themes (v2)",
+    "type": "FRAME",
+    "w": 1440,
+    "h": 521,
+    "d": 0
+  },
+  {
+    "id": "1456:1677",
+    "name": "Light · canonical states",
+    "type": "FRAME",
+    "w": 704,
+    "h": 521,
+    "d": 1,
+    "modes": {
+      "VariableCollectionId:158:23": "158:0",
+      "VariableCollectionId:1067:2": "1067:0"
+    }
+  },
+  {
+    "id": "1456:1913",
+    "name": "Icon-only · sm, md, lg × primary, secondary, ghost (square at control.height; 20, 20, 24 px icon)",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon-only · sm, md, lg × primary, secondary, ghost (square a"
+  },
+  {
+    "id": "1456:1914",
+    "name": "Icon-only sizes",
+    "type": "FRAME",
+    "w": 424,
+    "h": 48,
+    "d": 2
+  },
+  {
+    "id": "1456:1915",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=primary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:1922",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:1929",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:1936",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=primary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:1943",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:1950",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:1957",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=primary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:1964",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=secondary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:1971",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=ghost, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:1978",
+    "name": "Icon-only · md secondary: Default, Hover, Pressed, Focus, Disabled, Loading, On",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon-only · md secondary: Default, Hover, Pressed, Focus, Di"
+  },
+  {
+    "id": "1456:1979",
+    "name": "Icon-only states",
+    "type": "FRAME",
+    "w": 328,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:1980",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:1987",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Hover",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:1994",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Pressed",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2001",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Focus",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2008",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Disabled",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2015",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Loading",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2022",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2029",
+    "name": "Icon toggle · Off and On, same name (\"Bold\", \"Helpful\")",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon toggle · Off and On, same name (\"Bold\", \"Helpful\")"
+  },
+  {
+    "id": "1456:2030",
+    "name": "Icon toggles",
+    "type": "FRAME",
+    "w": 168,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:2031",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1456:2038",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1456:2045",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/General/thumbs-up"
+    }
+  },
+  {
+    "id": "1456:2052",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/General/thumbs-up"
+    }
+  },
+  {
+    "id": "1456:2059",
+    "name": "Text with icons · start, end, both (16 px at sm and md, 20 px at lg)",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Text with icons · start, end, both (16 px at sm and md, 20 p"
+  },
+  {
+    "id": "1456:2060",
+    "name": "Text with icons",
+    "type": "FRAME",
+    "w": 581,
+    "h": 48,
+    "d": 2
+  },
+  {
+    "id": "1456:2061",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 125,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "New project"
+    }
+  },
+  {
+    "id": "1456:2066",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 105,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=primary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Show icon": false,
+      "Label": "Continue"
+    }
+  },
+  {
+    "id": "1456:2071",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 105,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": true,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/copy",
+      "Label": "Open"
+    }
+  },
+  {
+    "id": "1456:2076",
+    "name": "Oddkin/Common/button/sm",
+    "type": "INSTANCE",
+    "w": 74,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/button/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/copy",
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Label": "Copy"
+    }
+  },
+  {
+    "id": "1456:2081",
+    "name": "Oddkin/Common/button/lg",
+    "type": "INSTANCE",
+    "w": 140,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/button/lg",
+    "variant": "Appearance=primary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus",
+      "Show end icon": true,
+      "Show icon": false,
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Label": "Get started"
+    }
+  },
+  {
+    "id": "1456:2086",
+    "name": "Loading keeps the footprint · md secondary with a start icon: Default, then Loading",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Loading keeps the footprint · md secondary with a start icon"
+  },
+  {
+    "id": "1456:2087",
+    "name": "Loading footprint",
+    "type": "FRAME",
+    "w": 196,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:2088",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 94,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "Upload"
+    }
+  },
+  {
+    "id": "1456:2093",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 94,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Loading",
+    "props": {
+      "Show end icon": false,
+      "Show icon": true,
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "Upload"
+    }
+  },
+  {
+    "id": "1456:1795",
+    "name": "Dark · canonical states",
+    "type": "FRAME",
+    "w": 704,
+    "h": 521,
+    "d": 1,
+    "modes": {
+      "VariableCollectionId:158:23": "158:1",
+      "VariableCollectionId:1067:2": "1067:0"
+    }
+  },
+  {
+    "id": "1456:2098",
+    "name": "Icon-only · sm, md, lg × primary, secondary, ghost (square at control.height; 20, 20, 24 px icon)",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon-only · sm, md, lg × primary, secondary, ghost (square a"
+  },
+  {
+    "id": "1456:2099",
+    "name": "Icon-only sizes",
+    "type": "FRAME",
+    "w": 424,
+    "h": 48,
+    "d": 2
+  },
+  {
+    "id": "1456:2100",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=primary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:2107",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2114",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:2121",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=primary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:2128",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2135",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:2142",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=primary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1456:2149",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=secondary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2156",
+    "name": "Oddkin/Common/iconButton/lg",
+    "type": "INSTANCE",
+    "w": 48,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/lg",
+    "variant": "Appearance=ghost, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1456:2163",
+    "name": "Icon-only · md secondary: Default, Hover, Pressed, Focus, Disabled, Loading, On",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon-only · md secondary: Default, Hover, Pressed, Focus, Di"
+  },
+  {
+    "id": "1456:2164",
+    "name": "Icon-only states",
+    "type": "FRAME",
+    "w": 328,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:2165",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2172",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Hover",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2179",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Pressed",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2186",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Focus",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2193",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Disabled",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2200",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=Loading",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2207",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=secondary, Size=md, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1456:2214",
+    "name": "Icon toggle · Off and On, same name (\"Bold\", \"Helpful\")",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Icon toggle · Off and On, same name (\"Bold\", \"Helpful\")"
+  },
+  {
+    "id": "1456:2215",
+    "name": "Icon toggles",
+    "type": "FRAME",
+    "w": 168,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:2216",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1456:2223",
+    "name": "Oddkin/Common/iconButton",
+    "type": "INSTANCE",
+    "w": 40,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton",
+    "variant": "Appearance=ghost, Size=md, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1456:2230",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/General/thumbs-up"
+    }
+  },
+  {
+    "id": "1456:2237",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/General/thumbs-up"
+    }
+  },
+  {
+    "id": "1456:2244",
+    "name": "Text with icons · start, end, both (16 px at sm and md, 20 px at lg)",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Text with icons · start, end, both (16 px at sm and md, 20 p"
+  },
+  {
+    "id": "1456:2245",
+    "name": "Text with icons",
+    "type": "FRAME",
+    "w": 581,
+    "h": 48,
+    "d": 2
+  },
+  {
+    "id": "1456:2246",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 125,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "New project"
+    }
+  },
+  {
+    "id": "1456:2251",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 105,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=primary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Show icon": false,
+      "Label": "Continue"
+    }
+  },
+  {
+    "id": "1456:2256",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 105,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=ghost, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": true,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/copy",
+      "Label": "Open"
+    }
+  },
+  {
+    "id": "1456:2261",
+    "name": "Oddkin/Common/button/sm",
+    "type": "INSTANCE",
+    "w": 74,
+    "h": 32,
+    "d": 3,
+    "main": "Oddkin/Common/button/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/copy",
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Label": "Copy"
+    }
+  },
+  {
+    "id": "1456:2266",
+    "name": "Oddkin/Common/button/lg",
+    "type": "INSTANCE",
+    "w": 140,
+    "h": 48,
+    "d": 3,
+    "main": "Oddkin/Common/button/lg",
+    "variant": "Appearance=primary, Size=lg, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus",
+      "Show end icon": true,
+      "Show icon": false,
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Label": "Get started"
+    }
+  },
+  {
+    "id": "1456:2271",
+    "name": "Loading keeps the footprint · md secondary with a start icon: Default, then Loading",
+    "type": "TEXT",
+    "w": 640,
+    "h": 19,
+    "d": 2,
+    "text": "Loading keeps the footprint · md secondary with a start icon"
+  },
+  {
+    "id": "1456:2272",
+    "name": "Loading footprint",
+    "type": "FRAME",
+    "w": 196,
+    "h": 40,
+    "d": 2
+  },
+  {
+    "id": "1456:2273",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 94,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Default",
+    "props": {
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Show end icon": false,
+      "Show icon": true,
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "Upload"
+    }
+  },
+  {
+    "id": "1456:2278",
+    "name": "Oddkin/Common/button",
+    "type": "INSTANCE",
+    "w": 94,
+    "h": 40,
+    "d": 3,
+    "main": "Oddkin/Common/button",
+    "variant": "Appearance=secondary, Size=md, State=Loading",
+    "props": {
+      "Show end icon": false,
+      "Show icon": true,
+      "End icon": "Oddkin/Icon/chevronRight",
+      "Icon": "Oddkin/Icon/plus",
+      "Label": "Upload"
+    }
+  },
+  {
+    "id": "1462:2074",
+    "name": "Icon-only toolbar · 240px parent, 208px usable · squares wrap, nothing scrolls (v2)",
+    "type": "FRAME",
+    "w": 240,
+    "h": 106,
+    "d": 0,
+    "modes": {
+      "VariableCollectionId:158:23": "158:0",
+      "VariableCollectionId:1067:2": "1067:0"
+    }
+  },
+  {
+    "id": "1462:2133",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1462:2140",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1462:2147",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/copy"
+    }
+  },
+  {
+    "id": "1462:2154",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/search"
+    }
+  },
+  {
+    "id": "1462:2161",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/settings"
+    }
+  },
+  {
+    "id": "1462:2168",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1462:2175",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/trash"
+    }
+  },
+  {
+    "id": "1462:2182",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Disabled",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1462:2189",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  },
+  {
+    "id": "1462:2104",
+    "name": "Icon-only toolbar · 240px parent, 208px usable · squares wrap, nothing scrolls (v2)",
+    "type": "FRAME",
+    "w": 240,
+    "h": 106,
+    "d": 0,
+    "modes": {
+      "VariableCollectionId:158:23": "158:1",
+      "VariableCollectionId:1067:2": "1067:0"
+    }
+  },
+  {
+    "id": "1462:2196",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1462:2203",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=On",
+    "props": {
+      "Icon": "Oddkin/Icon/bold"
+    }
+  },
+  {
+    "id": "1462:2210",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/copy"
+    }
+  },
+  {
+    "id": "1462:2217",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/search"
+    }
+  },
+  {
+    "id": "1462:2224",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/settings"
+    }
+  },
+  {
+    "id": "1462:2231",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/plus"
+    }
+  },
+  {
+    "id": "1462:2238",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=secondary, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/trash"
+    }
+  },
+  {
+    "id": "1462:2245",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Disabled",
+    "props": {
+      "Icon": "Oddkin/Icon/close"
+    }
+  },
+  {
+    "id": "1462:2252",
+    "name": "Oddkin/Common/iconButton/sm",
+    "type": "INSTANCE",
+    "w": 32,
+    "h": 32,
+    "d": 1,
+    "main": "Oddkin/Common/iconButton/sm",
+    "variant": "Appearance=ghost, Size=sm, State=Default",
+    "props": {
+      "Icon": "Oddkin/Icon/more"
+    }
+  }
+]

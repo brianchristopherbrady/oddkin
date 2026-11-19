@@ -96,7 +96,9 @@ export const BUDGETS = {
   // released with the element's scope).
   // 28,992 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 28,950 (+24) with
   // odd-button's loading overlay (Figma page 1398:2) and a pressed toggle kept selected while loading.
-  'ai-response': 28992,
+  // 29,056 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 29,018 (+68) with odd-button
+  // v2's native recipe: links, data-icon-only squares, and icon sizes by context.
+  'ai-response': 29056,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -177,7 +179,10 @@ export const BUDGETS = {
   // 69,376 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 69,347 (+48) with
   // odd-button's loading overlay (Figma page 1398:2), a pressed toggle kept selected while loading,
   // and the tone glyphs drawn from the canonical icons.
-  'ai-chat': 69376,
+  // 69,824 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 69,805 (+458) with
+  // odd-button v2: the icon-only state read from the default slot, its naming warning, and icon
+  // sizes by context in the element (+727 B minified) and the native recipe (+849, with links).
+  'ai-chat': 69824,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -389,7 +394,9 @@ export const CSS_BUDGETS = {
   'components:spinner': 384, // 319
   // 1,408 from 2026-11-17 (Agent 1), the smallest 64 B step: measured 1,347 (+69) with the loading
   // overlay (spinner over the transparent content, Figma page 1398:2) and pressed-while-loading paint.
-  'components:button': 1408, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
+  // 1,472 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 1,438 (+91) with v2's
+  // icon-only square from :state(icon-only) and icon sizes by context.
+  'components:button': 1472, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   // 576: measured 511 on 2026-10-26 with the number field's stepper (Figma `number`: the sunken
   // segment inside the border, its two buttons, and the text's end padding); 290 on 2026-10-23
@@ -442,13 +449,17 @@ export const CSS_BUDGETS = {
   // straight ::before bar (Figma NavigationItem) instead of a border bent by the row's radius.
   // 3,520 since 2026-11-06 (Agent 1's call): measured 3,479 (+343) once the entry exports
   // nativeButtonStyles for shadow roots (component-architecture-audit.md §9, step 1).
-  'components:shared': 3520,
+  // 3,648 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 3,586 with odd-button v2's
+  // native recipe (links, data-icon-only, icon sizes by context).
+  'components:shared': 3648,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   // measured 660 on 2026-10-24 (411 on 2026-10-18): layout.css page-author classes, with
   // Figma's Oddkin/Layout variants, .odd-box, .odd-center, .odd-aspect-ratio, and the presets
   // .odd-split-end and .odd-auto-grid-fit
   'components:layout': 704,
-  'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
+  // 1,152 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 1,093 with odd-button v2's
+  // links, data-icon-only squares, and icon sizes by context.
+  'components:button.css': 1152, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
   // 2,752: measured 2,735 on 2026-10-25 with stepper.css (+141); 2,594 with timeline.css; 2,290 with
   // description-list.css and typography's gated text-wrap; 2,081 on 2026-10-23 with the field recipe's
   // start and end adornments (b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes.

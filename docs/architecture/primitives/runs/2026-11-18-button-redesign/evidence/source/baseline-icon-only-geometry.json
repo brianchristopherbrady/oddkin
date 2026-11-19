@@ -1,0 +1,86 @@
+[
+  {
+    "case": "calendar previous (native recipe, sm)",
+    "ready": "false",
+    "control": {
+      "w": 32,
+      "h": 32,
+      "padInline": "0px",
+      "square": true
+    },
+    "glyph": {
+      "w": 20,
+      "h": 20
+    }
+  },
+  {
+    "case": "carousel previous (native recipe, sm)",
+    "ready": "false",
+    "control": {
+      "w": 32,
+      "h": 32,
+      "padInline": "0px",
+      "square": true
+    },
+    "glyph": {
+      "w": 20,
+      "h": 20
+    }
+  },
+  {
+    "case": "copy button",
+    "ready": "false",
+    "control": {
+      "w": 74.61,
+      "h": 32,
+      "padInline": "8px",
+      "square": false
+    },
+    "glyph": {
+      "w": 16,
+      "h": 16
+    }
+  },
+  {
+    "case": "odd-button sm + odd-icon (no size)",
+    "ready": "false",
+    "control": {
+      "w": 38,
+      "h": 32,
+      "padInline": "8px",
+      "square": false
+    },
+    "glyph": {
+      "w": 20,
+      "h": 20
+    }
+  },
+  {
+    "case": "odd-button md + odd-icon size=sm",
+    "ready": "false",
+    "control": {
+      "w": 42,
+      "h": 40,
+      "padInline": "12px",
+      "square": false
+    },
+    "glyph": {
+      "w": 16,
+      "h": 16
+    }
+  },
+  {
+    "case": "odd-button lg + odd-icon size=sm",
+    "ready": "false",
+    "control": {
+      "w": 50,
+      "h": 48,
+      "padInline": "16px",
+      "square": false
+    },
+    "glyph": {
+      "w": 16,
+      "h": 16
+    }
+  }
+]

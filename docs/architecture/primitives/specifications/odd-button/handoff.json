@@ -1,0 +1,774 @@
+{
+  "schemaVersion": 1,
+  "primitive": "odd-button",
+  "status": "implemented",
+  "design": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pageId": "1398:2",
+    "nodeIds": [
+      "1398:76",
+      "1398:2328",
+      "1398:2658",
+      "1398:2760",
+      "159:439",
+      "181:2332",
+      "181:2390",
+      "159:501",
+      "159:383",
+      "159:389",
+      "159:395",
+      "159:401",
+      "159:407",
+      "159:414",
+      "159:420",
+      "159:426",
+      "164:2139",
+      "164:2143",
+      "164:2147",
+      "164:2152",
+      "164:2156",
+      "164:2162",
+      "164:2166",
+      "164:2170",
+      "164:2175",
+      "164:2179",
+      "159:432",
+      "164:2185",
+      "164:2189",
+      "169:2142",
+      "169:2146",
+      "169:2150",
+      "181:2281",
+      "181:2285",
+      "181:2289",
+      "181:2294",
+      "181:2298",
+      "181:2302",
+      "181:2306",
+      "181:2311",
+      "181:2315",
+      "181:2319",
+      "181:2323",
+      "181:2328",
+      "159:438",
+      "164:2193",
+      "164:2197",
+      "169:2154",
+      "169:2158",
+      "169:2162",
+      "181:2339",
+      "181:2343",
+      "181:2347",
+      "181:2352",
+      "181:2356",
+      "181:2360",
+      "181:2364",
+      "181:2369",
+      "181:2373",
+      "181:2377",
+      "181:2381",
+      "181:2386",
+      "159:478",
+      "159:485",
+      "159:493",
+      "159:500",
+      "181:2252",
+      "181:2257",
+      "181:2262",
+      "181:2268",
+      "1398:2662",
+      "1398:2673",
+      "1398:2683",
+      "1398:2695",
+      "1398:2706",
+      "1398:2716",
+      "1398:2751",
+      "1399:1478",
+      "1399:1492",
+      "1399:1506",
+      "1399:1520",
+      "1399:1534",
+      "1400:1965",
+      "1400:1969",
+      "1406:1065",
+      "1406:1069",
+      "159:471",
+      "1455:4545",
+      "1455:4798",
+      "1456:1914",
+      "1456:2099",
+      "1456:1979",
+      "1456:2164",
+      "1456:2030",
+      "1456:2215",
+      "1456:2060",
+      "1456:2245",
+      "1456:2087",
+      "1456:2272",
+      "1462:2074",
+      "1462:2104",
+      "1456:1676",
+      "1456:2001",
+      "1456:2186",
+      "159:279"
+    ],
+    "revision": "Button v2 on 2026-11-18, resumed Figma page readback and 328 × 56 px themed focus fixture exports.",
+    "observedAt": "2026-11-19T04:35:41.929Z",
+    "contextEvidence": [
+      "docs/architecture/primitives/specifications/odd-button/figma-evidence.json",
+      "docs/architecture/primitives/specifications/odd-button/design-context.json",
+      "docs/architecture/primitives/specifications/odd-button/spec.md",
+      "docs/architecture/primitives/specifications/odd-button/figma-native-spec.md"
+    ],
+    "screenshotEvidence": [
+      "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-side.png",
+      "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+      "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png"
+    ],
+    "codeConnectEvidence": [
+      "docs/architecture/primitives/specifications/odd-button/design-context.json"
+    ]
+  },
+  "source": {
+    "baseCommit": "e84a08e33ee5510cb86dc462ccbf9e3a7fcce7dd",
+    "files": [
+      {
+        "path": "design/figma/components.json",
+        "sha256": "7dfc99a528a89f2cc1f4c101a50f0dd10912e98802cc53b160845b425941e818"
+      },
+      {
+        "path": "design/figma/reuse.json",
+        "sha256": "f395aaf11b0d3031b72d895693440a231e0fbd1e33abee9d96fbf6cf5b5744e1"
+      },
+      {
+        "path": "docs/architecture/component-catalog.md",
+        "sha256": "b95757a0cdb366227eb24d5068af6fd25cdd2ad66decf901680dd5732202124d"
+      },
+      {
+        "path": "docs/diagnostics.md",
+        "sha256": "02e02374b1ba9a0cb32067aec6b481099ce9fc545696f79dc41b43e5b8e3a7d1"
+      },
+      {
+        "path": "packages/components/src/button/button.examples.ts",
+        "sha256": "40d8c5e2de092500ec5a7c2e8baa4b834988592f45af83b1637f178b7bca4090"
+      },
+      {
+        "path": "packages/components/src/button/button.native.styles.ts",
+        "sha256": "5dd9834a8d4b3089b779d51cba97b56312937245b0b16be82f3375455dbe29c8"
+      },
+      {
+        "path": "packages/components/src/button/button.styles.ts",
+        "sha256": "cf12b258794bfe97c178369c0cd60aef21daa103a90c0c9e0d922e500e920c57"
+      },
+      {
+        "path": "packages/components/src/button/button.template.ts",
+        "sha256": "a4b3c516242ff67bb8bb415f1f3d5061007be3e9495b9a75c4d60a92c5cacb8b"
+      },
+      {
+        "path": "packages/components/src/button/button.ts",
+        "sha256": "8eadbc9b0ebb6307f34c5c8d59200f36627d0a35f16d4eccf8cc0ca871d74f90"
+      },
+      {
+        "path": "packages/components/src/calendar/calendar.styles.ts",
+        "sha256": "0cfb9f56277f2f89d3fb4a304301fe33b25aeaac57c15f9d43a5a4d728e072aa"
+      },
+      {
+        "path": "packages/components/src/calendar/calendar.template.ts",
+        "sha256": "ade6abc680bc26bb9c7f1519eadd925989d2265f1c19e506c062c15e532c9930"
+      },
+      {
+        "path": "packages/components/src/carousel/carousel.styles.ts",
+        "sha256": "2891aef7745d079b67ff3948fb34ee061a2bac4fa0cdeda5079fcc2fd3981f24"
+      },
+      {
+        "path": "packages/components/src/carousel/carousel.template.ts",
+        "sha256": "266a650cffbb397ddb5c8454bbc3bddc6caa08e3a598085136d346a7531e82c0"
+      },
+      {
+        "path": "packages/components/test/button.browser.test.ts",
+        "sha256": "e54bfdae6e079dc7c94f5598056217346ffa69c222f82dd5276a97e56bf11451"
+      },
+      {
+        "path": "packages/components/test/carousel.browser.test.ts",
+        "sha256": "b7d1afd79b4b9a90ffa2442fcfb0c34453fe97928a07c6acc3c1e9004d51a115"
+      },
+      {
+        "path": "packages/components/test/figma-parity.browser.test.ts",
+        "sha256": "ecbb3ffcff5b58f2ea5f30c59d6f9b4930de3bd558e88810bee66326beff2775"
+      },
+      {
+        "path": "packages/components/test/styling.browser.test.ts",
+        "sha256": "0e173b33746c2acfa8501f099ed6473274d860856b22d9d3655c117b65f89bb3"
+      },
+      {
+        "path": "research/benchmarks/size/measure.mjs",
+        "sha256": "f903085fa7bdce3683432be8f1e7468b789633c0984ee7f7114b70bd48330f61"
+      },
+      {
+        "path": "packages/components/src/button/button.structural.styles.ts",
+        "sha256": "5b31bad856a7e512ba3978e0e492ba006b55bab604379295386d407cc04d92fb"
+      },
+      {
+        "path": "packages/components/src/button/button.definition.ts",
+        "sha256": "9f76eb5caea725b4864a80efaa8f618542615d52eb862d9726f03cb404058626"
+      },
+      {
+        "path": "packages/components/src/button/button.define.ts",
+        "sha256": "099078afcf7a0e26911052b5361b77d8de6268710ddead50f72d169a27729a6a"
+      },
+      {
+        "path": "packages/components/src/button/index.ts",
+        "sha256": "855093cf3d9eef462fdfeadc9ac8448c39d00f3087efb9d16513d80f944e151b"
+      },
+      {
+        "path": "packages/components/src/button/foundation.ts",
+        "sha256": "c93354fa93936692f12399cb3fc20c1f0e1314d7d29d75279f143f7d214c4f4b"
+      },
+      {
+        "path": "packages/components/src/styles/focus-ring.styles.ts",
+        "sha256": "ebfd3b7f6829c07847dd6f4ffab9cb260b3c10ac15355f54abbc695ac6e35564"
+      },
+      {
+        "path": "packages/components/src/styles/spinner.styles.ts",
+        "sha256": "1eadd0713a2fc43713a3e660fe6133e7fd1a5ac62da82ed6554107f66bfb8e3d"
+      },
+      {
+        "path": "packages/components/test/frameworks-forms.browser.test.ts",
+        "sha256": "09dde222c0e114822ab4e00ec1d6e7f71a5805c2c6d7341d182896b0940eaf45"
+      }
+    ]
+  },
+  "targets": [
+    { "path": "design/figma/components.json", "role": "docs" },
+    { "path": "design/figma/reuse.json", "role": "docs" },
+    { "path": "docs/architecture/component-catalog.md", "role": "docs" },
+    { "path": "docs/diagnostics.md", "role": "docs" },
+    { "path": "packages/components/src/button/button.examples.ts", "role": "docs" },
+    { "path": "packages/components/src/button/button.native.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/button/button.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/button/button.template.ts", "role": "template" },
+    { "path": "packages/components/src/button/button.ts", "role": "class" },
+    { "path": "packages/components/src/calendar/calendar.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/calendar/calendar.template.ts", "role": "template" },
+    { "path": "packages/components/src/carousel/carousel.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/carousel/carousel.template.ts", "role": "template" },
+    { "path": "packages/components/test/button.browser.test.ts", "role": "test" },
+    { "path": "packages/components/test/carousel.browser.test.ts", "role": "test" },
+    { "path": "packages/components/test/figma-parity.browser.test.ts", "role": "test" },
+    { "path": "packages/components/test/styling.browser.test.ts", "role": "test" },
+    { "path": "research/benchmarks/size/measure.mjs", "role": "test" },
+    { "path": "packages/components/src/button/button.structural.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/button/button.definition.ts", "role": "definition" },
+    { "path": "packages/components/src/button/button.define.ts", "role": "registration" },
+    { "path": "packages/components/src/button/index.ts", "role": "exports" },
+    { "path": "packages/components/src/button/foundation.ts", "role": "exports" },
+    { "path": "packages/components/src/styles/focus-ring.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/styles/spinner.styles.ts", "role": "styles" },
+    { "path": "packages/components/test/frameworks-forms.browser.test.ts", "role": "test" }
+  ],
+  "contracts": [
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/contract.md",
+      "sha256": "3d65c90da5d04e9bea397087247f5f8a0895c92f6c479047bfc209f644552c99"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/decision.md",
+      "sha256": "25486cfc54e7fcfd3adc9e605ed60554f3ea7a5fad91c7e07adc3054191cf7ff"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/token-map.md",
+      "sha256": "f6ba7d5a84e4cd57062533f78eae69a41380533771eb00642b1d10ee4b3c3d26"
+    },
+    {
+      "path": "docs/architecture/responsiveness.md",
+      "sha256": "73037505c29063ec54fdbe3b2f863f80751363879188a774724b232b600302d7"
+    },
+    {
+      "path": "docs/architecture/component-contracts.md",
+      "sha256": "84604eb512f58541edd7b415373fd63f635ae4bf4d56e98575cea860766a5c58"
+    },
+    {
+      "path": "docs/architecture/decisions/0036-component-composition-api.md",
+      "sha256": "bf62c48212b5fb715fba6d9006c95b704c3c6b82d6f4086a15dfd69693e696d9"
+    },
+    {
+      "path": "docs/architecture/decisions/0043-composite-dependency-mechanism.md",
+      "sha256": "b6efe9ff913dd781d2c19f35016b4b2e9c5731ea324cbaf0db65e57a0f788d22"
+    },
+    {
+      "path": "docs/architecture/decisions/0045-api-vocabulary.md",
+      "sha256": "b06401dd1196853d451e8025539d6860863b2472ea1230962514fbd6b1633784"
+    },
+    {
+      "path": "packages/tokens/themes/default.theme.json",
+      "sha256": "6057c49c88489fdd2e50897e914962a113fae22943f7d3d4c4f67e12fa24656d"
+    },
+    {
+      "path": "packages/tokens/src/generate/preset.ts",
+      "sha256": "f286b52e5adde5b93a4e5e81c48a0c99f4de58eaea93df6d140ab3c3c35df2e5"
+    }
+  ],
+  "deltas": [
+    {
+      "id": "B-D4",
+      "from": "Ordinary text geometry even when the only content was an icon.",
+      "to": "Infer native intrinsic square presentation from one default-slot icon and provide data-icon-only for the native recipe.",
+      "rationale": "Avoid a new element and express the existing control and target tokens.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    },
+    {
+      "id": "B-D5",
+      "from": "Slotted icons used their own size defaults.",
+      "to": "Inherit Button’s context-specific icon sizing, with a per-icon style override.",
+      "rationale": "Reuse the icon size tokens and shared glyph artwork.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    },
+    {
+      "id": "B-D6",
+      "from": "There was no Button-specific naming diagnostic.",
+      "to": "Log a warning once for a missing own label on an icon-only Button.",
+      "rationale": "A glyph alone does not communicate the intended action.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    },
+    {
+      "id": "B-D7",
+      "from": "Native recipe hover rules did not match links.",
+      "to": "Allow the native recipe on links, including intended hover and disabled styling.",
+      "rationale": "Keep native navigation semantics and one shared visual recipe.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    },
+    {
+      "id": "B-D8",
+      "from": "Calendar and Carousel duplicated square styles.",
+      "to": "Reuse native icon-only styling with their existing size and artwork.",
+      "rationale": "Preserve consumer geometry through a shared definition.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    },
+    {
+      "id": "B-D9",
+      "from": "Trailing icon had no canonical swap in the text component sets and states review cropped focus.",
+      "to": "Keep trailing content optional with chevron as the Figma default, and reserve focus-ring space in the verification rows.",
+      "rationale": "Keep the component-set identities and reveal the already implemented focus geometry.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "nodeId": "159:432",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.sm"
+    },
+    {
+      "nodeId": "159:432",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.sm"
+    },
+    {
+      "nodeId": "181:2294",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "164:2185",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.sm"
+    },
+    {
+      "nodeId": "164:2185",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.sm"
+    },
+    {
+      "nodeId": "181:2311",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "164:2189",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.sm"
+    },
+    {
+      "nodeId": "164:2189",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.sm"
+    },
+    {
+      "nodeId": "181:2328",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:383",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.md"
+    },
+    {
+      "nodeId": "159:383",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.md"
+    },
+    {
+      "nodeId": "159:426",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:389",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.md"
+    },
+    {
+      "nodeId": "159:389",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.md"
+    },
+    {
+      "nodeId": "164:2156",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:395",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.md"
+    },
+    {
+      "nodeId": "159:395",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.md"
+    },
+    {
+      "nodeId": "164:2179",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:438",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.lg"
+    },
+    {
+      "nodeId": "159:438",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.lg"
+    },
+    {
+      "nodeId": "181:2352",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "164:2193",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.lg"
+    },
+    {
+      "nodeId": "164:2193",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.lg"
+    },
+    {
+      "nodeId": "181:2369",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "164:2197",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.lg"
+    },
+    {
+      "nodeId": "164:2197",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.padding.inline.lg"
+    },
+    {
+      "nodeId": "181:2386",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:383",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.action.default"
+    },
+    {
+      "nodeId": "159:389",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.surface.default"
+    },
+    {
+      "nodeId": "159:389",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.border.strong"
+    },
+    {
+      "nodeId": "159:395",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.text.primary"
+    },
+    {
+      "nodeId": "159:401",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.action.hover"
+    },
+    {
+      "nodeId": "159:407",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "color.action.pressed"
+    },
+    {
+      "nodeId": "159:414",
+      "sourcePath": "packages/components/src/styles/focus-ring.styles.ts",
+      "part": "control",
+      "token": "focus.width"
+    },
+    {
+      "nodeId": "159:414",
+      "sourcePath": "packages/components/src/styles/focus-ring.styles.ts",
+      "part": "control",
+      "token": "focus.offset"
+    },
+    {
+      "nodeId": "159:414",
+      "sourcePath": "packages/components/src/styles/focus-ring.styles.ts",
+      "part": "control",
+      "token": "color.focus.ring"
+    },
+    {
+      "nodeId": "159:426",
+      "sourcePath": "packages/components/src/styles/spinner.styles.ts",
+      "part": "spinner",
+      "token": null
+    },
+    {
+      "nodeId": "159:439",
+      "sourcePath": "packages/components/src/button/button.definition.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "181:2332",
+      "sourcePath": "packages/components/src/button/button.definition.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "181:2390",
+      "sourcePath": "packages/components/src/button/button.definition.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "159:501",
+      "sourcePath": "packages/components/src/button/button.definition.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "159:471",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.md"
+    },
+    {
+      "nodeId": "1455:4545",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.sm"
+    },
+    {
+      "nodeId": "1455:4798",
+      "sourcePath": "packages/components/src/button/button.styles.ts",
+      "part": "control",
+      "token": "control.height.lg"
+    },
+    {
+      "nodeId": "159:279",
+      "sourcePath": "packages/components/src/button/button.template.ts",
+      "part": "end slot",
+      "token": null
+    },
+    {
+      "nodeId": "1456:2001",
+      "sourcePath": "packages/components/src/styles/focus-ring.styles.ts",
+      "part": "control",
+      "token": "focus.width"
+    },
+    {
+      "nodeId": "1456:2186",
+      "sourcePath": "packages/components/src/styles/focus-ring.styles.ts",
+      "part": "control",
+      "token": "focus.width"
+    }
+  ],
+  "contextual": {
+    "version": 1,
+    "level": "intrinsic",
+    "contract": "docs/architecture/responsiveness.md"
+  },
+  "acceptance": [
+    {
+      "id": "B-A1",
+      "fixture": "Fixed viewport, 640 → 240 → 640 px parent with both adornments",
+      "assertions": [
+        "Retain native control, slots, focus and pressed state. Wrap the label and keep actions reachable without horizontal overflow."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A2",
+      "fixture": "All three sizes with leading and trailing content, before/during/after loading",
+      "assertions": [
+        "Retain geometry, name and focus. Center the shared spinner and suppress activation while loading."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A3",
+      "fixture": "Pressed toggle with loading and disabled in light, dark and compact scopes",
+      "assertions": ["Keep token-resolved selection paint, control height and disabled opacity."],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A4",
+      "fixture": "Click, Enter and Space, cancelled toggle activation, programmatic update",
+      "assertions": [
+        "Keep the native activation target and event order. Cancelled activation restores the previous pressed state. Programmatic updates emit no input or change."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A5",
+      "fixture": "Forms with custom Button submit/reset proxy and native CSS recipe",
+      "assertions": [
+        "Keep native form name/value, overrides, validation, cancellation, fieldset and reset behaviour within the documented proxy contract."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A6",
+      "fixture": "Loading button with one decorative icon and an explicit Button label",
+      "assertions": [
+        "Keep the accessible name and a target at least the token floor on both axes."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A7",
+      "fixture": "Bounded parent, host status/retry and focused textarea draft",
+      "assertions": [
+        "Keep the textarea identity, value, selection and focus while the parent changes width. The retry action remains reachable in the parent scroll area."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A8",
+      "fixture": "Disconnect with toggle/submit queued, then reconnect",
+      "assertions": [
+        "Suppress queued actions on disconnected controls and return to the resource baseline on reconnect."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A9",
+      "fixture": "Icon-only element and native recipe at three sizes and two density scopes",
+      "assertions": [
+        "Keep the intrinsic square at or above target.min. Update derived icon-only state as content changes and preserve control identity and focus."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A10",
+      "fixture": "Leading, trailing and only icons, using odd-icon and SVG fixtures",
+      "assertions": [
+        "Use 16/16/20 px beside text and 20/20/24 px alone. A per-icon custom property overrides the inherited size."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A11",
+      "fixture": "Labelled and unlabelled icon-only controls, content edits and reconnect",
+      "assertions": [
+        "Log the missing Button label at most once per element and leave valid labelled controls silent."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A12",
+      "fixture": "Native link, native button and odd-button using matching appearances",
+      "assertions": [
+        "Apply the shared paint and box geometry, including hover. A link has no underline and a disabled link is muted without hover paint."
+      ],
+      "kind": "browser"
+    },
+    {
+      "id": "B-A13",
+      "fixture": "Calendar navigation and Carousel previous/next controls",
+      "assertions": ["The native recipe preserves 32 × 32 px controls and 20 px glyphs."],
+      "kind": "browser"
+    },
+    {
+      "id": "B-FIDELITY",
+      "kind": "implementation-visual",
+      "fixture": "Six paired specimens across both light and dark themes",
+      "assertions": [
+        "Read the final component variants and compare current runtime geometry and token-resolved paint with Figma. Keep the complete focus outline visible in both focus rows. Document residual font, spinner and icon-stroke differences."
+      ]
+    }
+  ],
+  "issues": [],
+  "implementationRun": "docs/architecture/primitives/runs/2026-11-18-button-redesign/run.json"
+}

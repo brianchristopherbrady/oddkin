@@ -1,0 +1,21 @@
+
+checks ok 1514, DIFF 0; (hover: hover) true
+A bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+B bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+C bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+D bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+E bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+F bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+G bench ready=true errors=[] warnings=["@oddkin/components: dist is older than src (2026-11-18T21:40:10.612Z). Run npm run build to see current code"]
+G warnings: at load 0, before the warning test 0, after 1 [
+  'warning: [button.label.missing] <odd-button> shows only an icon and has no label: set label to name it.'
+] [
+  'unnamed: icon-only true',
+  'named: icon-only true',
+  'text: icon-only false',
+  'svg-named: icon-only true'
+]
+C strokes: [["sm","start",["start:16px:1.2"]],["sm","end",["end:16px:1.2"]],["sm","both",["start:16px:1.2","end:16px:1.2"]],["sm","alone",["default:20px:1.5"]],["sm","svg",["default:20px:1.5"]],["md","start",["start:16px:1.2"]],["md","end",["end:16px:1.2"]],["md","both",["start:16px:1.2","end:16px:1.2"]],["md","alone",["default:20px:1.5"]],["md","svg",["default:20px:1.5"]],["lg","start",["start:20px:1.5"]],["lg","end",["end:20px:1.5"]],["lg","both",["start:20px:1.5","end:20px:1.5"]],["lg","alone",["default:24px:1.8"]],["lg","svg",["default:24px:1.8"]]]
+A compact boxes: ["sm primary 24x24 icon 20x20","sm secondary 24x24 icon 20x20","sm ghost 24x24 icon 20x20","md primary 30x30 icon 20x20","md secondary 30x30 icon 20x20","md ghost 30x30 icon 20x20","lg primary 36x36 icon 24x24","lg secondary 36x36 icon 24x24","lg ghost 36x36 icon 24x24"]
+B backgrounds: ["light Default rgb(255, 255, 255) 1 none 3px rgb(35, 37, 43) 0px","light Disabled rgb(255, 255, 255) 0.5 none 3px rgb(35, 37, 43) 0px","light Loading rgb(255, 255, 255) 1 none 3px rgb(35, 37, 43) 0px","light On rgb(98, 80, 232) 1 none 3px rgb(255, 255, 255) 0px","light Hover rgb(240, 239, 245) 1 none 3px rgb(35, 37, 43) 0px","light Pressed rgb(240, 239, 243) 1 none 3px rgb(35, 37, 43) 0px","light Focus rgb(255, 255, 255) 1 solid 2px rgb(98, 80, 232) 2px","dark Default rgb(36, 38, 49) 1 none 3px rgb(245, 243, 253) 0px","dark Disabled rgb(36, 38, 49) 0.5 none 3px rgb(245, 243, 253) 0px","dark Loading rgb(36, 38, 49) 1 none 3px rgb(245, 243, 253) 0px","dark On rgb(180, 168, 255) 1 none 3px rgb(35, 37, 43) 0px","dark Hover rgb(48, 50, 63) 1 none 3px rgb(245, 243, 253) 0px","dark Pressed rgb(17, 18, 25) 1 none 3px rgb(245, 243, 253) 0px","dark Focus rgb(36, 38, 49) 1 solid 2px rgb(180, 168, 255) 2px"]
+other console errors/warnings: []

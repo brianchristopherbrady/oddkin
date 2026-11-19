@@ -1,0 +1,468 @@
+{
+  "numTotalTestSuites": 14,
+  "numPassedTestSuites": 14,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 34,
+  "numPassedTests": 34,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795063072410,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["change impact on @oddkin/components"],
+          "fullName": "change impact on @oddkin/components reads every source it depends on: no coverage gaps, no unresolved token reads",
+          "status": "passed",
+          "title": "reads every source it depends on: no coverage gaps, no unresolved token reads",
+          "duration": 495.6781000000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["change impact on @oddkin/components"],
+          "fullName": "change impact on @oddkin/components a side-nav structural style edit selects only side-nav examples, mistakes excluded",
+          "status": "passed",
+          "title": "a side-nav structural style edit selects only side-nav examples, mistakes excluded",
+          "duration": 530.1398000000002,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["change impact on @oddkin/components"],
+          "fullName": "change impact on @oddkin/components a button template edit also selects the examples whose fixtures render a button",
+          "status": "passed",
+          "title": "a button template edit also selects the examples whose fixtures render a button",
+          "duration": 654.8324,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063073330,
+      "endTime": 1795063075010.8325,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/analyzer/test/impact.components.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["component examples"],
+          "fullName": "component examples use only public properties, attributes, and slots from the published CEM",
+          "status": "passed",
+          "title": "use only public properties, attributes, and slots from the published CEM",
+          "duration": 12.151100000000042,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["component examples"],
+          "fullName": "component examples pair each explained mistake with the diagnostic the published contract gives it",
+          "status": "passed",
+          "title": "pair each explained mistake with the diagnostic the published contract gives it",
+          "duration": 15.797399999999925,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["component examples"],
+          "fullName": "component examples serialize to examples.v1",
+          "status": "passed",
+          "title": "serialize to examples.v1",
+          "duration": 63.49160000000006,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["component examples"],
+          "fullName": "component examples cover a default, every declared preview role, and an in-form fixture for form controls",
+          "status": "passed",
+          "title": "cover a default, every declared preview role, and an in-form fixture for form controls",
+          "duration": 13.238100000000031,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["component examples"],
+          "fullName": "component examples are listed in the published metadata exactly as the analyzer read them statically",
+          "status": "passed",
+          "title": "are listed in the published metadata exactly as the analyzer read them statically",
+          "duration": 31.478200000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063074080,
+      "endTime": 1795063074216.4783,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/examples.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Figma component exporter: composition slots"],
+          "fullName": "Figma component exporter: composition slots exports nested slot contents once and leaves inherited source internals with the source",
+          "status": "passed",
+          "title": "exports nested slot contents once and leaves inherited source internals with the source",
+          "duration": 5.462900000000047,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063072895,
+      "endTime": 1795063072900.463,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/figma-component-export.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Figma icon library"],
+          "fullName": "Figma icon library scales shared artwork and centers compact icons with their labels",
+          "status": "passed",
+          "title": "scales shared artwork and centers compact icons with their labels",
+          "duration": 12.52720000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma icon library"],
+          "fullName": "Figma icon library maps every SVG asset to exactly one existing main component",
+          "status": "passed",
+          "title": "maps every SVG asset to exactly one existing main component",
+          "duration": 9.430299999999988,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma icon library"],
+          "fullName": "Figma icon library keeps SVG containers transparent so they cannot cover the glyph with a square",
+          "status": "passed",
+          "title": "keeps SVG containers transparent so they cannot cover the glyph with a square",
+          "duration": 46.661400000000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma icon library"],
+          "fullName": "Figma icon library accounts for every source reference without missing or duplicate IDs",
+          "status": "passed",
+          "title": "accounts for every source reference without missing or duplicate IDs",
+          "duration": 34.87030000000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063072947,
+      "endTime": 1795063073050.8704,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/figma-icons.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["design/figma snapshot and reuse map"],
+          "fullName": "design/figma snapshot and reuse map match their schemas",
+          "status": "passed",
+          "title": "match their schemas",
+          "duration": 226.61040000000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["design/figma snapshot and reuse map"],
+          "fullName": "design/figma snapshot and reuse map classify every nested-instance reference once, with the snapshot count",
+          "status": "passed",
+          "title": "classify every nested-instance reference once, with the snapshot count",
+          "duration": 3.364500000000021,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["design/figma snapshot and reuse map"],
+          "fullName": "design/figma snapshot and reuse map is rendered into component-catalog.md (node design/figma/reuse.render.mjs --write)",
+          "status": "passed",
+          "title": "is rendered into component-catalog.md (node design/figma/reuse.render.mjs --write)",
+          "duration": 4.509799999999927,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["design/figma snapshot and reuse map"],
+          "fullName": "design/figma snapshot and reuse map element dependencies equal the dependencies the published definitions declare",
+          "status": "passed",
+          "title": "element dependencies equal the dependencies the published definitions declare",
+          "duration": 18.336400000000026,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063073136,
+      "endTime": 1795063073389.3364,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/figma-reuse.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata validates against the pinned CEM schema and oddkin-metadata.v1",
+          "status": "passed",
+          "title": "validates against the pinned CEM schema and oddkin-metadata.v1",
+          "duration": 273.93589999999995,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata lists every exported document stylesheet with what an author needs to use it",
+          "status": "passed",
+          "title": "lists every exported document stylesheet with what an author needs to use it",
+          "duration": 4.597700000000032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata is declared and published by the package",
+          "status": "passed",
+          "title": "is declared and published by the package",
+          "duration": 0.433699999999817,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata every module path exists in the build and every registration is a package export",
+          "status": "passed",
+          "title": "every module path exists in the build and every registration is a package export",
+          "duration": 28.46210000000019,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata describes odd-button from its definition, template, and styles",
+          "status": "passed",
+          "title": "describes odd-button from its definition, template, and styles",
+          "duration": 0.9768000000001393,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata states which properties take only property values and what each event reports",
+          "status": "passed",
+          "title": "states which properties take only property values and what each event reports",
+          "duration": 0.4249999999999545,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata lists customization paths; ladder levels only where the source declares them",
+          "status": "passed",
+          "title": "lists customization paths; ladder levels only where the source declares them",
+          "duration": 0.8941999999999553,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata traces options and states to tokens, and publishes each style source for reuse",
+          "status": "passed",
+          "title": "traces options and states to tokens, and publishes each style source for reuse",
+          "duration": 0.5963999999999032,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata publishes category labels, so the Workbench catalog groups components by them",
+          "status": "passed",
+          "title": "publishes category labels, so the Workbench catalog groups components by them",
+          "duration": 14.880400000000009,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["@oddkin/components published metadata"],
+          "fullName": "@oddkin/components published metadata dates component and foundation pages from source history, as Workbench shows them",
+          "status": "passed",
+          "title": "dates component and foundation pages from source history, as Workbench shows them",
+          "duration": 69.93730000000005,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063073366,
+      "endTime": 1795063073761.9373,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/components/test/metadata.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) the snapshot matches its schema and is sorted by name",
+          "status": "passed",
+          "title": "the snapshot matches its schema and is sorted by name",
+          "duration": 106.9135,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) maps every variable, text style, and effect style to a token of the default theme",
+          "status": "passed",
+          "title": "maps every variable, text style, and effect style to a token of the default theme",
+          "duration": 0.3088999999999942,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) has equal values in light and dark with no known mismatches",
+          "status": "passed",
+          "title": "has equal values in light and dark with no known mismatches",
+          "duration": 0.32950000000005275,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) preserves repository alias chains, including their exact targets",
+          "status": "passed",
+          "title": "preserves repository alias chains, including their exact targets",
+          "duration": 0.23839999999995598,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) keeps retired collections, selection variables, and duplicate text styles out of the snapshot",
+          "status": "passed",
+          "title": "keeps retired collections, selection variables, and duplicate text styles out of the snapshot",
+          "duration": 1.3238999999998668,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) binds text styles to canonical variables while preserving proportional metrics",
+          "status": "passed",
+          "title": "binds text styles to canonical variables while preserving proportional metrics",
+          "duration": 2.7671000000000276,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        },
+        {
+          "ancestorTitles": ["Figma parity (design/figma/variables.json)"],
+          "fullName": "Figma parity (design/figma/variables.json) reports the tokens Figma does not define",
+          "status": "passed",
+          "title": "reports the tokens Figma does not define",
+          "duration": 0.33590000000003783,
+          "failureMessages": [],
+          "meta": {},
+          "tags": [],
+          "benchmarks": []
+        }
+      ],
+      "startTime": 1795063073519,
+      "endTime": 1795063073631.336,
+      "status": "passed",
+      "message": "",
+      "name": "C:/SLT_Backup_10-21-2026/oddkin-a1-main/packages/tokens/test/figma-parity.test.ts"
+    }
+  ]
+}

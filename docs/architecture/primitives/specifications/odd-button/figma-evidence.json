@@ -1,0 +1,435 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pageId": "1398:2",
+  "observedAt": "2026-11-19T04:35:41.929Z",
+  "sessionId": "83a42333-24eb-403a-815f-3eaa842c5e18",
+  "layout": {
+    "frames": [
+      { "id": "1398:76", "y": 96, "h": 2842 },
+      { "id": "1398:2328", "y": 3002, "h": 1850 },
+      { "id": "1398:2658", "y": 4916, "h": 676 },
+      { "id": "1398:2751", "y": 5656, "h": 563 }
+    ],
+    "rows": [
+      {
+        "id": "1456:1979",
+        "h": 56,
+        "top": 8,
+        "bottom": 8,
+        "clips": false,
+        "paddingBinding": "VariableID:158:53"
+      },
+      {
+        "id": "1456:2164",
+        "h": 56,
+        "top": 8,
+        "bottom": 8,
+        "clips": false,
+        "paddingBinding": "VariableID:158:53"
+      }
+    ],
+    "overlaps": [],
+    "edits": [
+      {
+        "text": "because Calendar and Carousel were hand-building the same square and some design examples were using text glyphs for icon-only actions.",
+        "verified": true
+      },
+      { "text": "one console diagnostic added", "verified": true },
+      { "text": "logs a console warning once", "verified": true },
+      {
+        "text": "no layout context subscriber, resolver, size observer, overlay or component scroller",
+        "verified": true
+      },
+      {
+        "text": "The text sets add `End icon` and `Show end icon`. The chevron is the default Figma swap when enabled, and the slot stays hidden by default. In code the author supplies end-slot content.",
+        "verified": true
+      }
+    ]
+  },
+  "readback": {
+    "page": "1398:2",
+    "name": "Primitive · Button · Specification",
+    "top": [
+      {
+        "id": "159:439",
+        "name": "Oddkin/Common/button",
+        "x": 1800,
+        "y": 96,
+        "width": 1042,
+        "height": 312
+      },
+      {
+        "id": "181:2332",
+        "name": "Oddkin/Common/button/sm",
+        "x": 1800,
+        "y": 556,
+        "width": 1042,
+        "height": 304
+      },
+      {
+        "id": "181:2390",
+        "name": "Oddkin/Common/button/lg",
+        "x": 1800,
+        "y": 1016,
+        "width": 1048,
+        "height": 320
+      },
+      {
+        "id": "159:501",
+        "name": "Oddkin/Common/toggleButton",
+        "x": 1800,
+        "y": 1520,
+        "width": 823,
+        "height": 216
+      },
+      {
+        "id": "1398:76",
+        "name": "Button · States · Light + Dark",
+        "x": 96,
+        "y": 96,
+        "width": 1536,
+        "height": 2842
+      },
+      {
+        "id": "1398:2328",
+        "name": "Button · Parent allocation and content",
+        "x": 96,
+        "y": 3002,
+        "width": 1536,
+        "height": 1850
+      },
+      {
+        "id": "1398:2658",
+        "name": "Button · Interaction flows",
+        "x": 96,
+        "y": 4916,
+        "width": 1536,
+        "height": 676
+      },
+      {
+        "id": "1398:2662",
+        "name": "Light · Step 1",
+        "x": 1800,
+        "y": 2300,
+        "width": 458.6600036621094,
+        "height": 199
+      },
+      {
+        "id": "1398:2673",
+        "name": "Light · Step 2",
+        "x": 2290.659912109375,
+        "y": 2300,
+        "width": 458.6600036621094,
+        "height": 291
+      },
+      {
+        "id": "1398:2683",
+        "name": "Light · Step 3",
+        "x": 2781.320068359375,
+        "y": 2300,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1398:2695",
+        "name": "Dark · Step 1",
+        "x": 1800,
+        "y": 3420,
+        "width": 458.6600036621094,
+        "height": 199
+      },
+      {
+        "id": "1398:2706",
+        "name": "Dark · Step 2",
+        "x": 2290.659912109375,
+        "y": 3420,
+        "width": 458.6600036621094,
+        "height": 291
+      },
+      {
+        "id": "1398:2716",
+        "name": "Dark · Step 3",
+        "x": 2781.320068359375,
+        "y": 3420,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1398:2751",
+        "name": "Button · Anatomy, ownership and handoff",
+        "x": 96,
+        "y": 5656,
+        "width": 1536,
+        "height": 563
+      },
+      {
+        "id": "1399:1478",
+        "name": "Light · Host commits success",
+        "x": 1800,
+        "y": 2860,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1399:1492",
+        "name": "Light · Host withdraws loading",
+        "x": 2290.659912109375,
+        "y": 2860,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1399:1506",
+        "name": "Dark · Host commits success",
+        "x": 1800,
+        "y": 3980,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1399:1520",
+        "name": "Dark · Host withdraws loading",
+        "x": 2290.659912109375,
+        "y": 3980,
+        "width": 458.6600036621094,
+        "height": 223
+      },
+      {
+        "id": "1399:1534",
+        "name": "__Button/End slot specimen",
+        "x": 1800,
+        "y": 4267,
+        "width": 80,
+        "height": 40
+      },
+      {
+        "id": "1400:1965",
+        "name": "__Button/Full width/primary",
+        "x": 1800,
+        "y": 4377,
+        "width": 208,
+        "height": 40
+      },
+      {
+        "id": "1400:1969",
+        "name": "__Button/Full width/secondary",
+        "x": 2100,
+        "y": 4377,
+        "width": 208,
+        "height": 40
+      },
+      {
+        "id": "1406:1065",
+        "name": "__Button/Unbroken canonical label",
+        "x": 2100,
+        "y": 4267,
+        "width": 208,
+        "height": 57
+      },
+      {
+        "id": "1406:1069",
+        "name": "__Button/Long localized label with start and end slots",
+        "x": 2400,
+        "y": 4267,
+        "width": 208,
+        "height": 78
+      },
+      {
+        "id": "1455:4545",
+        "name": "Oddkin/Common/iconButton/sm",
+        "x": 1800,
+        "y": 1800,
+        "width": 480,
+        "height": 224
+      },
+      {
+        "id": "159:471",
+        "name": "Oddkin/Common/iconButton",
+        "x": 2328,
+        "y": 1800,
+        "width": 536,
+        "height": 248
+      },
+      {
+        "id": "1455:4798",
+        "name": "Oddkin/Common/iconButton/lg",
+        "x": 2912,
+        "y": 1800,
+        "width": 592,
+        "height": 272
+      }
+    ],
+    "topOverlaps": [],
+    "sets": [
+      {
+        "id": "159:439",
+        "name": "Oddkin/Common/button",
+        "count": 18,
+        "overlaps": [],
+        "defaultEnd": "159:279"
+      },
+      {
+        "id": "181:2332",
+        "name": "Oddkin/Common/button/sm",
+        "count": 18,
+        "overlaps": [],
+        "defaultEnd": "159:279"
+      },
+      {
+        "id": "181:2390",
+        "name": "Oddkin/Common/button/lg",
+        "count": 18,
+        "overlaps": [],
+        "defaultEnd": "159:279"
+      },
+      { "id": "159:501", "name": "Oddkin/Common/toggleButton", "count": 10, "overlaps": [] },
+      {
+        "id": "1455:4545",
+        "name": "Oddkin/Common/iconButton/sm",
+        "count": 21,
+        "overlaps": [],
+        "defaultEnd": "159:291"
+      },
+      {
+        "id": "159:471",
+        "name": "Oddkin/Common/iconButton",
+        "count": 21,
+        "overlaps": [],
+        "defaultEnd": "159:291"
+      },
+      {
+        "id": "1455:4798",
+        "name": "Oddkin/Common/iconButton/lg",
+        "count": 21,
+        "overlaps": [],
+        "defaultEnd": "159:291"
+      }
+    ],
+    "nodes": 1351,
+    "bindingFields": 10252,
+    "prototypeEdges": 24,
+    "brokenTargets": [],
+    "clippedText": [
+      [
+        "1398:2460",
+        "1398:2437",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ],
+      ["1398:2462", "1398:2437", "Saved working record 3"],
+      [
+        "1398:2471",
+        "1398:2437",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ],
+      ["1398:2473", "1398:2437", "Saved working record 4"],
+      [
+        "1398:2482",
+        "1398:2437",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ],
+      [
+        "1398:2623",
+        "1398:2600",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ],
+      ["1398:2625", "1398:2600", "Saved working record 3"],
+      [
+        "1398:2634",
+        "1398:2600",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ],
+      ["1398:2636", "1398:2600", "Saved working record 4"],
+      [
+        "1398:2645",
+        "1398:2600",
+        "Complete record text remains in the deliberately bounded parent reader."
+      ]
+    ],
+    "focus": [
+      {
+        "rowId": "1456:1979",
+        "focusId": "1456:2001",
+        "row": [328, 56],
+        "control": [40, 40],
+        "render": [48, 48],
+        "clearance": { "above": 4, "below": 4 },
+        "binding": "VariableID:158:53",
+        "clip": false
+      },
+      {
+        "rowId": "1456:2164",
+        "focusId": "1456:2186",
+        "row": [328, 56],
+        "control": [40, 40],
+        "render": [48, 48],
+        "clearance": { "above": 4, "below": 4 },
+        "binding": "VariableID:158:53",
+        "clip": false
+      }
+    ],
+    "spec": { "id": "1398:2760", "headings": 16 },
+    "sessionId": "83a42333-24eb-403a-815f-3eaa842c5e18",
+    "readAt": "2026-11-19T04:35:41.929Z",
+    "corrections": {
+      "frames": [
+        { "id": "1398:76", "y": 96, "h": 2842 },
+        { "id": "1398:2328", "y": 3002, "h": 1850 },
+        { "id": "1398:2658", "y": 4916, "h": 676 },
+        { "id": "1398:2751", "y": 5656, "h": 563 }
+      ],
+      "rows": [
+        {
+          "id": "1456:1979",
+          "h": 56,
+          "top": 8,
+          "bottom": 8,
+          "clips": false,
+          "paddingBinding": "VariableID:158:53"
+        },
+        {
+          "id": "1456:2164",
+          "h": 56,
+          "top": 8,
+          "bottom": 8,
+          "clips": false,
+          "paddingBinding": "VariableID:158:53"
+        }
+      ],
+      "overlaps": [],
+      "edits": [
+        {
+          "text": "because Calendar and Carousel were hand-building the same square and some design examples were using text glyphs for icon-only actions.",
+          "verified": true
+        },
+        { "text": "one console diagnostic added", "verified": true },
+        { "text": "logs a console warning once", "verified": true },
+        {
+          "text": "no layout context subscriber, resolver, size observer, overlay or component scroller",
+          "verified": true
+        },
+        {
+          "text": "The text sets add `End icon` and `Show end icon`. The chevron is the default Figma swap when enabled, and the slot stays hidden by default. In code the author supplies end-slot content.",
+          "verified": true
+        }
+      ]
+    },
+    "finalSpecEdits": [true, true, true, true],
+    "clipNote": "Ten bounds hits are sample reader text in the two deliberately bounded scrolling parent fixtures. No other text clipping observed.",
+    "codeConnect": [
+      "import OddkinButton from \"packages/components/src/button/button.ts\"\n\nexport default function OddkinCommonIconButton() {\n  return (\n    <CodeConnectSnippet data-node-id=\"1456:2001\" data-name=\"Oddkin/Common/iconButton\">\n      <OddkinButton icon=\"159:300\" appearance=\"secondary\" size=\"md\" state=\"Focus\" />\n    </CodeConnectSnippet>\n  );\n}",
+      "import OddkinButton from \"packages/components/src/button/button.ts\"\n\nexport default function OddkinCommonButton() {\n  return (\n    <CodeConnectSnippet data-node-id=\"1456:2066\" data-name=\"Oddkin/Common/button\">\n      <OddkinButton endIcon=\"159:279\" showEndIcon={true} icon=\"159:291\" showIcon={false} label=\"Continue\" appearance=\"primary\" size=\"md\" state=\"Default\" />\n    </CodeConnectSnippet>\n  );\n}"
+    ],
+    "codeConnectNote": "Mapped to OddkinButton. Native interactions drive browser states; callers supply the end slot and icon-only name."
+  },
+  "canon": {
+    "textSets": ["159:439", "181:2332", "181:2390"],
+    "textVariants": 54,
+    "iconOnlySets": ["159:471", "1455:4545", "1455:4798"],
+    "iconOnlyVariants": 63,
+    "toggleSet": "159:501",
+    "toggleVariants": 10
+  },
+  "focusRows": ["1456:1979", "1456:2164"],
+  "postBuildFidelity": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/verification.md",
+  "nativeSpecReadback": "docs/architecture/primitives/specifications/odd-button/figma-native-spec.md"
+}

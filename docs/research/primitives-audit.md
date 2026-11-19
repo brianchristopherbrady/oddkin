@@ -42,7 +42,7 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | done | ok | ok | ok | ok | ok | ok |
 | 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | done | ok | ok | ok | ok | ok | ok |
-| 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390) | `odd-button`, `.odd-button (button.css)` | fixing | ok | gap | ok | ok | ok | ok |
+| 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390), toggleButton (159:501), iconButton/sm (1455:4545), iconButton (159:471), iconButton/lg (1455:4798) | `odd-button`, `.odd-button (button.css)` | done | ok | ok | ok | ok | ok | ok |
 | 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | fixing | ok | ok | ok | ? | ok | ok |
 | 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | fixing | ok | ok | ok | ? | ok | ok |
@@ -152,13 +152,17 @@ Decisions for the owner:
 
 ## 3. button
 
-Status: fixing (2026-11-15). The closest to Figma so far: every appearance, size, and state matches, and the parity test compares all 54 in three engines. Two gaps: the default appearance (Figma primary, the code secondary), and the leading icon, which Figma draws at 16 px while the start slot leaves an odd-icon at its 20 px default. Outcome (2026-11-17): the owner's specification (page 1398:2) keeps secondary as the default; loading now centres the spinner over the kept label and a pressed toggle keeps its colours. Open: the leading icon's size (BT3, decision D2).
+Status: done (2026-11-18). The v2 flow reviewed seven implementation lineages and refreshed the Button family on page 1398:2. Named icon-only controls use a token-sized intrinsic square, contextual icon sizes, and the same native action semantics. Calendar and Carousel share the native recipe. The paged design, design-to-code handoff, three-engine behavior/parity and light/dark fidelity review are linked from the verification record. D2 is implemented per the scoped v2 decision; the library's primary specimen default and the code's secondary default remain documented under BT11.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
 | Oddkin/Common/button | 159:439 | 18 | Appearance: ghost, primary, secondary; Size: md; State: Default, Disabled, Focus, Hover, Loading, Pressed |
 | Oddkin/Common/button/sm | 181:2332 | 18 | Appearance: ghost, primary, secondary; Size: sm; State: Default, Disabled, Focus, Hover, Loading, Pressed |
 | Oddkin/Common/button/lg | 181:2390 | 18 | Appearance: ghost, primary, secondary; Size: lg; State: Default, Disabled, Focus, Hover, Loading, Pressed |
+| Oddkin/Common/toggleButton | 159:501 | 10 | Value: Off, On; State: Default, Disabled, Focus, Hover, Loading |
+| Oddkin/Common/iconButton/sm | 1455:4545 | 21 | Appearance: ghost, primary, secondary; Size: sm; State: Default, Disabled, Focus, Hover, Loading, Pressed, On |
+| Oddkin/Common/iconButton | 159:471 | 21 | Appearance: ghost, primary, secondary; Size: md; State: Default, Disabled, Focus, Hover, Loading, Pressed, On |
+| Oddkin/Common/iconButton/lg | 1455:4798 | 21 | Appearance: ghost, primary, secondary; Size: lg; State: Default, Disabled, Focus, Hover, Loading, Pressed, On |
 
 Code: `odd-button` (packages/components/src/button/), `.odd-button (button.css)`.
 
@@ -168,17 +172,17 @@ Code: `odd-button` (packages/components/src/button/), `.odd-button (button.css)`
 
 | Finding | Check | What | Proposal |
 | --- | --- | --- | --- |
-| BT1 | api | Figma's properties map: Appearance (primary, secondary, ghost) to appearance; Size (the button, button/sm, and button/lg sets) to size; State Disabled and Loading to disabled and loading, Hover, Pressed, and Focus to browser states; Label to the default slot; Icon with Show icon to the start slot. The code adds type, full-width, toggle, pressed, label (an icon-only name), and the form attributes. | None. |
+| BT1 | api | Figma's properties map: Appearance (primary, secondary, ghost) to appearance; Size (the button, button/sm, and button/lg sets) to size; State Disabled and Loading to disabled and loading, Hover, Pressed, and Focus to browser states; Label to the default slot; Icon with Show icon to the start slot. The code adds type, full-width, toggle, pressed, label (an icon-only name), and the form attributes. | None. Fixed: 2026-11-18: Show end icon defaults off and End icon defaults to a chevron in Figma. The caller supplies the runtime end slot. Icon-only is a derived custom state. |
 | BT2 | api | The default appearance: Figma's sets default to primary; odd-button defaults to secondary. | Decision D1. Fixed: 2026-11-17: decided (D1): secondary stays the default; Figma's sets still default to primary (BT11). |
-| BT3 | visual | Figma's Leading icon is 16 x 16 at every size (icon.size.sm), 8 px (control.gap) before the label. The start and end slots do not size their content, so an odd-icon there is 20 px (its md default) unless the author sets size="sm". | Size an odd-icon in the start and end slots to icon.size.sm, and compare Show icon in the parity test. |
+| BT3 | visual | Figma's Leading icon is 16 x 16 at every size (icon.size.sm), 8 px (control.gap) before the label. The start and end slots do not size their content, so an odd-icon there is 20 px (its md default) unless the author sets size="sm". | Size an odd-icon in the start and end slots to icon.size.sm, and compare Show icon in the parity test. Fixed: 2026-11-18: D2 implemented in the element and CSS recipe. Geometry and slot sizing are covered by B-A9 and B-A10. |
 | BT4 | visual | Matching: sm, md, and lg are 32, 40, and 48 px with 8, 12, and 16 px inline padding and the 8 px control.gap; labels 14, 14, and 16 px; primary on color.action.default, secondary on color.surface.default, ghost without a fill; Disabled keeps the appearance at 50% opacity (Figma's review 685:3157). | None. |
-| BT5 | parity | figma-parity.browser.test.ts compares every Appearance, Size, and State (54 cases: frame, gap, label, focus ring) in Chromium, Firefox, and WebKit; Pressed is skipped in Firefox, which applies no :active while Space is held. The .odd-button recipe is the same stylesheet (styles.test.ts), with its own styling test. | Add the leading icon (BT3). |
+| BT5 | parity | figma-parity.browser.test.ts compares every Appearance, Size, and State (54 cases: frame, gap, label, focus ring) in Chromium, Firefox, and WebKit; Pressed is skipped in Firefox, which applies no :active while Space is held. The .odd-button recipe is the same stylesheet (styles.test.ts), with its own styling test. | Add the leading icon (BT3). Fixed: 2026-11-18: expanded to 63 icon-only variants and the loading adornments. Native recipe, Calendar and Carousel keep their geometry; B-A9–B-A13 checked in three engines. |
 | BT6 | figma | For the owner: the 50% disabled opacity is a raw value in Figma and in the code; no opacity token exists. | An opacity token for disabled controls, with the tokens lane, or accept the raw value. Fixed: 2026-11-17: the specification's token map treats the 0.5 disabled opacity as a structural value, not a missing token. |
 | BT7 | a11y | A native button: keyboard, focus, and name from the platform; the focus ring is compared with Figma; label names an icon-only button (button.browser.test.ts); a disabled control is exempt from contrast. Not yet measured: each appearance's label contrast in light and dark. | Measure with the fix. Fixed: 2026-11-17: every appearance and state measures at least 5.40:1 (dark primary pressed); the pressed toggle 5.48:1 in light and 7.28:1 in dark. In forced colours a pressed toggle keeps Highlight, also while loading (button.browser.test.ts, Chromium). A disabled control is exempt. |
-| BT8 | responsive | Long labels wrap (min-inline-size: 0, overflow-wrap: anywhere); full-width fills the parent; the catalog sweep at 240 px found no overflow (responsiveness-behavior-matrix.md). | None. |
+| BT8 | responsive | Long labels wrap (min-inline-size: 0, overflow-wrap: anywhere); full-width fills the parent; the catalog sweep at 240 px found no overflow (responsiveness-behavior-matrix.md). | None. Fixed: 2026-11-18: a two-row icon-only toolbar fits a 240 px host with 208 px usable width in both modes. A stable named control retains focus when its slot content changes. |
 | BT9 | docs | Examples cover the appearances, sizes, disabled, loading, toggle, full width, and a form submit; none shows a leading icon or an icon-only button. | Add both, the icon-only one named by label. Fixed: 2026-11-17: the leadingIcon example (the canonical plus, 16 px, in the start slot) and the iconOnly example (named by label); examples.browser.test.ts checks the icon size, the control.gap before the words, and both names. |
 | BT10 | visual | Page 1398:2 draws Loading as a spinner centred over the label, which keeps its room undrawn, and keeps a pressed toggle's selection colours while loading. | Centre the spinner over the content; keep the content and its name; keep the pressed paint under aria-disabled. Fixed: 2026-11-17: button.structural.styles.ts, button.styles.ts, and button.css; button.browser.test.ts B-A2 and B-A3 and the parity Loading cases check it in three engines. |
-| BT11 | figma | Figma's three button sets default to Appearance=primary; the API keeps secondary (D1). | For the owner: make secondary the sets' default variant, or accept the difference. |
+| BT11 | figma | Figma's three button sets default to Appearance=primary; the API keeps secondary (D1). | For the owner: make secondary the sets' default variant, or accept the difference. Fixed: 2026-11-18: the native Figma specification records secondary as the runtime default and explicitly sets primary on featured examples. The existing Figma library starts on primary. |
 
 Decisions for the owner:
 
@@ -186,7 +190,7 @@ Decisions for the owner:
   1. Keep secondary, and set the Figma sets' default variant to secondary: an unmarked button is an ordinary action, and the one primary action in a view is chosen on purpose.
   2. Change the code to primary, as Figma has it.
   - Recommendation: Keep secondary (the first). Changing it would restyle every button written without appearance in pages that already use Oddkin.
-- **D2: An odd-icon in the start or end slot: does the button size it to icon.size.sm (Figma draws 16 px at every size), or does the author set size="sm"?** Open.
+- **D2: An odd-icon in the start or end slot: does the button size it to icon.size.sm (Figma draws 16 px at every size), or does the author set size="sm"?** Answer: 2026-11-18: the scoped Primitive Architect v2 decision selects context sizing through --odd-icon-size. Beside text icons are 16/16/20 px at sm/md/lg, alone 20/20/24 px, with an author CSS override. See the Button v2 specification and verification.
   1. The author sets size="sm" (the leadingIcon example); icons stay author content, as the specification says.
   2. The button sizes a slotted odd-icon through --odd-icon-size (a few bytes in the button bundle).
   - Recommendation: The first: the specification keeps icon artwork author content, and the example shows the size.

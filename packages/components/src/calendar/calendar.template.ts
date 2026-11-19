@@ -37,6 +37,7 @@ export const calendarTemplate = (calendar: OddkinCalendar) => {
           class="odd-button nav"
           data-appearance="ghost"
           data-size="sm"
+          data-icon-only
           type="button"
           aria-label=${text.previousMonth}
           ?disabled=${inactive || !calendar._canMove(-1)}
@@ -52,6 +53,7 @@ export const calendarTemplate = (calendar: OddkinCalendar) => {
           class="odd-button nav"
           data-appearance="ghost"
           data-size="sm"
+          data-icon-only
           type="button"
           aria-label=${text.nextMonth}
           ?disabled=${inactive || !calendar._canMove(1)}

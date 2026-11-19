@@ -20,10 +20,9 @@ export const carouselStyles = css`
     background: ${token('color.surface.sunken')};
     color: ${token('color.text.primary')};
   }
-  .step {
-    --odd-button-padding-inline: ${token('space.none')};
-    min-inline-size: max(${token('control.height.sm')}, ${token('target.min')});
-    font-size: ${token('icon.size.md')};
+  .step .glyph {
+    inline-size: var(--odd-icon-size);
+    block-size: var(--odd-icon-size);
   }
   .step[aria-disabled='true'] {
     border-color: transparent;

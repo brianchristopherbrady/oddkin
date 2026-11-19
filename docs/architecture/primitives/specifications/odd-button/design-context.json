@@ -1,0 +1,22 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pageId": "1398:2",
+  "observedAt": "2026-11-19T04:35:41.929Z",
+  "sessionId": "83a42333-24eb-403a-815f-3eaa842c5e18",
+  "codeConnect": [
+    "import OddkinButton from \"packages/components/src/button/button.ts\"\n\nexport default function OddkinCommonIconButton() {\n  return (\n    <CodeConnectSnippet data-node-id=\"1456:2001\" data-name=\"Oddkin/Common/iconButton\">\n      <OddkinButton icon=\"159:300\" appearance=\"secondary\" size=\"md\" state=\"Focus\" />\n    </CodeConnectSnippet>\n  );\n}",
+    "import OddkinButton from \"packages/components/src/button/button.ts\"\n\nexport default function OddkinCommonButton() {\n  return (\n    <CodeConnectSnippet data-node-id=\"1456:2066\" data-name=\"Oddkin/Common/button\">\n      <OddkinButton endIcon=\"159:279\" showEndIcon={true} icon=\"159:291\" showIcon={false} label=\"Continue\" appearance=\"primary\" size=\"md\" state=\"Default\" />\n    </CodeConnectSnippet>\n  );\n}"
+  ],
+  "contexts": [
+    "Live design context 1456:1676 with screenshot for the v2 review board. Mapped Javascript snippets verified at 1456:2001 and 1456:2061 as returned in the final audit."
+  ],
+  "localSource": "packages/components/src/button/button.ts",
+  "screenshotEvidence": [
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/figma/button-review.png",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-side.png",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png"
+  ],
+  "limits": "Figma context is descriptive. Temporary asset URLs and preview automation output are omitted. The implementation uses Oddkin asset and token sources.",
+  "nativeSpecReadback": "docs/architecture/primitives/specifications/odd-button/figma-native-spec.md"
+}

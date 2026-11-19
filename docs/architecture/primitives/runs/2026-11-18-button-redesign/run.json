@@ -1,0 +1,921 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-11-18-button-redesign",
+  "request": "Resume the full Oddkin Primitive Architect flow for odd-button. Evaluate the existing Figma design, then verify the revised design and implementation.",
+  "identifiers": ["odd-button"],
+  "mode": "design-and-implement",
+  "verificationScope": "both",
+  "verificationPolicyVersion": 2,
+  "source": {
+    "root": "C:/SLT_Backup_10-21-2026/oddkin-a1-main",
+    "branch": "a1-main",
+    "commit": "e84a08e33ee5510cb86dc462ccbf9e3a7fcce7dd",
+    "dirtyPaths": [
+      "design/figma/components.json",
+      "design/figma/reuse.json",
+      "docs/architecture/component-catalog.md",
+      "docs/diagnostics.md",
+      "packages/components/src/button/button.examples.ts",
+      "packages/components/src/button/button.native.styles.ts",
+      "packages/components/src/button/button.styles.ts",
+      "packages/components/src/button/button.template.ts",
+      "packages/components/src/button/button.ts",
+      "packages/components/src/calendar/calendar.styles.ts",
+      "packages/components/src/calendar/calendar.template.ts",
+      "packages/components/src/carousel/carousel.styles.ts",
+      "packages/components/src/carousel/carousel.template.ts",
+      "packages/components/test/button.browser.test.ts",
+      "packages/components/test/carousel.browser.test.ts",
+      "packages/components/test/figma-parity.browser.test.ts",
+      "packages/components/test/styling.browser.test.ts",
+      "research/benchmarks/size/measure.mjs"
+    ],
+    "additionalRefs": [
+      "Agent 1 item 11, current lane IMPLEMENTATION_PLAN.md",
+      "v1 design archived in docs/architecture/primitives/runs/2026-11-18-button-redesign/v1-specification-archive.json"
+    ]
+  },
+  "phase": "report",
+  "nextAction": "Proceed through normal Agent 1 review and integration. See the recorded fidelity limits and icon-system follow-up.",
+  "completion": "complete",
+  "handoff": "docs/architecture/primitives/specifications/odd-button/handoff.json",
+  "implementation": {
+    "sourceCommit": null,
+    "files": [
+      {
+        "path": "design/figma/components.json",
+        "sha256": "cc48db60bb46f4f03c359b49d5f1246e6b8397a8372fa4300070e3eb0e2e8136"
+      },
+      {
+        "path": "design/figma/reuse.json",
+        "sha256": "ff6c1443770b6d07d8671f001ec8a77e0965f036f50550cbb6d4298f2c51ac5b"
+      },
+      {
+        "path": "docs/architecture/component-catalog.md",
+        "sha256": "203a7640962722b44289418fbde9f07ed862d93ab3218ed36449e4f3f8009013"
+      },
+      {
+        "path": "docs/diagnostics.md",
+        "sha256": "5054003911698d462c63b766d62351120143d70cc8a93887485b2e62cbfd8433"
+      },
+      {
+        "path": "packages/components/src/button/button.examples.ts",
+        "sha256": "abcb1d487bb9a18e0b347ffc8280d96c1e8baafd49c90ea852e20298f375f24e"
+      },
+      {
+        "path": "packages/components/src/button/button.native.styles.ts",
+        "sha256": "8b1f19279b6255ff4c4a37738c9c629b2f105dcb52fc9cbe9761c3849149a487"
+      },
+      {
+        "path": "packages/components/src/button/button.styles.ts",
+        "sha256": "511a608ca8e815aa7d383b092a7d1346ed85c3a5ba1f7fc29b681f1297abe705"
+      },
+      {
+        "path": "packages/components/src/button/button.template.ts",
+        "sha256": "6753a15106fe39c114ab533c19a95810dde7deb7a8cebc89858c9446a24e33c3"
+      },
+      {
+        "path": "packages/components/src/button/button.ts",
+        "sha256": "f0cd51e4c61ee0cc9c87c97c16de528290655889de50fbd30f304eb073855a02"
+      },
+      {
+        "path": "packages/components/src/calendar/calendar.styles.ts",
+        "sha256": "a1de06f95b4b6a2134258a22d5c26d634086eb738c8b51467568b9d6a4124204"
+      },
+      {
+        "path": "packages/components/src/calendar/calendar.template.ts",
+        "sha256": "dceeb5f9b9dd753ddfe038f1121145550ce880b2bdaf47e5646d2cbb4c0ea1a1"
+      },
+      {
+        "path": "packages/components/src/carousel/carousel.styles.ts",
+        "sha256": "42681c36ce701135978e846670aaac46a834514db66ae3eeee0c7a0219063ee6"
+      },
+      {
+        "path": "packages/components/src/carousel/carousel.template.ts",
+        "sha256": "91ae1035e287c9b806d1b2edba35596eb1e531672fb9f981febe2b6a907c89db"
+      },
+      {
+        "path": "packages/components/test/button.browser.test.ts",
+        "sha256": "d5fd76e44e5a77033c4b29267f995095a6ffb3992a33572e5c07eed2daec3513"
+      },
+      {
+        "path": "packages/components/test/carousel.browser.test.ts",
+        "sha256": "af2c4554048795123e2d54323a3b7d1e1eee87eff6211364b9f53a9d57421ff2"
+      },
+      {
+        "path": "packages/components/test/figma-parity.browser.test.ts",
+        "sha256": "08e8e9bb201a8b22da12433db25245aa78090b532af85cd3ad26a27391142557"
+      },
+      {
+        "path": "packages/components/test/styling.browser.test.ts",
+        "sha256": "48c40863f254124db6d50c5946ae5fa5431bb0217f682ecd8f0499b941839b29"
+      },
+      {
+        "path": "research/benchmarks/size/measure.mjs",
+        "sha256": "31256b49eca91039425d657a8321b8491f8c9acc9e7345bbbf4204db54fc2245"
+      }
+    ]
+  },
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pages": [
+      {
+        "identifier": "odd-button",
+        "pageId": "1398:2",
+        "nodeIds": [
+          "1398:76",
+          "1398:2328",
+          "1398:2658",
+          "1398:2760",
+          "159:439",
+          "181:2332",
+          "181:2390",
+          "159:501",
+          "159:383",
+          "159:389",
+          "159:395",
+          "159:401",
+          "159:407",
+          "159:414",
+          "159:420",
+          "159:426",
+          "164:2139",
+          "164:2143",
+          "164:2147",
+          "164:2152",
+          "164:2156",
+          "164:2162",
+          "164:2166",
+          "164:2170",
+          "164:2175",
+          "164:2179",
+          "159:432",
+          "164:2185",
+          "164:2189",
+          "169:2142",
+          "169:2146",
+          "169:2150",
+          "181:2281",
+          "181:2285",
+          "181:2289",
+          "181:2294",
+          "181:2298",
+          "181:2302",
+          "181:2306",
+          "181:2311",
+          "181:2315",
+          "181:2319",
+          "181:2323",
+          "181:2328",
+          "159:438",
+          "164:2193",
+          "164:2197",
+          "169:2154",
+          "169:2158",
+          "169:2162",
+          "181:2339",
+          "181:2343",
+          "181:2347",
+          "181:2352",
+          "181:2356",
+          "181:2360",
+          "181:2364",
+          "181:2369",
+          "181:2373",
+          "181:2377",
+          "181:2381",
+          "181:2386",
+          "159:478",
+          "159:485",
+          "159:493",
+          "159:500",
+          "181:2252",
+          "181:2257",
+          "181:2262",
+          "181:2268",
+          "1398:2662",
+          "1398:2673",
+          "1398:2683",
+          "1398:2695",
+          "1398:2706",
+          "1398:2716",
+          "1398:2751",
+          "1399:1478",
+          "1399:1492",
+          "1399:1506",
+          "1399:1520",
+          "1399:1534",
+          "1400:1965",
+          "1400:1969",
+          "1406:1065",
+          "1406:1069",
+          "159:471",
+          "1455:4545",
+          "1455:4798",
+          "1456:1914",
+          "1456:2099",
+          "1456:1979",
+          "1456:2164",
+          "1456:2030",
+          "1456:2215",
+          "1456:2060",
+          "1456:2245",
+          "1456:2087",
+          "1456:2272",
+          "1462:2074",
+          "1462:2104",
+          "1456:1676",
+          "1456:2001",
+          "1456:2186",
+          "159:279"
+        ]
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "B-RESEARCH",
+      "kind": "contract",
+      "claim": "The Button remains one native-backed action primitive with shared sizing, no controller and host-owned outcomes.",
+      "method": "Inspect v2 research and selection against current lane source and the ownership contract.",
+      "fixture": "Button, native recipe, Calendar, Carousel",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/research.md",
+        "docs/architecture/primitives/specifications/odd-button/decision.md",
+        "docs/architecture/primitives/specifications/odd-button/contract.md",
+        "docs/architecture/primitives/specifications/odd-button/token-map.md"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "External source research was performed during the first part of the v2 run and preserved."
+    },
+    {
+      "id": "B-SOURCE",
+      "kind": "source",
+      "claim": "Scoped source, tests and authored snapshots are bound to Agent 1’s worktree and passed the current build. Typecheck, size, and 34 focused Node tests passed.",
+      "method": "Read authored source and canonical contracts, calculate SHA-256, and inspect build output.",
+      "fixture": "a1-main at e84a08e33ee5510cb86dc462ccbf9e3a7fcce7dd",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/implementation-provenance.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/build.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-node.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-node.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-typecheck.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-size.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "The recorded output hashes describe this worktree. A subsequent commit or deployment requires its own lane evidence."
+    },
+    {
+      "id": "B-FIGMA",
+      "kind": "figma-structure",
+      "claim": "Final Button v2 structure preserves the seven set IDs and clears the five reported top-level overlaps.",
+      "method": "Live Figma metadata, exact node inspection, native-spec readback and geometry checks.",
+      "fixture": "Page 1398:2, focused review rows 1456:1979 and 1456:2164",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-button/figma-evidence.json",
+        "docs/architecture/primitives/specifications/odd-button/spec.md",
+        "docs/architecture/primitives/specifications/odd-button/design-context.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/figma/button-review.png",
+        "docs/architecture/primitives/specifications/odd-button/figma-native-spec.md"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Figma navigation illustrates host flows. It does not execute native input, application outcomes or browser sizing."
+    },
+    {
+      "id": "B-A1",
+      "kind": "browser",
+      "claim": "Retain native control, slots, focus and pressed state. Wrap the label and keep actions reachable without horizontal overflow.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Fixed viewport, 640 → 240 → 640 px parent with both adornments",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A2",
+      "kind": "browser",
+      "claim": "Retain geometry, name and focus. Center the shared spinner and suppress activation while loading.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "All three sizes with leading and trailing content, before/during/after loading",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A3",
+      "kind": "browser",
+      "claim": "Keep token-resolved selection paint, control height and disabled opacity.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Pressed toggle with loading and disabled in light, dark and compact scopes",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A4",
+      "kind": "browser",
+      "claim": "Keep the native activation target and event order. Cancelled activation restores the previous pressed state. Programmatic updates emit no input or change.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Click, Enter and Space, cancelled toggle activation, programmatic update",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A5",
+      "kind": "browser",
+      "claim": "Keep native form name/value, overrides, validation, cancellation, fieldset and reset behaviour within the documented proxy contract.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Forms with custom Button submit/reset proxy and native CSS recipe",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A6",
+      "kind": "browser",
+      "claim": "Keep the accessible name and a target at least the token floor on both axes.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Loading button with one decorative icon and an explicit Button label",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A7",
+      "kind": "browser",
+      "claim": "Keep the textarea identity, value, selection and focus while the parent changes width. The retry action remains reachable in the parent scroll area.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Bounded parent, host status/retry and focused textarea draft",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A8",
+      "kind": "browser",
+      "claim": "Suppress queued actions on disconnected controls and return to the resource baseline on reconnect.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Disconnect with toggle/submit queued, then reconnect",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A9",
+      "kind": "browser",
+      "claim": "Keep the intrinsic square at or above target.min. Update derived icon-only state as content changes and preserve control identity and focus.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Icon-only element and native recipe at three sizes and two density scopes",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A10",
+      "kind": "browser",
+      "claim": "Use 16/16/20 px beside text and 20/20/24 px alone. A per-icon custom property overrides the inherited size.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Leading, trailing and only icons, using odd-icon and SVG fixtures",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A11",
+      "kind": "browser",
+      "claim": "Log the missing Button label at most once per element and leave valid labelled controls silent.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Labelled and unlabelled icon-only controls, content edits and reconnect",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A12",
+      "kind": "browser",
+      "claim": "Apply the shared paint and box geometry, including hover. A link has no underline and a disabled link is muted without hover paint.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Native link, native button and odd-button using matching appearances",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-A13",
+      "kind": "browser",
+      "claim": "The native recipe preserves 32 × 32 px controls and 20 px glyphs.",
+      "method": "Focused Vitest browser run across Chromium, Firefox and WebKit.",
+      "fixture": "Calendar navigation and Carousel previous/next controls",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/chromium.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/firefox.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/webkit.log"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Named automated fixtures and observed engine capabilities. Hardware assistive technology and real platform high contrast are outside the run."
+    },
+    {
+      "id": "B-FIDELITY",
+      "kind": "implementation-visual",
+      "claim": "Read the final component variants and compare current runtime geometry and token-resolved paint with Figma. Keep the complete focus outline visible in both focus rows. Document residual font, spinner and icon-stroke differences.",
+      "method": "Current-dist fidelity bench, 2× Figma exports, side/overlay/difference review and verified source/output digests.",
+      "fixture": "Six paired specimens across both light and dark themes",
+      "status": "PASS",
+      "critical": true,
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-dark@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-light@2x.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-dark.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-light.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/design-spec.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/implementation.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/diff.md",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/fix-log.md",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/verification.md",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/review-tree-before-layout-repair.json",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/capture-checks.log",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/independent-bench-counts-before-layout-repair.txt"
+      ],
+      "observedAt": "2026-11-19T04:35:41.929Z",
+      "limits": "Known font metrics, shared spinner phase/ink, and scaled icon strokes remain documented; fidelity verdict covers the sampled fixtures."
+    }
+  ],
+  "issues": [],
+  "fidelityAudits": [
+    {
+      "identifier": "odd-button",
+      "tool": "oddkin-fidelity-bench",
+      "checkId": "B-FIDELITY",
+      "implementationFingerprint": "65aed5bea46d7f04c7cf08326c3f809fabd5aad4ebc4a783d55806e88c4ff51a",
+      "handoff": {
+        "path": "docs/architecture/primitives/specifications/odd-button/handoff.json",
+        "sha256": "9007429f935c6138ca79be423ce96784a281538b0a8f3b09a9c26924ea13475f"
+      },
+      "artifacts": [
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-dark@2x.png",
+          "sha256": "17cf692baf80b27d86bdea9a3da8f84f1cecb324a069130d795bb804aa16967a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-light@2x.png",
+          "sha256": "e74fa24fb992a3116e5c13b386d07f6d1e8948c35dab324171be35d0cfd45dfe"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png",
+          "sha256": "9e99715caa46c648d86a320b96cf2f8673a970d31dac96d4484a06a6b42cebe9"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+          "sha256": "b65b2f7019c9d4bc803fc0847a6b85bea9c3d1aac14df1c429996576cae1e97e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-dark@2x.png",
+          "sha256": "68bad3d98123d2911e113bf8e5f31ac98770137fe021de987bad6458cdb39486"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-light@2x.png",
+          "sha256": "3f013516f7a5f3bf2700dd8491980abd32e87574c4959c4e06ef0c0ca24acc6e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-dark@2x.png",
+          "sha256": "a36238385046dc13f8d5cd8763a28879430cf61569c6fb0aff8c56f4fc975ecf"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-light@2x.png",
+          "sha256": "09cd54fb893571778b52d2680710627969767135fcf4e3a2ce8ade20b8bcdc88"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-dark@2x.png",
+          "sha256": "d2dc12fe3a9dda26eac33934985ff520f3a970c774893cc600a341f26d570a70"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-light@2x.png",
+          "sha256": "39c19ec335b33c98896030b17c840a3ebef5cea956cf05310d93b406e20e56bb"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-dark@2x.png",
+          "sha256": "c974e2170e4e3150f7be7c0c7db8c6721b2ce93e301db92e5199c460b9bfb844"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-light@2x.png",
+          "sha256": "1b089707f49f3de4c6a520e9196eb0d575f3e853f37465c662cfa8a2cc6252ed"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-dark.png",
+          "sha256": "cba20c38cebe99b51d13274709659461c88ae4c21649a8937557699c3ac2546b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-light.png",
+          "sha256": "d9b3b587093d400dd37cf0f5a92f443964d283f63da44a76c1ee77967cc64f91"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-dark.png",
+          "sha256": "bd30ba62fed572d332f73fc764694ecb7b9e0ca1be2abdc19fb67d20e69ab1d3"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-light.png",
+          "sha256": "639388b20b30dca872f9db9c7b2378645852d9190ed706f3945c27b697139cf7"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-dark.png",
+          "sha256": "4fc12535ed21cf7970c4985fcf1d8738c7eeea5c3ae32d52342184ade2d50356"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-light.png",
+          "sha256": "35a00b1f8eaa21a9432d5c4413f96e070b48b5b013e5d7ae4cfbc1bd643019fd"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-dark.png",
+          "sha256": "8fd28134245e6330480bbcaafe8f4d352b55519b53fb1b9e393218f580a457b3"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-light.png",
+          "sha256": "55eeda4b7ba30bd36b7b75ec34267de73b6644e2e432bec0b78b7cd2f9e26be7"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-dark.png",
+          "sha256": "0af1146e5573bfc91b0d67fe714285a92a8ad5ae38d39e69e9f57e129f60262c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-light.png",
+          "sha256": "daf92193b595af20b214d386e91b5e00513b42c17b74f2b074df7a77ee48e536"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-dark.png",
+          "sha256": "bd342f9d53f5a2688c6616cfd714e7bd1d6efd680ab7c4dbb02802a840eb84b2"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-light.png",
+          "sha256": "f076e9f5660878a6f4ad28a5a3315eaed225b49552a3455c4ff1b8702c10edda"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-diff.png",
+          "sha256": "0263042cbd1a70837578513f4cb7ec4acadd02e099e15d771cd5cde4671a281f"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-overlay.png",
+          "sha256": "dd11da2a3224648a1362709d7285e986e1f5399701359a6fb5e1c157045293ec"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/_sheet-side.png",
+          "sha256": "10e06d098a3b78d0ebf1855f11ede01bde10858a2921c74777172c28ff5dd211"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-diff.png",
+          "sha256": "0529a67fcb6fe45535061edb877a4241d6ee55fdfb8d86ec57d5659202a54c95"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-overlay.png",
+          "sha256": "3879bc45d3e2cf9289b2077e6d890a23921c86be93e7836082a3427646d4fc85"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-side.png",
+          "sha256": "8dec2d7b46aeb42f4113e074faf9b3b2df1cd40e4a17b515715237c4a017ac1a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-diff.png",
+          "sha256": "b802f6ef935bb6d36da492edd92cdfe65d03811e8d05b842644b83131b25a7aa"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-overlay.png",
+          "sha256": "88b43a1248f579684b553a8bd1a191049f43b4aab1d85b9f37bfbf3487d765f4"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-side.png",
+          "sha256": "74d94261d3c580f1c4002e8a8b47295f02908b09e23527bc18da413bf0092f01"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-diff.png",
+          "sha256": "9285c9eeb7107c2133e9de1a76928f95c2041d3a86b60e96b61e6bf294a11c3c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-overlay.png",
+          "sha256": "847fcab91ded667e17163c48c8f7e712771485ffc8eb9177b2a572959e400fc5"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-side.png",
+          "sha256": "6d5a972b0b927e611e7201db57cafa90350a945cc247db771c7b52f5057ab8f4"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-diff.png",
+          "sha256": "83dc037af9e543a2ad6a0e75cee08d7686e816a3b7af6a2e32ad61dd6891c21a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-overlay.png",
+          "sha256": "0e67d81761926c397d55a4139ef133d19bc6d18653dc2bb78431439a050904b1"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-side.png",
+          "sha256": "377bb09fd1ec313969ae02fa0fe6fdcc86d1e2c4703697a3bfa790db1cb59c67"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-diff.png",
+          "sha256": "0464827ff8581820e355b840755c07c979842c2bd9eb3d296e513f386d86979c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-overlay.png",
+          "sha256": "e1bc75b8c4dbb9381016d7bc376cceb266b99208eeba3c1e12aab03d43d963f4"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-side.png",
+          "sha256": "235bbf9e5accf0ed2c0a01689276bdd7bd8d7ecd8cebb58946127c05f0aa90c8"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-diff.png",
+          "sha256": "9c5cad2fc8819ecf8bc4c4a40be0b587be05db7e255b1eb2207afd544e171899"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-overlay.png",
+          "sha256": "84181dbfa871e4335b014e2d35e3853269e07bb6eec07b85e93e93d358876bd0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-side.png",
+          "sha256": "594d9ac02804f96c611c2ce5989dff88fb56c894a5f2fe4f043cefda01381e7b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-diff.png",
+          "sha256": "d5e539e7dac270c64af3f99ec197917dcd545643049c46e0b1d2cdc6060a0c34"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-overlay.png",
+          "sha256": "69d3d7b8f730a4519446b0f71aac1352b20e34c561ce5ec37961910b3f0c36d0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-side.png",
+          "sha256": "1209bb46b0989c0b4253771cb719f195c8fbd2033ea7bc00c10314fb9b43d28c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-diff.png",
+          "sha256": "323e78ec3aa187dbbe206f1082c246fa637fb009f539ff47307be873e9ed8e4d"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-overlay.png",
+          "sha256": "0460579c58a848c050af78837e814001622f532b1b665f2617a2ddafafa06d35"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-side.png",
+          "sha256": "43281092af6ec3a6d74f821dffe03f46a157de8b8f61b7f9858382609c553301"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-diff.png",
+          "sha256": "d7e378f47cfd9926b46c9533c371f28cb63e47d9df838de72316793be6b5d183"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-overlay.png",
+          "sha256": "3ea8332d4acd844db953f85eff973f3c5e29259157f92905e239e36f1760587a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-side.png",
+          "sha256": "12d9f352883fd511b8be685f2956c40d3f5e08e0d8228315c481d5609155e646"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-diff.png",
+          "sha256": "758ec4f368a31633485439173b42c623cc2f2763a93e191c338994d69557641b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-overlay.png",
+          "sha256": "b8438531bb1f2ed9a60e6ea828cb62547938d58b8f0e774af4b2395ca7f1fe40"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-side.png",
+          "sha256": "b4a39997b666ef5cc1dcb56cd468f2b3cf45b4dc56f145453639c2d72f68bf9e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-diff.png",
+          "sha256": "6cbd8cc3602185d8f45fbaa98b5db22ad1330ea03b515d8ab456e74a4c3134f6"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-overlay.png",
+          "sha256": "7290940fc506f1512f7c2db79fbd26777c41a8975f8bf1e92817720cb9d537be"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-side.png",
+          "sha256": "2c04eeebaa725da1fc308bada5586dc1ad714befeb3cc476b3649fb78aaee7bc"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-diff.png",
+          "sha256": "775b802abc6731a2154c27994e11b81ce2a0eae6d3c267eb8788040f66e24cfe"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-overlay.png",
+          "sha256": "a5e8383bbfdf922563d898583a257a8e84de34e4b17667a23577f8b9b6b9669c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-side.png",
+          "sha256": "33e78f3c594a0ec1b7fdea6d0354376edd1b9049d52ab12214e5a84ce3383345"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/design-spec.json",
+          "sha256": "2a1ed292f76dac70a82964d1e6f2b6fc98d26fe06dd93c81d06ac8389f6af1cc"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/implementation.json",
+          "sha256": "434b2feb0ed1950254f087158cdf2bb31b8197789e56ccfc4b13e8887a59b06b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/diff.md",
+          "sha256": "e6f65efff23d00bd03e6d40429881447faa9638d4fc0211dbcf292478b2e049a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/fix-log.md",
+          "sha256": "181cc96d64dd65dbe158cf33eec74d9159203d5dc191b6f56e247e25a1d33ef8"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/verification.md",
+          "sha256": "13c197cfcfd63d73891ce61940e4fea9e2733f8187b64abead0e95fb193518b0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/review-tree-before-layout-repair.json",
+          "sha256": "3974a6c472eeb3dcb9354665346b901aa39ed3734f36a9ae29cf1864f8d47760"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/capture-checks.log",
+          "sha256": "66d57ff6547a215654577fcaa6829154d7f69e3f5b16e12bda36bb1d57acddd1"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/browser/independent-bench-counts-before-layout-repair.txt",
+          "sha256": "c990ab08291be6a9994a270d97d800c959fc5211d4b0a6bc5d468a8ab55d56a9"
+        }
+      ]
+    }
+  ]
+}

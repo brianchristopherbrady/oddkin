@@ -1,0 +1,143 @@
+{
+  "root": "C:/SLT_Backup_10-21-2026/oddkin-a1-main",
+  "branch": "a1-main",
+  "lane": "Agent 1",
+  "planItem": 11,
+  "baseCommit": "e84a08e33ee5510cb86dc462ccbf9e3a7fcce7dd",
+  "observedAt": "2026-11-19T04:35:41.929Z",
+  "outputs": [
+    {
+      "path": "design/figma/components.json",
+      "sha256": "cc48db60bb46f4f03c359b49d5f1246e6b8397a8372fa4300070e3eb0e2e8136"
+    },
+    {
+      "path": "design/figma/reuse.json",
+      "sha256": "ff6c1443770b6d07d8671f001ec8a77e0965f036f50550cbb6d4298f2c51ac5b"
+    },
+    {
+      "path": "docs/architecture/component-catalog.md",
+      "sha256": "203a7640962722b44289418fbde9f07ed862d93ab3218ed36449e4f3f8009013"
+    },
+    {
+      "path": "docs/diagnostics.md",
+      "sha256": "5054003911698d462c63b766d62351120143d70cc8a93887485b2e62cbfd8433"
+    },
+    {
+      "path": "packages/components/src/button/button.examples.ts",
+      "sha256": "abcb1d487bb9a18e0b347ffc8280d96c1e8baafd49c90ea852e20298f375f24e"
+    },
+    {
+      "path": "packages/components/src/button/button.native.styles.ts",
+      "sha256": "8b1f19279b6255ff4c4a37738c9c629b2f105dcb52fc9cbe9761c3849149a487"
+    },
+    {
+      "path": "packages/components/src/button/button.styles.ts",
+      "sha256": "511a608ca8e815aa7d383b092a7d1346ed85c3a5ba1f7fc29b681f1297abe705"
+    },
+    {
+      "path": "packages/components/src/button/button.template.ts",
+      "sha256": "6753a15106fe39c114ab533c19a95810dde7deb7a8cebc89858c9446a24e33c3"
+    },
+    {
+      "path": "packages/components/src/button/button.ts",
+      "sha256": "f0cd51e4c61ee0cc9c87c97c16de528290655889de50fbd30f304eb073855a02"
+    },
+    {
+      "path": "packages/components/src/calendar/calendar.styles.ts",
+      "sha256": "a1de06f95b4b6a2134258a22d5c26d634086eb738c8b51467568b9d6a4124204"
+    },
+    {
+      "path": "packages/components/src/calendar/calendar.template.ts",
+      "sha256": "dceeb5f9b9dd753ddfe038f1121145550ce880b2bdaf47e5646d2cbb4c0ea1a1"
+    },
+    {
+      "path": "packages/components/src/carousel/carousel.styles.ts",
+      "sha256": "42681c36ce701135978e846670aaac46a834514db66ae3eeee0c7a0219063ee6"
+    },
+    {
+      "path": "packages/components/src/carousel/carousel.template.ts",
+      "sha256": "91ae1035e287c9b806d1b2edba35596eb1e531672fb9f981febe2b6a907c89db"
+    },
+    {
+      "path": "packages/components/test/button.browser.test.ts",
+      "sha256": "d5fd76e44e5a77033c4b29267f995095a6ffb3992a33572e5c07eed2daec3513"
+    },
+    {
+      "path": "packages/components/test/carousel.browser.test.ts",
+      "sha256": "af2c4554048795123e2d54323a3b7d1e1eee87eff6211364b9f53a9d57421ff2"
+    },
+    {
+      "path": "packages/components/test/figma-parity.browser.test.ts",
+      "sha256": "08e8e9bb201a8b22da12433db25245aa78090b532af85cd3ad26a27391142557"
+    },
+    {
+      "path": "packages/components/test/styling.browser.test.ts",
+      "sha256": "48c40863f254124db6d50c5946ae5fa5431bb0217f682ecd8f0499b941839b29"
+    },
+    {
+      "path": "research/benchmarks/size/measure.mjs",
+      "sha256": "31256b49eca91039425d657a8321b8491f8c9acc9e7345bbbf4204db54fc2245"
+    }
+  ],
+  "readContracts": [
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/contract.md",
+      "sha256": "3d65c90da5d04e9bea397087247f5f8a0895c92f6c479047bfc209f644552c99"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/decision.md",
+      "sha256": "2e08cb7df8422055d059c28209bb6eae4a8b282dee2cd332899183faebf8ea79"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-button/token-map.md",
+      "sha256": "f6ba7d5a84e4cd57062533f78eae69a41380533771eb00642b1d10ee4b3c3d26"
+    },
+    {
+      "path": "docs/architecture/responsiveness.md",
+      "sha256": "73037505c29063ec54fdbe3b2f863f80751363879188a774724b232b600302d7"
+    },
+    {
+      "path": "docs/architecture/component-contracts.md",
+      "sha256": "84604eb512f58541edd7b415373fd63f635ae4bf4d56e98575cea860766a5c58"
+    },
+    {
+      "path": "docs/architecture/decisions/0036-component-composition-api.md",
+      "sha256": "bf62c48212b5fb715fba6d9006c95b704c3c6b82d6f4086a15dfd69693e696d9"
+    },
+    {
+      "path": "docs/architecture/decisions/0043-composite-dependency-mechanism.md",
+      "sha256": "b6efe9ff913dd781d2c19f35016b4b2e9c5731ea324cbaf0db65e57a0f788d22"
+    },
+    {
+      "path": "docs/architecture/decisions/0045-api-vocabulary.md",
+      "sha256": "b06401dd1196853d451e8025539d6860863b2472ea1230962514fbd6b1633784"
+    },
+    {
+      "path": "packages/tokens/themes/default.theme.json",
+      "sha256": "6057c49c88489fdd2e50897e914962a113fae22943f7d3d4c4f67e12fa24656d"
+    },
+    {
+      "path": "packages/tokens/src/generate/preset.ts",
+      "sha256": "f286b52e5adde5b93a4e5e81c48a0c99f4de58eaea93df6d140ab3c3c35df2e5"
+    }
+  ],
+  "servedAssets": {
+    "packages/components/dist/button/button.js": "d7453c4bc456df6c6b5b8b49f156bbaeaa0db96a14e3d2f7485e6c8d1334761f",
+    "packages/components/dist/button/button.template.js": "2f8c51370bd60745a74b3ffd1ee56b71304df5b668c7c3ed028864ce110e5dd0",
+    "packages/components/dist/button/button.styles.js": "06c16eb26c949d937a2e1366ecfaa9af99b3427f8672250f0a42840ed765d6a8",
+    "packages/components/dist/button/button.structural.styles.js": "91b0962490648dcaf73c69951909de316ff1e44af4a21351ca3b069efc7fc33b",
+    "packages/components/dist/icon/icon.js": "77a8ec8aa181c5e9663ec316e444953ae2067d49f4503f4997d33b63b4699428",
+    "packages/components/dist/icon/icon.styles.js": "23c9d44c06901bdb82a9a06058a35dd3ac5c2f2aaa880c515ef8137f345ca420",
+    "packages/components/dist/styles/spinner.styles.js": "45192c5f378d602cf5902fd3edd2b90d79ce2103820f8e523d152268bf684715",
+    "packages/components/dist/styles/focus-ring.styles.js": "5a3d13d227dda21debf3b4dfae4537963fef036703c24f38a1b3978fa1bbdfce"
+  },
+  "build": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/build.log",
+  "status": "Working-tree implementation. Integration and publication are separate lane steps.",
+  "validationLogs": [
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-node.json",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-node.log",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-typecheck.log",
+    "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/source/codex-size.log"
+  ],
+  "sourceEvidenceNote": "The 18 output digests cover the component code, snapshot, documentation and tests tied to this fidelity run. Order-of-work, audit matrix and progress notes are adjacent lane records."
+}

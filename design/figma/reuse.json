@@ -13,8 +13,8 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 153,
-    "slot": 53,
+    "style": 156,
+    "slot": 58,
     "deferred": 11,
     "controller": 20,
     "native": 7,
@@ -907,9 +907,18 @@
     {
       "consumer": "Oddkin/Common/button",
       "consumerId": "159:439",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 18,
+      "class": "slot",
+      "reason": "The end icon is author content in the end slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button",
+      "consumerId": "159:439",
       "source": "Oddkin/Icon/plus",
       "sourceId": "159:291",
-      "count": 15,
+      "count": 18,
       "class": "slot",
       "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
     },
@@ -925,9 +934,18 @@
     {
       "consumer": "Oddkin/Common/button/lg",
       "consumerId": "181:2390",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 18,
+      "class": "slot",
+      "reason": "The end icon is author content in the end slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button/lg",
+      "consumerId": "181:2390",
       "source": "Oddkin/Icon/plus",
       "sourceId": "159:291",
-      "count": 15,
+      "count": 18,
       "class": "slot",
       "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
     },
@@ -943,9 +961,18 @@
     {
       "consumer": "Oddkin/Common/button/sm",
       "consumerId": "181:2332",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 18,
+      "class": "slot",
+      "reason": "The end icon is author content in the end slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button/sm",
+      "consumerId": "181:2332",
       "source": "Oddkin/Icon/plus",
       "sourceId": "159:291",
-      "count": 15,
+      "count": 18,
       "class": "slot",
       "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
     },
@@ -1107,9 +1134,54 @@
       "consumerId": "159:471",
       "source": "Oddkin/Icon/plus",
       "sourceId": "159:291",
-      "count": 5,
+      "count": 21,
       "class": "slot",
-      "reason": "The icon is the author's content; `label` gives the accessible name (odd-button, icon-only)."
+      "reason": "The icon is the author's content, alone in the default slot (odd-button's icon-only state); `label` gives the accessible name."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton",
+      "consumerId": "159:471",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module, as for every odd-button; the icon keeps its place, undrawn."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton/lg",
+      "consumerId": "1455:4798",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 21,
+      "class": "slot",
+      "reason": "The icon is the author's content, alone in the default slot (odd-button's icon-only state); `label` gives the accessible name."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton/lg",
+      "consumerId": "1455:4798",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module, as for every odd-button; the icon keeps its place, undrawn."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton/sm",
+      "consumerId": "1455:4545",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 21,
+      "class": "slot",
+      "reason": "The icon is the author's content, alone in the default slot (odd-button's icon-only state); `label` gives the accessible name."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton/sm",
+      "consumerId": "1455:4545",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module, as for every odd-button; the icon keeps its place, undrawn."
     },
     {
       "consumer": "Oddkin/Common/input",

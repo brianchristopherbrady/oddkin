@@ -7,10 +7,14 @@ import { token } from '@oddkin/tokens/refs';
  * default button for Enter). `data-appearance` (`primary`, `secondary`, `ghost`; default
  * secondary), `data-size` (`sm`, `md`, `lg`; default md), and `data-full-width` mirror the
  * element's attributes, and `aria-pressed` draws a pressed toggle (kept under `aria-disabled` and
- * `disabled`); the same `--odd-button-*` variables apply. Published as
- * `@oddkin/components/css/button.css` in the `odd.components` layer; kept equal to the element's
- * computed styles by `styling.browser.test.ts`. No loading state: use `aria-disabled` and your
- * own progress text.
+ * `disabled`); the same `--odd-button-*` variables apply. `data-icon-only` draws the square for a
+ * button whose only content is an icon (name it with `aria-label`); icons take
+ * `--odd-icon-size` by size and context. On a link, `<a class="odd-button" href>`, it styles a
+ * link that looks like a button: same feedback, no underline, muted by `aria-disabled` as a
+ * disabled button is (a link cannot be `:disabled`; it still navigates: remove `href` too).
+ * Published as `@oddkin/components/css/button.css` in the `odd.components` layer; kept equal to
+ * the element's computed styles by `styling.browser.test.ts`. No loading state: use
+ * `aria-disabled` and your own progress text.
  */
 export const nativeButtonStyles = css`
   .odd-button {
@@ -39,11 +43,13 @@ export const nativeButtonStyles = css`
     line-height: ${token('type.ui.line-height')};
     letter-spacing: ${token('type.ui.letter-spacing')};
     text-align: center;
+    text-decoration: none;
     overflow-wrap: anywhere;
     cursor: pointer;
     transition-property: background-color, border-color, color;
     transition-duration: ${token('motion.duration.fast')};
     transition-timing-function: ${token('motion.easing.standard')};
+    --odd-icon-size: ${token('icon.size.sm')};
   }
   .odd-button[data-size='sm'] {
     min-block-size: max(
@@ -59,6 +65,28 @@ export const nativeButtonStyles = css`
     );
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.lg')});
     font-size: ${token('type.body.size')};
+    --odd-icon-size: ${token('icon.size.md')};
+  }
+  .odd-button[data-icon-only] {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.md')}),
+      ${token('target.min')}
+    );
+    padding-inline: ${token('space.none')};
+    --odd-icon-size: ${token('icon.size.md')};
+  }
+  .odd-button[data-icon-only][data-size='sm'] {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.sm')}),
+      ${token('target.min')}
+    );
+  }
+  .odd-button[data-icon-only][data-size='lg'] {
+    min-inline-size: max(
+      var(--odd-button-height, ${token('control.height.lg')}),
+      ${token('target.min')}
+    );
+    --odd-icon-size: ${token('icon.size.lg')};
   }
   .odd-button[data-full-width] {
     inline-size: 100%;
@@ -73,17 +101,17 @@ export const nativeButtonStyles = css`
     background: var(--odd-button-background, transparent);
   }
   @media (hover: hover) {
-    .odd-button[data-appearance='primary']:hover:enabled:not([aria-disabled='true']) {
+    .odd-button[data-appearance='primary']:hover:not(:disabled, [aria-disabled='true']) {
       background: var(--odd-button-background, ${token('color.action.hover')});
     }
-    .odd-button:not([data-appearance='primary']):hover:enabled:not([aria-disabled='true']) {
+    .odd-button:not([data-appearance='primary']):hover:not(:disabled, [aria-disabled='true']) {
       background: var(--odd-button-background, ${token('color.surface.hover')});
     }
   }
-  .odd-button[data-appearance='primary']:active:enabled:not([aria-disabled='true']) {
+  .odd-button[data-appearance='primary']:active:not(:disabled, [aria-disabled='true']) {
     background: var(--odd-button-background, ${token('color.action.pressed')});
   }
-  .odd-button:not([data-appearance='primary']):active:enabled:not([aria-disabled='true']) {
+  .odd-button:not([data-appearance='primary']):active:not(:disabled, [aria-disabled='true']) {
     background: var(--odd-button-background, ${token('color.surface.sunken')});
   }
   .odd-button:disabled {
@@ -93,8 +121,11 @@ export const nativeButtonStyles = css`
   .odd-button[aria-disabled='true'] {
     cursor: not-allowed;
   }
+  a.odd-button[aria-disabled='true'] {
+    opacity: 0.5;
+  }
   /* The pressed state twice: as specific as the hover and active rules, and later. */
-  .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+  .odd-button[aria-pressed='true'][aria-pressed='true']:not(:disabled, [aria-disabled='true']),
   .odd-button[aria-pressed='true'][aria-disabled='true'],
   .odd-button[aria-pressed='true']:disabled {
     border-color: ${token('color.selection.background')};
@@ -109,12 +140,13 @@ export const nativeButtonStyles = css`
     .odd-button {
       border: 1px solid ButtonText;
     }
-    .odd-button:disabled {
+    .odd-button:disabled,
+    a.odd-button[aria-disabled='true'] {
       opacity: 1;
       color: GrayText;
       border-color: GrayText;
     }
-    .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+    .odd-button[aria-pressed='true'][aria-pressed='true']:not(:disabled, [aria-disabled='true']),
     .odd-button[aria-pressed='true'][aria-pressed='true'][aria-disabled='true'] {
       border-color: Highlight;
       background: Highlight;

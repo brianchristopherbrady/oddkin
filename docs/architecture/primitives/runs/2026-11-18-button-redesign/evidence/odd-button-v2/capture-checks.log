@@ -1,0 +1,13 @@
+icon-sizes light: ready=true errors=0 warnings=1 wrapper {"box":{"width":424,"height":48},"overflow":false,"rows":3} checks 90 all ok
+icon-sizes dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":424,"height":48},"overflow":false,"rows":3} checks 90 all ok
+icon-states light: ready=true errors=0 warnings=1 wrapper {"box":{"width":328,"height":56},"overflow":false,"rows":1} checks 80 all ok
+icon-states dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":328,"height":56},"overflow":false,"rows":1} checks 80 all ok
+icon-toggles light: ready=true errors=0 warnings=1 wrapper {"box":{"width":168,"height":40},"overflow":false,"rows":2} checks 42 all ok
+icon-toggles dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":168,"height":40},"overflow":false,"rows":2} checks 42 all ok
+text-icons light: ready=true errors=0 warnings=1 wrapper {"box":{"width":593.25,"height":48},"overflow":false,"rows":3} checks 46 all ok
+text-icons dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":593.25,"height":48},"overflow":false,"rows":3} checks 46 all ok
+loading-footprint light: ready=true errors=0 warnings=1 wrapper {"box":{"width":199.78125,"height":40},"overflow":false,"rows":1} checks 20 all ok
+loading-footprint dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":199.78125,"height":40},"overflow":false,"rows":1} checks 20 all ok
+toolbar light: ready=true errors=0 warnings=1 wrapper {"box":{"width":240,"height":106},"overflow":false,"rows":2} checks 87 all ok
+toolbar dark: ready=true errors=0 warnings=1 wrapper {"box":{"width":240,"height":106},"overflow":false,"rows":2} checks 87 all ok
+implementation.json written; 0 differences

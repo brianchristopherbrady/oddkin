@@ -27,18 +27,20 @@ export const changeEvent = event('change', {
  * Where native submit-button semantics matter, style a native `<button class="odd-button">`
  * with `@oddkin/components/css/button.css`, which looks the same.
  *
- * @slot - The label. Its text is the button's accessible name. Text and icons only: no links or controls inside a button.
+ * @slot - The label. Its text is the button's accessible name. Text and icons only: no links or controls inside a button. One icon alone (an `odd-icon` or an `svg`) makes an icon-only button: name it with `label`.
  * @slot start - Content before the label, such as an icon (not interactive).
  * @slot end - Content after the label (not interactive).
  * @csspart control - The native button.
  * @csspart spinner - The loading indicator, centred over the content.
+ * @cssstate icon-only - The default slot holds one icon and no text: the button is a square at its size's height.
  * @cssprop --odd-button-radius - Corner radius.
  * @cssprop --odd-button-background - Background colour.
  * @cssprop --odd-button-color - Text colour.
  * @cssprop --odd-button-border-color - Border colour.
  * @cssprop --odd-button-height - Minimum height (never below the target-size token).
  * @cssprop --odd-button-padding-inline - Inline padding.
- * @a11y The slotted text names the button. Icon-only buttons must set `label`.
+ * @a11y The slotted text names the button. An icon-only button is named by `label`, and its icon stays decorative; without `label` it warns `[button.label.missing]` once.
+ * @a11y Icons in the slots take the button's size: 16 px beside text (20 px at `lg`), 20 px alone (24 px at `lg`). Set `--odd-icon-size` on an icon to change one.
  * @a11y `loading` keeps the button focusable and sets `aria-disabled`; announce progress separately if it matters.
  * @a11y With `toggle`, the native button reports `aria-pressed`; keep the label the same in both states ("Bold", not "Bold on").
  * @keyboard Enter and Space activate the button (native behavior).
@@ -136,6 +138,44 @@ export class OddkinButton extends OddkinElement.with({
 
   /** @internal Disabled by an ancestor `<fieldset disabled>`; read by the template. */
   readonly _formDisabled = signal(false);
+
+  /** @internal The default slot holds one icon and no text; set by the template's slot. */
+  readonly _iconOnly = signal(false);
+
+  #warned = false;
+
+  /** @internal The default slot's content changed. */
+  readonly _onSlotChange = (): void => this.#readSlot();
+
+  #readSlot(): void {
+    const nodes =
+      this.shadowRoot
+        ?.querySelector<HTMLSlotElement>('slot:not([name])')
+        ?.assignedNodes({ flatten: true }) ?? [];
+    const elements = nodes.filter((node) => node.nodeType === Node.ELEMENT_NODE) as Element[];
+    this._iconOnly.value =
+      elements.length === 1 &&
+      (elements[0]!.localName === 'svg' || elements[0]!.localName === 'odd-icon') &&
+      nodes.every((node) => node.nodeType !== Node.TEXT_NODE || !node.textContent!.trim());
+  }
+
+  protected override mounted(scope: Scope): void {
+    // After the first commit, so the slot exists. `slotchange` reports added and removed nodes;
+    // the observer reports text changed in place, as templates update it.
+    this.#readSlot();
+    const observer = new MutationObserver(() => this.#readSlot());
+    observer.observe(this, { characterData: true, subtree: true });
+    scope.add(() => observer.disconnect(), 'button content');
+    scope.effect(() => {
+      const iconOnly = this._iconOnly.value;
+      this.setState('icon-only', iconOnly);
+      if (!iconOnly || this.label || this.#warned) return;
+      this.#warned = true;
+      console.warn(
+        `[button.label.missing] <${this.localName}> shows only an icon and has no label: set label to name it.`,
+      );
+    });
+  }
 
   /** The form this button belongs to, if any. */
   get form(): HTMLFormElement | null {

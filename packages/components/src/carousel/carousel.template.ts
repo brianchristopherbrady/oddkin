@@ -35,6 +35,7 @@ export const carouselTemplate = (carousel: OddkinCarousel) => {
         part="previous"
         class="odd-button step"
         data-size="sm"
+        data-icon-only
         type="button"
         aria-label=${text.previous}
         aria-controls="slides"
@@ -64,6 +65,7 @@ export const carouselTemplate = (carousel: OddkinCarousel) => {
         part="next"
         class="odd-button step"
         data-size="sm"
+        data-icon-only
         type="button"
         aria-label=${text.next}
         aria-controls="slides"

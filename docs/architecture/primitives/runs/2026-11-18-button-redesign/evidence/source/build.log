@@ -1,0 +1,214 @@
+
+> oddkin-workspace@0.0.0 build
+> tsc -b && node scripts/build-token-assets.mjs && node scripts/build-production.mjs && node scripts/build-component-css.mjs && node scripts/build-metadata.mjs && node scripts/build-component-schemas.mjs && node scripts/build-composition-schemas.mjs && node scripts/build-ai-schemas.mjs && node scripts/build-ai-demos.mjs && node scripts/agent-kit/package-kits.mjs
+
+Token assets: packages\tokens\dist\css\default.css, packages\tokens\dist\inspect\default.inspect.json, packages\tokens\dist\inspect\default.contrast.json, packages/tokens/dist/scss/refs.scss, packages/tokens/dist/scss/values.scss, examples\tokens-css-only\generated\harbor.css
+production build: packages/ai (213 modules)
+production build: packages/app (14 modules)
+production build: packages/core (50 modules)
+production build: packages/state (8 modules)
+Component CSS: reset.css, base.css, layout.css, button.css, typography.css, link.css, divider.css, kbd.css, list.css, table.css, field.css, avatar-group.css, description-list.css, timeline.css, stepper.css, utilities.css
+Metadata: packages\components\custom-elements.json, packages\components\oddkin.metadata.json
+Verified facts from current contract-test records: 0
+Metadata: packages\ai\custom-elements.json, packages\ai\oddkin.metadata.json
+Verified facts from current contract-test records: 0
+Component schemas written: 3
+Composition written: 55 elements, 56 schemas
+AI schemas written: 15
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/internal/copies.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/reactive/graph.js:1:7:
+      1 │ import "../internal/copies.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/parts.js:4:7:
+      4 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/directives.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/element/element.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/element/define.js:4:7:
+      4 │ import "./element.js";
+        ╵        ~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/helpers/style-map.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/helpers/live.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+demo ai-research: 344776 B (minified)
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/internal/copies.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/reactive/graph.js:1:7:
+      1 │ import "../internal/copies.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/element/element.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/element/define.js:4:7:
+      4 │ import "./element.js";
+        ╵        ~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/parts.js:4:7:
+      4 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/directives.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/helpers/live.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+demo ai-writing: 126320 B (minified)
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/internal/copies.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/reactive/graph.js:1:7:
+      1 │ import "../internal/copies.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/element/element.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/element/define.js:4:7:
+      4 │ import "./element.js";
+        ╵        ~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/parts.js:4:7:
+      4 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/template/directives.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+▲ [WARNING] Ignoring this import because "packages/core/dist/prod/reactive/graph.js" was marked as having no side effects [ignored-bare-import]
+
+    packages/core/dist/prod/helpers/live.js:2:7:
+      2 │ import "../reactive/graph.js";
+        ╵        ~~~~~~~~~~~~~~~~~~~~~~
+
+  "sideEffects" is false in the enclosing "package.json" file:
+
+    packages/core/package.json:23:2:
+      23 │   "sideEffects": false,
+         ╵   ~~~~~~~~~~~~~
+
+demo ai-agent: 255931 B (minified)
+@oddkin/ai: 68 files in packages/ai/agent; GUIDE.md 7313 of 8192 bytes
+@oddkin/components: 109 files in packages/components/agent; GUIDE.md 7190 of 8192 bytes

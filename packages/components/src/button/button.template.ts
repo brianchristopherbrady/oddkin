@@ -6,6 +6,7 @@ import type { OddkinButton } from './button.js';
  * Anatomy: a native `<button part="control">` (focus target, keyboard activation, accessible
  * name from the default slot or `label`), a `part="spinner"` centred over the content while
  * loading (the content keeps its size and name, undrawn), and `start`, default, and `end` slots.
+ * The default slot reports its content, so one icon alone makes the button icon-only.
  * Alternative templates must keep these relationships.
  */
 export const buttonTemplate = (button: OddkinButton) =>
@@ -20,7 +21,7 @@ export const buttonTemplate = (button: OddkinButton) =>
     >
       <span part="spinner" class="spinner" aria-hidden="true" ?hidden=${!button.loading}></span>
       <slot name="start"></slot>
-      <span class="label"><slot></slot></span>
+      <span class="label"><slot @slotchange=${button._onSlotChange}></slot></span>
       <slot name="end"></slot>
     </button>
     ${externalDescriptionTemplate(button._externalDescription)}`;

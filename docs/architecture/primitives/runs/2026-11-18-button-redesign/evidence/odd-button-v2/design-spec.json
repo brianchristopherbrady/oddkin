@@ -1,0 +1,2627 @@
+{
+  "tag": "odd-button",
+  "run": "2026-11-18-button-redesign",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "page": "1398:2",
+    "session": "71644cb7-87e5-4909-9931-5e918bce4b70",
+    "readAt": "2026-11-19T04:35:41.929Z",
+    "revision": "The Plugin API exposes no file version; the read-only export of 2026-11-18 (length 104,871, FNV-1a 1818157331) identifies the sets compared. The resumed inspection verified the live variants and repaired the canvas layout and focus review row extents. Component variants are unchanged by the fixture repair.",
+    "snapshot": "current: design/figma/components.json refreshed 2026-11-18 from that export (button, button/sm, button/lg, iconButton, iconButton/sm, iconButton/lg, toggleButton) and the icon strokes checked against Figma (1,723 families, FNV-1a 2609796525)",
+    "initialReviewSession": "71644cb7-87e5-4909-9931-5e918bce4b70",
+    "resumeSession": "83a42333-24eb-403a-815f-3eaa842c5e18"
+  },
+  "sources": {
+    "tree": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/review-tree-before-layout-repair.json (historical dimensions; see the final focused layout readback)",
+    "renders": "download_assets, png, defaultScale 2, one per row frame",
+    "resumeLayout": "docs/architecture/primitives/specifications/odd-button/figma-evidence.json"
+  },
+  "specimens": [
+    {
+      "id": "1456:1914",
+      "name": "icon-sizes",
+      "mode": "light",
+      "parent": "Icon-only sizes",
+      "state": "Default; sm, md, lg × primary, secondary, ghost",
+      "frame": {
+        "w": 424,
+        "h": 48,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-light@2x.png",
+          "pixels": [848, 96]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22lg%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22lg%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-sizes-%7Bmode%7D%402x.png&scale=2&pad=16&width=424&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:1915",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=primary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1922",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1929",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1936",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=primary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1943",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1950",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1957",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=primary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1964",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=secondary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1971",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=ghost, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2099",
+      "name": "icon-sizes",
+      "mode": "dark",
+      "parent": "Icon-only sizes",
+      "state": "Default; sm, md, lg × primary, secondary, ghost",
+      "frame": {
+        "w": 424,
+        "h": 48,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-dark@2x.png",
+          "pixels": [848, 96]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22lg%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22lg%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-sizes-%7Bmode%7D%402x.png&scale=2&pad=16&width=424&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2100",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=primary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2107",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2114",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2121",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=primary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2128",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2135",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2142",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=primary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2149",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=secondary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2156",
+          "family": "Oddkin/Common/iconButton/lg",
+          "variant": "Appearance=ghost, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [48, 48],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "minWidth": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:1979",
+      "name": "icon-states",
+      "mode": "light",
+      "parent": "Icon-only states",
+      "state": "md secondary: Default, Hover, Pressed, Focus, Disabled, Loading, On",
+      "frame": {
+        "w": 328,
+        "h": 56,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+          "pixels": [656, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%3B+padding-block%3A+var%28--odd-space-xs%29%22%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Hover%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Pressed%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Focus%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-states-%7Bmode%7D%402x.png&scale=2&pad=16&width=328&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:1980",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1987",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Hover",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Hover",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-hover",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:1994",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Pressed",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Pressed",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-sunken",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2001",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Focus",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Focus",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2008",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Disabled",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Disabled",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {
+              "opacity": "0.5"
+            }
+          }
+        },
+        {
+          "id": "1456:2015",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Loading",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Loading",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2022",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2164",
+      "name": "icon-states",
+      "mode": "dark",
+      "parent": "Icon-only states",
+      "state": "md secondary: Default, Hover, Pressed, Focus, Disabled, Loading, On",
+      "frame": {
+        "w": 328,
+        "h": 56,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png",
+          "pixels": [656, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%3B+padding-block%3A+var%28--odd-space-xs%29%22%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Hover%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Pressed%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Focus%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-states-%7Bmode%7D%402x.png&scale=2&pad=16&width=328&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2165",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2172",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Hover",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Hover",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-hover",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2179",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Pressed",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Pressed",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-sunken",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2186",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Focus",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Focus",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2193",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Disabled",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Disabled",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {
+              "opacity": "0.5"
+            }
+          }
+        },
+        {
+          "id": "1456:2200",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=Loading",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Loading",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2207",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=secondary, Size=md, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2030",
+      "name": "icon-toggles",
+      "mode": "light",
+      "parent": "Icon toggles",
+      "state": "icon toggles Off and On: ghost md Bold, secondary sm Helpful",
+      "frame": {
+        "w": 168,
+        "h": 40,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-light@2x.png",
+          "pixels": [336, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-toggles-%7Bmode%7D%402x.png&scale=2&pad=16&width=168&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2031",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2038",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2045",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/General/thumbs-up"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2052",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/General/thumbs-up"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2215",
+      "name": "icon-toggles",
+      "mode": "dark",
+      "parent": "Icon toggles",
+      "state": "icon toggles Off and On: ghost md Bold, secondary sm Helpful",
+      "frame": {
+        "w": 168,
+        "h": 40,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-dark@2x.png",
+          "pixels": [336, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-toggles-%7Bmode%7D%402x.png&scale=2&pad=16&width=168&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2216",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2223",
+          "family": "Oddkin/Common/iconButton",
+          "variant": "Appearance=ghost, Size=md, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [40, 40],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "minWidth": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2230",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/General/thumbs-up"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2237",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/General/thumbs-up"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2060",
+      "name": "text-icons",
+      "mode": "light",
+      "parent": "Text with icons",
+      "state": "start, end, and both icons beside text at sm, md, lg",
+      "frame": {
+        "w": 581,
+        "h": 48,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-light@2x.png",
+          "pixels": [1162, 96]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ENew+project%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+data-state%3D%22Default%22%3EContinue%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EOpen%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ECopy%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+data-state%3D%22Default%22%3EGet+started%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftext-icons-%7Bmode%7D%402x.png&scale=2&pad=16&width=640&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2061",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "New project"
+          },
+          "size": [125, 40],
+          "frame": {
+            "layer": "Button / Secondary",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2066",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=primary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Show icon": false,
+            "Label": "Continue"
+          },
+          "size": [105, 40],
+          "frame": {
+            "layer": "Button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2071",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": true,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/copy",
+            "Label": "Open"
+          },
+          "size": [105, 40],
+          "frame": {
+            "layer": "Button / Ghost",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2076",
+          "family": "Oddkin/Common/button/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/copy",
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Label": "Copy"
+          },
+          "size": [74, 32],
+          "frame": {
+            "layer": "Button / Small",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-sm",
+              "paddingRight": "--odd-control-padding-inline-sm",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2081",
+          "family": "Oddkin/Common/button/lg",
+          "variant": "Appearance=primary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus",
+            "Show end icon": true,
+            "Show icon": false,
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Label": "Get started"
+          },
+          "size": [140, 48],
+          "frame": {
+            "layer": "Button / Large",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-lg",
+              "paddingRight": "--odd-control-padding-inline-lg",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2245",
+      "name": "text-icons",
+      "mode": "dark",
+      "parent": "Text with icons",
+      "state": "start, end, and both icons beside text at sm, md, lg",
+      "frame": {
+        "w": 581,
+        "h": 48,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-dark@2x.png",
+          "pixels": [1162, 96]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ENew+project%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+data-state%3D%22Default%22%3EContinue%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EOpen%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ECopy%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+data-state%3D%22Default%22%3EGet+started%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftext-icons-%7Bmode%7D%402x.png&scale=2&pad=16&width=640&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2246",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "New project"
+          },
+          "size": [125, 40],
+          "frame": {
+            "layer": "Button / Secondary",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2251",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=primary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Show icon": false,
+            "Label": "Continue"
+          },
+          "size": [105, 40],
+          "frame": {
+            "layer": "Button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2256",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=ghost, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": true,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/copy",
+            "Label": "Open"
+          },
+          "size": [105, 40],
+          "frame": {
+            "layer": "Button / Ghost",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2261",
+          "family": "Oddkin/Common/button/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/copy",
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Label": "Copy"
+          },
+          "size": [74, 32],
+          "frame": {
+            "layer": "Button / Small",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-sm",
+              "paddingRight": "--odd-control-padding-inline-sm",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2266",
+          "family": "Oddkin/Common/button/lg",
+          "variant": "Appearance=primary, Size=lg, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus",
+            "Show end icon": true,
+            "Show icon": false,
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Label": "Get started"
+          },
+          "size": [140, 48],
+          "frame": {
+            "layer": "Button / Large",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-action-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-lg",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-lg",
+              "paddingRight": "--odd-control-padding-inline-lg",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2087",
+      "name": "loading-footprint",
+      "mode": "light",
+      "parent": "Loading footprint",
+      "state": "md secondary with a start icon: Default, then Loading",
+      "frame": {
+        "w": 196,
+        "h": 40,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-light@2x.png",
+          "pixels": [392, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Floading-footprint-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2088",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "Upload"
+          },
+          "size": [94, 40],
+          "frame": {
+            "layer": "Button / Secondary",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2093",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Loading",
+          "props": {
+            "Show end icon": false,
+            "Show icon": true,
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "Upload"
+          },
+          "size": [94, 40],
+          "frame": {
+            "layer": "Button / Loading",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1456:2272",
+      "name": "loading-footprint",
+      "mode": "dark",
+      "parent": "Loading footprint",
+      "state": "md secondary with a start icon: Default, then Loading",
+      "frame": {
+        "w": 196,
+        "h": 40,
+        "sizing": ["HUG", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), no padding, centred",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-dark@2x.png",
+          "pixels": [392, 80]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Floading-footprint-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1456:2273",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Default",
+          "props": {
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Show end icon": false,
+            "Show icon": true,
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "Upload"
+          },
+          "size": [94, 40],
+          "frame": {
+            "layer": "Button / Secondary",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1456:2278",
+          "family": "Oddkin/Common/button",
+          "variant": "Appearance=secondary, Size=md, State=Loading",
+          "props": {
+            "Show end icon": false,
+            "Show icon": true,
+            "End icon": "Oddkin/Icon/chevronRight",
+            "Icon": "Oddkin/Icon/plus",
+            "Label": "Upload"
+          },
+          "size": [94, 40],
+          "frame": {
+            "layer": "Button / Loading",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-md",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-control-padding-inline-md",
+              "paddingRight": "--odd-control-padding-inline-md",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1462:2074",
+      "name": "toolbar",
+      "mode": "light",
+      "parent": "Icon-only toolbar · 240px parent, 208px usable · squares wrap, nothing scrolls (v2)",
+      "state": "240 px parent (208 px usable): nine sm icon-only buttons wrap to two rows",
+      "frame": {
+        "w": 240,
+        "h": 106,
+        "sizing": ["FIXED", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), padding space/md, top-aligned; surface default, border default, radius md",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-light@2x.png",
+          "pixels": [480, 212]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22box-sizing%3A+border-box%3B+inline-size%3A+240px%3B+display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+flex-start%3B+padding%3A+var%28--odd-space-md%29%3B+border%3A+var%28--odd-border-width-default%29+solid+var%28--odd-color-border-default%29%3B+border-radius%3A+var%28--odd-radius-md%29%3B+background%3A+var%28--odd-color-surface-default%29%22%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Copy%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Search%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.5000+-0.5000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+8+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+12++L+18+18%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Settings%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+10+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8.2+10+a+1.8+1.8+0+1+0+3.6+0+a+1.8+1.8+0+1+0+-3.6+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+1.5++L+10+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+15++L+10+18.5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+1.5+10++L+5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15+10++L+18.5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+4++L+6+6%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+14++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+16++L+6+14%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+6++L+16+4%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Delete%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+2+5++L+18+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+7+5++L+7+2+L+13+2+L+13+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+5++L+5+18+L+15+18+L+16+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8+8++L+8+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+8++L+12+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftoolbar-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1462:2133",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2140",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2147",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/copy"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2154",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/search"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2161",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/settings"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2168",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2175",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/trash"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2182",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Disabled",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Disabled",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {
+              "opacity": "0.5"
+            }
+          }
+        },
+        {
+          "id": "1462:2189",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "1462:2104",
+      "name": "toolbar",
+      "mode": "dark",
+      "parent": "Icon-only toolbar · 240px parent, 208px usable · squares wrap, nothing scrolls (v2)",
+      "state": "240 px parent (208 px usable): nine sm icon-only buttons wrap to two rows",
+      "frame": {
+        "w": 240,
+        "h": 106,
+        "sizing": ["FIXED", "HUG"]
+      },
+      "layout": "horizontal wrap, gap 8 (both axes), padding space/md, top-aligned; surface default, border default, radius md",
+      "png": {
+        "2x": {
+          "path": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-dark@2x.png",
+          "pixels": [480, 212]
+        }
+      },
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22box-sizing%3A+border-box%3B+inline-size%3A+240px%3B+display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+flex-start%3B+padding%3A+var%28--odd-space-md%29%3B+border%3A+var%28--odd-border-width-default%29+solid+var%28--odd-color-border-default%29%3B+border-radius%3A+var%28--odd-radius-md%29%3B+background%3A+var%28--odd-color-surface-default%29%22%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Copy%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Search%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.5000+-0.5000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+8+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+12++L+18+18%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Settings%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+10+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8.2+10+a+1.8+1.8+0+1+0+3.6+0+a+1.8+1.8+0+1+0+-3.6+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+1.5++L+10+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+15++L+10+18.5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+1.5+10++L+5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15+10++L+18.5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+4++L+6+6%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+14++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+16++L+6+14%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+6++L+16+4%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Delete%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+2+5++L+18+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+7+5++L+7+2+L+13+2+L+13+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+5++L+5+18+L+15+18+L+16+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8+8++L+8+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+8++L+12+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftoolbar-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "note": "markup reproduces each instance: same appearance, size, state, icon (canonical SVG), and name"
+      },
+      "instances": [
+        {
+          "id": "1462:2196",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2203",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=On",
+          "props": {
+            "Icon": "Oddkin/Icon/bold"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / On",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-selection-background",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-selection-background",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2210",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/copy"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2217",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/search"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2224",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/settings"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2231",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/plus"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2238",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=secondary, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/trash"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "fills": "--odd-color-surface-default",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "strokes": "--odd-color-border-strong",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        },
+        {
+          "id": "1462:2245",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Disabled",
+          "props": {
+            "Icon": "Oddkin/Icon/close"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Disabled",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {
+              "opacity": "0.5"
+            }
+          }
+        },
+        {
+          "id": "1462:2252",
+          "family": "Oddkin/Common/iconButton/sm",
+          "variant": "Appearance=ghost, Size=sm, State=Default",
+          "props": {
+            "Icon": "Oddkin/Icon/more"
+          },
+          "size": [32, 32],
+          "frame": {
+            "layer": "Icon button / Default",
+            "bound": {
+              "bottomLeftRadius": "--odd-control-radius",
+              "bottomRightRadius": "--odd-control-radius",
+              "itemSpacing": "--odd-control-gap",
+              "minHeight": "--odd-control-height-sm",
+              "minWidth": "--odd-control-height-sm",
+              "paddingBottom": "--odd-space-none",
+              "paddingLeft": "--odd-space-none",
+              "paddingRight": "--odd-space-none",
+              "paddingTop": "--odd-space-none",
+              "strokeBottomWeight": "--odd-border-width-default",
+              "strokeLeftWeight": "--odd-border-width-default",
+              "strokeRightWeight": "--odd-border-width-default",
+              "strokeTopWeight": "--odd-border-width-default",
+              "topLeftRadius": "--odd-control-radius",
+              "topRightRadius": "--odd-control-radius"
+            },
+            "literals": {}
+          }
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Fonts are Figma stand-ins (Roboto): font families and text widths are not compared; text rows drift by the label width.",
+    "Icon strokes: Figma resizes icon instances at a fixed 1.5 px stroke; the canonical SVGs are 20-unit artwork with stroke-width 1.5, so the browser draws 1.2 px at 16 px and 1.8 px at 24 px.",
+    "Each button frame sets an explicit mode of Oddkin · Content colour (Text, On action, Selection) so its icon takes the label colour; the exporter records bindings, not modes.",
+    "The spinner turns in code (paused at its first frame for captures); Figma draws a static arc."
+  ]
+}

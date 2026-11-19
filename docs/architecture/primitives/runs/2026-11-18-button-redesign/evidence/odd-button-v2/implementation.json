@@ -1,0 +1,3029 @@
+{
+  "tag": "odd-button",
+  "run": "2026-11-18-button-redesign",
+  "worktree": "C:\\SLT_Backup_10-21-2026\\oddkin-a1-main",
+  "head": "e84a08e3",
+  "dirtyFiles": 18,
+  "build": "npm run build exit 0 after the last source edit (2026-11-18); dist freshness checked by the bench warnings below",
+  "servedAssets": {
+    "packages/components/dist/button/button.js": "d7453c4bc456df6c6b5b8b49f156bbaeaa0db96a14e3d2f7485e6c8d1334761f",
+    "packages/components/dist/button/button.template.js": "2f8c51370bd60745a74b3ffd1ee56b71304df5b668c7c3ed028864ce110e5dd0",
+    "packages/components/dist/button/button.styles.js": "06c16eb26c949d937a2e1366ecfaa9af99b3427f8672250f0a42840ed765d6a8",
+    "packages/components/dist/button/button.structural.styles.js": "91b0962490648dcaf73c69951909de316ff1e44af4a21351ca3b069efc7fc33b",
+    "packages/components/dist/icon/icon.js": "77a8ec8aa181c5e9663ec316e444953ae2067d49f4503f4997d33b63b4699428",
+    "packages/components/dist/icon/icon.styles.js": "23c9d44c06901bdb82a9a06058a35dd3ac5c2f2aaa880c515ef8137f345ca420",
+    "packages/components/dist/styles/spinner.styles.js": "45192c5f378d602cf5902fd3edd2b90d79ce2103820f8e523d152268bf684715",
+    "packages/components/dist/styles/focus-ring.styles.js": "5a3d13d227dda21debf3b4dfae4537963fef036703c24f38a1b3978fa1bbdfce"
+  },
+  "browser": "Playwright 1.64.1 headless Chromium 156.0.8078.4, devicePixelRatio 2, viewport 1000x700",
+  "forcedStates": "Hover, Pressed, and Focus are forced with CSS.forcePseudoState on the native button (hover, active, focus + focus-visible); Disabled, Loading, On, and Off are attributes",
+  "capturedAt": "2026-11-19T04:33:38.606Z",
+  "specimens": [
+    {
+      "name": "icon-sizes",
+      "figmaNode": "1456:1914",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22lg%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22lg%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-sizes-%7Bmode%7D%402x.png&scale=2&pad=16&width=424&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 424,
+            "height": 48
+          },
+          "overflow": false,
+          "rows": 3
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-action-default rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-text-on-action rgb(255, 255, 255)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-action-default rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-text-on-action rgb(255, 255, 255)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-action-default rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-text-on-action rgb(255, 255, 255)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "icon-sizes",
+      "figmaNode": "1456:2099",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22lg%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22lg%22+label%3D%22Close%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-sizes-%7Bmode%7D%402x.png&scale=2&pad=16&width=424&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-sizes-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-sizes-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-sizes-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 424,
+            "height": 48
+          },
+          "overflow": false,
+          "rows": 3
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-action-default rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-on-action rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-action-default rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-on-action rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-action-default rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-on-action rgb(35, 37, 43)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 48,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 48px, --odd-control-height-lg 48px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [24, 24],
+                "expected": "24px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "icon-states",
+      "figmaNode": "1456:1979",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%3B+padding-block%3A+var%28--odd-space-xs%29%22%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Hover%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Pressed%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Focus%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-states-%7Bmode%7D%402x.png&scale=2&pad=16&width=328&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 328,
+            "height": 56
+          },
+          "overflow": false,
+          "rows": 1
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Hover",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(240, 239, 245)",
+            "checks": [
+              "ok   background-color: live rgb(240, 239, 245), --odd-color-surface-hover rgb(240, 239, 245)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Pressed",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(240, 239, 243)",
+            "checks": [
+              "ok   background-color: live rgb(240, 239, 243), --odd-color-surface-sunken rgb(240, 239, 243)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Focus",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px",
+              "ok   outline-color: live rgb(98, 80, 232), --odd-color-focus-ring rgb(98, 80, 232)",
+              "ok   outline-width: live 2px, --odd-focus-width 2px",
+              "ok   outline-offset: live 2px, --odd-focus-offset 2px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Disabled",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "0.5",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Loading",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "0",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "On",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   border-top-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-selection-foreground rgb(255, 255, 255)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "icon-states",
+      "figmaNode": "1456:2164",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%3B+padding-block%3A+var%28--odd-space-xs%29%22%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Hover%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Pressed%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+data-state%3D%22Focus%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+label%3D%22More%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-states-%7Bmode%7D%402x.png&scale=2&pad=16&width=328&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-states-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-states-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-states-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 328,
+            "height": 56
+          },
+          "overflow": false,
+          "rows": 1
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Hover",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(48, 50, 63)",
+            "checks": [
+              "ok   background-color: live rgb(48, 50, 63), --odd-color-surface-hover rgb(48, 50, 63)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Pressed",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(17, 18, 25)",
+            "checks": [
+              "ok   background-color: live rgb(17, 18, 25), --odd-color-surface-sunken rgb(17, 18, 25)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Focus",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px",
+              "ok   outline-color: live rgb(180, 168, 255), --odd-color-focus-ring rgb(180, 168, 255)",
+              "ok   outline-width: live 2px, --odd-focus-width 2px",
+              "ok   outline-offset: live 2px, --odd-focus-offset 2px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Disabled",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "0.5",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Loading",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "0",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "On",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   border-top-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-selection-foreground rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "icon-toggles",
+      "figmaNode": "1456:2030",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-toggles-%7Bmode%7D%402x.png&scale=2&pad=16&width=168&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 168,
+            "height": 40
+          },
+          "overflow": false,
+          "rows": 2
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   border-top-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-selection-foreground rgb(255, 255, 255)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Helpful",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Helpful",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   border-top-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-selection-foreground rgb(255, 255, 255)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "icon-toggles",
+      "figmaNode": "1456:2215",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Helpful%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.2222%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+9+L+10+2+Q+14+0+13+7+H+18+V+11+L+15+18+H+7+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+2.4+9+H+6.6+Q+7+9+7+9.4+V+17.6+Q+7+18+6.6+18+H+2.4+Q+2+18+2+17.6+V+9.4+Q+2+9+2.4+9+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ficon-toggles-%7Bmode%7D%402x.png&scale=2&pad=16&width=168&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/icon-toggles-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/icon-toggles-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/icon-toggles-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 168,
+            "height": 40
+          },
+          "overflow": false,
+          "rows": 2
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 40,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   border-top-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-selection-foreground rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 40px, --odd-control-height-md 40px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Helpful",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Helpful",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   border-top-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-selection-foreground rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "text-icons",
+      "figmaNode": "1456:2060",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ENew+project%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+data-state%3D%22Default%22%3EContinue%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EOpen%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ECopy%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+data-state%3D%22Default%22%3EGet+started%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftext-icons-%7Bmode%7D%402x.png&scale=2&pad=16&width=640&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 593.25,
+            "height": 48
+          },
+          "overflow": false,
+          "rows": 3
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 127.21875,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 107.71875,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-action-default rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-text-on-action rgb(255, 255, 255)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "end",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 108.625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              },
+              {
+                "slot": "end",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 74.609375,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 8px, --odd-control-padding-inline-sm 8px",
+              "ok   padding-inline-end: live 8px, --odd-control-padding-inline-sm 8px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 143.078125,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-action-default rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-text-on-action rgb(255, 255, 255)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 16px, --odd-control-padding-inline-lg 16px",
+              "ok   padding-inline-end: live 16px, --odd-control-padding-inline-lg 16px"
+            ],
+            "icons": [
+              {
+                "slot": "end",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "text-icons",
+      "figmaNode": "1456:2245",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ENew+project%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+data-state%3D%22Default%22%3EContinue%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EOpen%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3ECopy%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22primary%22+size%3D%22lg%22+data-state%3D%22Default%22%3EGet+started%3Codd-icon+slot%3D%22end%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cg+transform%3D%22rotate%280+10+10%29%22%3E%3Cpath+d%3D%22M+7+4++L+13+10+L+7+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftext-icons-%7Bmode%7D%402x.png&scale=2&pad=16&width=640&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/text-icons-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/text-icons-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/text-icons-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 593.25,
+            "height": 48
+          },
+          "overflow": false,
+          "rows": 3
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 127.21875,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 107.71875,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-action-default rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-on-action rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "end",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 108.625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              },
+              {
+                "slot": "end",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 74.609375,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 8px, --odd-control-padding-inline-sm 8px",
+              "ok   padding-inline-end: live 8px, --odd-control-padding-inline-sm 8px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 143.078125,
+              "height": 48
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-action-default rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-on-action rgb(35, 37, 43)",
+              "ok   min-height: live 48px, --odd-control-height-lg 48px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 16px, --odd-control-padding-inline-lg 16px",
+              "ok   padding-inline-end: live 16px, --odd-control-padding-inline-lg 16px"
+            ],
+            "icons": [
+              {
+                "slot": "end",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "loading-footprint",
+      "figmaNode": "1456:2087",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Floading-footprint-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 199.78125,
+            "height": 40
+          },
+          "overflow": false,
+          "rows": 1
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 95.890625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Loading",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 95.890625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "0",
+                "centred": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "loading-footprint",
+      "figmaNode": "1456:2272",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+center%3B+inline-size%3A+max-content%22%3E%3Codd-button+appearance%3D%22secondary%22+data-state%3D%22Default%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+loading+data-state%3D%22Loading%22%3E%3Codd-icon+slot%3D%22start%22%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3EUpload%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Floading-footprint-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/loading-footprint-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/loading-footprint-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/loading-footprint-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 199.78125,
+            "height": 40
+          },
+          "overflow": false,
+          "rows": 1
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Default",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 95.890625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": false
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "Loading",
+            "iconOnly": false,
+            "name": "",
+            "box": {
+              "width": 95.890625,
+              "height": 40
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 40px, --odd-control-height-md 40px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   padding-inline-start: live 12px, --odd-control-padding-inline-md 12px",
+              "ok   padding-inline-end: live 12px, --odd-control-padding-inline-md 12px"
+            ],
+            "icons": [
+              {
+                "slot": "start",
+                "box": [16, 16],
+                "expected": "16px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "0",
+                "centred": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "toolbar",
+      "figmaNode": "1462:2074",
+      "mode": "light",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22box-sizing%3A+border-box%3B+inline-size%3A+240px%3B+display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+flex-start%3B+padding%3A+var%28--odd-space-md%29%3B+border%3A+var%28--odd-border-width-default%29+solid+var%28--odd-color-border-default%29%3B+border-radius%3A+var%28--odd-radius-md%29%3B+background%3A+var%28--odd-color-surface-default%29%22%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Copy%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Search%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.5000+-0.5000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+8+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+12++L+18+18%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Settings%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+10+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8.2+10+a+1.8+1.8+0+1+0+3.6+0+a+1.8+1.8+0+1+0+-3.6+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+1.5++L+10+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+15++L+10+18.5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+1.5+10++L+5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15+10++L+18.5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+4++L+6+6%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+14++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+16++L+6+14%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+6++L+16+4%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Delete%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+2+5++L+18+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+7+5++L+7+2+L+13+2+L+13+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+5++L+5+18+L+15+18+L+16+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8+8++L+8+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+8++L+12+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftoolbar-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-light@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-light.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-light-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 240,
+            "height": 106
+          },
+          "overflow": false,
+          "rows": 2
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(98, 80, 232)",
+            "checks": [
+              "ok   background-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   border-top-color: live rgb(98, 80, 232), --odd-color-selection-background rgb(98, 80, 232)",
+              "ok   color: live rgb(255, 255, 255), --odd-color-selection-foreground rgb(255, 255, 255)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(255, 255, 255)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Copy",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Search",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Settings",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Delete",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(255, 255, 255)",
+            "checks": [
+              "ok   background-color: live rgb(255, 255, 255), --odd-color-surface-default rgb(255, 255, 255)",
+              "ok   border-top-color: live rgb(134, 137, 151), --odd-color-border-strong rgb(134, 137, 151)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "state": "Disabled",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "0.5",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(35, 37, 43), --odd-color-text-primary rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "toolbar",
+      "figmaNode": "1462:2104",
+      "mode": "dark",
+      "bench": {
+        "url": "http://127.0.0.1:4190/bench?html=%3Cdiv+style%3D%22box-sizing%3A+border-box%3B+inline-size%3A+240px%3B+display%3A+flex%3B+flex-wrap%3A+wrap%3B+gap%3A+8px%3B+align-items%3A+flex-start%3B+padding%3A+var%28--odd-space-md%29%3B+border%3A+var%28--odd-border-width-default%29+solid+var%28--odd-color-border-default%29%3B+border-radius%3A+var%28--odd-radius-md%29%3B+background%3A+var%28--odd-color-surface-default%29%22%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+data-state%3D%22Off%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Bold%22+toggle+pressed+data-state%3D%22On%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-1.0116+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+2+V+18+H+11+C+20+18+18+9+11+10+H+5+M+5+2+H+11+C+18+2+18+10+11+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Copy%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+7+6+H+17+Q+18+6+18+7+V+17+Q+18+18+17+18+H+7+Q+6+18+6+17+V+7+Q+6+6+7+6+Z%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+3+14++L+2+14+L+2+2+L+14+2+L+14+3%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Search%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.5000+-0.5000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+8+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+12++L+18+18%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Settings%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+5+10+a+5+5+0+1+0+10+0+a+5+5+0+1+0+-10+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8.2+10+a+1.8+1.8+0+1+0+3.6+0+a+1.8+1.8+0+1+0+-3.6+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+1.5++L+10+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+15++L+10+18.5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+1.5+10++L+5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15+10++L+18.5+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+4++L+6+6%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+14++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+16++L+6+14%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+14+6++L+16+4%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Add%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3+10++L+17+10%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+10+3++L+10+17%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22secondary%22+size%3D%22sm%22+label%3D%22Delete%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+2+5++L+18+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+7+5++L+7+2+L+13+2+L+13+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+4+5++L+5+18+L+15+18+L+16+5%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+8+8++L+8+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+12+8++L+12+15%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22Close%22+disabled+data-state%3D%22Disabled%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%280.0000+0.0000%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+4+4++L+16+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+16+4++L+4+16%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3Codd-button+appearance%3D%22ghost%22+size%3D%22sm%22+label%3D%22More%22+data-state%3D%22Default%22%3E%3Codd-icon%3E%3Csvg+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22+viewBox%3D%220+0+20+20%22+fill%3D%22none%22+stroke%3D%22currentColor%22+stroke-width%3D%221.5%22+stroke-linecap%3D%22round%22+stroke-linejoin%3D%22round%22%3E%3Cg+transform%3D%22translate%28-0.0000+0.0004%29+scale%281.000000%29%22%3E%3Cpath+d%3D%22M+3.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+9.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3Cpath+d%3D%22M+15.4+10+a+0.6+0.6+0+1+0+1.2+0+a+0.6+0.6+0+1+0+-1.2+0%22+stroke-width%3D%221.50000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E%0A%3C%2Fodd-icon%3E%3C%2Fodd-button%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Fodd-button-v2%2Ffigma%2Ftoolbar-%7Bmode%7D%402x.png&scale=2&pad=16&width=240&opacity=0.5",
+        "ready": "true",
+        "errors": [],
+        "warnings": [
+          "@oddkin/components: dist is older than src (2026-11-19T04:32:45.947Z). Run npm run build to see current code"
+        ]
+      },
+      "figma": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/figma/toolbar-dark@2x.png",
+      "live": "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/live/toolbar-dark.png",
+      "comparison": [
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-18-button-redesign/evidence/odd-button-v2/comparison/toolbar-dark-diff.png"
+      ],
+      "measured": {
+        "wrapper": {
+          "box": {
+            "width": 240,
+            "height": 106
+          },
+          "overflow": false,
+          "rows": 2
+        },
+        "buttons": [
+          {
+            "index": 0,
+            "state": "Off",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "state": "On",
+            "iconOnly": true,
+            "name": "Bold",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(180, 168, 255)",
+            "checks": [
+              "ok   background-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   border-top-color: live rgb(180, 168, 255), --odd-color-selection-background rgb(180, 168, 255)",
+              "ok   color: live rgb(35, 37, 43), --odd-color-selection-foreground rgb(35, 37, 43)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(35, 37, 43)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Copy",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Search",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Settings",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Add",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "Delete",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgb(36, 38, 49)",
+            "checks": [
+              "ok   background-color: live rgb(36, 38, 49), --odd-color-surface-default rgb(36, 38, 49)",
+              "ok   border-top-color: live rgb(133, 131, 149), --odd-color-border-strong rgb(133, 131, 149)",
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "state": "Disabled",
+            "iconOnly": true,
+            "name": "Close",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "0.5",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "state": "Default",
+            "iconOnly": true,
+            "name": "More",
+            "box": {
+              "width": 32,
+              "height": 32
+            },
+            "opacity": "1",
+            "background": "rgba(0, 0, 0, 0)",
+            "checks": [
+              "ok   color: live rgb(245, 243, 253), --odd-color-text-primary rgb(245, 243, 253)",
+              "ok   min-height: live 32px, --odd-control-height-sm 32px",
+              "ok   border-start-start-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-end-end-radius: live 8px, --odd-control-radius 8px",
+              "ok   border-top-width: live 1px, --odd-border-width-default 1px",
+              "ok   column-gap: live 8px, --odd-control-gap 8px",
+              "ok   min-width: live 32px, --odd-control-height-sm 32px",
+              "ok   padding-inline-start: live 0px, --odd-space-none 0px",
+              "ok   padding-inline-end: live 0px, --odd-space-none 0px"
+            ],
+            "icons": [
+              {
+                "slot": "default",
+                "box": [20, 20],
+                "expected": "20px",
+                "size": "ok",
+                "stroke": "rgb(245, 243, 253)",
+                "strokeIsText": true,
+                "opacity": "1",
+                "centred": true
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

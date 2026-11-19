@@ -381,4 +381,89 @@ describe('native <button> styling path (button.css)', () => {
         await userEvent.unhover(target);
       }
   }, 30_000);
+
+  const icon = (slot = '') =>
+    `<odd-icon ${slot}><svg viewBox="0 0 20 20"><path d="M4 4l12 12" /></svg></odd-icon>`;
+
+  it('B-A9, B-A10: draws the icon-only square and sizes icons as odd-button does, in each density', async () => {
+    await import('../src/icon/icon.define.js');
+    const cases = ['sm', 'md', 'lg'].flatMap((size) => [
+      `<odd-button size="${size}" label="Close">${icon()}</odd-button>` +
+        `<button class="odd-button" data-size="${size}" data-icon-only aria-label="Close">${icon()}</button>`,
+      `<odd-button size="${size}">${icon('slot="start"')}Label</odd-button>` +
+        `<button class="odd-button" data-size="${size}">${icon()}Label</button>`,
+    ]);
+    await render(
+      `<div>${cases.join('')}</div><div data-odd-density="compact">${cases.join('')}</div>`,
+    );
+    for (const i of container.querySelectorAll('odd-icon')) await i.updateComplete;
+    await restPointer();
+    const all = pairs();
+    expect(all).toHaveLength(12);
+    const hosts = [...container.querySelectorAll('odd-button')];
+    for (const [i, [control, native]] of all.entries()) {
+      const at = native.outerHTML;
+      expect(styles(native), at).toEqual(styles(control));
+      expect(getComputedStyle(native).minWidth, at).toBe(getComputedStyle(control).minWidth);
+      const [a, b] = [control, native].map((el) => el.getBoundingClientRect()) as [
+        DOMRect,
+        DOMRect,
+      ];
+      // Firefox rounds the text width differently in the two trees (by 0.00002 px).
+      expect(b.width, at).toBeCloseTo(a.width, 3);
+      expect(b.height, at).toBe(a.height);
+      // Icon-only cases are even: a square.
+      if (i % 2 === 0) expect(b.width, at).toBe(b.height);
+      const [ia, ib] = [hosts[i]!, native].map((el) =>
+        el.querySelector('odd-icon')!.getBoundingClientRect(),
+      ) as [DOMRect, DOMRect];
+      expect([ib.width, ib.height], at).toEqual([ia.width, ia.height]);
+    }
+  });
+
+  it('B-A12: styles a link as the button: no underline, the same hover, muted by aria-disabled', async () => {
+    await render(`
+      <button class="odd-button" data-appearance="primary">Go</button>
+      <a class="odd-button" data-appearance="primary" href="#go">Go</a>
+      <button class="odd-button">Go</button><a class="odd-button" href="#go">Go</a>
+      <button class="odd-button" disabled>Go</button>
+      <a class="odd-button" href="#go" aria-disabled="true">Go</a>`);
+    const [primary, primaryLink, secondary, link, disabled, unavailable] = [
+      ...container.querySelectorAll<HTMLElement>('.odd-button'),
+    ] as [HTMLElement, HTMLElement, HTMLElement, HTMLElement, HTMLElement, HTMLElement];
+    const rest = document.createElement('p');
+    rest.textContent = 'Pointer rests here';
+    container.prepend(rest);
+    await userEvent.hover(rest);
+    for (const [button, anchor] of [
+      [primary, primaryLink],
+      [secondary, link],
+    ] as const) {
+      expect(styles(anchor), anchor.outerHTML).toEqual(styles(button));
+      expect(getComputedStyle(anchor).textDecorationLine).toBe('none');
+    }
+    const muted = (el: HTMLElement) => [getComputedStyle(el).opacity, getComputedStyle(el).cursor];
+    expect(muted(unavailable)).toEqual(muted(disabled));
+    expect(muted(unavailable)).toEqual(['0.5', 'not-allowed']);
+    if (!matchMedia('(hover: hover)').matches) return;
+    const settled = async (el: HTMLElement) => {
+      await Promise.all(el.getAnimations().map((a) => a.finished.catch(() => undefined)));
+      return getComputedStyle(el).backgroundColor;
+    };
+    for (const [button, anchor] of [
+      [primary, primaryLink],
+      [secondary, link],
+    ] as const) {
+      const before = await settled(anchor);
+      await userEvent.hover(button);
+      const hovered = await settled(button);
+      await userEvent.hover(anchor);
+      expect(await settled(anchor), anchor.outerHTML).toBe(hovered);
+      expect(hovered).not.toBe(before);
+    }
+    // No feedback on an unavailable link.
+    const before = await settled(unavailable);
+    await userEvent.hover(unavailable);
+    expect(await settled(unavailable)).toBe(before);
+  });
 });
