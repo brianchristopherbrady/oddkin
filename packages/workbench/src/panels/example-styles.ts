@@ -148,6 +148,21 @@ export const exampleStyles = css`
     table-layout: fixed;
     overflow-wrap: anywhere;
   }
+  .wb-content .wb-table-title {
+    padding: var(--odd-space-sm);
+    border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+    font-weight: var(--odd-font-weight-semibold);
+    text-align: start;
+  }
+  .wb-content .wb-api:is([data-table='attributes'], [data-table='properties']) col:first-child {
+    inline-size: 32%;
+  }
+  .wb-content .wb-api[data-table='properties'] col:nth-child(2) {
+    inline-size: 30%;
+  }
+  .wb-content .wb-api:is([data-table='attributes'], [data-table='properties']) col:nth-child(4) {
+    inline-size: auto;
+  }
   .wb-content .wb-api th,
   .wb-content .wb-api td {
     padding: var(--odd-space-sm);
@@ -184,6 +199,22 @@ export const exampleStyles = css`
   }
   .wb-content .wb-api[data-table='slots'] col:nth-child(2) {
     inline-size: auto;
+  }
+  @container wb-content (width < 40rem) {
+    /* Stacked rows share the full inline size instead of the first desktop column. */
+    .wb-content .wb-api:has(> .wb-table-title) {
+      table-layout: auto;
+    }
+    .wb-content .wb-api:has(> .wb-table-title) > colgroup {
+      display: none;
+    }
+    .wb-content .wb-api:has(> .wb-table-title) td {
+      padding: 0 var(--odd-space-sm);
+    }
+    .wb-content .wb-api:has(> .wb-table-title) th[scope='row'] {
+      padding-block: 0 var(--odd-space-xs);
+      border: 0;
+    }
   }
   .wb-content .wb-api select,
   .wb-content .wb-api input:is([type='text'], [type='number']) {

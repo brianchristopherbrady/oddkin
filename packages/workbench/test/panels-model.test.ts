@@ -372,7 +372,7 @@ describe('detail model', () => {
     // Entries listed without a description are named, so their rows can say so.
     expect(at('api/slots')?.undocumented).toEqual(['(default)', 'end']);
     expect(at('api/properties')?.undocumented).toContain('legacy-mode');
-    // The editable properties and slots render as the interactive example's controls.
+    // The combined API table and slot reference belong to the interactive example.
     expect([at('api/properties')?.section, at('api/slots')?.section]).toEqual([
       'interactive-example',
       'interactive-example',
@@ -413,6 +413,42 @@ describe('detail model', () => {
     ).toMatchObject({
       'interactive-example/presets': 'missing',
       'examples/examples': 'documented',
+    });
+  });
+
+  it('tracks attributes and properties separately in the reference layout', () => {
+    const coverage = pageCoverage(page(), { reference: true });
+    const at = (id: string) => coverage.find((item) => item.id === id);
+    expect(at('api/attributes')).toMatchObject({
+      section: 'interactive-example',
+      state: 'documented',
+      undocumented: ['tone', 'open', 'size', 'legacy-mode'],
+    });
+    expect(at('api/properties')).toMatchObject({
+      section: 'interactive-example',
+      state: 'documented',
+      undocumented: ['tone', 'open', 'items', 'size', 'node', 'form'],
+    });
+    expect(coverage.map((item) => item.id).slice(3, 7)).toEqual([
+      'api/attributes',
+      'api/properties',
+      'api/slots',
+      'api/css-properties',
+    ]);
+
+    const propertyOnly = page({ declaration: { members: [{ kind: 'field', name: 'items' }] } });
+    expect(
+      pageCoverage(propertyOnly, { reference: true }).find((item) => item.id === 'api/attributes'),
+    ).toMatchObject({
+      state: 'none',
+      empty: 'No attributes are declared.',
+    });
+    const attributeOnly = page({ declaration: { attributes: [{ name: 'legacy-mode' }] } });
+    expect(
+      pageCoverage(attributeOnly, { reference: true }).find((item) => item.id === 'api/properties'),
+    ).toMatchObject({
+      state: 'none',
+      empty: 'No properties are declared.',
     });
   });
 

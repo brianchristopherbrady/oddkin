@@ -160,14 +160,26 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   const slots = controls.locator('[data-table="slots"]');
   await expect(slots.getByRole('rowheader', { name: 'default', exact: true })).toBeVisible();
   await expect(slots.locator('input, textarea, select, button')).toHaveCount(0);
-  const field = controls.getByRole('textbox', { name: /^name \(/ });
+  const styles = controls.locator('[data-table="css-properties"]');
+  await expect(styles.getByRole('rowheader', { name: /--odd-button-radius/ })).toBeVisible();
+  await expect(styles.locator('input, textarea, select, button')).toHaveCount(0);
+  const appearance = controls
+    .locator('[data-table="attributes"]')
+    .getByRole('combobox', { name: 'appearance (attribute)' });
   const liveButton = buttonPanel.frameLocator('iframe').first().locator('odd-button');
-  const liveName = () =>
-    liveButton.evaluate((element: HTMLElementTagNameMap['odd-button']) => element.name);
-  await field.fill('submit-project');
-  await expect.poll(liveName).toBe('submit-project');
-  await field.clear();
-  await expect.poll(liveName).toBe('');
+  const liveAppearance = () =>
+    liveButton.evaluate((element: HTMLElementTagNameMap['odd-button']) => element.appearance);
+  await expect(appearance).toHaveValue('');
+  await appearance.selectOption('primary');
+  await expect.poll(liveAppearance).toBe('primary');
+  await buttonPanel.getByRole('button', { name: 'See code', exact: true }).click();
+  const generatedCode = buttonPanel.locator('.wb-snippet');
+  await expect(generatedCode).toContainText('appearance="primary"');
+  await expect(generatedCode).not.toContainText('element.appearance');
+  await appearance.selectOption('');
+  await expect.poll(liveAppearance).toBe('secondary');
+  await expect(generatedCode).not.toContainText('appearance=');
+  await buttonPanel.getByRole('button', { name: 'Hide code', exact: true }).click();
   await expect(liveButton).toHaveText('Save');
   await expect(page).toHaveURL(`${docs}/components/odd-button#controls`);
   await tabs.getByRole('tab', { name: 'Controls' }).focus();
@@ -435,6 +447,53 @@ test('every core docs component is listed under its category and has a reference
     // The panel has drawn its cards again before the next click (a click on a card being replaced is lost).
     await expect(page.getByText(`Showing ${total} of ${total} components`)).toBeVisible();
   }
+});
+
+test('Tree documents selection separately and exposes useful attribute controls', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto(`${docs}/components/odd-tree#controls`);
+  const panel = page.locator('oddkin-component-panel');
+  const controls = panel.getByRole('region', { name: 'Controls and API' });
+  const properties = controls.locator('[data-table="properties"]');
+  const attributes = controls.locator('[data-table="attributes"]');
+  await expect(properties.getByRole('rowheader', { name: /^values\b/ })).toBeVisible();
+  await expect(properties.locator('input, textarea, select, button')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      properties
+        .locator('tbody tr')
+        .first()
+        .evaluate((row) => row.getBoundingClientRect().width),
+    )
+    .toBeGreaterThan(280);
+  await expect(attributes.getByRole('rowheader', { name: /^values\b/ })).toHaveCount(0);
+  const value = attributes.getByRole('row').filter({
+    has: page.getByRole('rowheader', { name: /^value\b/ }),
+  });
+  await expect(value).toBeVisible();
+  await expect(value.locator('input, textarea, select, button')).toHaveCount(0);
+
+  const tree = panel.frameLocator('iframe').first().getByRole('tree', { name: 'Project files' });
+  await expect(tree.getByRole('treeitem', { name: 'Text field' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  const combobox = tree.getByRole('treeitem', { name: 'Combobox' });
+  await combobox.click();
+  await expect(combobox).toHaveAttribute('aria-selected', 'true');
+  await attributes.getByRole('switch', { name: 'multiple (attribute)' }).click();
+  await expect(tree).toHaveAttribute('aria-multiselectable', 'true');
+  const label = attributes.getByRole('textbox', { name: 'label (attribute)' });
+  await expect(label).toHaveValue('Project files');
+  await label.fill('Workspace files');
+  await expect(
+    panel.frameLocator('iframe').first().getByRole('tree', { name: 'Workspace files' }),
+  ).toBeVisible();
+  await panel.getByRole('button', { name: 'See code', exact: true }).click();
+  await expect(panel.locator('.wb-snippet')).toContainText('label="Workspace files"');
+  await expect(panel.locator('.wb-snippet')).not.toContainText('element.label');
 });
 
 test('a live example runs its setup script', async ({ page }) => {

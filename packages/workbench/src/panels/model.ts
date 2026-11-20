@@ -421,7 +421,10 @@ export function registrationOf(page: ComponentPageData): string | undefined {
  * Every item a component's detail page shows, in page order, and how it is shown. The panel
  * renders from this, and the coverage check walks it for every component (workbench-pages.md §7).
  */
-export function pageCoverage(page: ComponentPageData): CoverageItem[] {
+export function pageCoverage(
+  page: ComponentPageData,
+  { reference = false }: { readonly reference?: boolean } = {},
+): CoverageItem[] {
   const facts = componentFacts(page);
   const entries = presets(page);
   const { useFor, notFor } = intendedUse(page);
@@ -470,13 +473,26 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     'Presets',
   );
   documented('interactive-example/preview', registered, REGISTRATION_SOURCE, 'Preview');
-  // The editable controls render in the interactive example (its "Controls and API").
-  declared(
-    'api/properties',
-    facts.rows,
-    'No properties or attributes are declared.',
-    'interactive-example',
-  );
+  // The reference layout lists HTML attributes and JavaScript properties separately.
+  if (reference) {
+    const attributes = facts.rows.flatMap(({ attribute, description }) =>
+      attribute ? [{ name: attribute, ...(description ? { description } : {}) }] : [],
+    );
+    declared('api/attributes', attributes, 'No attributes are declared.', 'interactive-example');
+    declared(
+      'api/properties',
+      facts.rows.filter((row) => row.property),
+      'No properties are declared.',
+      'interactive-example',
+    );
+  } else {
+    declared(
+      'api/properties',
+      facts.rows,
+      'No properties or attributes are declared.',
+      'interactive-example',
+    );
+  }
   declared('api/slots', facts.slots, 'No slots are declared.', 'interactive-example');
   declared(
     'api/css-properties',

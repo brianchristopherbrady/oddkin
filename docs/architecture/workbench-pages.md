@@ -110,14 +110,14 @@ Built first, from the library's actual spacing contracts:
 
 Each component's documentation and interactive controls live on its detail page. There is no "Open in playground" hand-off and no separate Playground destination.
 
-*(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. The API table writes one property or attribute per change exactly as declared; types it cannot edit generically say "Requires fixture"; read-only fields are inspect-only. Slots have a static reference table. Declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
+*(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. Workbench's editable API table writes one property or attribute per change. Types that need setup are marked "Requires fixture". In the reference layout, selected HTML attributes control the example. JavaScript properties, slots, and CSS custom properties have static reference tables. Declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
 
 ### 7.1 Section order (every section shown; missing items labelled)
 
 The order and titles follow the owner's component page (Figma 20:2190, 2026-10-28).
 
 1. **Overview** — the description.
-2. **Interactive example** — preview (the component centred on the canvas), See code with Copy code, Reset; in Workbench also the preset selector (from `defineExamples`), Copy example link, preview settings, and the event log. Its "Controls and API" is one region that scrolls on its own (552 px at most) with a header row per group: Properties (§7.2), Slots, CSS custom properties.
+2. **Interactive example** — preview (the component centred on the canvas), See code with Copy code, Reset; in Workbench also the preset selector (from `defineExamples`), Copy example link, preview settings, and the event log. Its "Controls and API" is one region that scrolls on its own (552 px at most) with a header row per table. The reference layout shows Attributes, Properties, Slots, and CSS custom properties (§7.2). The Workbench layout uses its editable API table alongside Slots and CSS custom properties.
 3. **Source and package** — package, module, class, and definition as cards, then the register import.
 4. **States and examples** — authored examples as cards, presets first; a host may supply a live specimen per card (`examplePreview`).
 5. **Reference** — events, CSS parts, methods, custom states, and the CSS custom properties.
@@ -130,17 +130,21 @@ The order and titles follow the owner's component page (Figma 20:2190, 2026-10-2
 
 **Coverage (owner decision, 2026-10-22).** A component page has no unlabelled gap. `pageCoverage(page)` (the panels' DOM-free model, `packages/workbench/src/panels/model.ts`) lists every item of the page in order with one of three states: *documented* (shown with content), *none* (the component declares none of these, e.g. "None declared."), or *missing* ("Not documented. Supplied by `<input>`.", naming the tag, file, or metadata field that would supply it). The panel renders each item from that list and marks it with `data-coverage` and `data-state`. Sections are never hidden for lack of data; authored content may still hide one (`visible: false`). One browser check (`packages/workbench/test/coverage.browser.test.ts`) walks every component in the `@oddkin/components` and `@oddkin/ai` metadata and fails on any item that is unlisted, unmarked, out of order, empty, or labelled differently from its state, on any empty section or table cell, and on any hidden section; new components are covered without new tests. Missing items are component-side gaps, reported to the components' owner.
 
-### 7.2 Editable API table
+### 7.2 Attribute controls and JavaScript properties
 
-The primary control surface; there is no second controls table or duplicate props reference.
+The reference layout has separate Attributes and Properties tables. The Attributes table provides controls for scalar attributes that demonstrate the component in its authored preview. Structured values and attributes that depend on example data or host wiring remain documented in the table. For example, Tree's `multiple` attribute changes selection behavior, and the tree itself lets readers select items. Its `value` attribute and `values` property are documented for applications.
+
+The Properties table lists JavaScript names, types, defaults, and related attributes where available. Slots and CSS custom properties also show their documented contracts. Preview presets, fixtures, and generated code continue to use the authored property, slot, and CSS values.
+
+Workbench's editable API table supports developer testing of property and attribute writes.
 
 | Column | Content |
 | --- | --- |
-| Name | Property name; attribute name and reflection shown beneath ("attr `appearance`, reflects") |
-| Type | Declared type (unions expanded to allowed values) |
-| Default | Known default, or "Unknown" / "Unset: <behavior>" when declared |
-| Current value | Contract-correct control (workbench.md §4); read-only values displayed, not editable; non-serializable values show "Requires fixture" with the fixture picker |
-| Description | From metadata, with provenance marker |
+| Name | Property or attribute name and its description from metadata |
+| Type | Declared type and allowed values for literal unions |
+| Default | Declared default or "Unknown" |
+| Attribute and reflection | Related HTML attribute and whether property writes reflect to it |
+| Control | Editor for writable values, read-only status, or "Requires fixture" for data that needs setup |
 
 - At narrow widths, rows become stacked cards with the same fields.
 - See [the control contracts](./workbench.md#4-controls) for assignment modes, boolean presence, explicit null values, clearing a field, read-only values, and declared sync behavior.

@@ -8,6 +8,7 @@ import type {
   WorkbenchData,
   WorkbenchIndex,
 } from '@oddkin/workbench/data';
+import { staticExampleAttributes } from './example-attributes.js';
 import { pages, type Page } from './pages/index.js';
 import { icons } from './pages/icons.js';
 import { repository } from './pages/model.js';
@@ -296,6 +297,7 @@ function referencePanel(
 ): HTMLElementTagNameMap['oddkin-component-panel'] {
   const panel = componentPanel(index, page) as HTMLElementTagNameMap['oddkin-component-panel'];
   panel.layout = 'reference';
+  panel.staticAttributes = staticExampleAttributes(page.tag);
   panel.examplePreview = examplePreview ??= examplePreviews();
   return panel;
 }

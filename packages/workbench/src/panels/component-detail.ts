@@ -22,6 +22,7 @@ import {
 } from '../protocol/index.js';
 import {
   authoredValues,
+  classifyType,
   componentFacts,
   decodeShare,
   defaultWriteMode,
@@ -156,6 +157,9 @@ export class ComponentDetailElement extends OddkinElement.with({
         ? { ok: true, value: value as (route: string) => string }
         : { ok: false, reason: 'expected a function' },
     description: 'Maps a Workbench route to a URL.',
+  }),
+  staticAttributes: prop.object<readonly string[]>({
+    description: 'HTML attributes documented without a live control in the reference layout.',
   }),
   frameUrl: prop.string({
     default: '',
@@ -524,9 +528,16 @@ export class ComponentDetailElement extends OddkinElement.with({
     const attributes = { ...state.attributes };
     if (value === null) delete attributes[name];
     else attributes[name] = value;
-    this.#state.value = { ...state, attributes };
+    // The attribute becomes the single authored binding for this value in the reference.
+    const property = this.layout === 'reference' ? row.property : undefined;
+    const properties = { ...state.properties };
+    const replacesProperty = property !== undefined && Object.hasOwn(properties, property);
+    if (replacesProperty) delete properties[property];
+    this.#state.value = { ...state, attributes, properties };
     this.#setError(row.id, undefined);
-    this.#send({ attribute: name, attributeValue: value });
+    // Removing an attribute cannot clear a property assigned without one.
+    if (value === null && replacesProperty) this.#remount();
+    else this.#send({ attribute: name, attributeValue: value });
   }
 
   #writeProperty(row: ApiRow, value: JsonValue): void {
@@ -687,7 +698,7 @@ export class ComponentDetailElement extends OddkinElement.with({
     const entry = index.registry.pages.find((p) => p.id === page.id);
     const reference = this.layout === 'reference';
     const facts = componentFacts(page);
-    const coverage = pageCoverage(page);
+    const coverage = pageCoverage(page, { reference });
     const at = covered(coverage, reference);
     // The reference layout leaves out a section with nothing to show; Workbench labels it.
     const sections = (entry?.sections ?? []).filter(
@@ -840,6 +851,7 @@ export class ComponentDetailElement extends OddkinElement.with({
     const update = (patch: Partial<Settings>) => this.#applySettings({ ...settings, ...patch });
     const code = this.#code.value;
     const tools = this.layout === 'workbench';
+    const hasPreview = registrationOf(page) !== undefined && Boolean(this.frameUrl);
     return html`<div class="wb-example">
         <div class="wb-example-bar">
           <p class="wb-example-title">Interactive example · ${page.tag}</p>
@@ -921,9 +933,7 @@ export class ComponentDetailElement extends OddkinElement.with({
             <p class="wb-muted">Scroll the table; the preview stays in view.</p>
           </div>
           <div class="wb-controls-scroll" role="region" aria-label="Controls and API" tabindex="0">
-            ${at('api/properties', () => this.#apiTable(facts))}
-            ${at('api/slots', () => this.#slots(facts))}
-            ${at('api/css-properties', () => this.#cssTable(facts))}
+            ${this.#apiTables(facts, at, hasPreview)}
           </div>
         </div>
         <div class="wb-example-code" id="wb-example-code" ?hidden=${!code}>
@@ -1092,15 +1102,7 @@ export class ComponentDetailElement extends OddkinElement.with({
                 </ul>`,
             )}
           </div>`;
-    return html`${
-        inExample
-          ? html`<p class="wb-lede">
-              Contracts that complement the properties and slots table above.
-            </p>`
-          : html`${at('api/properties', () => this.#apiTable(facts))}
-            ${at('api/slots', () => this.#slots(facts))}
-            ${at('api/css-properties', () => this.#cssTable(facts))}`
-      }
+    return html`${inExample ? nothing : this.#apiTables(facts, at, false)}
       <div class="wb-boxes">
         ${card('events', 'Events', facts.events)} ${card('parts', 'CSS parts', facts.parts)}
         ${card('methods', 'Methods', facts.methods)}
@@ -1116,6 +1118,77 @@ export class ComponentDetailElement extends OddkinElement.with({
             </div>`
           : nothing
       }`;
+  }
+
+  #apiTables(facts: ComponentFacts, at: Covered, hasPreview: boolean) {
+    const reference = this.layout === 'reference';
+    return html`
+      ${reference ? at('api/attributes', () => this.#attributeTable(facts, hasPreview)) : nothing}
+      ${at('api/properties', () => (reference ? this.#propertyTable(facts) : this.#apiTable(facts)))}
+      ${at('api/slots', () => this.#slots(facts))}
+      ${at('api/css-properties', () => this.#cssTable(facts))}
+    `;
+  }
+
+  #attributeTable(facts: ComponentFacts, hasPreview: boolean) {
+    return this.#group(
+      'attributes',
+      'HTML attributes. Available controls update the example.',
+      ['Attributes', 'Type', 'Default', 'Control'],
+      facts.rows
+        .filter((row) => row.attribute)
+        .map(
+          (row) =>
+            html`<tr data-row=${row.id}>
+              ${named(row.attribute ?? '', row.description)}
+              <td data-label="Type">${row.values?.join(', ') ?? row.type}</td>
+              <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+              <td data-label="Control">
+                ${
+                  hasPreview && this.#editableAttribute(row)
+                    ? this.#control(row)
+                    : html`<span class="wb-muted">${'\u2014'}</span>`
+                }
+              </td>
+            </tr>`,
+        ),
+    );
+  }
+
+  #editableAttribute(row: ApiRow): boolean {
+    return (
+      !!row.attribute &&
+      !row.propertyOnly &&
+      row.control !== 'readonly' &&
+      !this.staticAttributes?.includes(row.attribute) &&
+      ['boolean', 'enum', 'number', 'string'].includes(classifyType(row.type).control)
+    );
+  }
+
+  #propertyTable(facts: ComponentFacts) {
+    return this.#group(
+      'properties',
+      'JavaScript properties declared by the component.',
+      ['Properties', 'Type', 'Default', 'Attribute'],
+      facts.rows
+        .filter((row) => row.property)
+        .map(
+          (row) =>
+            html`<tr data-property=${row.id}>
+              ${named(row.property ?? '', row.description)}
+              <td data-label="Type">
+                <span
+                  ><code>${row.type}</code
+                  >${row.control === 'readonly' ? html`<small>Read-only</small>` : nothing}</span
+                >
+              </td>
+              <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+              <td data-label="Attribute">
+                ${row.attribute ? html`<span><code>${row.attribute}</code>${row.reflects ? html`<small>Reflected</small>` : nothing}</span>` : '\u2014'}
+              </td>
+            </tr>`,
+        ),
+    );
   }
 
   #apiTable(facts: ComponentFacts) {
@@ -1145,7 +1218,8 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #control(row: ApiRow) {
-    const name = row.property ?? row.attribute ?? '';
+    const reference = this.layout === 'reference';
+    const name = (reference ? row.attribute : (row.property ?? row.attribute)) ?? '';
     if (row.control === 'readonly')
       return html`<span class="wb-muted">Read-only; inspected, never edited.</span>`;
     if (row.control === 'fixture')
@@ -1154,14 +1228,20 @@ export class ComponentDetailElement extends OddkinElement.with({
       >`;
     const state = this.#state.value;
     const modes = this.#modes.value;
-    const mode = modes[row.id] ?? defaultWriteMode(row);
+    const mode = reference ? 'attribute' : (modes[row.id] ?? defaultWriteMode(row));
     const error = this.#errors.value[row.id];
     const label = `${name} (${mode})`;
     const attr = row.attribute;
     const prop = row.property;
-    const attrValue = attr ? state.attributes[attr] : undefined;
     const propSet = prop !== undefined && prop in state.properties;
     const propValue = prop !== undefined ? state.properties[prop] : undefined;
+    let attrValue = attr ? state.attributes[attr] : undefined;
+    // Examples often supply the attribute's initial value through its paired property.
+    if (reference && attrValue === undefined) {
+      if (row.control === 'boolean' && propValue === true) attrValue = '';
+      if (typeof propValue === 'string' || typeof propValue === 'number')
+        attrValue = String(propValue);
+    }
     const modeSwitch =
       this.layout === 'workbench' &&
       row.property &&
@@ -1294,8 +1374,8 @@ export class ComponentDetailElement extends OddkinElement.with({
   #group(id: string, caption: string, heads: readonly string[], rows: unknown[]) {
     return html`<div class="wb-table-wrap">
       <table class="wb-stack wb-api" data-table=${id}>
-        <caption class="wb-visually-hidden">
-          ${caption}
+        <caption class=${this.layout === 'reference' ? 'wb-table-title' : 'wb-visually-hidden'}>
+          ${this.layout === 'reference' ? heads[0] : caption}
         </caption>
         <colgroup>
           ${Array.from({ length: heads.length === 5 ? 6 : heads.length }, () => html`<col />`)}
@@ -1305,7 +1385,7 @@ export class ComponentDetailElement extends OddkinElement.with({
             ${heads.map(
               (head, i) =>
                 html`<th scope="col" colspan=${heads.length === 5 && i === 3 ? '2' : null}>
-                  ${head}
+                  ${this.layout === 'reference' && i === 0 ? 'Name' : head}
                 </th>`,
             )}
           </tr>
@@ -1335,37 +1415,46 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #cssTable(facts: ComponentFacts) {
+    const editable = this.layout === 'workbench';
     const styles = this.#state.value.styles ?? {};
+    const heads = ['CSS custom properties', 'Syntax', 'Default', 'Description'];
+    if (editable) heads.push('Control / current value');
     return this.#group(
       'css-properties',
-      "CSS custom properties: values set on the preview element's style.",
-      ['CSS custom properties', 'Syntax', 'Default', 'Description', 'Control / current value'],
+      'CSS custom properties declared by the component.',
+      heads,
       facts.cssProperties.map((entry) => {
         const value = styles[entry.name];
         return html`<tr data-css=${entry.name}>
-          ${named(entry.name, undefined)}
+          <th scope="row" data-label="Name"><code>${entry.name}</code></th>
           <td data-label="Syntax">${entry.type ?? 'Unknown'}</td>
           <td data-label="Default">${entry.default ?? 'Unknown'}</td>
-          <td data-label="Description" colspan="2">
+          <td data-label="Description" colspan=${editable ? '2' : null}>
             ${entry.description ? inline(entry.description) : html`<span class="wb-not-documented">Not documented</span>`}
           </td>
-          <td data-label="Control">
-            ${
-              isCustomPropertyName(entry.name)
-                ? html`<div class="wb-cell-controls">
-                    <input
-                      type="text"
-                      aria-label=${`${entry.name} value`}
-                      .value=${value ?? ''}
-                      @input=${(event: Event) => {
-                        const text = (event.target as HTMLInputElement).value;
-                        this.#writeStyle(entry.name, text === '' ? null : text);
-                      }}
-                    />
-                  </div>`
-                : html`<span class="wb-muted">Not editable: not a custom property name.</span>`
-            }
-          </td>
+          ${
+            editable
+              ? html`<td data-label="Control">
+                  ${
+                    isCustomPropertyName(entry.name)
+                      ? html`<div class="wb-cell-controls">
+                          <input
+                            type="text"
+                            aria-label=${`${entry.name} value`}
+                            .value=${value ?? ''}
+                            @input=${(event: Event) => {
+                              const text = (event.target as HTMLInputElement).value;
+                              this.#writeStyle(entry.name, text === '' ? null : text);
+                            }}
+                          />
+                        </div>`
+                      : html`<span class="wb-muted"
+                          >Not editable: not a custom property name.</span
+                        >`
+                  }
+                </td>`
+              : nothing
+          }
         </tr>`;
       }),
     );
