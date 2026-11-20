@@ -4,6 +4,7 @@ import { flush } from '@oddkin/core/reactive';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { scopeStats } from '@oddkin/core/scope';
 import { mountExample, type MountedExample } from '@oddkin/workbench/testing';
+import badge from '../src/badge/badge.examples.js';
 import button from '../src/button/button.examples.js';
 import card from '../src/card/card.examples.js';
 import input from '../src/input/input.examples.js';
@@ -40,6 +41,13 @@ async function mount<E extends Element>(
 const output = (root: Element) => expect.poll(() => root.querySelector('output')!.value);
 
 describe('authored examples', () => {
+  it('mounts Badge examples with their authored CSS declarations', async () => {
+    const { element: pill } = await mount(badge, 'pill');
+    expect(pill.style.getPropertyValue('--odd-badge-radius')).toBe('var(--odd-radius-full)');
+    const { element: wrapping } = await mount(badge, 'wrapping');
+    expect(wrapping.style.inlineSize).toBe('112px');
+  });
+
   it('each example mounts with its properties, attributes, and slots, then releases everything', async () => {
     for (const set of Object.values(exampleSets)) {
       for (const [name, example] of Object.entries(set.examples)) {

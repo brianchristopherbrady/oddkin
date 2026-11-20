@@ -259,11 +259,15 @@ const EMPTY_STATE: PreviewState = { preset: 'default', attributes: {}, propertie
 function stateFrom(name: string, values: Record<string, unknown>): PreviewState | undefined {
   const props = isRecord(values['props']) ? values['props'] : {};
   const attributes = isRecord(values['attributes']) ? values['attributes'] : {};
+  const styles = isRecord(values['styles']) ? values['styles'] : {};
   const slots = isRecord(values['slots']) ? values['slots'] : {};
   if (!isJsonValue(props)) return undefined;
   const stringAttributes: Record<string, string> = {};
   for (const [key, value] of Object.entries(attributes))
     if (typeof value === 'string') stringAttributes[key] = value;
+  const stringStyles: Record<string, string> = {};
+  for (const [key, value] of Object.entries(styles))
+    if (typeof value === 'string') stringStyles[key] = value;
   const stringSlots: Record<string, string> = {};
   for (const [key, value] of Object.entries(slots))
     if (typeof value === 'string') stringSlots[key === 'default' ? '' : key] = value;
@@ -272,6 +276,7 @@ function stateFrom(name: string, values: Record<string, unknown>): PreviewState 
     attributes: stringAttributes,
     properties: props as Record<string, JsonValue>,
     slots: stringSlots,
+    ...(Object.keys(stringStyles).length ? { styles: stringStyles } : {}),
   };
 }
 

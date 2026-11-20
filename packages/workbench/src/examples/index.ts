@@ -47,6 +47,8 @@ export interface ExampleDefinition<E extends Element = HTMLElement> {
   /** Property values, checked against the element type (TypeScript) or metadata (checkExamples). */
   readonly props?: ElementProps<E>;
   readonly attributes?: Readonly<Record<string, string | null>>;
+  /** CSS declarations applied to the example element through the CSSOM. */
+  readonly styles?: Readonly<Record<string, string>>;
   /** Plain-text slot content keyed by slot name; `default` is the default slot. */
   readonly slots?: Readonly<Record<string, string>>;
   readonly previewRoles?: readonly string[];

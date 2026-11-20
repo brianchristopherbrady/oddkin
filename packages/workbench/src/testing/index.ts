@@ -118,7 +118,7 @@ export interface MountedExample<E extends Element> {
 
 /**
  * Mount one authored example the way a preview frame does: create the registered element, set
- * its attributes, properties, and slot text, connect it, then run its fixture. The tag (and any
+ * its attributes, properties, styles, and slot text, connect it, then run its fixture. The tag (and any
  * element the fixture uses) must already be registered.
  */
 export async function mountExample<E extends Element>(
@@ -135,10 +135,12 @@ export async function mountExample<E extends Element>(
   const root = document.createElement('div');
   root.dataset['example'] = id;
   container.append(root);
-  const element = document.createElement(set.component) as unknown as E;
+  const element = document.createElement(set.component) as HTMLElement & E;
   for (const [attribute, value] of Object.entries(example.attributes ?? {}))
     if (value !== null) element.setAttribute(attribute, value);
   Object.assign(element, example.props ?? {});
+  for (const [property, value] of Object.entries(example.styles ?? {}))
+    element.style.setProperty(property, value);
   for (const [slot, text] of Object.entries(example.slots ?? {})) {
     if (slot === 'default') element.append(text);
     else {

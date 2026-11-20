@@ -19,6 +19,7 @@
           "label": { "type": "string" },
           "props": { "type": "object" },
           "attributes": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+          "styles": { "type": "object", "additionalProperties": { "type": "string" }, "description": "CSS declarations applied to the example element through the CSSOM" },
           "slots": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Plain text slot content keyed by slot name ('default' for the default slot)" },
           "previewRoles": { "type": "array", "items": { "type": "string" } },
           "preset": { "type": "boolean", "description": "Offered as a preset on the component detail page" },

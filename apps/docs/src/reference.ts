@@ -73,6 +73,7 @@ interface ExampleValues {
   attributes: Json;
   properties: Json;
   slots: Json;
+  styles: Json;
 }
 
 /** An authored example's values (`definition`), with or without a fixture. */
@@ -84,6 +85,7 @@ function definitionValues(example: Json | undefined): ExampleValues | undefined 
     attributes: record(definition['attributes']),
     properties: record(definition['props']),
     slots: record(definition['slots']),
+    styles: record(definition['styles']),
   };
 }
 
@@ -127,7 +129,7 @@ export const previewExample = (page: ComponentPageData): PreviewExample | undefi
 
 /**
  * A component's example as an element: its registration loaded, then the example's attributes,
- * properties, and slot text. Undefined when the component has no registration.
+ * properties, slot text, and CSS overrides. Undefined when the component has no registration.
  */
 async function exampleElement(
   page: ComponentPageData,
@@ -140,6 +142,9 @@ async function exampleElement(
   for (const [name, value] of Object.entries(values.attributes))
     if (typeof value === 'string') element.setAttribute(name, value);
   for (const [name, value] of Object.entries(values.properties)) Reflect.set(element, name, value);
+  // Apply authored overrides through CSSOM under the docs style policy.
+  for (const [name, value] of Object.entries(values.styles))
+    if (typeof value === 'string') element.style.setProperty(name, value);
   for (const [slot, text] of Object.entries(values.slots)) {
     if (typeof text !== 'string') continue;
     if (slot === 'default') element.append(text);
@@ -355,6 +360,7 @@ async function drawOverlay(
     example: `example:${page.tag}/${example.name}`,
     properties: example.values.properties as Record<string, JsonValue>,
     attributes: strings(example.values.attributes),
+    styles: strings(example.values.styles),
     // The frame names the default slot ''.
     slots: Object.fromEntries(
       Object.entries(strings(example.values.slots)).map(([name, text]) => [

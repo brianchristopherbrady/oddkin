@@ -42,21 +42,17 @@ export default defineExamples('odd-badge', {
   pill: {
     label: 'Pill radius',
     props: { tone: 'info' },
+    styles: { '--odd-badge-radius': 'var(--odd-radius-full)' },
     slots: { default: 'Beta' },
     guidance: 'Set --odd-badge-radius: var(--odd-radius-full) on the badge to use the pill radius.',
-    fixture({ element }) {
-      element.style.setProperty('--odd-badge-radius', 'var(--odd-radius-full)');
-    },
   },
   wrapping: {
     label: 'Narrow status',
     props: { tone: 'warning' },
+    styles: { 'inline-size': '112px' },
     slots: { default: 'Waiting for accessibility review' },
     guidance:
       'The label wraps within this 112 px grant and the marker stays beside its first line. The parent owns the row and any adjacent actions.',
-    fixture({ element }) {
-      element.style.inlineSize = '112px';
-    },
   },
   colorOnly: {
     label: 'Unknown tone "error"',
