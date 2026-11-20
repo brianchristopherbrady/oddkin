@@ -17,15 +17,17 @@ const commands = [
   },
 ];
 
+const palette = {
+  label: 'Command palette',
+  placeholder: 'Search commands and projects…',
+  items: commands,
+};
+
 export default defineExamples('odd-command-palette', {
   default: {
     label: 'Commands and projects',
     previewRoles: ['commandPalette'],
-    props: {
-      label: 'Command palette',
-      placeholder: 'Search commands and projects…',
-      items: commands,
-    },
+    props: palette,
     recommended: true,
     preset: true,
     guidance:
@@ -43,7 +45,7 @@ export default defineExamples('odd-command-palette', {
   },
   open: {
     label: 'Open',
-    props: { label: 'Command palette', items: commands, open: true },
+    props: { ...palette, open: true },
     preset: true,
   },
   serverSearch: {

@@ -367,7 +367,9 @@ test.describe('Workbench shell', () => {
       ).toHaveValue('hello');
     });
 
-    test('applies edits made while the preview loads, and follows typing', async ({ page }) => {
+    test('applies edits made while the preview loads and keeps authored slot content', async ({
+      page,
+    }) => {
       // The owner's report (2026-10-28): an edit made before the first preview had loaded its
       // module graph was lost. The button's registration is held back 2 s to make that window.
       await page.route('**/define/button.js', async (route) => {
@@ -389,9 +391,10 @@ test.describe('Workbench shell', () => {
         .locator('odd-button');
       await expect(button).toHaveAttribute('appearance', 'primary', { timeout: 20_000 });
       await expect(button).toHaveAttribute('size', 'sm');
-      // Typing updates the preview without leaving the field.
-      await page.locator('tr[data-slot=""] input').fill('Publish');
-      await expect(button).toHaveText('Publish');
+      // Slots are documented; the preview keeps the authored example's content.
+      await expect(page.locator('tr[data-slot=""]')).toBeVisible();
+      await expect(page.locator('tr[data-slot=""] input')).toHaveCount(0);
+      await expect(button).toHaveText('Save');
       await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });
 
@@ -428,7 +431,7 @@ test.describe('Workbench shell', () => {
       await expect(page.locator('.wb-snippet')).toContainText(
         'element.style.setProperty("--odd-button-background", "rgb(1, 2, 3)");',
       );
-      await row.getByRole('button', { name: 'Unset' }).click();
+      await row.getByRole('textbox').fill('');
       await expect.poll(background, { timeout: 10_000 }).not.toBe('rgb(1, 2, 3)');
       await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });

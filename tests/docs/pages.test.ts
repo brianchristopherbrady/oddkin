@@ -509,7 +509,7 @@ describe('catalog previews', () => {
     const options = { props: { options: [{ value: 'a', label: 'A' }] } };
     expect(previewExample(page(example('default', { props: { label: 'Role' } })))).toEqual({
       name: 'default',
-      values: { attributes: {}, properties: { label: 'Role' }, slots: {} },
+      values: { attributes: {}, properties: { label: 'Role' }, slots: {}, styles: {} },
       fixture: false,
     });
     expect(previewExample(page(example('default', { hasFixture: true })))).toMatchObject({
@@ -526,6 +526,25 @@ describe('catalog previews', () => {
     expect(fallback).toMatchObject({ name: 'fromData', fixture: true });
     expect(fallback?.values.properties).toEqual(options.props);
     expect(previewExample(page(example('open', { props: { open: true } })))).toBeUndefined();
+  });
+
+  it('prefers a fixture-free open example for an isolated overlay preview', () => {
+    const launcher = example('default', { hasFixture: true });
+    const open = example('open', { props: { open: true } });
+    const loading = example('loading', { props: { open: true, loading: true } });
+    const commandPalette = (...examples: ReturnType<typeof example>[]) => ({
+      ...page(launcher, loading, ...examples),
+      tag: 'odd-command-palette',
+    });
+    expect(previewExample(commandPalette(open))).toMatchObject({ name: 'open', fixture: false });
+    for (const variant of [
+      example('open', { ...open.definition, hasFixture: true }),
+      example('open', { ...open.definition, incorrect: { explanation: 'No.' } }),
+    ])
+      expect(previewExample(commandPalette(variant))).toMatchObject({
+        name: 'default',
+        fixture: true,
+      });
   });
 });
 

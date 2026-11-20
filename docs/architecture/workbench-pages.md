@@ -110,7 +110,7 @@ Built first, from the library's actual spacing contracts:
 
 Each component's documentation and interactive controls live on its detail page. There is no "Open in playground" hand-off and no separate Playground destination.
 
-*(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. The API table writes one property or attribute per change exactly as declared; types it cannot edit generically say "Requires fixture"; read-only fields are inspect-only. Slots have text editors; declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
+*(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. The API table writes one property or attribute per change exactly as declared; types it cannot edit generically say "Requires fixture"; read-only fields are inspect-only. Slots have a static reference table. Declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
 
 ### 7.1 Section order (every section shown; missing items labelled)
 
@@ -143,11 +143,11 @@ The primary control surface; there is no second controls table or duplicate prop
 | Description | From metadata, with provenance marker |
 
 - At narrow widths, rows become stacked cards with the same fields.
-- All workbench.md §4 control contracts apply unchanged: property vs attribute, boolean presence, `''` / `0` / `false` / `null` / unset / unknown, optional/nullable/read-only, schema-backed arrays and objects, fixtures/adapters, no reflection loops, sync only via declared contracts.
+- See [the control contracts](./workbench.md#4-controls) for assignment modes, boolean presence, explicit null values, clearing a field, read-only values, and declared sync behavior.
 
 ### 7.3 Slots and composition
 
-- Default and named slots listed from the component's real contract, each with a text editor for simple content and a fixture picker for richer compositions (from `defineExamples`).
+- The Slots table lists the default and named slots with their documented descriptions. Authored examples and fixtures supply the slot content in the preview.
 - No invented `children`-style properties: React `children`/`ReactNode` concepts from the reference become the component's actual slots, properties, and fixtures.
 
 ### 7.4 Preview, settings, code, and layout

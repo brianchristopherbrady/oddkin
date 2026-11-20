@@ -156,7 +156,21 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await page.keyboard.press('ArrowRight');
   await expect(tabs.getByRole('tab', { name: 'Controls' })).toBeFocused();
   await expect(headings).toHaveText(['Interactive example', 'Reference']);
+  await expect(controls.getByRole('button', { name: 'Unset', exact: true })).toHaveCount(0);
+  const slots = controls.locator('[data-table="slots"]');
+  await expect(slots.getByRole('rowheader', { name: 'default', exact: true })).toBeVisible();
+  await expect(slots.locator('input, textarea, select, button')).toHaveCount(0);
+  const field = controls.getByRole('textbox', { name: /^name \(/ });
+  const liveButton = buttonPanel.frameLocator('iframe').first().locator('odd-button');
+  const liveName = () =>
+    liveButton.evaluate((element: HTMLElementTagNameMap['odd-button']) => element.name);
+  await field.fill('submit-project');
+  await expect.poll(liveName).toBe('submit-project');
+  await field.clear();
+  await expect.poll(liveName).toBe('');
+  await expect(liveButton).toHaveText('Save');
   await expect(page).toHaveURL(`${docs}/components/odd-button#controls`);
+  await tabs.getByRole('tab', { name: 'Controls' }).focus();
   await page.keyboard.press('End');
   await expect(headings).toHaveText(['Accessibility', 'Known limitations']);
   await tabs.getByRole('tab', { name: 'Examples' }).click();
@@ -454,6 +468,66 @@ test('serves llms.txt, linking the agent kits under its own address', async ({ r
   expect(guide.headers()['content-type']).toContain('text/markdown');
 });
 
+test('the Table and Command Palette thumbnails fit at desktop and phone widths', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${docs}/components`);
+    const catalog = page.locator('oddkin-catalog-panel');
+    const preview = (tag: string) =>
+      catalog.locator(`li:has(a[href="/components/${tag}"]) .wb-card-preview`);
+
+    const tablePreview = preview('odd-table');
+    await tablePreview.scrollIntoViewIfNeeded();
+    const table = tablePreview.locator('odd-table table');
+    await expect(table.locator('tbody tr')).toHaveCount(4);
+    await expect
+      .poll(() =>
+        tablePreview.evaluate((header) => {
+          const example = header
+            .querySelector('.catalog-preview')
+            ?.shadowRoot?.querySelector('odd-table');
+          const actual = example?.shadowRoot?.querySelector('table');
+          if (!actual) return false;
+          const rect = actual.getBoundingClientRect();
+          const frame = header.getBoundingClientRect();
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.top >= frame.top &&
+            rect.bottom <= frame.bottom &&
+            rect.left >= frame.left &&
+            rect.right <= frame.right &&
+            Array.from(actual.querySelectorAll('thead th')).every((cell) => {
+              const range = actual.ownerDocument.createRange();
+              const label = cell.querySelector('.label') ?? cell;
+              range.selectNodeContents(label);
+              return (
+                Array.from(range.getClientRects()).filter((line) => line.width > 0).length === 1
+              );
+            })
+          );
+        }),
+      )
+      .toBe(true);
+
+    const palettePreview = preview('odd-command-palette');
+    await palettePreview.scrollIntoViewIfNeeded();
+    const frame = palettePreview.frameLocator('iframe');
+    await expect(frame.locator('odd-command-palette dialog[open]')).toBeVisible();
+    await expect(frame.locator('odd-command-palette [part="item"]').first()).toContainText(
+      'New project',
+    );
+    await expect(frame.locator('[data-oddkin-preview] > odd-button')).toHaveCount(0);
+  }
+  await page.locator('.mode-toggle').click();
+  await expect(
+    page.frameLocator('iframe[title="odd-command-palette example"]').locator('html'),
+  ).toHaveAttribute('data-odd-mode', 'dark');
+});
+
 test('every catalog card shows a live example', async ({ page }) => {
   // Every card in turn (79 on 2026-11-05): Firefox took 21 to 29 s, and over 30 s on a loaded
   // machine, too close to the default 30 s; each new card and fixture adds to it.
@@ -474,10 +548,22 @@ test('every catalog card shows a live example', async ({ page }) => {
       return link?.getAttribute('href')?.split('/').pop();
     });
     await expect
-      .poll(() => preview.evaluate((host) => host.shadowRoot?.childElementCount ?? 0), {
-        message: `the ${card ?? `card ${i + 1}`} card draws its example`,
-        timeout: catalogLoad,
-      })
+      .poll(
+        () =>
+          preview.evaluate((host) => {
+            const root = host.shadowRoot;
+            const stage = root?.querySelector<HTMLElement>('[data-preview-stage]');
+            return stage
+              ? stage.style.visibility === 'hidden'
+                ? 0
+                : stage.childElementCount
+              : (root?.childElementCount ?? 0);
+          }),
+        {
+          message: `the ${card ?? `card ${i + 1}`} card draws its example`,
+          timeout: catalogLoad,
+        },
+      )
       .toBeGreaterThan(0);
   }
 });

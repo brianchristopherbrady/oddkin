@@ -10,7 +10,7 @@ A generated Workbench provides (information architecture and page contracts: [wo
 - **Components** catalog (search, category filter, counts, URL state) and component detail pages that combine documentation with the interactive example and an editable API table. There is no separate Playground destination.
 - **Theme Studio** as its own primary destination.
 - Optional **Products and modes** page (disabled by default).
-- Interactive property, attribute, slot, and CSS-custom-property controls; event inspection; reproducible plain HTML/JS snippets.
+- Interactive property, attribute, and CSS custom property controls, with slot documentation, event inspection, and reproducible HTML and JavaScript snippets.
 - Token search, alias chains, provenance, and computed-value inspection.
 - Previews across components, compositions, theme, density, direction, viewport, and container sizes.
 - Docs for recipes, variants, responsive profiles, and data models.
@@ -88,15 +88,15 @@ These contracts govern the **Current value** column of the editable API table on
 | --- | --- |
 | Boolean property | Checkbox writes `el.prop = true/false` |
 | Boolean attribute | Toggles presence (`setAttribute(name, '')` / `removeAttribute`) — distinct from the property |
-| String | Text field; distinguishes empty string `''` from **unset** (explicit "unset" affordance removes the attribute / deletes the assignment) |
+| String | Text field. Clearing it removes the attribute or property assignment. Authored presets can still supply an explicit empty string. |
 | Number (constrained) | Number field with min/max/step from metadata; `0` is a value, not unset |
-| Enum / literal union | Select or segmented control |
-| Optional / nullable | Explicit `undefined` (unset) vs `null` options when the contract allows each |
+| Enum / literal union | Select with a blank option that clears the assignment |
+| Optional / nullable | A blank field clears the assignment. The control can assign `null` when the property contract allows it. |
 | Read-only | Inspect only; displayed live, never editable |
 | Array / object with model | Model-generated editor (data-composition.md §5) with validation |
 | Function, DOM node, class instance, template result | Not editable generically; requires a fixture or adapter (§7) — shown as "requires fixture" |
-| Default / named slots | Text or limited-markup slot editors producing light-DOM children; complex children via fixtures |
-| CSS custom properties | Value field per declared custom property (the manifest's `syntax` and `default` beside it): typing sets it on the element with `style.setProperty`, empty or Unset removes it; snippets and share links carry the values. A name without the leading `--` is listed but not editable. Not built yet: a token-reference picker |
+| Default / named slots | Static names and descriptions. Examples and fixtures supply the light DOM shown in the preview. |
+| CSS custom properties | The value field sets the property with `style.setProperty`. Clearing the field removes the property. Snippets and share links carry the values. A name without the leading `--` is listed without an editor. |
 
 Rules:
 - Assign properties or serialize attributes exactly per contract (property vs attribute, converter). One write per change; reflected attributes are not written back by the control (no reflection loops).

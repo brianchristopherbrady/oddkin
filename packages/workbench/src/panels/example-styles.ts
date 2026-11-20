@@ -182,6 +182,9 @@ export const exampleStyles = css`
   .wb-content .wb-api col:nth-child(5) {
     inline-size: 10%;
   }
+  .wb-content .wb-api[data-table='slots'] col:nth-child(2) {
+    inline-size: auto;
+  }
   .wb-content .wb-api select,
   .wb-content .wb-api input:is([type='text'], [type='number']) {
     inline-size: 100%;

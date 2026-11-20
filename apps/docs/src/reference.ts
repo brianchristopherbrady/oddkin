@@ -112,20 +112,32 @@ export interface PreviewExample {
   readonly fixture: boolean;
 }
 
-/** A correct example that opens nothing, as a preview draws it. */
-function previewable(example: Json | undefined): PreviewExample | undefined {
+/** A correct example with enough metadata to draw. */
+function previewSpec(example: Json | undefined): PreviewExample | undefined {
   if (!example || incorrect(example)) return undefined;
-  const values = opensNothing(definitionValues(example));
+  const values = definitionValues(example);
   const name = example['name'];
   if (!values || typeof name !== 'string') return undefined;
   const definition = example['definition'] as Json;
   return { name, values, fixture: definition['hasFixture'] === true };
 }
 
-/** A catalog card's example: the `default` one, or else the first correct one that opens nothing. */
-export const previewExample = (page: ComponentPageData): PreviewExample | undefined =>
-  previewable(page.examples.find((example) => example['name'] === 'default')) ??
-  page.examples.map(previewable).find((example) => example !== undefined);
+function previewable(example: Json | undefined): PreviewExample | undefined {
+  const preview = previewSpec(example);
+  return preview && opensNothing(preview.values) ? preview : undefined;
+}
+
+/** A catalog card can use an overlay's self-contained `open` preset in its isolated frame. */
+export function previewExample(page: ComponentPageData): PreviewExample | undefined {
+  if (OVERLAYS.has(page.tag)) {
+    const open = previewSpec(page.examples.find((example) => example['name'] === 'open'));
+    if (open && !open.fixture && !opensNothing(open.values)) return open;
+  }
+  return (
+    previewable(page.examples.find((example) => example['name'] === 'default')) ??
+    page.examples.map(previewable).find((example) => example !== undefined)
+  );
+}
 
 /**
  * A component's example as an element: its registration loaded, then the example's attributes,
@@ -243,7 +255,7 @@ async function runFixture(
   page: ComponentPageData,
   name: string,
   element: HTMLElement,
-  root: ShadowRoot,
+  root: ShadowRoot | HTMLElement,
 ): Promise<void> {
   if (!page.exampleModule) return;
   const module = (await import(page.exampleModule)) as ExampleModule;
@@ -299,13 +311,49 @@ async function drawExample(
   page: ComponentPageData,
   example: PreviewExample,
   host: HTMLElement,
-  root: ShadowRoot,
+  root: ShadowRoot | HTMLElement,
 ): Promise<void> {
   const element = await exampleElement(page, example.values);
   if (!element) return;
   if (FILL.has(page.tag)) host.style.inlineSize = '100%';
   root.replaceChildren(element);
   if (example.fixture) await runFixture(page, example.name, element, root);
+}
+
+// These previews have side-by-side content that needs room before it scales.
+const CATALOG_MIN_INLINE_SIZE: Readonly<Record<string, string>> = {
+  'odd-split-panel': '32rem',
+  'odd-tabs': '24rem',
+};
+
+/** Keep the example's layout width and fit its rendered box inside the padded thumbnail. */
+async function drawCatalogExample(
+  page: ComponentPageData,
+  example: PreviewExample,
+  host: HTMLElement,
+  root: ShadowRoot,
+): Promise<void> {
+  host.style.cssText += ';position:relative;inline-size:100%;block-size:100%;min-inline-size:0';
+  const stage = document.createElement('div');
+  stage.dataset['previewStage'] = '';
+  stage.style.cssText =
+    'position:absolute;left:50%;top:50%;display:flow-root;inline-size:max-content;visibility:hidden';
+  stage.style.minInlineSize = CATALOG_MIN_INLINE_SIZE[page.tag] ?? '';
+  root.replaceChildren(stage);
+  await drawExample(page, example, stage, stage);
+
+  const fit = () => {
+    const { clientWidth, clientHeight } = host;
+    const { offsetWidth, offsetHeight } = stage;
+    if (!clientWidth || !clientHeight || !offsetWidth || !offsetHeight) return;
+    const scale = Math.min(1, clientWidth / offsetWidth, clientHeight / offsetHeight);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    stage.style.visibility = '';
+  };
+  const resized = new ResizeObserver(fit);
+  resized.observe(host);
+  resized.observe(stage);
+  fit();
 }
 
 /** Overlays open in the top layer, outside any card: their cards show them open in a frame. */
@@ -349,7 +397,25 @@ async function drawOverlay(
     frameUrl: FRAME_URL,
     title: `${page.tag} example`,
   });
-  framesOf.set(host, preview);
+  const pageRoot = document.documentElement;
+  const readMode = (): 'light' | 'dark' | undefined => {
+    const mode = pageRoot.dataset['oddMode'];
+    return mode === 'dark' || mode === 'light' ? mode : undefined;
+  };
+  let mode = readMode();
+  const syncMode = () => {
+    const next = readMode();
+    if (!host.isConnected || next === mode) return;
+    mode = next;
+    void preview.request('settings', mode ? { mode } : {}).catch(reportError);
+  };
+  const modeChanges = new MutationObserver(syncMode);
+  framesOf.set(host, {
+    dispose() {
+      modeChanges.disconnect();
+      preview.dispose();
+    },
+  });
   // Read by src/frame.ts before the example mounts: the frame keeps its size and takes no focus.
   preview.iframe.dataset['still'] = '';
   preview.iframe.style.cssText =
@@ -369,9 +435,12 @@ async function drawOverlay(
       ]),
     ),
     ...(example.fixture && page.exampleModule ? { fixture: page.exampleModule } : {}),
+    ...(mode ? { settings: { mode } } : {}),
   };
   await preview.request('mount', mount);
   await preview.request('set', { property: 'open', value: true });
+  modeChanges.observe(pageRoot, { attributeFilter: ['data-odd-mode'] });
+  syncMode();
 }
 
 /**
@@ -386,7 +455,7 @@ export function catalogPreviews(index: WorkbenchIndex): (entry: PageEntry) => No
           const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
           const example = page && previewExample(page);
           if (!page || !example) return;
-          const draw = OVERLAYS.has(page.tag) ? drawOverlay : drawExample;
+          const draw = OVERLAYS.has(page.tag) ? drawOverlay : drawCatalogExample;
           await draw(page, example, into, root);
         })
       : undefined;

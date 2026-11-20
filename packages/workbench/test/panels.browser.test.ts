@@ -334,11 +334,16 @@ describe('<oddkin-component-panel>', () => {
       ),
     ).toEqual([
       'Properties | Types | Default | Attribute | Reflected | Control / current value',
-      'Slots | Content type | Default | Name | Position | Control / current content',
+      'Slots | Description',
       'CSS custom properties | Syntax | Default | Description | Control / current value',
     ]);
     expect(row('open').querySelector('th small')?.textContent).toBe('Open.');
     expect(row('tone').querySelector('select')?.value).toBe('');
+    const slots = root.querySelector('[data-table="slots"]')!;
+    expect(
+      slots.querySelector('[data-slot=""] [data-label="Description"]')?.textContent?.trim(),
+    ).toBe('Content.');
+    expect(slots.querySelector('input, select, textarea, button')).toBeNull();
     expect(row('renderer').textContent).toContain('Requires fixture');
     expect(row('form').textContent).toContain('Read-only');
     expect(row('form').querySelector('input, select, textarea')).toBeNull();
@@ -545,16 +550,15 @@ describe('<oddkin-component-panel>', () => {
     row('open').querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
     expect(await writesAfter(probe, start, 1)).toEqual(['prop open=true']);
 
-    // '' is a value; Unset removes the attribute.
+    // Text updates the attribute; clearing the field removes it.
     start = probe()!.writes.length;
-    change(row('label').querySelector<HTMLInputElement>('input[type="text"]')!, '');
-    expect(await writesAfter(probe, start, 1)).toEqual(['attr label=""']);
-    expect(row('label').textContent).toContain('empty string');
+    const labelField = () => row('label').querySelector<HTMLInputElement>('input[type="text"]')!;
+    change(labelField(), 'Edited');
+    expect(await writesAfter(probe, start, 1)).toEqual(['attr label="Edited"']);
     start = probe()!.writes.length;
-    [...row('label').querySelectorAll('button')]
-      .find((b) => b.textContent?.trim() === 'Unset')!
-      .click();
+    change(labelField(), '');
     expect(await writesAfter(probe, start, 1)).toEqual(['attr label=null']);
+    expect(row('label').querySelector('button, input[placeholder]')).toBeNull();
 
     // 0 is a number, not unset; a nullable property can be set to null.
     change(
@@ -575,11 +579,10 @@ describe('<oddkin-component-panel>', () => {
       .find((b) => b.textContent?.trim() === 'Set null')!
       .click();
     expect(await writesAfter(probe, start, 1)).toEqual(['prop label=null']);
-    // Unsetting a property cannot un-assign it: a clean instance is mounted without it.
+    expect(labelField().value).toBe('null');
+    // Clearing a property mounts a clean instance without that assignment.
     const assigned = probe();
-    [...row('label').querySelectorAll('button')]
-      .find((b) => b.textContent?.trim() === 'Unset')!
-      .click();
+    change(labelField(), '');
     await until(() => probe() !== assigned && !!probe()?.isConnected, 'a clean instance');
     expect(probe()!.writes).toEqual(['prop open=true', 'prop count=0']);
 
@@ -600,14 +603,8 @@ describe('<oddkin-component-panel>', () => {
     await new Promise((r) => setTimeout(r, 50));
     expect(probe()!.writes.length).toBe(start);
 
-    // Slot editors write light-DOM text, nothing else.
-    start = probe()!.writes.length;
-    change(root.querySelector<HTMLInputElement>('tr[data-slot="end"] input')!, 'After');
-    await until(
-      () => probe()!.querySelector('[slot="end"]')?.textContent === 'After',
-      'the end slot',
-    );
-    expect(probe()!.writes.length).toBe(start);
+    // The preview still uses its example's authored slot content.
+    expect(probe()!.textContent).toBe('Hello');
 
     // The snippet reproduces the configuration with public imports and property assignments.
     // It stays hidden until "See code" expands it.
@@ -631,7 +628,16 @@ describe('<oddkin-component-panel>', () => {
     expect(code).toContain('element.count = 0;');
     expect(code).not.toContain('element.label');
     expect(code).toContain("element.addEventListener('wb-ping'");
-    expect(code).toContain('<span slot="end">After</span>');
+    expect(code).toMatch(/<wb-probe[^>]*>\s*Hello\s*<\/wb-probe>/);
+
+    const configured = probe();
+    change(row('items').querySelector('textarea')!, '');
+    await until(
+      () => probe() !== configured && !!probe()?.isConnected,
+      'an instance without items',
+    );
+    expect(probe()!.writes.some((write) => write.startsWith('prop items='))).toBe(false);
+    expect(row('items').querySelector('[role="alert"]')).toBeNull();
   });
 
   it("runs a fixture example from the page's example module", async () => {
@@ -694,20 +700,16 @@ describe('<oddkin-component-panel>', () => {
     // The mount is out; its registration takes 1.5 s more to load.
     expect(probe()).toBeFalsy();
     change(row('label').querySelector<HTMLInputElement>('input[type="text"]')!, 'Early');
-    change(root.querySelector<HTMLInputElement>('tr[data-slot="end"] input')!, 'After');
     await until(() => !!probe()?.isConnected, 'the probe preview');
     await until(() => probe()!.writes.length === 2, 'the two attribute writes');
     // Each edit reaches the mounted element, in order.
     expect(probe()!.writes).toEqual(['attr tone="loud"', 'attr label="Early"']);
-    await until(
-      () => probe()!.querySelector('[slot="end"]')?.textContent === 'After',
-      'the end slot',
-    );
+    expect(probe()!.textContent).toBe('Hello');
     expect(root.querySelector('.wb-status')?.textContent?.trim()).toBe('');
   });
 
   it('follows text fields as the reader types', async () => {
-    const { probe, row, root } = componentPanel();
+    const { panel, probe, row, change } = componentPanel();
     await until(() => !!probe()?.isConnected, 'the probe preview');
     const field = row('label').querySelector<HTMLInputElement>('input[type="text"]')!;
     for (const text of ['H', 'Hi']) {
@@ -716,42 +718,28 @@ describe('<oddkin-component-panel>', () => {
     }
     await until(() => probe()!.getAttribute('label') === 'Hi', 'the typed attribute');
     expect(probe()!.writes).toEqual(['attr label="H"', 'attr label="Hi"']);
-    const slot = root.querySelector<HTMLInputElement>('tr[data-slot=""] input')!;
-    slot.value = 'Typed';
-    slot.dispatchEvent(new Event('input', { bubbles: true }));
-    await until(() => probe()!.textContent === 'Typed', 'the typed slot');
-    // A number field writes once its text is a number, and says why it waits otherwise.
+    // A number field writes once its text is a number, and clears on empty.
     const count = row('count').querySelector<HTMLInputElement>('input[type="number"]')!;
-    count.value = '';
-    count.dispatchEvent(new Event('input', { bubbles: true }));
-    count.dispatchEvent(new Event('change', { bubbles: true }));
-    // An empty attribute is a value.
-    await until(() => probe()!.writes.at(-1) === 'attr count=""', 'the empty count attribute');
-    expect(row('count').querySelector('[role="alert"]')).toBeNull();
-    count.value = '5';
-    count.dispatchEvent(new Event('input', { bubbles: true }));
+    change(count, '5');
     await until(() => probe()!.writes.at(-1) === 'attr count="5"', 'the typed count attribute');
-    // As a property, a field that is not a number yet writes nothing and says why when committed.
+    change(count, '');
+    await until(() => probe()!.writes.at(-1) === 'attr count=null', 'the removed count attribute');
+    expect(row('count').querySelector('[role="alert"]')).toBeNull();
+    // As a property, entering zero assigns it and clearing removes the assignment.
     const mode = row('count').querySelector<HTMLSelectElement>(
       'select[aria-label="Write count as"]',
     )!;
-    mode.value = 'property';
-    mode.dispatchEvent(new Event('change', { bubbles: true }));
+    change(mode, 'property');
     await settled();
     const before = probe()!.writes.length;
     const number = row('count').querySelector<HTMLInputElement>('input[type="number"]')!;
-    number.value = '';
-    number.dispatchEvent(new Event('input', { bubbles: true }));
-    number.dispatchEvent(new Event('change', { bubbles: true }));
-    await settled();
-    expect(row('count').querySelector('[role="alert"]')?.textContent).toContain(
-      'Not written: enter a number',
-    );
-    number.value = '7';
-    number.dispatchEvent(new Event('input', { bubbles: true }));
-    await until(() => probe()!.writes.at(-1) === 'prop count=7', 'the typed number');
+    change(number, '0');
+    await until(() => probe()!.writes.at(-1) === 'prop count=0', 'the typed number');
     expect(probe()!.writes.length).toBe(before + 1);
-    await settled();
+    const assigned = probe();
+    change(number, '');
+    await until(() => probe() !== assigned && !!probe()?.isConnected, 'an instance without count');
+    expect(panel.previewState.properties).not.toHaveProperty('count');
     expect(row('count').querySelector('[role="alert"]')).toBeNull();
   });
 
@@ -899,8 +887,7 @@ describe('<oddkin-component-panel>', () => {
     expect(css('color').querySelector('input')).toBeNull();
     expect(css('color').textContent).toContain('Not editable: not a custom property name.');
     const field = css('--wb-probe-accent').querySelector<HTMLInputElement>('input')!;
-    const unset = css('--wb-probe-accent').querySelector('button')!;
-    expect(unset.disabled).toBe(true);
+    expect(css('--wb-probe-accent').querySelector('button')).toBeNull();
     for (const text of ['t', 'teal']) {
       field.value = text;
       field.dispatchEvent(new Event('input', { bubbles: true }));
@@ -911,7 +898,6 @@ describe('<oddkin-component-panel>', () => {
     expect(first.probe()!.writes).toEqual([]);
     expect(first.panel.previewState.styles).toEqual({ '--wb-probe-accent': 'teal' });
     await settled();
-    expect(unset.disabled).toBe(false);
     first.root.querySelector<HTMLButtonElement>('button[aria-controls="wb-example-code"]')!.click();
     await settled();
     expect(first.root.querySelector('.wb-snippet')?.textContent).toContain(
@@ -926,8 +912,9 @@ describe('<oddkin-component-panel>', () => {
       'the link',
     );
     const link = first.root.querySelector<HTMLInputElement>('input[type="url"]')!.value;
-    // Unset removes the value from the element and the state.
-    unset.click();
+    // Clearing the field removes the value from the element and the state.
+    field.value = '';
+    field.dispatchEvent(new Event('input', { bubbles: true }));
     await until(() => accent() === '', 'the removed value');
     expect(first.panel.previewState.styles).toEqual({});
     await settled();

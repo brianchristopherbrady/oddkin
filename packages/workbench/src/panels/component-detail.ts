@@ -499,9 +499,9 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   /** Send one request to every live preview. */
-  #send(kind: 'set' | 'slot', payload: Record<string, JsonValue>): void {
+  #send(payload: Record<string, JsonValue>): void {
     for (const preview of this.#previews)
-      void preview.request(kind, payload as never).catch((error: unknown) => this.#fail(error));
+      void preview.request('set', payload as never).catch((error: unknown) => this.#fail(error));
   }
 
   #setError(id: string, text: string | undefined): void {
@@ -512,15 +512,10 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   /** Why a typed value is not written (a number field's text that is not a number yet). */
-  #textProblem(number: boolean, mode: WriteMode, text: string): string | undefined {
-    if (!number) return undefined;
-    if (mode === 'attribute')
-      return text !== '' && !Number.isFinite(Number(text))
-        ? 'Not written: not a number.'
-        : undefined;
-    return text.trim() === '' || !Number.isFinite(Number(text))
-      ? 'Not written: enter a number, or use Unset.'
-      : undefined;
+  #numberProblem(input: HTMLInputElement): string | undefined {
+    if (input.validity.badInput || (input.value !== '' && !Number.isFinite(Number(input.value))))
+      return 'Not written: enter a number.';
+    return undefined;
   }
 
   #writeAttribute(row: ApiRow, value: string | null): void {
@@ -531,7 +526,7 @@ export class ComponentDetailElement extends OddkinElement.with({
     else attributes[name] = value;
     this.#state.value = { ...state, attributes };
     this.#setError(row.id, undefined);
-    this.#send('set', { attribute: name, attributeValue: value });
+    this.#send({ attribute: name, attributeValue: value });
   }
 
   #writeProperty(row: ApiRow, value: JsonValue): void {
@@ -539,25 +534,19 @@ export class ComponentDetailElement extends OddkinElement.with({
     const state = this.#state.peek();
     this.#state.value = { ...state, properties: { ...state.properties, [name]: value } };
     this.#setError(row.id, undefined);
-    this.#send('set', { property: name, value });
+    this.#send({ property: name, value });
   }
 
   /** Unset a property assignment: the frame cannot un-assign, so a clean instance is mounted. */
   #unsetProperty(row: ApiRow): void {
     const name = row.property as string;
     const state = this.#state.peek();
+    this.#setError(row.id, undefined);
     if (!(name in state.properties)) return;
     const properties = { ...state.properties };
     delete properties[name];
     this.#state.value = { ...state, properties };
-    this.#setError(row.id, undefined);
-    this.#remount('Unset recreated the instance without this assignment.');
-  }
-
-  #writeSlot(name: string, text: string): void {
-    const state = this.#state.peek();
-    this.#state.value = { ...state, slots: { ...state.slots, [name]: text } };
-    this.#send('slot', { name, text });
+    this.#remount();
   }
 
   /** A CSS custom property on the element's style; `null` removes it. */
@@ -567,16 +556,16 @@ export class ComponentDetailElement extends OddkinElement.with({
     if (value === null) delete styles[name];
     else styles[name] = value;
     this.#state.value = { ...state, styles };
-    this.#send('set', { cssProperty: name, cssValue: value });
+    this.#send({ cssProperty: name, cssValue: value });
   }
 
   /** Mount the current state again in the existing frames (a clean instance, same realm). */
-  #remount(note?: string): void {
+  #remount(): void {
     const page = this.page;
     const registration = page && registrationOf(page);
     const scope = this.#previewScope;
     if (!page || registration === undefined || !scope) return;
-    this.#status.value = { text: note ?? '', alert: false, ...(note ? { keep: true } : {}) };
+    this.#status.value = { text: '', alert: false };
     this.#mountAll(scope, page, registration);
   }
 
@@ -1197,28 +1186,17 @@ export class ComponentDetailElement extends OddkinElement.with({
     if (row.control === 'boolean') {
       const checked = mode === 'attribute' ? attrValue !== undefined : propValue === true;
       control = html`<input
-          type="checkbox"
-          role="switch"
-          class="wb-switch"
-          aria-label=${label}
-          .checked=${checked}
-          @change=${(event: Event) => {
-            const on = (event.target as HTMLInputElement).checked;
-            if (mode === 'attribute') this.#writeAttribute(row, on ? '' : null);
-            else this.#writeProperty(row, on);
-          }}
-        />
-        <span class="wb-muted"
-          >${
-            mode === 'attribute'
-              ? attrValue !== undefined
-                ? 'present'
-                : 'absent'
-              : propSet
-                ? String(propValue)
-                : 'unset'
-          }</span
-        >`;
+        type="checkbox"
+        role="switch"
+        class="wb-switch"
+        aria-label=${label}
+        .checked=${checked}
+        @change=${(event: Event) => {
+          const on = (event.target as HTMLInputElement).checked;
+          if (mode === 'attribute') this.#writeAttribute(row, on ? '' : null);
+          else this.#writeProperty(row, on);
+        }}
+      />`;
     } else if (row.control === 'enum') {
       const current =
         mode === 'attribute'
@@ -1239,7 +1217,7 @@ export class ComponentDetailElement extends OddkinElement.with({
         .value=${current}
         @change=${(event: Event) => write((event.target as HTMLSelectElement).value)}
       >
-        <option value="" ?selected=${current === ''}>(unset)</option>
+        <option value="" aria-label="Use default" ?selected=${current === ''}></option>
         ${values.map(
           (value) => html`<option value=${value} ?selected=${current === value}>${value}</option>`,
         )}
@@ -1256,7 +1234,6 @@ export class ComponentDetailElement extends OddkinElement.with({
         aria-label=${label}
         rows="3"
         .value=${propSet ? JSON.stringify(propValue) : ''}
-        placeholder="unset"
         @change=${(event: Event) => {
           const text = (event.target as HTMLTextAreaElement).value.trim();
           if (!text) {
@@ -1275,46 +1252,30 @@ export class ComponentDetailElement extends OddkinElement.with({
       ></textarea>`;
     } else {
       const number = row.control === 'number';
-      const isSet = mode === 'attribute' ? attrValue !== undefined : propSet;
-      const shown =
-        mode === 'attribute'
-          ? (attrValue ?? '')
-          : propSet && propValue !== null
-            ? String(propValue)
-            : '';
+      const nullableProperty = mode === 'property' && row.nullable;
+      const shown = mode === 'attribute' ? (attrValue ?? '') : propSet ? String(propValue) : '';
       control = html`<input
-          type=${number ? 'number' : 'text'}
+          type=${number && !nullableProperty ? 'number' : 'text'}
+          inputmode=${number && nullableProperty ? 'decimal' : null}
           aria-label=${label}
-          placeholder=${isSet ? '' : 'unset'}
           .value=${shown}
           @input=${(event: Event) => {
             // The preview follows the field as the reader types; an unfinished number waits.
-            const text = (event.target as HTMLInputElement).value;
-            if (this.#textProblem(number, mode, text)) return;
-            if (mode === 'attribute') this.#writeAttribute(row, text);
+            const input = event.target as HTMLInputElement;
+            if (number && this.#numberProblem(input)) return;
+            const text = number ? input.value.trim() : input.value;
+            if (mode === 'attribute') this.#writeAttribute(row, text === '' ? null : text);
+            else if (text === '') this.#unsetProperty(row);
             else this.#writeProperty(row, number ? Number(text) : text);
           }}
           @change=${(event: Event) => {
-            const problem = this.#textProblem(
-              number,
-              mode,
-              (event.target as HTMLInputElement).value,
-            );
-            if (problem) this.#setError(row.id, problem);
+            const input = event.target as HTMLInputElement;
+            if (number && !(propValue === null && input.value === 'null'))
+              this.#setError(row.id, this.#numberProblem(input));
           }}
         />
-        <button
-          type="button"
-          ?disabled=${!isSet}
-          @click=${() => {
-            if (mode === 'attribute') this.#writeAttribute(row, null);
-            else this.#unsetProperty(row);
-          }}
-        >
-          Unset
-        </button>
         ${
-          mode === 'property' && row.nullable
+          nullableProperty
             ? html`<button
                 type="button"
                 ?disabled=${propSet && propValue === null}
@@ -1323,18 +1284,7 @@ export class ComponentDetailElement extends OddkinElement.with({
                 Set null
               </button>`
             : nothing
-        }
-        <span class="wb-muted"
-          >${
-            !isSet
-              ? 'unset'
-              : mode === 'property' && propValue === null
-                ? 'null'
-                : shown === ''
-                  ? 'empty string'
-                  : ''
-          }</span
-        >`;
+        }`;
     }
     return html`<div class="wb-cell-controls">${control} ${modeSwitch}</div>
       ${error ? html`<p class="wb-error" role="alert">${error}</p>` : nothing}`;
@@ -1348,7 +1298,7 @@ export class ComponentDetailElement extends OddkinElement.with({
           ${caption}
         </caption>
         <colgroup>
-          ${[0, 1, 2, 3, 4, 5].map(() => html`<col />`)}
+          ${Array.from({ length: heads.length === 5 ? 6 : heads.length }, () => html`<col />`)}
         </colgroup>
         <thead>
           <tr>
@@ -1368,32 +1318,19 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #slots(facts: ComponentFacts) {
-    const state = this.#state.value;
     return this.#group(
       'slots',
-      'Slots: text content written into the preview.',
-      ['Slots', 'Content type', 'Default', 'Name', 'Position', 'Control / current content'],
-      facts.slots.map((slot) => {
-        const label = slot.name || 'default';
-        return html`<tr data-slot=${slot.name}>
-          ${named(label, undefined)}
-          <td data-label="Content type">Text</td>
-          <td data-label="Default">Empty</td>
-          <td data-label="Name">${slot.name || '(none)'}</td>
-          <td data-label="Position">
-            ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
-          </td>
-          <td data-label="Control">
-            <input
-              type="text"
-              aria-label=${`${label} slot text`}
-              .value=${state.slots[slot.name] ?? ''}
-              @input=${(event: Event) =>
-                this.#writeSlot(slot.name, (event.target as HTMLInputElement).value)}
-            />
-          </td>
-        </tr>`;
-      }),
+      'Slots declared by the component.',
+      ['Slots', 'Description'],
+      facts.slots.map(
+        (slot) =>
+          html`<tr data-slot=${slot.name}>
+            <th scope="row" data-label="Name"><code>${slot.name || 'default'}</code></th>
+            <td data-label="Description">
+              ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
+            </td>
+          </tr>`,
+      ),
     );
   }
 
@@ -1419,20 +1356,12 @@ export class ComponentDetailElement extends OddkinElement.with({
                     <input
                       type="text"
                       aria-label=${`${entry.name} value`}
-                      placeholder="unset"
                       .value=${value ?? ''}
                       @input=${(event: Event) => {
                         const text = (event.target as HTMLInputElement).value;
                         this.#writeStyle(entry.name, text === '' ? null : text);
                       }}
                     />
-                    <button
-                      type="button"
-                      ?disabled=${value === undefined}
-                      @click=${() => this.#writeStyle(entry.name, null)}
-                    >
-                      Unset
-                    </button>
                   </div>`
                 : html`<span class="wb-muted">Not editable: not a custom property name.</span>`
             }
