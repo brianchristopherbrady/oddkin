@@ -1,0 +1,713 @@
+{
+  "page": "1395:2",
+  "set": "159:582",
+  "top": [
+    {
+      "id": "159:581",
+      "name": "Count content · historical composition",
+      "width": 136,
+      "height": 32,
+      "x": 1800,
+      "y": 800
+    },
+    {
+      "id": "159:582",
+      "name": "Oddkin/Common/badge",
+      "width": 479,
+      "height": 198,
+      "x": 1800,
+      "y": 96
+    },
+    {
+      "id": "1395:106",
+      "name": "Badge · States · Light + Dark",
+      "width": 1536,
+      "height": 1194,
+      "x": 96,
+      "y": 96
+    },
+    {
+      "id": "1395:562",
+      "name": "Badge · Parent allocation and content",
+      "width": 1536,
+      "height": 1369,
+      "x": 96,
+      "y": 1354
+    },
+    {
+      "id": "1395:852",
+      "name": "Badge · Interaction flows",
+      "width": 1536,
+      "height": 476,
+      "x": 96,
+      "y": 2787
+    },
+    {
+      "id": "1395:856",
+      "name": "Light · Step 1",
+      "width": 458.6600036621094,
+      "height": 239,
+      "x": 1800,
+      "y": 2300
+    },
+    {
+      "id": "1395:867",
+      "name": "Light · Step 2",
+      "width": 458.6600036621094,
+      "height": 205,
+      "x": 2290.659912109375,
+      "y": 2300
+    },
+    {
+      "id": "1395:878",
+      "name": "Light · Step 3",
+      "width": 458.6600036621094,
+      "height": 205,
+      "x": 2781.320068359375,
+      "y": 2300
+    },
+    {
+      "id": "1395:890",
+      "name": "Dark · Step 1",
+      "width": 458.6600036621094,
+      "height": 239,
+      "x": 1800,
+      "y": 2860
+    },
+    {
+      "id": "1395:901",
+      "name": "Dark · Step 2",
+      "width": 458.6600036621094,
+      "height": 205,
+      "x": 2290.659912109375,
+      "y": 2860
+    },
+    {
+      "id": "1395:912",
+      "name": "Dark · Step 3",
+      "width": 458.6600036621094,
+      "height": 205,
+      "x": 2781.320068359375,
+      "y": 2860
+    },
+    {
+      "id": "1395:951",
+      "name": "Badge · Anatomy, ownership and handoff",
+      "width": 1536,
+      "height": 563,
+      "x": 96,
+      "y": 3327
+    },
+    {
+      "id": "1395:960",
+      "name": "Badge · Architecture and interaction contract",
+      "width": 850,
+      "height": 1100,
+      "x": 4000,
+      "y": 96
+    },
+    {
+      "id": "1399:405",
+      "name": "__Badge/Native RTL specimen",
+      "width": 213,
+      "height": 22,
+      "x": 1800,
+      "y": 1100
+    },
+    {
+      "id": "1496:431",
+      "name": "Badge · First-line marker and wrapping",
+      "width": 1536,
+      "height": 525,
+      "x": 96,
+      "y": 3980
+    }
+  ],
+  "topOverlaps": [],
+  "variantOverlaps": [],
+  "variants": [
+    {
+      "id": "159:556",
+      "name": "Tone=neutral",
+      "width": 63,
+      "height": 22,
+      "x": 32,
+      "y": 48,
+      "bindings": {
+        "itemSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "paddingLeft": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingTop": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "paddingRight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingBottom": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "topLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "topRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "fills": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:332:71"
+          }
+        ]
+      },
+      "layout": "MIN",
+      "label": "159:555"
+    },
+    {
+      "id": "159:563",
+      "name": "Tone=success",
+      "width": 63,
+      "height": 22,
+      "x": 208,
+      "y": 48,
+      "bindings": {
+        "itemSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "paddingLeft": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingTop": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "paddingRight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingBottom": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "topLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "topRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "fills": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:46"
+          }
+        ]
+      },
+      "layout": "MIN",
+      "label": "159:562"
+    },
+    {
+      "id": "159:570",
+      "name": "Tone=warning",
+      "width": 63,
+      "height": 22,
+      "x": 384,
+      "y": 48,
+      "bindings": {
+        "itemSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "paddingLeft": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingTop": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "paddingRight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingBottom": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "topLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "topRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "fills": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:48"
+          }
+        ]
+      },
+      "layout": "MIN",
+      "label": "159:569"
+    },
+    {
+      "id": "159:577",
+      "name": "Tone=danger",
+      "width": 63,
+      "height": 22,
+      "x": 32,
+      "y": 144,
+      "bindings": {
+        "itemSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "paddingLeft": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingTop": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "paddingRight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingBottom": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "topLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "topRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "fills": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:44"
+          }
+        ]
+      },
+      "layout": "MIN",
+      "label": "159:576"
+    },
+    {
+      "id": "499:2513",
+      "name": "Tone=info",
+      "width": 63,
+      "height": 22,
+      "x": 208,
+      "y": 144,
+      "bindings": {
+        "itemSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "paddingLeft": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingTop": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "paddingRight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:10"
+        },
+        "paddingBottom": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:6"
+        },
+        "topLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "topRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomLeftRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "bottomRightRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "fills": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:499:2482"
+          }
+        ]
+      },
+      "layout": "MIN",
+      "label": "499:2517"
+    }
+  ],
+  "properties": {
+    "Show marker#1395:0": {
+      "type": "BOOLEAN",
+      "defaultValue": true
+    },
+    "Label#1395:7": {
+      "type": "TEXT",
+      "defaultValue": "Draft"
+    },
+    "Tone": {
+      "type": "VARIANT",
+      "defaultValue": "neutral",
+      "variantOptions": ["neutral", "info", "success", "warning", "danger"]
+    }
+  },
+  "links": [
+    {
+      "node": "1395:923",
+      "to": "1395:856",
+      "valid": true
+    },
+    {
+      "node": "1395:925",
+      "to": "1395:867",
+      "valid": true
+    },
+    {
+      "node": "1395:927",
+      "to": "1395:878",
+      "valid": true
+    },
+    {
+      "node": "1395:929",
+      "to": "1395:890",
+      "valid": true
+    },
+    {
+      "node": "1395:931",
+      "to": "1395:901",
+      "valid": true
+    },
+    {
+      "node": "1395:933",
+      "to": "1395:912",
+      "valid": true
+    },
+    {
+      "node": "1395:935",
+      "to": "1395:867",
+      "valid": true
+    },
+    {
+      "node": "1395:937",
+      "to": "1395:878",
+      "valid": true
+    },
+    {
+      "node": "1395:939",
+      "to": "1395:856",
+      "valid": true
+    },
+    {
+      "node": "1395:941",
+      "to": "1395:856",
+      "valid": true
+    },
+    {
+      "node": "1395:943",
+      "to": "1395:901",
+      "valid": true
+    },
+    {
+      "node": "1395:945",
+      "to": "1395:912",
+      "valid": true
+    },
+    {
+      "node": "1395:947",
+      "to": "1395:890",
+      "valid": true
+    },
+    {
+      "node": "1395:949",
+      "to": "1395:890",
+      "valid": true
+    }
+  ],
+  "badLinks": [],
+  "markerInstances": 76,
+  "hiddenInstances": 26,
+  "markerMismatches": [],
+  "nodesWithBinding": 665,
+  "missingFonts": [],
+  "clipFlags": [
+    {
+      "text": "1395:672",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:674",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "I1395:675;159:562",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:683",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:685",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "I1395:686;159:562",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:694",
+      "clip": "1395:649",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:817",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:819",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "I1395:820;159:562",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:828",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:830",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "I1395:831;159:562",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    },
+    {
+      "text": "1395:839",
+      "clip": "1395:794",
+      "clipName": "Named parent reader · scroll owner"
+    }
+  ],
+  "examples": [
+    {
+      "id": "1496:437",
+      "name": "short · light",
+      "width": 63,
+      "height": 22,
+      "x": 32,
+      "y": 113,
+      "children": [
+        {
+          "id": "I1496:437;1496:426",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:437;159:555",
+          "name": "Draft",
+          "width": 27,
+          "height": 18,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "label": "Draft"
+    },
+    {
+      "id": "1496:447",
+      "name": "wrapped · light",
+      "width": 112,
+      "height": 58,
+      "x": 32,
+      "y": 186,
+      "children": [
+        {
+          "id": "I1496:447;1496:428",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:447;159:569",
+          "name": "Draft",
+          "width": 76,
+          "height": 54,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "label": "Waiting for accessibility review"
+    },
+    {
+      "id": "1496:457",
+      "name": "markerless · light",
+      "width": 112,
+      "height": 40,
+      "x": 32,
+      "y": 295,
+      "children": [
+        {
+          "id": "I1496:457;499:2517",
+          "name": "Draft",
+          "width": 96,
+          "height": 36,
+          "x": 8,
+          "y": 2
+        }
+      ],
+      "label": "ReleaseCandidate0123456789"
+    },
+    {
+      "id": "1496:469",
+      "name": "short · dark",
+      "width": 63,
+      "height": 22,
+      "x": 32,
+      "y": 113,
+      "children": [
+        {
+          "id": "I1496:469;1496:426",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:469;159:555",
+          "name": "Draft",
+          "width": 27,
+          "height": 18,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "label": "Draft"
+    },
+    {
+      "id": "1496:479",
+      "name": "wrapped · dark",
+      "width": 112,
+      "height": 58,
+      "x": 32,
+      "y": 186,
+      "children": [
+        {
+          "id": "I1496:479;1496:428",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:479;159:569",
+          "name": "Draft",
+          "width": 76,
+          "height": 54,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "label": "Waiting for accessibility review"
+    },
+    {
+      "id": "1496:489",
+      "name": "markerless · dark",
+      "width": 112,
+      "height": 40,
+      "x": 32,
+      "y": 295,
+      "children": [
+        {
+          "id": "I1496:489;499:2517",
+          "name": "Draft",
+          "width": 96,
+          "height": 36,
+          "x": 8,
+          "y": 2
+        }
+      ],
+      "label": "ReleaseCandidate0123456789"
+    }
+  ]
+}

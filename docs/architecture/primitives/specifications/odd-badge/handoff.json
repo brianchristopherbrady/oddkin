@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "primitive": "odd-badge",
+  "status": "implemented",
+  "design": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pageId": "1395:2",
+    "nodeIds": [
+      "1395:2",
+      "159:582",
+      "159:581",
+      "1395:960",
+      "1395:106",
+      "1395:562",
+      "1395:852",
+      "1395:951",
+      "1399:405",
+      "159:556",
+      "499:2513",
+      "159:563",
+      "159:570",
+      "159:577",
+      "1395:71",
+      "159:555",
+      "1496:426",
+      "1496:427",
+      "1496:428",
+      "1496:429",
+      "1496:430",
+      "1496:431",
+      "1496:437",
+      "1496:447",
+      "1496:457",
+      "1496:469",
+      "1496:479",
+      "1496:489"
+    ],
+    "revision": "2026-11-19-badge-redesign / Figma session 2a3fccb5-3556-4290-b360-5e055b8caab6",
+    "observedAt": "2026-11-20T04:42:31.896Z",
+    "contextEvidence": [
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-context.json",
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-native-spec.md"
+    ],
+    "screenshotEvidence": [
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-review.png",
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/short-light.png",
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/wrapped-light.png"
+    ],
+    "codeConnectEvidence": [
+      "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/code-connect.json"
+    ]
+  },
+  "source": {
+    "baseCommit": "7220497638764abbb03add15eec89106bbe12d6f",
+    "files": [
+      {
+        "path": "packages/components/src/badge/badge.ts",
+        "sha256": "298b89ea313683ef70b95eb8d4f70bab3b733314fac9504654acfce5f79dbeac"
+      },
+      {
+        "path": "packages/components/src/badge/badge.template.ts",
+        "sha256": "8644ec35cfc06e3fe5ec1ee996846131963177594be26d27a9f62c1ca56e36dc"
+      },
+      {
+        "path": "packages/components/src/badge/badge.structural.styles.ts",
+        "sha256": "8906fd45165bfc0063646bf844e0a90721de09dde8126792773a484e4fe364a4"
+      },
+      {
+        "path": "packages/components/src/badge/badge.styles.ts",
+        "sha256": "fdcda301c7fbcd0e3bdac4397367d026e99d09b04626c1abe6a3940039a98c60"
+      },
+      {
+        "path": "packages/components/src/badge/badge.definition.ts",
+        "sha256": "26f4f94b71549d20fe0fb94a2475339110611296fbb51a89212b51efa2acc7c0"
+      },
+      {
+        "path": "packages/components/src/badge/badge.define.ts",
+        "sha256": "14a78038b38f4d78056ea02f781441556974555235d66777ed32454375f6db32"
+      },
+      {
+        "path": "packages/components/src/badge/index.ts",
+        "sha256": "82f6e4dfdee75ff93229dfe55f6eae46991e1e5c42abf209be8506e5134543d3"
+      },
+      {
+        "path": "packages/components/src/badge/foundation.ts",
+        "sha256": "c73ddd82d7a166a7b1a8ab29e1671964490bc72fe56ff17e19bf89f2959497b1"
+      },
+      {
+        "path": "packages/components/src/badge/badge.examples.ts",
+        "sha256": "340289811c374960521543158fc50297e006d1dcd0073b27355eb7e8d36cfea2"
+      },
+      {
+        "path": "packages/components/test/badge.browser.test.ts",
+        "sha256": "c8ecf1d85bf461d9bcebb4b23fef9ab43ed966a6be1d306aaf86c0fd5162b44a"
+      },
+      {
+        "path": "packages/components/src/styles/glyphs.ts",
+        "sha256": "694675a66a60a10fe327c32869332764e4b18ac41506200bd6ddd91e7578c588"
+      },
+      {
+        "path": "packages/components/src/styles/tone.styles.ts",
+        "sha256": "79598f25ae7d598467b99bb0d3eef22308504ed335900e952153a4a1445bcb2c"
+      },
+      {
+        "path": "packages/components/src/styles/host.styles.ts",
+        "sha256": "053f07e8b3a8131e25a50fbfbb3f1c0fb002c8eea44175dbb8ed92eead5f2444"
+      },
+      {
+        "path": "packages/components/test/graph.test.ts",
+        "sha256": "bb18b529d06f644e3cb19aae406fe750bef11712b9770e1742e5b1f01edefc8e"
+      },
+      {
+        "path": "packages/components/test/figma-parity.browser.test.ts",
+        "sha256": "08e8e9bb201a8b22da12433db25245aa78090b532af85cd3ad26a27391142557"
+      },
+      {
+        "path": "packages/ai/src/internal/status.ts",
+        "sha256": "4b3b127ddd76dbb44dcdc53ac76d92a57722ee009dab8d0600b583468aa7e50e"
+      },
+      {
+        "path": "packages/ai/src/internal/expiry.ts",
+        "sha256": "2bfd8b5bb5cc0ae70e2c57ed7fc97961d816979ae9129fffd006faa1f73e3d90"
+      },
+      {
+        "path": "packages/ai/src/action-approval/action-approval.template.ts",
+        "sha256": "15083e6c67aa883f1b4ba792fd5c1100b15967c429a6bf57e33cf0d2e74b510f"
+      }
+    ]
+  },
+  "targets": [
+    { "path": "packages/components/src/badge/badge.ts", "role": "class" },
+    { "path": "packages/components/src/badge/badge.template.ts", "role": "template" },
+    { "path": "packages/components/src/badge/badge.structural.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/badge/badge.styles.ts", "role": "styles" },
+    { "path": "packages/components/src/badge/badge.definition.ts", "role": "definition" },
+    { "path": "packages/components/src/badge/badge.define.ts", "role": "registration" },
+    { "path": "packages/components/src/badge/index.ts", "role": "exports" },
+    { "path": "packages/components/src/badge/foundation.ts", "role": "exports" },
+    { "path": "packages/components/src/badge/badge.examples.ts", "role": "docs" },
+    { "path": "packages/components/test/badge.browser.test.ts", "role": "test" }
+  ],
+  "contracts": [
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/spec.md",
+      "sha256": "a3e7be910539f745f17a31419ffe3e7cbc080d17d04f67b44a832dcbb0ba5097"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/context.md",
+      "sha256": "f4f14e6671dc9b2267a3f545a235e97129df105a60e58e64813aeffa0e8b9e02"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/research.md",
+      "sha256": "dc02b0224c79f985fe26f52120f9d6fb2f38a13857c5d2e8fc3c98e5f4230bd0"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/contract.md",
+      "sha256": "f7c4be87a3086563c7a43912a17223be63d24380af6e3342be04069768864f61"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/decision.md",
+      "sha256": "fc58786f465485f9ca02aa9405d244089526f0cf065dfb266e2f137eaec399d4"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-badge/token-map.md",
+      "sha256": "0640c047a6ea78e2d515ec246ab0ea18b2302d9b8ad8096b978e954e5d37dc85"
+    },
+    {
+      "path": "docs/architecture/responsiveness.md",
+      "sha256": "73037505c29063ec54fdbe3b2f863f80751363879188a774724b232b600302d7"
+    },
+    {
+      "path": "docs/architecture/component-contracts.md",
+      "sha256": "84604eb512f58541edd7b415373fd63f635ae4bf4d56e98575cea860766a5c58"
+    },
+    {
+      "path": "docs/architecture/decisions/0036-component-composition-api.md",
+      "sha256": "bf62c48212b5fb715fba6d9006c95b704c3c6b82d6f4086a15dfd69693e696d9"
+    },
+    {
+      "path": "docs/architecture/decisions/0043-composite-dependency-mechanism.md",
+      "sha256": "b6efe9ff913dd781d2c19f35016b4b2e9c5731ea324cbaf0db65e57a0f788d22"
+    },
+    {
+      "path": "docs/architecture/decisions/0045-api-vocabulary.md",
+      "sha256": "b06401dd1196853d451e8025539d6860863b2472ea1230962514fbd6b1633784"
+    },
+    {
+      "path": "docs/architecture/decisions/0049-agent-workflow-components.md",
+      "sha256": "bf3176a4950cce90c2d55311ac3fae09644af57b9bab967293b8ca4316410121"
+    }
+  ],
+  "deltas": [
+    {
+      "id": "BG-LABEL",
+      "from": "A direct slot in a flex row can expose several independent flex items and inherit no-wrap.",
+      "to": "An internal label wrapper forms one text run with normal white-space, anywhere overflow wrapping and zero automatic inline minimum.",
+      "rationale": "Preserve reading order and complete text in shrinkable parent allocation.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-badge/context.md",
+        "docs/architecture/primitives/specifications/odd-badge/research.md",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-context.json"
+      ]
+    },
+    {
+      "id": "BG-START",
+      "from": "Decorative marker is centered across all wrapped lines.",
+      "to": "Marker remains at logical start, centered within the first-line lane at the current token size.",
+      "rationale": "Keep glyph/label association near the first line without changing ordinary badge geometry.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-badge/decision.md",
+        "docs/architecture/primitives/specifications/odd-badge/token-map.md",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-review.png"
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "nodeId": "159:582",
+      "sourcePath": "packages/components/src/badge/badge.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "159:556",
+      "sourcePath": "packages/components/src/badge/badge.styles.ts",
+      "part": "base",
+      "token": "color.neutral.surface"
+    },
+    {
+      "nodeId": "1395:71",
+      "sourcePath": "packages/components/src/badge/badge.styles.ts",
+      "part": "marker",
+      "token": "icon.size.sm"
+    },
+    {
+      "nodeId": "159:555",
+      "sourcePath": "packages/components/src/badge/badge.template.ts",
+      "part": null,
+      "token": "font.size.xs"
+    },
+    {
+      "nodeId": "1496:447",
+      "sourcePath": "packages/components/src/badge/badge.structural.styles.ts",
+      "part": "base",
+      "token": null
+    },
+    {
+      "nodeId": "1496:457",
+      "sourcePath": "packages/components/src/badge/badge.template.ts",
+      "part": "marker",
+      "token": null
+    }
+  ],
+  "contextual": {
+    "version": 1,
+    "level": "intrinsic",
+    "contract": "docs/architecture/primitives/specifications/odd-badge/contract.md#parent-allocation"
+  },
+  "acceptance": [
+    {
+      "id": "BG-SOURCE",
+      "kind": "source",
+      "fixture": "Package source, generated contract and dependency checks",
+      "assertions": [
+        "One private text formatting context, logical first-line marker placement and CSS-only intrinsic wrapping.",
+        "Existing props, slot, parts, roles, registration and theme tokens are preserved."
+      ]
+    },
+    {
+      "id": "BG-FIGMA-STRUCTURE",
+      "kind": "figma-structure",
+      "fixture": "Canonical family, native spec and Badge page sections",
+      "assertions": [
+        "Five same-ID tone masters with Label and inverse Show marker mapping.",
+        "Real instances, bound existing tokens, no unintended overlaps or broken prototype destinations."
+      ]
+    },
+    {
+      "id": "BG-FIGMA-VISUAL",
+      "kind": "figma-visual",
+      "fixture": "Light and dark states/allocations plus matching review specimens",
+      "assertions": [
+        "Default and compact scope, full readable multiline content beside first-line marker, markerless behavior and RTL.",
+        "Parent reader owns the only intentional clipping, and real host controls own focus and actions."
+      ]
+    },
+    {
+      "id": "BG-BROWSER",
+      "kind": "browser",
+      "fixture": "Badge regression suite at current build",
+      "assertions": [
+        "Text and emphasis flow in order inside inherited nowrap and narrow flex/grid grants.",
+        "Marker stays first-line aligned and preserves geometry and identity. Theme, density, forced colors and focused neighbor continuity remain intact."
+      ]
+    },
+    {
+      "id": "BG-FIDELITY",
+      "kind": "implementation-visual",
+      "fixture": "Matched Oddkin fidelity bench samples",
+      "assertions": [
+        "Compare current built exports to same-content themed design captures, including normal and constrained examples.",
+        "Examine side, overlay and diff, measure the text/marker/parent geometry, and explain any genuine renderer differences."
+      ]
+    }
+  ],
+  "issues": [],
+  "implementationRun": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/run.json"
+}

@@ -16,7 +16,7 @@ export const badgeStyles = css`
     line-height: ${token('line-height.normal')};
     letter-spacing: ${token('letter-spacing.normal')};
   }
-  .marker {
+  .marker > .glyph {
     font-size: ${token('icon.size.sm')};
   }
 `;

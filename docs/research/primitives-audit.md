@@ -41,7 +41,7 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | # | Primitive | Figma | Code | Status | API | Visual | Parity | Accessibility | Responsive | Docs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | done | ok | ok | ok | ok | ok | ok |
-| 2 | [badge](#2-badge) | badge (159:582) | `odd-badge` | done | ok | ok | ok | ok | ok | ok |
+| 2 | [badge](#2-badge) | badge (159:582), Count content · historical composition (159:581) | `odd-badge` | done | ok | ok | ok | ok | ok | ok |
 | 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390), toggleButton (159:501), iconButton/sm (1455:4545), iconButton (159:471), iconButton/lg (1455:4798) | `odd-button`, `.odd-button (button.css)` | done | ok | ok | ok | ok | ok | ok |
 | 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | fixing | ok | ok | ok | ? | ok | ok |
@@ -118,11 +118,12 @@ Decisions for the owner:
 
 ## 2. badge
 
-Status: done (2026-11-15). The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it. Outcome (2026-11-17): the owner's specification (page 1395:2) keeps the code's compact spacing and binds it in Figma, so parity now compares the gap and padding; the glyphs follow the canonical icons and a row of badges aligns.
+Status: done (2026-11-19). The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it. Outcome (2026-11-17): the owner's specification (page 1395:2) keeps the code's compact spacing and binds it in Figma, so parity now compares the gap and padding; the glyphs follow the canonical icons and a row of badges aligns. Research-led redesign (2026-11-19): the label wraps as one text flow even with inline formatting and a no-wrap parent, and the marker aligns to the first line. Existing compact tokens, public API and passive behavior carry forward.
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
-| Oddkin/Common/badge | 159:582 | 6 | State: Count, Danger, Info, Neutral, Success, Warning |
+| Oddkin/Common/badge | 159:582 | 5 | Tone: neutral, info, success, warning, danger |
+| Count content · historical composition | 159:581 | 1 | — |
 
 Code: `odd-badge` (packages/components/src/badge/).
 
@@ -142,6 +143,8 @@ Code: `odd-badge` (packages/components/src/badge/).
 | BG8 | responsive | The badge is at most as wide as its parent and wraps long words (overflow-wrap: anywhere). | None. |
 | BG9 | visual | Badges with and without a glyph sat about 2.5 px apart in a row: the host was a line box taller than the 22 px surface. | Make the host exactly its surface. Fixed: 2026-11-17: the surface is display: flex inside the inline-block host; badge.browser.test.ts B-L1 checks a row of both and a badge inline in text. |
 | BG10 | visual | The tone glyphs drew their circle and triangle at about 12 px inside the 16 px marker; Figma's library icons span 14 to 15 px. | Draw them from the canonical icons in design/icons/general. Fixed: 2026-11-17: info, check-circle, and warning follow information.svg, check-circle.svg, and warning.svg (glyphs.test.ts), for the badge, alert, toast, status marker, and validation summary. |
+| BG11 | responsive | An inherited no-wrap style could overflow a narrow parent. Inline emphasis could separate adjacent text into flex columns, and a competing sibling could leave Badge wider than its track. | One wrapping label with intrinsic sizing. Allow its host and text to shrink within the parent allocation. Fixed: 2026-11-19: source and three-engine regressions preserve complete content, fit alongside an adjacent action, and retain its focus. |
+| BG12 | visual | The glyph was centered on the entire multiline label, separating it from the first line. | Center the existing token-sized glyph within the first line and preserve the short Badge geometry. Fixed: 2026-11-19: the first-line lane is in the existing Figma family and source. In both text directions the browser keeps its size and first-line position. |
 
 Decisions for the owner:
 

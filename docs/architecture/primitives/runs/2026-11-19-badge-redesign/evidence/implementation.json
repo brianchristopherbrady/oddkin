@@ -1,0 +1,1441 @@
+{
+  "tag": "odd-badge",
+  "run": "2026-11-19-badge-redesign",
+  "worktree": "C:\\SLT_Backup_10-21-2026\\oddkin-a1-main",
+  "head": "7220497638764abbb03add15eec89106bbe12d6f",
+  "branch": "a1-main",
+  "worktreeModified": true,
+  "build": {
+    "capturedAfterBuild": true,
+    "benchRefresh": {
+      "exports": 297,
+      "warnings": []
+    },
+    "commands": [
+      {
+        "command": "npm run build",
+        "exitCode": 0
+      },
+      {
+        "command": "npm exec -- tsc -b",
+        "exitCode": 0
+      },
+      {
+        "command": "npm exec -- tsc -b --force packages/components",
+        "exitCode": 0
+      }
+    ]
+  },
+  "bench": {
+    "origin": "http://127.0.0.1:4194",
+    "toolkit": "Installed Oddkin fidelity bench",
+    "overlayOpacity": 0.5,
+    "comparisonModes": ["side", "overlay", "diff"]
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "156.0.8078.4",
+    "driver": "Headless Playwright",
+    "viewport": {
+      "width": 960,
+      "height": 720
+    },
+    "deviceScaleFactor": 2
+  },
+  "capturedAt": "2026-11-20T04:54:25.252Z",
+  "servedAssets": {
+    "packages/components/dist/badge/badge.define.js": "a8316f601d9c3081f60a9c40fcdea78f713872bcb2d9124d7dde878436ad2ce1",
+    "packages/components/dist/badge/badge.definition.js": "642e02385b92374e1c50401d78825316cff86e5c6d356466327c226ee1d84fbe",
+    "packages/components/dist/badge/badge.js": "bc1bc89789db7f9e535bdb236afbb7490f4ef2c0350b90387a8efeaf9c2cc183",
+    "packages/components/dist/badge/badge.structural.styles.js": "c8d59d2cf195ee688b52dbac138d48e1fb117be06c534e0037b41110a344f955",
+    "packages/components/dist/badge/badge.styles.js": "f5fec6dbce9466944181e9afaf11b288c9333616d481838f1da5876f7ad25f84",
+    "packages/components/dist/badge/badge.template.js": "8035d50d3f70f760f4b1ce5ebe0379eca993d1f1802894903688afa996d2d72c",
+    "packages/components/dist/css/base.css": "62575b13404a9bb449b2c15c30484cb0defbc7bb3eaa675f1a92876a2d34e442",
+    "packages/components/dist/styles/glyphs.js": "44dd1467d23de4f6edda2948c9522c37e5181ec6e6904173b31db08092ca3c54",
+    "packages/components/dist/styles/host.styles.js": "7d497a445545c7106cf93eedc10348da720861eb760ab7b47fa285f5a29bad51",
+    "packages/components/dist/styles/tone.styles.js": "fe78d7c270eade82092d591ec8125cac4b515d03cd84e33ab398bc9b302f2e93",
+    "packages/core/dist/prod/diagnostics/index.js": "68126199a4c31624b14f3a010c7e3e0719dede9c3b41b6554656bdf0343c95b5",
+    "packages/core/dist/prod/element/define.js": "16ad618ba8cad1cc7e6ee7092f34ce0369768ebb5b947b7e018f96f3b9cae6a8",
+    "packages/core/dist/prod/element/definition.js": "62d2033356822a2677a1bdd0434a200293f8eeea159882be174f64cd7610bbf7",
+    "packages/core/dist/prod/element/element.js": "44eff7b4644914cb44f67f260be417ab321ae416d81af9d25179f5641fa834b5",
+    "packages/core/dist/prod/element/events.js": "0cf2c079d98dbde50a3f59ec7c7d7e0a71bdc263842983401541c62c33276a53",
+    "packages/core/dist/prod/element/index.js": "c28dbedfbc936564370beb533424766ff542342dbac9c27b518fd0c6e116f29f",
+    "packages/core/dist/prod/element/props.js": "2d73800e775c7862150c4305a344216770ef561442b58c79569eb5983bc60ea8",
+    "packages/core/dist/prod/internal/copies.js": "df1cef089becea155ba24c1610ab71ec3e17e3b8e0aaa1e0a91ef574643d4943",
+    "packages/core/dist/prod/internal/definitions.js": "513608f2ab2fefb00631758804f0d8c423dcf0bbe3f13a872897cab8d989fa5c",
+    "packages/core/dist/prod/internal/render-context.js": "42b79d03a6c6a01c30df433d0a3c0b19bb50bf32b3215e8788faf8a79a5331bd",
+    "packages/core/dist/prod/internal/version.js": "43f4bcad511d1540556f404d94fa077acaf85dd266e44a03e98ad0b8895ea489",
+    "packages/core/dist/prod/reactive/graph.js": "9798454aca81cd9ee5d7c67265a12fe80d4a28a0b038c7c8df829a4c9d83ca8b",
+    "packages/core/dist/prod/reactive/index.js": "ce0767cfbc1d02cff04830a71f1772cc662816fba315ff51f789bd1d52723932",
+    "packages/core/dist/prod/scope/index.js": "d43a59c3fe236f5e20ac4993ed3937d16d26d83b6efae1bd9451249495823f5c",
+    "packages/core/dist/prod/scope/scope.js": "2c8f6d8858e97982110deef314c1169210f2fb55aff16681cb060117227c390d",
+    "packages/core/dist/prod/styles/index.js": "7b47dcfc5d07efafcf7c60203fbf1357c4eab902806653deb9f509f13e45e407",
+    "packages/core/dist/prod/template/directive.js": "9265374b3cef933af0e79558cc745a7824a6028856533d904e121333141db3ef",
+    "packages/core/dist/prod/template/directives.js": "116dacddd71afe42d5dfaa674ae67403b186dc98a03f537e6ac6742de3145647",
+    "packages/core/dist/prod/template/index.js": "16e0c1703ab36db1bf9f768f07c31d6c8a6f141522485ce4957a265a79b4e322",
+    "packages/core/dist/prod/template/parts.js": "4e97bcbeafc9a7c1b6fa3fee129e451d9edac0033abd88b98bb0dd2b227d06d6",
+    "packages/core/dist/prod/template/prepare.js": "3f92e4afb40ba3c4718aeafc78908b1fae4d98a039dd8fbb70d72501477a7768",
+    "packages/core/dist/prod/template/repeat.js": "28d4a95339bb0c1a60e7b11f8116215dda84bb0b2fb90768ae449fc81c027138",
+    "packages/core/dist/prod/template/result.js": "27fed4c6263707481d78ebc5ee226377d8adb8d23c5425dcb1358aa2ba1bf408",
+    "packages/tokens/dist/css/default.css": "89604c5cfb3f35b621c00e4e71da3422ff318b0560a698f9c5b10aa9e151beb5",
+    "packages/tokens/dist/refs/index.js": "5c39c225619029bb1a8f759be91928c968b8594d49d76a6c5db167f02e7873f9"
+  },
+  "specimens": [
+    {
+      "specimen": "short",
+      "mode": "light",
+      "figmaNode": "1496:437",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22neutral%22%3EDraft%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fshort-%7Bmode%7D.png&scale=2&width=128&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/short-light.png",
+      "live": "live/short-light.png",
+      "comparisons": {
+        "side": "comparison/short-light-side.png",
+        "overlay": "comparison/short-light-overlay.png",
+        "diff": "comparison/short-light-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 64.015625,
+          "h": 22,
+          "authoredText": "Draft",
+          "tone": "neutral",
+          "noMarker": false
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 64.015625,
+          "h": 22,
+          "scrollW": 64,
+          "clientW": 64,
+          "scrollH": 22,
+          "clientH": 22
+        },
+        "label": {
+          "x": 28,
+          "y": 2,
+          "w": 28.015625,
+          "h": 18,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": 8,
+          "y": 2,
+          "w": 16,
+          "h": 18,
+          "hidden": false,
+          "display": "flex",
+          "glyph": {
+            "x": 8,
+            "y": 3,
+            "w": 16,
+            "h": 16,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": 0
+        },
+        "referencePng": {
+          "w": 126,
+          "h": 44,
+          "interiorFill": "rgb(240, 239, 243)"
+        },
+        "lines": [
+          {
+            "text": "Draft",
+            "bounds": {
+              "x": 28,
+              "y": 3,
+              "w": 28.015625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(246, 245, 241)",
+        "grant": 128,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 128,
+          "h": 22
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-neutral-surface",
+            "value": "rgb(240, 239, 243)",
+            "observed": "rgb(240, 239, 243)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-neutral-foreground",
+            "value": "rgb(95, 98, 111)",
+            "observed": "rgb(95, 98, 111)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 5
+          }
+        ]
+      }
+    },
+    {
+      "specimen": "short",
+      "mode": "dark",
+      "figmaNode": "1496:469",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22neutral%22%3EDraft%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fshort-%7Bmode%7D.png&scale=2&width=128&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/short-dark.png",
+      "live": "live/short-dark.png",
+      "comparisons": {
+        "side": "comparison/short-dark-side.png",
+        "overlay": "comparison/short-dark-overlay.png",
+        "diff": "comparison/short-dark-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 64.015625,
+          "h": 22,
+          "authoredText": "Draft",
+          "tone": "neutral",
+          "noMarker": false
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 64.015625,
+          "h": 22,
+          "scrollW": 64,
+          "clientW": 64,
+          "scrollH": 22,
+          "clientH": 22
+        },
+        "label": {
+          "x": 28,
+          "y": 2,
+          "w": 28.015625,
+          "h": 18,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": 8,
+          "y": 2,
+          "w": 16,
+          "h": 18,
+          "hidden": false,
+          "display": "flex",
+          "glyph": {
+            "x": 8,
+            "y": 3,
+            "w": 16,
+            "h": 16,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": 0
+        },
+        "referencePng": {
+          "w": 126,
+          "h": 44,
+          "interiorFill": "rgb(17, 18, 25)"
+        },
+        "lines": [
+          {
+            "text": "Draft",
+            "bounds": {
+              "x": 28,
+              "y": 3,
+              "w": 28.015625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(23, 24, 33)",
+        "grant": 128,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 128,
+          "h": 22
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-neutral-surface",
+            "value": "rgb(17, 18, 25)",
+            "observed": "rgb(17, 18, 25)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-neutral-foreground",
+            "value": "rgb(189, 187, 205)",
+            "observed": "rgb(189, 187, 205)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 5
+          }
+        ]
+      }
+    },
+    {
+      "specimen": "wrapped",
+      "mode": "light",
+      "figmaNode": "1496:447",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22warning%22%3EWaiting+for+accessibility+review%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fwrapped-%7Bmode%7D.png&scale=2&width=112&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/wrapped-light.png",
+      "live": "live/wrapped-light.png",
+      "comparisons": {
+        "side": "comparison/wrapped-light-side.png",
+        "overlay": "comparison/wrapped-light-overlay.png",
+        "diff": "comparison/wrapped-light-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58,
+          "authoredText": "Waiting for accessibility review",
+          "tone": "warning",
+          "noMarker": false
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58,
+          "scrollW": 112,
+          "clientW": 112,
+          "scrollH": 58,
+          "clientH": 58
+        },
+        "label": {
+          "x": 28,
+          "y": 2,
+          "w": 76,
+          "h": 54,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": 8,
+          "y": 2,
+          "w": 16,
+          "h": 18,
+          "hidden": false,
+          "display": "flex",
+          "glyph": {
+            "x": 8,
+            "y": 3,
+            "w": 16,
+            "h": 16,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": 0
+        },
+        "referencePng": {
+          "w": 224,
+          "h": 116,
+          "interiorFill": "rgb(255, 245, 222)"
+        },
+        "lines": [
+          {
+            "text": "Waiting for",
+            "bounds": {
+              "x": 28,
+              "y": 3,
+              "w": 61.28125,
+              "h": 16
+            }
+          },
+          {
+            "text": "accessibility",
+            "bounds": {
+              "x": 28,
+              "y": 21,
+              "w": 64.484375,
+              "h": 16
+            }
+          },
+          {
+            "text": "review",
+            "bounds": {
+              "x": 28,
+              "y": 39,
+              "w": 35.390625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(246, 245, 241)",
+        "grant": 112,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-warning-surface",
+            "value": "rgb(255, 245, 222)",
+            "observed": "rgb(255, 245, 222)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-warning-foreground",
+            "value": "rgb(138, 89, 0)",
+            "observed": "rgb(138, 89, 0)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 30
+          }
+        ]
+      }
+    },
+    {
+      "specimen": "wrapped",
+      "mode": "dark",
+      "figmaNode": "1496:479",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22warning%22%3EWaiting+for+accessibility+review%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fwrapped-%7Bmode%7D.png&scale=2&width=112&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/wrapped-dark.png",
+      "live": "live/wrapped-dark.png",
+      "comparisons": {
+        "side": "comparison/wrapped-dark-side.png",
+        "overlay": "comparison/wrapped-dark-overlay.png",
+        "diff": "comparison/wrapped-dark-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58,
+          "authoredText": "Waiting for accessibility review",
+          "tone": "warning",
+          "noMarker": false
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58,
+          "scrollW": 112,
+          "clientW": 112,
+          "scrollH": 58,
+          "clientH": 58
+        },
+        "label": {
+          "x": 28,
+          "y": 2,
+          "w": 76,
+          "h": 54,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": 8,
+          "y": 2,
+          "w": 16,
+          "h": 18,
+          "hidden": false,
+          "display": "flex",
+          "glyph": {
+            "x": 8,
+            "y": 3,
+            "w": 16,
+            "h": 16,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": 0
+        },
+        "referencePng": {
+          "w": 224,
+          "h": 116,
+          "interiorFill": "rgb(58, 46, 24)"
+        },
+        "lines": [
+          {
+            "text": "Waiting for",
+            "bounds": {
+              "x": 28,
+              "y": 3,
+              "w": 61.28125,
+              "h": 16
+            }
+          },
+          {
+            "text": "accessibility",
+            "bounds": {
+              "x": 28,
+              "y": 21,
+              "w": 64.484375,
+              "h": 16
+            }
+          },
+          {
+            "text": "review",
+            "bounds": {
+              "x": 28,
+              "y": 39,
+              "w": 35.390625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(23, 24, 33)",
+        "grant": 112,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 58
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-warning-surface",
+            "value": "rgb(58, 46, 24)",
+            "observed": "rgb(58, 46, 24)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-warning-foreground",
+            "value": "rgb(233, 196, 120)",
+            "observed": "rgb(233, 196, 120)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 30
+          }
+        ]
+      }
+    },
+    {
+      "specimen": "markerless",
+      "mode": "light",
+      "figmaNode": "1496:457",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22info%22+no-marker%3EReleaseCandidate0123456789%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fmarkerless-%7Bmode%7D.png&scale=2&width=112&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/markerless-light.png",
+      "live": "live/markerless-light.png",
+      "comparisons": {
+        "side": "comparison/markerless-light-side.png",
+        "overlay": "comparison/markerless-light-overlay.png",
+        "diff": "comparison/markerless-light-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40,
+          "authoredText": "ReleaseCandidate0123456789",
+          "tone": "info",
+          "noMarker": true
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40,
+          "scrollW": 112,
+          "clientW": 112,
+          "scrollH": 40,
+          "clientH": 40
+        },
+        "label": {
+          "x": 8,
+          "y": 2,
+          "w": 96,
+          "h": 36,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": null,
+          "y": null,
+          "w": 0,
+          "h": 0,
+          "hidden": true,
+          "display": "none",
+          "glyph": {
+            "x": null,
+            "y": null,
+            "w": 0,
+            "h": 0,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": null
+        },
+        "referencePng": {
+          "w": 224,
+          "h": 80,
+          "interiorFill": "rgb(236, 247, 255)"
+        },
+        "lines": [
+          {
+            "text": "ReleaseCandidat",
+            "bounds": {
+              "x": 8,
+              "y": 3,
+              "w": 89.765625,
+              "h": 16
+            }
+          },
+          {
+            "text": "e0123456789",
+            "bounds": {
+              "x": 8,
+              "y": 21,
+              "w": 71.265625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(246, 245, 241)",
+        "grant": 112,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-info-surface",
+            "value": "rgb(236, 247, 255)",
+            "observed": "rgb(236, 247, 255)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-info-foreground",
+            "value": "rgb(0, 118, 175)",
+            "observed": "rgb(0, 118, 175)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 26
+          }
+        ]
+      }
+    },
+    {
+      "specimen": "markerless",
+      "mode": "dark",
+      "figmaNode": "1496:489",
+      "url": "http://127.0.0.1:4194/bench?html=%3Cdiv+style%3D%22display%3Aflex%3Balign-items%3Aflex-start%22%3E%3Codd-badge+tone%3D%22info%22+no-marker%3EReleaseCandidate0123456789%3C%2Fodd-badge%3E%3C%2Fdiv%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fmarkerless-%7Bmode%7D.png&scale=2&width=112&pad=16&dir=ltr&opacity=0.5",
+      "state": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "fontScale": "16px",
+        "devicePixelRatio": 2
+      },
+      "figma": "figma/markerless-dark.png",
+      "live": "live/markerless-dark.png",
+      "comparisons": {
+        "side": "comparison/markerless-dark-side.png",
+        "overlay": "comparison/markerless-dark-overlay.png",
+        "diff": "comparison/markerless-dark-diff.png"
+      },
+      "measured": {
+        "host": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40,
+          "authoredText": "ReleaseCandidate0123456789",
+          "tone": "info",
+          "noMarker": true
+        },
+        "base": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40,
+          "scrollW": 112,
+          "clientW": 112,
+          "scrollH": 40,
+          "clientH": 40
+        },
+        "label": {
+          "x": 8,
+          "y": 2,
+          "w": 96,
+          "h": 36,
+          "whiteSpace": "normal",
+          "overflowWrap": "anywhere",
+          "font": "500 12px / 18px system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+        },
+        "marker": {
+          "x": null,
+          "y": null,
+          "w": 0,
+          "h": 0,
+          "hidden": true,
+          "display": "none",
+          "glyph": {
+            "x": null,
+            "y": null,
+            "w": 0,
+            "h": 0,
+            "fontSize": "16px",
+            "token": {
+              "token": "--odd-icon-size-sm",
+              "value": "16px"
+            },
+            "ariaHidden": "true"
+          },
+          "centerVsFirstLine": null
+        },
+        "referencePng": {
+          "w": 224,
+          "h": 80,
+          "interiorFill": "rgb(0, 29, 47)"
+        },
+        "lines": [
+          {
+            "text": "ReleaseCandidat",
+            "bounds": {
+              "x": 8,
+              "y": 3,
+              "w": 89.765625,
+              "h": 16
+            }
+          },
+          {
+            "text": "e0123456789",
+            "bounds": {
+              "x": 8,
+              "y": 21,
+              "w": 71.265625,
+              "h": 16
+            }
+          }
+        ],
+        "canvas": "rgb(23, 24, 33)",
+        "grant": 112,
+        "cellOrigin": {
+          "x": 0,
+          "y": 0,
+          "w": 112,
+          "h": 40
+        },
+        "tokens": [
+          {
+            "cssProperty": "background-color",
+            "token": "--odd-color-info-surface",
+            "value": "rgb(0, 29, 47)",
+            "observed": "rgb(0, 29, 47)",
+            "equal": true
+          },
+          {
+            "cssProperty": "color",
+            "token": "--odd-color-info-foreground",
+            "value": "rgb(83, 171, 228)",
+            "observed": "rgb(83, 171, 228)",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-start-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-start-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "border-end-end-radius",
+            "token": "--odd-radius-sm",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-start",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-block-end",
+            "token": "--odd-space-3xs",
+            "value": "2px",
+            "observed": "2px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-start",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "padding-inline-end",
+            "token": "--odd-space-xs",
+            "value": "8px",
+            "observed": "8px",
+            "equal": true
+          },
+          {
+            "cssProperty": "column-gap",
+            "token": "--odd-space-2xs",
+            "value": "4px",
+            "observed": "4px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-family",
+            "token": "--odd-font-family-sans",
+            "value": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-size",
+            "token": "--odd-font-size-xs",
+            "value": "12px",
+            "observed": "12px",
+            "equal": true
+          },
+          {
+            "cssProperty": "font-weight",
+            "token": "--odd-font-weight-medium",
+            "value": "500",
+            "observed": "500",
+            "equal": true
+          },
+          {
+            "cssProperty": "line-height",
+            "token": "--odd-line-height-normal",
+            "value": "18px",
+            "observed": "18px",
+            "equal": true
+          },
+          {
+            "cssProperty": "letter-spacing",
+            "token": "--odd-letter-spacing-normal",
+            "value": "normal",
+            "observed": "normal",
+            "equal": true
+          }
+        ],
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 26
+          }
+        ]
+      }
+    }
+  ]
+}

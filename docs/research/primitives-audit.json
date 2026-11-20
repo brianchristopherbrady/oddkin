@@ -249,11 +249,18 @@
         {
           "family": "Oddkin/Common/badge",
           "id": "159:582",
-          "frame": "Definitions · Actions",
-          "variants": 6,
+          "frame": "Primitive · Badge · Specification (1395:2)",
+          "variants": 5,
           "axes": {
-            "State": ["Count", "Danger", "Info", "Neutral", "Success", "Warning"]
+            "Tone": ["neutral", "info", "success", "warning", "danger"]
           }
+        },
+        {
+          "family": "Count content · historical composition",
+          "id": "159:581",
+          "frame": "Primitive · Badge · Specification (1395:2)",
+          "variants": 1,
+          "axes": {}
         }
       ],
       "code": {
@@ -346,6 +353,20 @@
           "finding": "The tone glyphs drew their circle and triangle at about 12 px inside the 16 px marker; Figma's library icons span 14 to 15 px.",
           "proposal": "Draw them from the canonical icons in design/icons/general.",
           "fixed": "2026-11-17: info, check-circle, and warning follow information.svg, check-circle.svg, and warning.svg (glyphs.test.ts), for the badge, alert, toast, status marker, and validation summary."
+        },
+        {
+          "id": "BG11",
+          "check": "responsive",
+          "finding": "An inherited no-wrap style could overflow a narrow parent. Inline emphasis could separate adjacent text into flex columns, and a competing sibling could leave Badge wider than its track.",
+          "proposal": "One wrapping label with intrinsic sizing. Allow its host and text to shrink within the parent allocation.",
+          "fixed": "2026-11-19: source and three-engine regressions preserve complete content, fit alongside an adjacent action, and retain its focus."
+        },
+        {
+          "id": "BG12",
+          "check": "visual",
+          "finding": "The glyph was centered on the entire multiline label, separating it from the first line.",
+          "proposal": "Center the existing token-sized glyph within the first line and preserve the short Badge geometry.",
+          "fixed": "2026-11-19: the first-line lane is in the existing Figma family and source. In both text directions the browser keeps its size and first-line position."
         }
       ],
       "decisions": [
@@ -360,8 +381,8 @@
           "answer": "2026-11-17, the owner's specification (page 1395:2): the code's compact badge, space.2xs gap, space.3xs block and space.xs inline padding, 22 px tall. The Tone variants now bind those tokens."
         }
       ],
-      "audited": "2026-11-15",
-      "summary": "The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it. Outcome (2026-11-17): the owner's specification (page 1395:2) keeps the code's compact spacing and binds it in Figma, so parity now compares the gap and padding; the glyphs follow the canonical icons and a row of badges aligns."
+      "audited": "2026-11-19",
+      "summary": "The API covers Figma: tone gives the five colours with their glyphs, and no-marker gives Count. Colours, radius, glyph size, and the Status type match. The spacing does not: Figma draws 8 px between glyph and text and a 28 px height; the code computes to 4 px and 22 px. Figma binds neither, so the parity test cannot see it. Outcome (2026-11-17): the owner's specification (page 1395:2) keeps the code's compact spacing and binds it in Figma, so parity now compares the gap and padding; the glyphs follow the canonical icons and a row of badges aligns. Research-led redesign (2026-11-19): the label wraps as one text flow even with inline formatting and a no-wrap parent, and the marker aligns to the first line. Existing compact tokens, public API and passive behavior carry forward."
     },
     {
       "order": 3,

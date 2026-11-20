@@ -5,7 +5,7 @@ import { TONES } from '../styles/tone.styles.js';
  * A passive status or count: words with a tone colour and a glyph, so the meaning never rests on
  * colour alone. Not an action; do not make it clickable.
  *
- * @slot - The text.
+ * @slot - Status or count text, with optional inline emphasis. Wraps in the space the parent grants.
  * @csspart base - The surface.
  * @csspart marker - The tone glyph (hidden with `no-marker`).
  * @cssprop --odd-badge-radius - Corner radius.

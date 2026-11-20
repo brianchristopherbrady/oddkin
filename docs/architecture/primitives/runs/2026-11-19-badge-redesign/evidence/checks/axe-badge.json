@@ -1,0 +1,65 @@
+{
+  "source": "Oddkin built Badge registration and default CSS",
+  "results": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "mode": "light",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "mode": "dark",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    },
+    {
+      "browser": "firefox",
+      "version": "157.0",
+      "mode": "light",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    },
+    {
+      "browser": "firefox",
+      "version": "157.0",
+      "mode": "dark",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "mode": "light",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    },
+    {
+      "browser": "webkit",
+      "version": "27.2",
+      "mode": "dark",
+      "count": 11,
+      "passive": true,
+      "violations": [],
+      "contrast": true,
+      "axeVersion": "4.14.0"
+    }
+  ]
+}

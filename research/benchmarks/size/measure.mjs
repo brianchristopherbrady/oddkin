@@ -182,7 +182,7 @@ export const BUDGETS = {
   // 69,824 from 2026-11-18 (Agent 1), the smallest 64 B step: measured 69,805 (+458) with
   // odd-button v2: the icon-only state read from the default slot, its naming warning, and icon
   // sizes by context in the element (+727 B minified) and the native recipe (+849, with links).
-  'ai-chat': 69824,
+  'ai-chat': 69856,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -319,7 +319,7 @@ export const CSS_BUDGETS = {
   // 2026-10-22 (2,770 before the info ramp and the tone, selection, and scrim
   // roles; 2,764 at ADRs 0041-0042, 1,827 before the approved palette and foundation scales).
   'tokens:default.css': 3136,
-  'components:badge': 384, // measured 375 on 2026-10-22: structural and default styles
+  'components:badge': 448, // measured 430 on 2026-11-19: one wrapping label and first-line marker
   // Display elements, measured on 2026-10-22 (structural and default styles).
   'components:alert': 576, // 540 on 2026-10-26 (500 before its layout recipe, layout-recipes.md §14)
   'components:avatar': 512, // 430

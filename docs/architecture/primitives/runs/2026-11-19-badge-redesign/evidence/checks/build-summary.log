@@ -1,0 +1,6 @@
+Commands with observed exit 0:
+npm run build
+npm exec -- tsc -b (post-generation)
+npm exec -- tsc -p tsconfig.tests.json
+
+Production builds, component CSS, CEM/metadata, schemas, demos and kit generation completed.

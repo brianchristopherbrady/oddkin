@@ -2475,7 +2475,7 @@
       "page": "1395:2",
       "frame": "Oddkin/Common/badge",
       "kind": "COMPONENT_SET",
-      "description": "Passive, noninteractive status/count. Tone maps to the existing tone property; Show marker maps to !noMarker. Label is default-slot content. Count is content, not a sixth tone. No automatic announcements or overlay.",
+      "description": "Passive status and count text. Tone maps to tone, Show marker maps to !noMarker, and Label is default-slot content. The decorative marker stays on the first line. The parent owns count context and important announcements.",
       "properties": [
         { "name": "Label", "type": "TEXT", "defaultValue": "Draft" },
         { "name": "Show marker", "type": "BOOLEAN", "defaultValue": true },
@@ -2535,7 +2535,12 @@
           },
           "properties": { "characters": ["Label"] }
         },
-        { "path": ["marker"], "types": ["INSTANCE"], "properties": { "visible": ["Show marker"] } }
+        {
+          "path": ["First-line marker"],
+          "types": ["FRAME"],
+          "properties": { "visible": ["Show marker"] }
+        },
+        { "path": ["First-line marker", "marker"], "types": ["INSTANCE"] }
       ],
       "instances": [
         {

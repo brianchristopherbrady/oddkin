@@ -6757,3 +6757,16 @@ Resumed the owner-requested full Primitive Architect flow from the in-progress i
 | Handoff | The [handoff](./architecture/primitives/specifications/odd-button/handoff.json) and [run](./architecture/primitives/runs/2026-11-18-button-redesign/run.json) bind the revised design, final implementation files, test evidence and comparison artifacts. An independent review checked the refreshed captures alongside the earlier independent source and behavior review. |
 
 Coverage includes browser behavior and the accessibility tree in the checked fixtures. Real assistive technology, physical devices and new live zoom checks remain outside the observed run. Agent 1's checkout holds the implementation for the normal integration process.
+
+## 2026-11-19 — Item 11: Badge redesign (Agent 1)
+
+The [Badge run](./architecture/primitives/runs/2026-11-19-badge-redesign/README.md) records the research, design-to-code handoff and implementation in `a1-main`. The design retains the accepted D1 compact spacing and uses the existing API.
+
+| Check | Observed result |
+| --- | --- |
+| Figma | Revised page `1395:2`, set `159:582`, native spec `1395:960` and shared index link `1410:1679`. Five tone identities and all 14 prototype destinations remain valid. Zero top-level and variant overlaps, missing fonts or marker visibility mismatches. Clip flags were confined to the two deliberately bounded parent readers. |
+| Browser | 73 focused Badge and Figma parity cases passed across Chromium, Firefox and WebKit. New probes cover a no-wrap flex parent, inline emphasis, adjacent action focus and first-line glyph geometry in LTR and RTL. |
+| Visual fidelity | The Oddkin bench compared six matched specimens and saved live, side, overlay and difference captures. All 112 px specimens matched line breaks and heights. The browser's native font makes the natural Draft specimen 1.016 px wider than Figma's stand-in. |
+| Build and source | Production build, test typecheck, compatibility check, 15 snapshot/reuse/metadata Node tests and the scoped Badge intrinsic dependency test passed. Size checks passed with measured budgets of 448 B for Badge CSS (430 B actual) and 69,856 B for AI chat (69,842 B actual). |
+
+The [handoff](./architecture/primitives/specifications/odd-badge/handoff.json) and [comparison evidence](./architecture/primitives/runs/2026-11-19-badge-redesign/evidence/verification.md) bind the change to the current source and tested fixtures.

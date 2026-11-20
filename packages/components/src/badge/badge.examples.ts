@@ -39,6 +39,16 @@ export default defineExamples('odd-badge', {
     slots: { default: '12' },
     guidance: 'A count needs no glyph; say what is counted nearby ("12 unread").',
   },
+  wrapping: {
+    label: 'Narrow status',
+    props: { tone: 'warning' },
+    slots: { default: 'Waiting for accessibility review' },
+    guidance:
+      'The label wraps within this 112 px grant and the marker stays beside its first line. The parent owns the row and any adjacent actions.',
+    fixture({ element }) {
+      element.style.inlineSize = '112px';
+    },
+  },
   colorOnly: {
     label: 'Unknown tone "error"',
     attributes: { tone: 'error' },

@@ -5,16 +5,24 @@ export const badgeStructuralStyles = css`
   :host {
     display: inline-block;
     vertical-align: middle;
+    min-inline-size: 0;
     max-inline-size: 100%;
   }
   .badge {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
   }
   .marker {
     display: inline-flex;
+    flex: none;
+    align-items: center;
+    min-block-size: 1lh;
+  }
+  .label {
+    min-inline-size: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
   @media (forced-colors: active) {
     .badge {

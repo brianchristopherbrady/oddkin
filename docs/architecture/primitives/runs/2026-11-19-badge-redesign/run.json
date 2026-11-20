@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-11-19-badge-redesign",
+  "request": "Run the full Oddkin flow to research framework-agnostic Badge designs, redesign Badge in Figma and implement and verify the reviewed contract.",
+  "identifiers": ["odd-badge"],
+  "mode": "design-and-implement",
+  "verificationScope": "both",
+  "verificationPolicyVersion": 2,
+  "source": {
+    "root": "C:/SLT_Backup_10-21-2026/oddkin-a1-main",
+    "branch": "a1-main",
+    "commit": "7220497638764abbb03add15eec89106bbe12d6f",
+    "dirtyPaths": [
+      "IMPLEMENTATION_PLAN.md",
+      "design/figma/components.json",
+      "design/figma/reuse.json",
+      "docs/architecture/component-catalog.md",
+      "docs/progress-log.md",
+      "docs/research/primitives-audit.json",
+      "docs/research/primitives-audit.md",
+      "docs/verification.md",
+      "docs/architecture/primitives/runs/2026-11-18-avatar-design-review/",
+      "docs/architecture/primitives/specifications/odd-avatar/"
+    ],
+    "additionalRefs": [
+      "e84a08e33ee5510cb86dc462ccbf9e3a7fcce7dd (previous Badge implementation)",
+      "Agent 1 item 11 in IMPLEMENTATION_PLAN.md"
+    ]
+  },
+  "phase": "report",
+  "nextAction": "Use the revised Badge design and current implementation as the base for future Badge work. Compare any subsequent change against this handoff.",
+  "completion": "complete",
+  "handoff": "docs/architecture/primitives/specifications/odd-badge/handoff.json",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pages": [
+      {
+        "identifier": "odd-badge",
+        "pageId": "1395:2",
+        "nodeIds": [
+          "1395:2",
+          "159:582",
+          "159:581",
+          "1395:960",
+          "1395:106",
+          "1395:562",
+          "1395:852",
+          "1395:951",
+          "1399:405",
+          "159:556",
+          "499:2513",
+          "159:563",
+          "159:570",
+          "159:577",
+          "1395:71",
+          "159:555",
+          "1496:426",
+          "1496:427",
+          "1496:428",
+          "1496:429",
+          "1496:430",
+          "1496:431",
+          "1496:437",
+          "1496:447",
+          "1496:457",
+          "1496:469",
+          "1496:479",
+          "1496:489"
+        ]
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "BG-RESEARCH",
+      "kind": "contract",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Four independent implementations support the selected passive and wrapping contract.",
+      "method": "Compare original source and official docs and inspect the actual prior Badge.",
+      "fixture": "Web Awesome, Adobe Spectrum 2, SAP UI5 Tag, Bootstrap, CSS and WAI standards.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-badge/research.md",
+        "docs/architecture/primitives/specifications/odd-badge/decision.md",
+        "docs/architecture/primitives/specifications/odd-badge/context.md"
+      ],
+      "observedAt": "2026-11-20T04:42:31.971Z",
+      "limits": "Primary source comparison and baseline diagnosis. No external component runtime or manual assistive technology test."
+    },
+    {
+      "id": "BG-PREFLIGHT",
+      "kind": "contract",
+      "status": "PASS",
+      "critical": true,
+      "claim": "The reviewed Badge handoff matches its pre-implementation source and contract fingerprints.",
+      "method": "Validate the frozen reference schema and validator against the Agent 1 worktree using its exact file bytes.",
+      "fixture": "Agent 1 worktree at the recorded baseline, with Badge source and tests clean.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-badge/handoff.json",
+        "docs/architecture/primitives/specifications/odd-badge/contract.md",
+        "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1395-2"
+      ],
+      "observedAt": "2026-11-20T04:42:31.972Z",
+      "limits": "Checks the pre-implementation baseline. Current browser behavior and visual fidelity require separate verification."
+    },
+    {
+      "id": "BG-SOURCE",
+      "kind": "source",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Production build and both typechecks passed. Generated contracts match the checked-in design inventory, Badge has no runtime layout dependency, and asset size and CSS compatibility checks are green.",
+      "method": "Build and regenerate current assets, invoke the package compilers and run scoped Node, dependency, compression budget and compatibility checks.",
+      "fixture": "Agent 1's current Badge and selected related package assets.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/build-summary.log",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/badge-node.log",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/badge-graph.log",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/badge-size.log",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/compat.log"
+      ],
+      "observedAt": "2026-11-20T04:56:44.775Z",
+      "limits": "The source result is Badge-scoped. Generated contracts and agent kits come from the build. The separate project-wide runtime metadata verifier uses recorded conformance from every element and engine."
+    },
+    {
+      "id": "BG-FIGMA-STRUCTURE",
+      "kind": "figma-structure",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Five same-ID tone masters, token bindings, marker visibility, text geometry and 14 valid prototype destinations were observed.",
+      "method": "Read live page and parse the Figma structure audit.",
+      "fixture": "Badge page 1395:2 and canonical set 159:582.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-audit.json",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-native-spec.md",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-context.json"
+      ],
+      "observedAt": "2026-11-20T04:56:44.775Z",
+      "limits": "Fourteen intended text clipping flags occur only within the two named bounded parent readers. Structural review does not test browser behavior."
+    },
+    {
+      "id": "BG-FIGMA-VISUAL",
+      "kind": "figma-visual",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Tone/marker states, both themes/densities, RTL, bounded reader and short/wrapped specimens are readable without unintended clipping or overlaps.",
+      "method": "Independently inspect the four source Figma exports.",
+      "fixture": "State, parent allocation, host flow index and first-line marker and wrapping frames.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-states.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-allocation.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-flows.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma-review.png"
+      ],
+      "observedAt": "2026-11-20T04:56:44.775Z",
+      "limits": "Figma images and navigation demonstrate presentation. Actual focus, dynamic updates, zoom and assistive technology require their own evidence."
+    },
+    {
+      "id": "BG-BROWSER",
+      "kind": "browser",
+      "status": "PASS",
+      "critical": true,
+      "claim": "All 73 selected Badge and Figma parity browser cases passed in Chromium, Firefox and WebKit.",
+      "method": "Execute the current Badge and selected Figma parity tests in the repository browser projects.",
+      "fixture": "Five tones, marker toggles, content and direction, first-line glyph, constrained parent allocation, inline emphasis, focused sibling continuity, theme/density and Chromium forced colors.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/checks/badge-browser.log"
+      ],
+      "observedAt": "2026-11-20T04:56:44.775Z",
+      "limits": "Nonselected cases and unsupported forced-colors emulation were filtered or skipped. Larger text was exercised through font sizing rather than browser zoom. No manual screen reader run."
+    },
+    {
+      "id": "BG-FIDELITY",
+      "kind": "implementation-visual",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Six matched current Badge captures passed scoped visual review. The natural short specimen differs in width by 1.016 px due to the platform font, with matching surface height, marker, insets and paints.",
+      "method": "Compare the same current built inputs to 2x Figma exports in the existing Oddkin fidelity bench. Inspect side, 50% overlay and CSS difference views and independently review sample pairs.",
+      "fixture": "Neutral short, warning wrapped and info markerless label in light and dark, matched parent dimensions and token scope.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/design-spec.json",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/diff.md",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/markerless-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/markerless-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/short-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/short-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/wrapped-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/wrapped-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/fix-log.md",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/implementation.json",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/markerless-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/markerless-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/short-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/short-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/wrapped-dark.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/wrapped-light.png",
+        "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/verification.md"
+      ],
+      "observedAt": "2026-11-20T04:56:44.775Z",
+      "limits": "Windows Chromium uses Segoe UI Semibold vs Figma Roboto Medium. Exact metrics match the constrained sample dimensions and line positions; typography and artwork raster edges retain expected residuals. This audit is scoped to six specimens."
+    }
+  ],
+  "issues": [],
+  "implementation": {
+    "sourceCommit": null,
+    "files": [
+      {
+        "path": "packages/components/src/badge/badge.ts",
+        "sha256": "fbd68d7400aee80a161a6c2e9e8a6be250f1b26c58a0f88c708f34e773d2d429"
+      },
+      {
+        "path": "packages/components/src/badge/badge.template.ts",
+        "sha256": "989d44f7a2d6ffaaa9e321d671bcc5ac16e697c221c01035fef1a73835b62139"
+      },
+      {
+        "path": "packages/components/src/badge/badge.structural.styles.ts",
+        "sha256": "57fdad5e6224fb376bd4fc87d20543e1420f0fe2dc834ab8c482b50b8ea77ce7"
+      },
+      {
+        "path": "packages/components/src/badge/badge.styles.ts",
+        "sha256": "2e45ee2dc512a104c48732fe21cf97339f6b3e996f213565303a778bb606d290"
+      },
+      {
+        "path": "packages/components/src/badge/badge.examples.ts",
+        "sha256": "e3696d43f85f09e063e9380b40b00b3698e2801bfa27400b47f24b42a2b82c13"
+      },
+      {
+        "path": "packages/components/test/badge.browser.test.ts",
+        "sha256": "78ad9a915dda5d99490babdb0e93c0128a71ffea517a2bdaeffc7389e03cdbfb"
+      },
+      {
+        "path": "research/benchmarks/size/measure.mjs",
+        "sha256": "8f3830c9b2bc7ec10d05617b15901463a17f221795726cb315ec5b94705a3778"
+      },
+      {
+        "path": "docs/compatibility/matrix.md",
+        "sha256": "8988373fee3584377685cd242e159d721be42b98b28db548d3fd3ec8369c1f99"
+      }
+    ]
+  },
+  "fidelityAudits": [
+    {
+      "identifier": "odd-badge",
+      "tool": "oddkin-fidelity-bench",
+      "checkId": "BG-FIDELITY",
+      "implementationFingerprint": "cea357f4b4fcafc92e7b9ad2df33d722cd69d21f8f1739d810bd28be39313401",
+      "handoff": {
+        "path": "docs/architecture/primitives/specifications/odd-badge/handoff.json",
+        "sha256": "a395f45fc96d661857bace1d5295ddd01855bf67e441136024cc54fd47a7137c"
+      },
+      "artifacts": [
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-diff.png",
+          "sha256": "19aafd9e8fcbe4120babf11d23738d4c88bc1e6f857a5361639104f969337265"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-overlay.png",
+          "sha256": "4f181751e0276dbcc11e2a24c3aa107af44805274260fad1f28aee7608f856c8"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-dark-side.png",
+          "sha256": "d17cef92d53826c1759bec9f4120950d7505c709c157ac6c3a1f64525a2611fa"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-diff.png",
+          "sha256": "990bb39a5b202ecd72eb1426d177ed3fde469f59a820e94ff59020c26644fa24"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-overlay.png",
+          "sha256": "4dbb93c4942229e7d180bda23af0d9bc4e8a557bfeda75280a822a2bf3aa395b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/markerless-light-side.png",
+          "sha256": "d210da9e6a30a83927b0532d6771d6fe8c1c3ba44e95ffe39fb4d16b9190f927"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-diff.png",
+          "sha256": "6f32b430081d67a00b4f32b617805288439a6e7358ad717eebc630123bf1bbae"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-overlay.png",
+          "sha256": "1021165ad43f377d120f8fe9e58fc49f0711cad600538d1682136af1100b0e8e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-dark-side.png",
+          "sha256": "c9af5c8a2974af29877dbb41f01789eb8834ad0cc445ef63bfaaad189a3cc927"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-diff.png",
+          "sha256": "7bc958d1d7aba7ee24ed148229e414169d3d3f7e5517967b431fa877f62e0cd9"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-overlay.png",
+          "sha256": "753315ec39ced979cf3a6cc85f9e44bf228eba586dc02ae590b16be2b4463620"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/short-light-side.png",
+          "sha256": "bb4ed30c129b626e9ffec87d37eac43253e9553a4ea1132feb9a7e6cb5b77205"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-diff.png",
+          "sha256": "2fa012033bb4aff4c5e892e69c3c710bb3d43111130519140888454b3254e3b6"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-overlay.png",
+          "sha256": "7efd90c10f3212ef28ca669a173b96f08694b4617afee4224045d71cab29044b"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-dark-side.png",
+          "sha256": "85e2b25f8d17c79203acf25da084bcbd46e26748d63504ebdc53fa8f8590557e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-diff.png",
+          "sha256": "80a51744c8c5c99bef1617965af337e587552963e32290521b8256d04d870f91"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-overlay.png",
+          "sha256": "b31950971ba1adf8b22e804c4e1568bdbd05e580b752fcdf2f1548400675ad93"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/comparison/wrapped-light-side.png",
+          "sha256": "7d44dc5c374175374ccbb81601da9d5882c33277897973418a1fa61b772a379a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/design-spec.json",
+          "sha256": "7e58cf7b76b644f1051ef70915936f28d28bd502df5f8485be8a8d8a3d477edf"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/diff.md",
+          "sha256": "b2f9a26b732fea7fd3940cdf4e533c0ed18360bcd373588ee368a97548e0716c"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/markerless-dark.png",
+          "sha256": "c6da985cdf3ec87a9c937422cab29bddcf1d1011c1b8024827603a45b00a49b8"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/markerless-light.png",
+          "sha256": "3330fe7b11addab2958b30260c6e95e06fd9d66fdf7c207c4aaf980c719f2402"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/short-dark.png",
+          "sha256": "d02825d5b3c63f2137d6a622a0cddfe8dd1fd82c8216597b2e9639c430d48b53"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/short-light.png",
+          "sha256": "aff5392d2e3bbe3d1459b6ef72763107be888cc507f147a291090fb952c4054e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/wrapped-dark.png",
+          "sha256": "d29e686da7c00e31e9e9830493dd60b60ffa519669d01de8d5ea341b2a96c37d"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/figma/wrapped-light.png",
+          "sha256": "cb657d9bbff77c6d3e66daeadc9075b61e8432b4c8b75a67f98147f282cad106"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/fix-log.md",
+          "sha256": "9547c4d99cdbb08e7fd2b16d846c14f8f459201055e4c4b82b72693c50b5b633"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/implementation.json",
+          "sha256": "8b1da8fc58d9383df4302c21c9479aa47bb13179a5eb09d33c2e1fc2d4970a3f"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/markerless-dark.png",
+          "sha256": "e332a9977f711caff8fe62ac1d842c990b9f4bb2de5c41ce1d207f68f3995817"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/markerless-light.png",
+          "sha256": "25486f60baade9e83fa58c2256d253caf489e0b688b0ef76ddba38bfa25ed8d2"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/short-dark.png",
+          "sha256": "23c10095373890c4a17483a291391c8d85e14f7e5b1b14608f5e8d33ffd061e0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/short-light.png",
+          "sha256": "b5675ea2cca166a22b91bb2bb445b62c108c85689b4cd58678bca6e832264e89"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/wrapped-dark.png",
+          "sha256": "46bfe5c7e0fc3b3712907e61e07dc1637e52cacd0f3d2066f42af537846fd4c0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/live/wrapped-light.png",
+          "sha256": "dfc1dcc2ce2e5112f122f4d8bc31b85c576ad2597ee68553637d9d3ba2f2cfdd"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-19-badge-redesign/evidence/verification.md",
+          "sha256": "01c4f820b4a7b66cadc7628459ae5b27798b8a3a570bcb3c4c872a8919a51918"
+        }
+      ]
+    }
+  ]
+}

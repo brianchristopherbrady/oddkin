@@ -55,7 +55,7 @@ tokens, slot content, a native element, or a look-alike.
 | `toggleButton` | 8 | `odd-button` `toggle` and `pressed` (`aria-pressed`) | Existing (variant) | Not a new appearance: a pressed toggle takes the selection colours in every appearance. |
 | `splitAction` | 2 | `odd-split-button` | Existing | A primary `<button>` part and a complete `odd-menu` behind a glyph-only trigger (`strings.more`), its parts forwarded with `exportparts`; `loading` on the primary half. |
 | `link` | 3 | `a.odd-link` recipe (`css/link.css`) | Existing (CSS recipe) | No element: a native `<a>` with the link colour, an underline on hover, and the shared focus ring. |
-| `badge` | 6 | `odd-badge` | Existing | `tone` neutral/info/success/warning/danger with the tone glyph (`no-marker` hides it). AI status labels (`.status` in `@oddkin/ai`) take their colours from the same tone module (`toneStyles`). |
+| `Oddkin/Common/badge` | 5 | `odd-badge` | Existing | Tone and optional marker. A wrapping label keeps the glyph on the first line. Count is slot content; the separate Count specimen retains its ID. [Badge contract](./primitives/specifications/odd-badge/spec.md) |
 | `chip` | 4 | `odd-chip` | Existing | `removable` (a named remove button), `selected`, `disabled`. `multiselect` draws its 14 chips as parts from the chip style module (§6). |
 | `field` | 2 | the field anatomy of every form control; `.odd-field` recipe (`css/field.css`) | Existing (shared module) | Not an element: each form control renders label, description, control, and error (`OddkinFormControl`, the control module); the recipe gives plain HTML fields the same look. |
 | `input` | 8 | `odd-input` | Existing | Types text, email, password, tel, url, search, number, date, time, datetime-local, month, week. |

@@ -1,0 +1,32 @@
+{
+  "159:556": {
+    "componentName": "OddkinBadge",
+    "source": "packages/components/src/badge/badge.ts",
+    "version": "unknown",
+    "hasTemplate": false
+  },
+  "159:563": {
+    "componentName": "OddkinBadge",
+    "source": "packages/components/src/badge/badge.ts",
+    "version": "unknown",
+    "hasTemplate": false
+  },
+  "159:570": {
+    "componentName": "OddkinBadge",
+    "source": "packages/components/src/badge/badge.ts",
+    "version": "unknown",
+    "hasTemplate": false
+  },
+  "159:577": {
+    "componentName": "OddkinBadge",
+    "source": "packages/components/src/badge/badge.ts",
+    "version": "unknown",
+    "hasTemplate": false
+  },
+  "499:2513": {
+    "componentName": "OddkinBadge",
+    "source": "packages/components/src/badge/badge.ts",
+    "version": "unknown",
+    "hasTemplate": false
+  }
+}

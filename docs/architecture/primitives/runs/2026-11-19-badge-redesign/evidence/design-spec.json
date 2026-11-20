@@ -1,0 +1,348 @@
+{
+  "tag": "odd-badge",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "page": "1395:2",
+    "review": "1496:431",
+    "set": "159:582",
+    "nativeSpec": "1395:960",
+    "session": "2a3fccb5-3556-4290-b360-5e055b8caab6",
+    "revision": "2026-11-19 live redesign",
+    "referenceExport": "Figma download_assets at 2×",
+    "savedAt": "2026-11-20T04:42:38.601Z",
+    "supportingEvidence": ["figma-audit.json", "figma-context.json", "figma-review.png"]
+  },
+  "bindings": {
+    "placement": "Badge is intrinsic. 112px is the granted cell width for the two constrained specimens.",
+    "base": {
+      "source": "[part~=\"base\"]",
+      "tokens": {
+        "blockInset": "space.3xs",
+        "inlineInset": "space.xs",
+        "gap": "space.2xs",
+        "radius": "radius.sm",
+        "fill": "color.<tone>.surface"
+      }
+    },
+    "label": {
+      "source": ".label and default slot",
+      "tokens": {
+        "family": "font.family.sans",
+        "weight": "font.weight.medium",
+        "size": "font.size.xs",
+        "line": "line-height.normal",
+        "letterSpacing": "letter-spacing.normal",
+        "foreground": "color.<tone>.foreground"
+      },
+      "figmaRendering": "Oddkin/Component/Status with Roboto Medium font stand-in."
+    },
+    "marker": {
+      "source": "[part~=\"marker\"] svg",
+      "tokens": {
+        "size": "icon.size.sm",
+        "color": "color.<tone>.foreground"
+      },
+      "alignment": "16px artwork centered against the 18px first line, 1px from line start."
+    }
+  },
+  "specimens": [
+    {
+      "specimen": "short",
+      "id": "1496:437",
+      "mode": "light",
+      "content": "Draft",
+      "tone": "neutral",
+      "marker": true,
+      "frame": {
+        "w": 63,
+        "h": 22,
+        "width": "HUG",
+        "height": "HUG"
+      },
+      "renderedLines": 1,
+      "layers": [
+        {
+          "id": "I1496:437;1496:426",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:437;159:555",
+          "name": "Draft",
+          "width": 27,
+          "height": 18,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"neutral\">Draft</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "neutral"
+        },
+        "text": "Draft",
+        "grant": 128,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(246, 245, 241)"
+      },
+      "png": {
+        "path": "figma/short-light.png",
+        "scale": 2,
+        "w": 126,
+        "h": 44,
+        "interiorFill": "rgb(240, 239, 243)"
+      }
+    },
+    {
+      "specimen": "short",
+      "id": "1496:469",
+      "mode": "dark",
+      "content": "Draft",
+      "tone": "neutral",
+      "marker": true,
+      "frame": {
+        "w": 63,
+        "h": 22,
+        "width": "HUG",
+        "height": "HUG"
+      },
+      "renderedLines": 1,
+      "layers": [
+        {
+          "id": "I1496:469;1496:426",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:469;159:555",
+          "name": "Draft",
+          "width": 27,
+          "height": 18,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"neutral\">Draft</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "neutral"
+        },
+        "text": "Draft",
+        "grant": 128,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(23, 24, 33)"
+      },
+      "png": {
+        "path": "figma/short-dark.png",
+        "scale": 2,
+        "w": 126,
+        "h": 44,
+        "interiorFill": "rgb(17, 18, 25)"
+      }
+    },
+    {
+      "specimen": "wrapped",
+      "id": "1496:447",
+      "mode": "light",
+      "content": "Waiting for accessibility review",
+      "tone": "warning",
+      "marker": true,
+      "frame": {
+        "w": 112,
+        "h": 58,
+        "width": "FIXED",
+        "height": "HUG"
+      },
+      "renderedLines": 3,
+      "layers": [
+        {
+          "id": "I1496:447;1496:428",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:447;159:569",
+          "name": "Draft",
+          "width": 76,
+          "height": 54,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"warning\">Waiting for accessibility review</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "warning"
+        },
+        "text": "Waiting for accessibility review",
+        "grant": 112,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(246, 245, 241)"
+      },
+      "png": {
+        "path": "figma/wrapped-light.png",
+        "scale": 2,
+        "w": 224,
+        "h": 116,
+        "interiorFill": "rgb(255, 245, 222)"
+      }
+    },
+    {
+      "specimen": "wrapped",
+      "id": "1496:479",
+      "mode": "dark",
+      "content": "Waiting for accessibility review",
+      "tone": "warning",
+      "marker": true,
+      "frame": {
+        "w": 112,
+        "h": 58,
+        "width": "FIXED",
+        "height": "HUG"
+      },
+      "renderedLines": 3,
+      "layers": [
+        {
+          "id": "I1496:479;1496:428",
+          "name": "First-line marker",
+          "width": 16,
+          "height": 17,
+          "x": 8,
+          "y": 2
+        },
+        {
+          "id": "I1496:479;159:569",
+          "name": "Draft",
+          "width": 76,
+          "height": 54,
+          "x": 28,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"warning\">Waiting for accessibility review</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "warning"
+        },
+        "text": "Waiting for accessibility review",
+        "grant": 112,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(23, 24, 33)"
+      },
+      "png": {
+        "path": "figma/wrapped-dark.png",
+        "scale": 2,
+        "w": 224,
+        "h": 116,
+        "interiorFill": "rgb(58, 46, 24)"
+      }
+    },
+    {
+      "specimen": "markerless",
+      "id": "1496:457",
+      "mode": "light",
+      "content": "ReleaseCandidate0123456789",
+      "tone": "info",
+      "marker": false,
+      "frame": {
+        "w": 112,
+        "h": 40,
+        "width": "FIXED",
+        "height": "HUG"
+      },
+      "renderedLines": 2,
+      "layers": [
+        {
+          "id": "I1496:457;499:2517",
+          "name": "Draft",
+          "width": 96,
+          "height": 36,
+          "x": 8,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"info\" no-marker>ReleaseCandidate0123456789</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "info",
+          "no-marker": true
+        },
+        "text": "ReleaseCandidate0123456789",
+        "grant": 112,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(246, 245, 241)"
+      },
+      "png": {
+        "path": "figma/markerless-light.png",
+        "scale": 2,
+        "w": 224,
+        "h": 80,
+        "interiorFill": "rgb(236, 247, 255)"
+      }
+    },
+    {
+      "specimen": "markerless",
+      "id": "1496:489",
+      "mode": "dark",
+      "content": "ReleaseCandidate0123456789",
+      "tone": "info",
+      "marker": false,
+      "frame": {
+        "w": 112,
+        "h": 40,
+        "width": "FIXED",
+        "height": "HUG"
+      },
+      "renderedLines": 2,
+      "layers": [
+        {
+          "id": "I1496:489;499:2517",
+          "name": "Draft",
+          "width": 96,
+          "height": 36,
+          "x": 8,
+          "y": 2
+        }
+      ],
+      "bench": {
+        "html": "<div style=\"display:flex;align-items:flex-start\"><odd-badge tone=\"info\" no-marker>ReleaseCandidate0123456789</odd-badge></div>",
+        "tag": "odd-badge",
+        "attrs": {
+          "tone": "info",
+          "no-marker": true
+        },
+        "text": "ReleaseCandidate0123456789",
+        "grant": 112,
+        "density": "default",
+        "dir": "ltr",
+        "canvas": "rgb(23, 24, 33)"
+      },
+      "png": {
+        "path": "figma/markerless-dark.png",
+        "scale": 2,
+        "w": 224,
+        "h": 80,
+        "interiorFill": "rgb(0, 29, 47)"
+      }
+    }
+  ]
+}

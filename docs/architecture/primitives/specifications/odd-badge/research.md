@@ -1,0 +1,23 @@
+# Badge research
+
+Reviewed November 19, 2026, for the Agent 1 design and implementation assignment. The comparison inspected framework-agnostic component docs and original source. It did not benchmark other libraries or test their assistive-technology behavior.
+
+| Implementation | Observed mechanism | Oddkin decision |
+| --- | --- | --- |
+| Web Awesome Badge | Slotted text and optional start/end decoration, an internal `status` role, nonwrapping content, optional animation and a Button-specific position rule | Retain the slotted content and optional decoration. Keep Oddkin's read-in-place semantics and parent-owned placement. |
+| Adobe Spectrum 2 Badge | Passive text slot with a separate icon, explicit multiline support, a maximum inline grant and a centered icon across the content block | Keep the passive contract and multiline fit. Align the meaning glyph with the first line in narrow compositions. |
+| SAP UI5 Tag | Framework-agnostic successor to UI5 Badge. Passive by default and wrapping by default, with baseline alignment for icon and words. Opt-in truncation, synthesized status wording and a distinct interactive treatment | Use its first-line association as a reference. Keep Oddkin's explicit wording, emergency wrapping and separate action controls. |
+| Bootstrap Badge | A styled span with examples placing a count inside a Button or a positioned host. Its guidance adds visually hidden context where a number alone is ambiguous | Keep count context with its related control or record. Preserve the supplied text and avoid adding automatic positioning or a count limit. |
+
+- Web Awesome [documentation](https://webawesome.com/docs/components/badge/), [component](https://github.com/shoelace-style/webawesome/blob/be6cfaec76b3d1bc943b89fb5425b39901268948/packages/webawesome/src/components/badge/badge.ts) and [styles](https://github.com/shoelace-style/webawesome/blob/be6cfaec76b3d1bc943b89fb5425b39901268948/packages/webawesome/src/components/badge/badge.styles.ts).
+- Adobe Spectrum 2 [documentation](https://spectrum.adobe.com/web/swc/components/badge), [API](https://opensource.adobe.com/spectrum-web-components/components/badge/api/), [component](https://github.com/adobe/spectrum-web-components/blob/2fe339e67175a2c4a1c7106a6592e6d1380560eb/gen2/packages/swc/components/badge/Badge.ts) and [styles](https://github.com/adobe/spectrum-web-components/blob/2fe339e67175a2c4a1c7106a6592e6d1380560eb/gen2/packages/swc/components/badge/badge.css).
+- SAP UI5 [documentation](https://ui5.github.io/webcomponents/components/Tag/), [component](https://github.com/SAP/ui5-webcomponents/blob/e5499eb378e59ae3cc7d334ebac1f07211ef7d54/packages/main/src/Tag.ts), [template](https://github.com/SAP/ui5-webcomponents/blob/e5499eb378e59ae3cc7d334ebac1f07211ef7d54/packages/main/src/TagTemplate.tsx) and [styles](https://github.com/SAP/ui5-webcomponents/blob/e5499eb378e59ae3cc7d334ebac1f07211ef7d54/packages/main/src/themes/Tag.css).
+- Bootstrap 5.3 [documentation](https://getbootstrap.com/docs/5.3/components/badge/#buttons) and [5.3.8 source](https://github.com/twbs/bootstrap/blob/v5.3.8/scss/_badge.scss).
+
+An existing `status` region can announce an important outcome without moving focus. The application decides which updates need announcements and whether nearby words already supply their context. WCAG guidance on color and reflow supports legible words and wrapping, while CSS Text distinguishes normal line wrapping from emergency breaks in long strings. [Use of Color](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html) · [Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html) · [Status Messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html) · [CSS Text](https://www.w3.org/TR/css-text-3/#overflow-wrap-property)
+
+## Synthesis
+
+Use a single readable text run with an optional decorative marker at logical start. Badge remains useful as Oddkin's shared tone and token contract. The label wraps normally even within a parent's no-wrap convention. Unbroken content wraps at the available inline grant. The application owns formatting, record state and announcements. A neighboring Button owns activation and focus. This avoids introducing a second control, store, announcement mechanism or overlay lifecycle.
+
+The current Figma on page `1395:2` and runtime both center a marker across wrapped content. Current built Chromium also exposed inherited no-wrap overflow, multiple flex items for inline emphasis and an automatic minimum that could overflow a shrinkable action row. The redesign addresses those issues while preserving D1's single-line metrics and the existing public API. [Context](./context.md) · [Decision](./decision.md) · [Contract](./contract.md)

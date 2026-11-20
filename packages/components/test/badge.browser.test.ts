@@ -192,6 +192,58 @@ describe('odd-badge in its parent', () => {
     expect(centre(badges[3]!)).toBeCloseTo(centre(badges[2]!), 1);
   });
 
+  it('B-A9: wraps one inline label beside a focused action in a no-wrap parent', async () => {
+    container.innerHTML = `<div style="display:flex; inline-size:240px; gap:4px; white-space:nowrap">
+      <odd-badge tone="info">Waiting for <strong>security</strong> review</odd-badge>
+      <button style="flex:none; inline-size:36px; white-space:inherit">OK</button>
+    </div>`;
+    const row = container.firstElementChild as HTMLElement;
+    const badge = row.querySelector('odd-badge')!;
+    const action = row.querySelector('button')!;
+    await settle(badge);
+    action.focus();
+
+    row.style.inlineSize = '112px';
+    await settle(badge);
+    const badgeBox = badge.getBoundingClientRect();
+    const actionBox = action.getBoundingClientRect();
+    expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth + 1);
+    expect(badgeBox.right + 4).toBeLessThanOrEqual(actionBox.left + 0.5);
+    expect(new Set(lines(badge).map((line) => line.top)).size).toBeGreaterThan(1);
+    for (const line of lines(badge)) {
+      expect(line.left).toBeGreaterThanOrEqual(marker(badge).getBoundingClientRect().right - 0.5);
+      expect(line.right).toBeLessThanOrEqual(badgeBox.right + 0.5);
+    }
+    expect(getComputedStyle(badge.querySelector('strong')!).display).toBe('inline');
+    expect(getComputedStyle(action).whiteSpace).toBe('nowrap');
+    expect(badge.textContent).toBe('Waiting for security review');
+    expect(row.querySelector('odd-badge')).toBe(badge);
+    expect(document.activeElement).toBe(action);
+  });
+
+  it('B-A10: keeps the token-sized marker beside the first line in both directions', async () => {
+    container.style.inlineSize = '112px';
+    const cases = [
+      ['ltr', 'Waiting for accessibility review'],
+      ['rtl', 'بانتظار مراجعة إمكانية الوصول'],
+    ] as const;
+    for (const [dir, text] of cases) {
+      const { el } = await mount(text, { dir, tone: 'warning' });
+      await settle(el);
+      expect(lines(el).length).toBeGreaterThan(1);
+      const surface = base(el);
+      const styles = getComputedStyle(surface);
+      const glyph = marker(el).querySelector('svg')!.getBoundingClientRect();
+      const firstLineCentre =
+        surface.getBoundingClientRect().top +
+        parseFloat(styles.paddingBlockStart) +
+        parseFloat(styles.lineHeight) / 2;
+      expect(glyph.top + glyph.height / 2).toBeCloseTo(firstLineCentre);
+      expect(glyph.width).toBe(parseFloat(resolveIn(container, 'width', '--odd-icon-size-sm')));
+      el.remove();
+    }
+  });
+
   it('B-A3: shows the host’s committed words and tone in place, beside a focused action', async () => {
     const { el } = await mount('In review', { tone: 'info' });
     const action = document.createElement('button');
