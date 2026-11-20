@@ -7,7 +7,7 @@
 | `tone` | Reflected enum: neutral (default), info, success, warning, danger. Invalid attribute values use neutral with the existing diagnostic. |
 | `noMarker` / `no-marker` | Reflected boolean presence. Default false. Figma Show marker is its inverse and defaults true. |
 | Default slot | Caller supplies readable words or a count with adjacent context. Inline emphasis stays inside the same reading run. |
-| Parts and CSS | `base`, `marker`, and `--odd-badge-radius` falling back to `radius.sm`. The text wrapper is internal. |
+| Parts and CSS | `base`, `marker`, and `--odd-badge-radius` falling back to `radius.sm`. Set `--odd-badge-radius: var(--odd-radius-full)` for a pill. The text wrapper is internal. |
 | Events and interaction | Plain text in reading order. No default action, tab stop, role, live region, selection, animation or form participation. |
 
 Badge keeps the same element and attributes when text, marker, tone, direction, theme, density or parent space changes. The decoration uses the existing glyph and is excluded from the accessibility tree. Text must communicate meaning independently of glyph/color. A separate action represents dismissal, navigation, review or retry. The record owner may announce important committed updates through one appropriate stable status region.

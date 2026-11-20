@@ -36,6 +36,8 @@ export interface Target {
   kind: Kind;
   pseudo?: string;
   gap?: 'column-gap' | 'row-gap';
+  /** Compares an inside stroke with an inset box-shadow that takes no layout space. */
+  insetStroke?: boolean;
   /** More bound fields to compare, as [Figma field, CSS property] (layout: `counterAxisSpacing`, …). */
   fields?: [string, string][];
   /** Compares this element's computed opacity with the layer's (Figma's literal, else 1). */
@@ -166,12 +168,16 @@ const tokenVar = (path: string) => {
 function resolved(property: string, variable: string): string {
   const defined = getComputedStyle(document.documentElement).getPropertyValue(variable);
   if (!defined.trim()) return `missing token ${variable}`;
+  return computed(property, `var(${variable})`);
+}
+
+function computed(property: string, value: string): string {
   const probe = document.createElement('div');
-  probe.style.cssText = `border-style: solid; outline-style: solid; ${property}: var(${variable})`;
+  probe.style.cssText = `border-style: solid; outline-style: solid; ${property}: ${value}`;
   container.append(probe);
-  const value = getComputedStyle(probe).getPropertyValue(property);
+  const result = getComputedStyle(probe).getPropertyValue(property);
   probe.remove();
-  return value;
+  return result;
 }
 
 const FRAME: [string, string][] = [
@@ -212,14 +218,34 @@ export function compare(familyName: string, values: Record<string, string>, targ
         out.push(`${at} ${field} (${tokenVar(path)}): ${property} ${actual}, token ${expected}`);
     };
     if (t.kind === 'frame') {
-      for (const [field, property] of FRAME)
+      for (const [field, property] of FRAME) {
+        if (t.insetStroke && (field === 'strokes' || field === 'strokeTopWeight')) continue;
         check(field, property, style.getPropertyValue(property));
+      }
       if (!boundFor(layer, index, 'fills') && style.backgroundColor !== 'rgba(0, 0, 0, 0)')
         out.push(`${at} fills (none): background-color ${style.backgroundColor}`);
       const border = parseFloat(style.borderBlockStartWidth);
       const visible = border > 0 && !/rgba\(.*, 0\)$/.test(style.borderBlockStartColor);
-      if (!boundFor(layer, index, 'strokes') && visible)
+      if (t.insetStroke) {
+        const stroke = boundFor(layer, index, 'strokes');
+        const weight =
+          boundFor(layer, index, 'strokeWeight') ?? boundFor(layer, index, 'strokeTopWeight');
+        if (!stroke || !weight) {
+          out.push(`${at} inset stroke: missing bound Figma stroke color or weight`);
+        } else {
+          const color = tokenVar(stroke);
+          const width = tokenVar(weight);
+          const expected = computed('box-shadow', `inset 0 0 0 var(${width}) var(${color})`);
+          if (expected === 'none' || style.boxShadow !== expected)
+            out.push(
+              `${at} inset stroke (${color}, ${width}): box-shadow ${style.boxShadow}, token ${expected}`,
+            );
+        }
+        if (visible)
+          out.push(`${at} inset stroke: unexpected layout border ${style.borderBlockStartColor}`);
+      } else if (!boundFor(layer, index, 'strokes') && visible) {
         out.push(`${at} strokes (none): border ${style.borderBlockStartColor}`);
+      }
       if (t.gap) check('itemSpacing', t.gap, style.getPropertyValue(t.gap));
       for (const [field, property] of t.fields ?? [])
         check(field, property, style.getPropertyValue(property));

@@ -135,6 +135,24 @@
           }
         },
         {
+          "id": "VariableID:1506:510",
+          "name": "color/danger/border",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.danger.border",
+          "scopes": ["STROKE_COLOR"],
+          "codeSyntax": {
+            "WEB": "var(--odd-color-danger-border)"
+          },
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/ref/danger/800"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/ref/danger/200"
+            }
+          }
+        },
+        {
           "id": "VariableID:158:43",
           "name": "color/danger/foreground",
           "type": "COLOR",
@@ -278,6 +296,24 @@
           }
         },
         {
+          "id": "VariableID:1506:508",
+          "name": "color/success/border",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.success.border",
+          "scopes": ["STROKE_COLOR"],
+          "codeSyntax": {
+            "WEB": "var(--odd-color-success-border)"
+          },
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/ref/success/800"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/ref/success/200"
+            }
+          }
+        },
+        {
           "id": "VariableID:158:45",
           "name": "color/success/foreground",
           "type": "COLOR",
@@ -396,6 +432,24 @@
           "valuesByMode": {
             "Dark": { "alias": "Oddkin · Repository tokens/repo/color/text/secondary/dark" },
             "Light": { "alias": "Oddkin · Repository tokens/repo/color/text/secondary/light" }
+          }
+        },
+        {
+          "id": "VariableID:1506:509",
+          "name": "color/warning/border",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.warning.border",
+          "scopes": ["STROKE_COLOR"],
+          "codeSyntax": {
+            "WEB": "var(--odd-color-warning-border)"
+          },
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/ref/warning/800"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/ref/warning/200"
+            }
           }
         },
         {

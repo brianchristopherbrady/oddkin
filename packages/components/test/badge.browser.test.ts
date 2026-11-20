@@ -41,15 +41,23 @@ async function mount(text: string, attributes: Record<string, string> = {}) {
   return { el, part };
 }
 
-/** The computed colour of a theme custom property, resolved in this document. */
-function themeColor(property: string): string {
+/** Resolve a CSS value against the theme in the supplied scope. */
+function resolveStyle(scope: Element, property: string, value: string): string {
   const probe = document.createElement('span');
-  probe.style.color = `var(${property})`;
-  container.append(probe);
-  const value = getComputedStyle(probe).color;
+  probe.style.setProperty(property, value);
+  scope.append(probe);
+  const resolved = getComputedStyle(probe).getPropertyValue(property);
   probe.remove();
-  return value;
+  return resolved;
 }
+
+const themeColor = (property: string) => resolveStyle(container, 'color', `var(${property})`);
+const toneEdge = (scope: Element, tone: OddkinBadge['tone']) =>
+  resolveStyle(
+    scope,
+    'box-shadow',
+    `inset 0 0 0 var(--odd-border-width-default) var(--odd-color-${tone}-border)`,
+  );
 
 const glyphShape = (el: OddkinBadge) =>
   el.shadowRoot!.querySelector('[part="marker"] svg')!.innerHTML.replace(/\s+/g, ' ');
@@ -71,7 +79,7 @@ describe('odd-badge', () => {
     expect(getComputedStyle(part('base')).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
   });
 
-  it('takes each tone colour from the theme and a glyph that differs where Figma differs', async () => {
+  it('uses the theme surface, text and edge of each tone and the corresponding glyph', async () => {
     const shapes = new Map<string, string>();
     for (const tone of TONES) {
       const { el, part } = await mount(tone, { tone });
@@ -81,11 +89,29 @@ describe('odd-badge', () => {
       expect(getComputedStyle(part('base')).backgroundColor, tone).toBe(
         themeColor(`--odd-color-${tone}-surface`),
       );
+      const edge = toneEdge(container, tone);
+      expect(edge, tone).not.toBe('none');
+      expect(getComputedStyle(part('base')).boxShadow, tone).toBe(edge);
       shapes.set(tone, glyphShape(el));
     }
     expect(shapes.get('info')).toBe(shapes.get('neutral'));
     expect(shapes.get('danger')).toBe(shapes.get('warning'));
     expect(new Set(shapes.values()).size).toBe(3);
+  });
+
+  it('uses the radius token override without changing the surface size', async () => {
+    const { el, part } = await mount('Beta', { tone: 'info' });
+    const surface = part('base');
+    const { width, height } = surface.getBoundingClientRect();
+    expect(getComputedStyle(surface).borderRadius).toBe(
+      resolveStyle(container, 'border-radius', 'var(--odd-radius-sm)'),
+    );
+    el.style.setProperty('--odd-badge-radius', 'var(--odd-radius-full)');
+    expect(getComputedStyle(surface).borderRadius).toBe(
+      resolveStyle(container, 'border-radius', 'var(--odd-radius-full)'),
+    );
+    expect(surface.getBoundingClientRect().width).toBe(width);
+    expect(surface.getBoundingClientRect().height).toBe(height);
   });
 
   it('hides the glyph for a count and follows tone changes', async () => {
@@ -135,14 +161,8 @@ describe('odd-badge in its parent', () => {
     range.selectNodeContents(el);
     return [...range.getClientRects()].filter((r) => r.width > 0);
   };
-  const resolveIn = (scope: Element, property: string, variable: string) => {
-    const probe = document.createElement('div');
-    probe.style.setProperty(property, `var(${variable})`);
-    scope.append(probe);
-    const value = getComputedStyle(probe).getPropertyValue(property);
-    probe.remove();
-    return value;
-  };
+  const resolveIn = (scope: Element, property: string, variable: string) =>
+    resolveStyle(scope, property, `var(${variable})`);
   const TEXTS = [
     'Waiting for security review',
     'Überprüfung der Veröffentlichung ausstehend',
@@ -320,6 +340,7 @@ describe('odd-badge in its parent', () => {
       const el = wrapper.firstElementChild as OddkinBadge;
       await settle(el);
       const style = getComputedStyle(base(el));
+      expect(style.boxShadow, scope).toBe(toneEdge(wrapper, 'warning'));
       expect(
         [style.paddingInlineStart, style.paddingBlockStart, style.columnGap, style.backgroundColor],
         scope,

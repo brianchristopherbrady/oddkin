@@ -277,6 +277,7 @@ describe('Figma parity: odd-badge (badge, Count content)', () => {
             el: base,
             kind: 'frame',
             gap: 'column-gap',
+            insetStroke: true,
             fields: [
               ['paddingRight', 'padding-inline-end'],
               ['paddingBottom', 'padding-block-end'],

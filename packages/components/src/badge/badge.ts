@@ -8,7 +8,7 @@ import { TONES } from '../styles/tone.styles.js';
  * @slot - Status or count text, with optional inline emphasis. Wraps in the space the parent grants.
  * @csspart base - The surface.
  * @csspart marker - The tone glyph (hidden with `no-marker`).
- * @cssprop --odd-badge-radius - Corner radius.
+ * @cssprop --odd-badge-radius - Corner radius. Defaults to var(--odd-radius-sm). Set var(--odd-radius-full) for a pill.
  * @a11y Read in place as text; it has no role. Put the meaning in the words ("Failed", "3 new"), not only in the tone.
  * @previewRole badge
  * @useFor Short status labels and counts next to the thing they describe.

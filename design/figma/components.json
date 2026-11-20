@@ -2512,6 +2512,17 @@
             "paddingLeft": ["Oddkin · AI density scopes/space/xs"],
             "paddingRight": ["Oddkin · AI density scopes/space/xs"],
             "paddingTop": ["Oddkin · AI density scopes/space/3xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": [
+              { "value": "Oddkin · Component roles/color/danger/border", "variants": [0] },
+              { "value": "Oddkin · Component roles/color/info/border", "variants": [1] },
+              { "value": "Oddkin · Component roles/color/neutral/border", "variants": [2] },
+              { "value": "Oddkin · Component roles/color/success/border", "variants": [3] },
+              { "value": "Oddkin · Component roles/color/warning/border", "variants": [4] }
+            ],
             "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
             "topRightRadius": ["Oddkin · Component roles/radius/sm"]
           }

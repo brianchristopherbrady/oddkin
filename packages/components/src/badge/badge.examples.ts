@@ -39,6 +39,15 @@ export default defineExamples('odd-badge', {
     slots: { default: '12' },
     guidance: 'A count needs no glyph; say what is counted nearby ("12 unread").',
   },
+  pill: {
+    label: 'Pill radius',
+    props: { tone: 'info' },
+    slots: { default: 'Beta' },
+    guidance: 'Set --odd-badge-radius: var(--odd-radius-full) on the badge to use the pill radius.',
+    fixture({ element }) {
+      element.style.setProperty('--odd-badge-radius', 'var(--odd-radius-full)');
+    },
+  },
   wrapping: {
     label: 'Narrow status',
     props: { tone: 'warning' },

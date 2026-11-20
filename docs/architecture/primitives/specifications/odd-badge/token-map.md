@@ -5,7 +5,8 @@
 | Base fill and text | `color.<tone>.surface`, `color.<tone>.foreground` through shared tone styles | Neutral, info, success, warning and danger resolve in the active theme. |
 | Gap | `space.2xs` | 4 px at the default 16 px root. |
 | Insets | `space.3xs` block, `space.xs` inline | 2 px and 8 px respectively at the default root. Logical inline sides permit RTL. |
-| Corners | `--odd-badge-radius` with `radius.sm` fallback | 4 px default. |
+| Inside edge | `color.<tone>.border` and `border.width.default` | The 1 px edge defines the fill without adding to Badge dimensions. Figma binds an inside stroke. CSS paints an inset shadow. |
+| Corners | `--odd-badge-radius` with `radius.sm` fallback | 4 px default. Use `var(--odd-radius-full)` for a pill, or another Oddkin radius token. Figma applies the same token to the instance corners. |
 | Text | Sans family, `font.size.xs`, `font.weight.medium`, `line-height.normal`, `letter-spacing.normal` | 12 px / 500 / 18 px line box at the default root. |
 | Marker | `icon.size.sm` | 16 px decorative SVG in a lane at least one line high. Neutral/info use information, success uses check-circle, warning/danger use warning. |
 | Forced colors | System `CanvasText` boundary | 1 CSS px in the existing forced-colors rule. |
