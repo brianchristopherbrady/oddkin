@@ -470,6 +470,7 @@ test.describe('docs responsiveness', () => {
     await openLab(page);
     const selector = page.locator('#behavior-component');
     for (const value of [
+      'odd-context-picker',
       'odd-question',
       'odd-model-select',
       'odd-sources',
@@ -479,7 +480,7 @@ test.describe('docs responsiveness', () => {
       'scenario:details-in-tabs',
     ])
       await expect(selector.locator(`option[value="${value}"]`)).toHaveCount(0);
-    for (const value of ['odd-citation', 'odd-context-picker', 'scenario:form-in-dialog'])
+    for (const value of ['odd-citation', 'scenario:form-in-dialog'])
       await expect(selector.locator(`option[value="${value}"]`)).toBeAttached();
     await selector.selectOption('scenario:form-in-dialog');
     await ready(page);

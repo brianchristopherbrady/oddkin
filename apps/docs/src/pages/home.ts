@@ -80,15 +80,6 @@ function explore(site: SiteFacts): string {
       meta: '@oddkin/tokens',
       action: 'Browse foundations',
     },
-    // The AI interaction components are in the catalog, under AI (owner, 2026-11-02).
-    {
-      path: 'components',
-      href: '/components?category=AI',
-      title: 'AI components',
-      text: site.packages['@oddkin/ai'],
-      meta: '@oddkin/ai',
-      action: 'Browse AI components',
-    },
   ];
   return `<section class="home-section" aria-labelledby="explore-title">${heading(
     'explore-title',

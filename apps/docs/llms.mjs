@@ -3,22 +3,25 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { siteFacts } from './facts.mjs';
-import { publicAiComponents } from './public-ai-components.mjs';
+import { publicAiCategories, publicAiComponents } from './public-ai-components.mjs';
 
-function siteLibrary(library) {
+function siteLibrary(library, categories) {
   if (library.name !== '@oddkin/ai') return library;
   const { metadata } = library;
   const components = Object.fromEntries(
-    Object.entries(metadata.components ?? {}).filter(([, component]) =>
-      publicAiComponents.has(component.tag),
-    ),
+    Object.entries(metadata.components ?? {})
+      .filter(([, component]) => publicAiComponents.has(component.tag))
+      .map(([id, component]) => [
+        id,
+        { ...component, category: `category:${publicAiCategories[component.tag]}` },
+      ]),
   );
   const recipes = Object.fromEntries(
     Object.entries(metadata.recipes ?? {}).filter(
       ([, recipe]) => recipe.name === 'ai-element' || publicAiComponents.has(`odd-${recipe.name}`),
     ),
   );
-  return { ...library, metadata: { ...metadata, components, recipes } };
+  return { ...library, metadata: { ...metadata, components, recipes, categories } };
 }
 
 export async function writeLlms(root, out, base) {
@@ -36,7 +39,12 @@ export async function writeLlms(root, out, base) {
   for (const { severity, code, message } of project.diagnostics) {
     console.error(`${severity} ${code}: ${message}`);
   }
-  const siteProject = { ...project, libraries: project.libraries.map(siteLibrary) };
+  const categories = project.libraries.find(({ name }) => name === '@oddkin/components')?.metadata
+    .categories;
+  const siteProject = {
+    ...project,
+    libraries: project.libraries.map((library) => siteLibrary(library, categories)),
+  };
   const kits = [];
   for (const library of siteProject.libraries.filter((entry) => entry.owned)) {
     const isAi = library.name === '@oddkin/ai';
@@ -49,7 +57,7 @@ export async function writeLlms(root, out, base) {
         .get('GUIDE.md')
         .replace(
           /Generated from this package's published metadata[^\n]+/,
-          'This website guide covers the published AI component reference pages. The installed package provides the full agent kit.',
+          'This website guide covers the published component reference pages for this package. The installed package provides the full agent kit.',
         );
       files.set('GUIDE.md', guide);
       manifest.guide.bytes = Buffer.byteLength(guide);

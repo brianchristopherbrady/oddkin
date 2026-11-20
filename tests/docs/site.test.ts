@@ -17,7 +17,7 @@ const build = (out: string) =>
   });
 const documentAt = (out: string, path: string) =>
   join(out, ...path.split('/').filter(Boolean), 'index.html');
-const publicAiTags = ['odd-citation', 'odd-context-picker'];
+const citation = 'components/odd-citation';
 
 describe('the static docs build', () => {
   // A stable folder: on Windows, first writes of new files are slow while they are scanned.
@@ -35,7 +35,7 @@ describe('the static docs build', () => {
       ...pages.map((page) => `/${page.path}`),
       ...clientPages.map((page) => `/${page.path}`),
       ...Object.values(metadata.components).map(({ tag }) => `/components/${tag}`),
-      ...publicAiTags.map((tag) => `/components/${tag}`),
+      `/${citation}`,
     ];
     for (const route of routes) expect(existsSync(documentAt(out, route)), route).toBe(true);
     const notFound = readFileSync(join(out, '404.html'), 'utf8');
@@ -94,10 +94,11 @@ describe('the static docs build', () => {
       };
     };
     const components = index.registry.pages.filter((page) => page.kind === 'component');
-    const publicAi = components.filter((page) => page.group === 'AI' && page.visible);
-    expect(publicAi.map((page) => page.route).sort()).toEqual(
-      publicAiTags.map((tag) => `/components/${tag}`),
-    );
+    expect(components.filter((page) => page.group === 'AI' && page.visible)).toEqual([]);
+    expect(components.find((page) => page.id === citation)).toMatchObject({
+      group: 'Display',
+      visible: true,
+    });
     // Titles a tag cannot spell come from the docs' authored content (apps/docs/oddkin.docs.ts).
     const title = (id: string) => components.find((page) => page.id === id)?.title;
     expect(title('components/odd-one-time-code')).toBe('One-time code');
@@ -110,8 +111,10 @@ describe('the static docs build', () => {
     ) as { components: Record<string, { tag: string }> };
     const hiddenAiTags = Object.values(aiMetadata.components)
       .map(({ tag }) => tag)
-      .filter((tag) => !publicAiTags.includes(tag));
-    expect(hiddenAiTags).toContain('odd-prompt-input');
+      .filter((tag) => tag !== 'odd-citation');
+    expect(hiddenAiTags).toEqual(
+      expect.arrayContaining(['odd-context-picker', 'odd-prompt-input']),
+    );
     for (const tag of hiddenAiTags) {
       const id = `components/${tag}`;
       expect(index.pages[id], id).toBeUndefined();
@@ -154,6 +157,7 @@ describe('the static docs build', () => {
       expect(existsSync(join(root, sourcePath(data))), page.id).toBe(true);
     }
     expect(sidebar).not.toContain('href="/components/odd-prompt-input"');
+    expect(sidebar).not.toContain('href="/components/odd-context-picker"');
   });
 
   it('puts every section a reference page shows in one of its tabs', async () => {
@@ -184,22 +188,20 @@ describe('the static docs build', () => {
       );
     }
     const aiReferences = '/agent/oddkin-ai/references/components/';
-    const publishedAiFiles = publicAiTags.map((tag) => `${tag}.md`);
     expect(
-      links
-        .filter((url) => url.pathname.startsWith(aiReferences))
-        .map((url) => url.pathname.slice(aiReferences.length))
-        .sort(),
-    ).toEqual(publishedAiFiles);
-    expect(readdirSync(join(out, 'agent/oddkin-ai/references/components')).sort()).toEqual(
-      publishedAiFiles,
-    );
-    expect(readFileSync(join(out, 'agent/oddkin-ai/GUIDE.md'), 'utf8')).not.toContain(
-      'odd-prompt-input',
-    );
-    expect(
-      existsSync(join(root, 'packages/ai/agent/references/components/odd-prompt-input.md')),
-    ).toBe(true);
+      links.filter((url) => url.pathname.startsWith(aiReferences)).map((url) => url.pathname),
+    ).toEqual([`${aiReferences}odd-citation.md`]);
+    expect(readdirSync(join(out, 'agent/oddkin-ai/references/components'))).toEqual([
+      'odd-citation.md',
+    ]);
+    const aiGuide = readFileSync(join(out, 'agent/oddkin-ai/GUIDE.md'), 'utf8');
+    expect(aiGuide).toContain('**Display:** `<odd-citation>`');
+    for (const tag of ['odd-context-picker', 'odd-prompt-input'])
+      expect(aiGuide).not.toContain(tag);
+    for (const tag of ['odd-citation', 'odd-context-picker', 'odd-prompt-input'])
+      expect(existsSync(join(root, 'packages/ai/agent/references/components', `${tag}.md`))).toBe(
+        true,
+      );
     expect(readFileSync(join(out, 'agent/oddkin-components/GUIDE.md'), 'utf8')).toBe(
       readFileSync(join(root, 'packages/components/agent/GUIDE.md'), 'utf8'),
     );

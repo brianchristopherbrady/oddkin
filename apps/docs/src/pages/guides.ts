@@ -452,15 +452,12 @@ export const aiTooling: Page = {
     },
     {
       id: 'components',
-      title: 'AI interaction components',
+      title: 'Citations',
       blocks: [
         {
           p: [
-            'The elements of ',
-            { code: '@oddkin/ai' },
-            ', for conversation, inline assistance, research, and agent workflows, are in the ',
-            { link: 'component catalog', href: '/components?category=AI' },
-            ', each with its reference page. They never call a model: the application owns data, transport, persistence, and policy.',
+            { link: 'Citation', href: '/components/odd-citation' },
+            ' is a display primitive for identifying a source and opening its preview. The application provides the source data and determines where a citation leads.',
           ],
         },
       ],

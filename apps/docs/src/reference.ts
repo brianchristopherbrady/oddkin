@@ -58,7 +58,7 @@ export const catalogGroups = (index: WorkbenchIndex): string[] => {
   const groups = [
     ...new Set(
       index.registry.pages
-        .filter((page) => page.kind === 'component' && page.group)
+        .filter((page) => page.kind === 'component' && page.visible && page.group)
         .map((page) => page.group as string),
     ),
   ];

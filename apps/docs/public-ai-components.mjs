@@ -1,2 +1,3 @@
 // The AI component references available on the public docs site.
-export const publicAiComponents = new Set(['odd-citation', 'odd-context-picker']);
+export const publicAiCategories = { 'odd-citation': 'display' };
+export const publicAiComponents = new Set(Object.keys(publicAiCategories));

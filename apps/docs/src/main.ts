@@ -313,7 +313,7 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
     pageHeader(
       'Reference',
       'Component catalog',
-      'Every published component, with a live example. Each reference page has the full API, an interactive example, and the generated code.',
+      'Browse the component references, each with an API, interactive examples, and generated code.',
     ),
   );
   const panel = document.createElement('oddkin-catalog-panel');
@@ -322,18 +322,20 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
   panel.groups = catalogGroups(index);
   panel.preview = catalogPreview ??= catalogPreviews(index);
   panel.query = filter.query;
-  panel.category = filter.category;
+  panel.category = panel.groups.includes(filter.category) ? filter.category : '';
   // The panel updates itself; the URL follows without a new history entry or a re-render.
   panel.addEventListener('oddkin-catalog-filter', (event) => {
     void router.navigate(catalogUrl(event.detail), { replace: true });
   });
-  // The AI interaction components, under the catalog's AI category (Figma 20:1877).
-  const next = node('div', 'page-next');
-  const ai = makeLink('Explore AI interaction components', `/components?category=${AI_GROUP}`);
-  ai.className = 'odd-link';
-  ai.append(arrowIcon());
-  next.append(ai);
-  main.append(panel, next);
+  main.append(panel);
+  if (panel.groups.includes(AI_GROUP)) {
+    const next = node('div', 'page-next');
+    const ai = makeLink('Explore AI interaction components', `/components?category=${AI_GROUP}`);
+    ai.className = 'odd-link';
+    ai.append(arrowIcon());
+    next.append(ai);
+    main.append(next);
+  }
 }
 function renderLayoutGuide(main: HTMLElement, data: DocsData): void {
   const recipe = record(record(data.metadata['recipes'])['recipe:side-nav']);
@@ -712,7 +714,7 @@ function renderRoute(state: RouterState, owner: Scope): void {
     const current = column.querySelector('oddkin-catalog-panel');
     if (current) {
       current.query = filter.query;
-      current.category = filter.category;
+      current.category = current.groups?.includes(filter.category) ? filter.category : '';
       main.setAttribute('aria-busy', 'false');
       return;
     }

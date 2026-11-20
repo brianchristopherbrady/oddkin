@@ -193,7 +193,7 @@ export const sections: readonly NavSection[] = [
       { path: 'theme-studio' },
       { path: 'workbench' },
       { path: 'tooling', label: 'Analyzer and agents' },
-      // The site's AI section: AI tooling. The AI interaction components are in the catalog.
+      // The site's AI section covers AI tooling.
       { path: 'ai' },
       { path: 'change-impact' },
     ],
