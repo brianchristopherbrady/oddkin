@@ -145,10 +145,10 @@
           },
           "valuesByMode": {
             "Dark": {
-              "alias": "Oddkin · Repository tokens/repo/ref/danger/800"
+              "alias": "Oddkin · Repository tokens/repo/color/danger/border/dark"
             },
             "Light": {
-              "alias": "Oddkin · Repository tokens/repo/ref/danger/200"
+              "alias": "Oddkin · Repository tokens/repo/color/danger/border/light"
             }
           }
         },
@@ -306,10 +306,10 @@
           },
           "valuesByMode": {
             "Dark": {
-              "alias": "Oddkin · Repository tokens/repo/ref/success/800"
+              "alias": "Oddkin · Repository tokens/repo/color/success/border/dark"
             },
             "Light": {
-              "alias": "Oddkin · Repository tokens/repo/ref/success/200"
+              "alias": "Oddkin · Repository tokens/repo/color/success/border/light"
             }
           }
         },
@@ -445,10 +445,10 @@
           },
           "valuesByMode": {
             "Dark": {
-              "alias": "Oddkin · Repository tokens/repo/ref/warning/800"
+              "alias": "Oddkin · Repository tokens/repo/color/warning/border/dark"
             },
             "Light": {
-              "alias": "Oddkin · Repository tokens/repo/ref/warning/200"
+              "alias": "Oddkin · Repository tokens/repo/color/warning/border/light"
             }
           }
         },
@@ -1020,6 +1020,30 @@
           "valuesByMode": { "Mode 1": { "value": "#f6f5f1" } }
         },
         {
+          "id": "VariableID:1508:540",
+          "name": "repo/color/danger/border/dark",
+          "type": "COLOR",
+          "description": "color.danger.border → ref.danger.800 · dark",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/danger/800"
+            }
+          }
+        },
+        {
+          "id": "VariableID:1508:541",
+          "name": "repo/color/danger/border/light",
+          "type": "COLOR",
+          "description": "color.danger.border → ref.danger.200 · light",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/danger/200"
+            }
+          }
+        },
+        {
           "id": "VariableID:83:1024",
           "name": "repo/color/danger/foreground/dark",
           "type": "COLOR",
@@ -1256,6 +1280,30 @@
           "valuesByMode": { "Mode 1": { "alias": "Oddkin · Repository tokens/repo/ref/brand/100" } }
         },
         {
+          "id": "VariableID:1508:542",
+          "name": "repo/color/success/border/dark",
+          "type": "COLOR",
+          "description": "color.success.border → ref.success.800 · dark",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/success/800"
+            }
+          }
+        },
+        {
+          "id": "VariableID:1508:543",
+          "name": "repo/color/success/border/light",
+          "type": "COLOR",
+          "description": "color.success.border → ref.success.200 · light",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/success/200"
+            }
+          }
+        },
+        {
           "id": "VariableID:83:1036",
           "name": "repo/color/success/foreground/dark",
           "type": "COLOR",
@@ -1430,6 +1478,30 @@
           "description": "color.text.secondary · repository source value #5f626f",
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": { "Mode 1": { "value": "#5f626f" } }
+        },
+        {
+          "id": "VariableID:1508:544",
+          "name": "repo/color/warning/border/dark",
+          "type": "COLOR",
+          "description": "color.warning.border → ref.warning.800 · dark",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/warning/800"
+            }
+          }
+        },
+        {
+          "id": "VariableID:1508:545",
+          "name": "repo/color/warning/border/light",
+          "type": "COLOR",
+          "description": "color.warning.border → ref.warning.200 · light",
+          "scopes": [],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/warning/200"
+            }
+          }
         },
         {
           "id": "VariableID:83:1058",
