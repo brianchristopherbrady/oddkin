@@ -427,7 +427,8 @@ describe('odd-file-input', () => {
     const px = (property: string, token: string) => parseFloat(themeValue(property, token));
     expect(getComputedStyle(el).display).toBe('block');
     const surface = getComputedStyle(part('surface'));
-    expect(surface.paddingTop).toBe(themeValue('padding-top', '--odd-card-padding'));
+    expect(surface.paddingTop).toBe(themeValue('padding-top', '--odd-space-md'));
+    expect(surface.paddingLeft).toBe(themeValue('padding-left', '--odd-space-md'));
     expect(surface.rowGap).toBe(themeValue('row-gap', '--odd-space-xs'));
     expect(getComputedStyle(el.shadowRoot!.querySelector('.header-glyph')!).color).toBe(
       themeValue('color', '--odd-color-text-secondary'),

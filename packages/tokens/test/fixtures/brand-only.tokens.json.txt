@@ -33,7 +33,7 @@
     "padding": {
       "$type": "dimension",
       "$value": "{layout.inset}",
-      "$description": "Inner padding of card surfaces (odd-card, odd-stat, the file drop zone). Follows layout.inset, so the layout.compact profile tightens it.",
+      "$description": "Inner padding of card surfaces (odd-card and odd-stat). Follows layout.inset, so the layout.compact profile tightens it.",
       "$extensions": {
         "dev.oddkin": {
           "category": "component",

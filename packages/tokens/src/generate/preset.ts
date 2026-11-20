@@ -279,7 +279,7 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   // Card
   t('card.padding', 'component', 'dimension', '{layout.inset}', {
     description:
-      'Inner padding of card surfaces (odd-card, odd-stat, the file drop zone). Follows layout.inset, so the layout.compact profile tightens it.',
+      'Inner padding of card surfaces (odd-card and odd-stat). Follows layout.inset, so the layout.compact profile tightens it.',
   }),
   t('card.radius', 'component', 'dimension', '{radius.lg}', {
     description:

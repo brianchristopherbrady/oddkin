@@ -11,7 +11,7 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const fileInputStyles = css`
   .surface {
-    padding: ${token('card.padding')};
+    padding: ${token('space.md')};
     border: ${token('border.width.default')} solid ${token('color.border.strong')};
     border-radius: ${token('card.radius')};
     background: ${token('color.surface.default')};
