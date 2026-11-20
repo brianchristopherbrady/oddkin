@@ -3,13 +3,17 @@
 // inventory or usage cards). Workbench reads this file from the configuration's folder.
 import { readFileSync } from 'node:fs';
 import { defineDocs } from '@oddkin/workbench/config';
+import { publicAiComponents } from './public-ai-components.mjs';
 
-const tags = ['components', 'ai'].flatMap((name) => {
+const components = ['components', 'ai'].flatMap((name) => {
   const file = new URL(`../../packages/${name}/oddkin.metadata.json`, import.meta.url);
   const metadata = JSON.parse(readFileSync(file, 'utf8')) as {
     components: Record<string, { tag: string }>;
   };
-  return Object.values(metadata.components).map((component) => component.tag);
+  return Object.values(metadata.components).map(({ tag }) => ({
+    tag,
+    visible: name !== 'ai' || publicAiComponents.has(tag),
+  }));
 });
 
 const titles: Record<string, string> = {
@@ -19,10 +23,11 @@ const titles: Record<string, string> = {
 
 export default defineDocs({
   pages: Object.fromEntries(
-    tags.map((tag) => [
+    components.map(({ tag, visible }) => [
       `components/${tag}`,
       {
         ...(titles[tag] ? { title: titles[tag] } : {}),
+        ...(!visible ? { visible: false } : {}),
         sections: { tokens: { visible: false }, guidance: { visible: false } },
       },
     ]),

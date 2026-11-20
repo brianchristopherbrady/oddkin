@@ -466,63 +466,27 @@ test.describe('docs responsiveness', () => {
     await expect(note).toHaveValue('A neighboring task also keeps its draft.');
   });
 
-  test('keeps a composed question draft across disclosure changes and waits for its host outcome', async ({
-    page,
-  }) => {
+  test('offers compositions only when their component examples are public', async ({ page }) => {
     await openLab(page);
-    await page.locator('#behavior-component').selectOption('scenario:review-in-disclosure');
+    const selector = page.locator('#behavior-component');
+    for (const value of [
+      'odd-question',
+      'odd-model-select',
+      'odd-sources',
+      'odd-tool-call',
+      'scenario:review-in-disclosure',
+      'scenario:toolbar-tools',
+      'scenario:details-in-tabs',
+    ])
+      await expect(selector.locator(`option[value="${value}"]`)).toHaveCount(0);
+    for (const value of ['odd-citation', 'odd-context-picker', 'scenario:form-in-dialog'])
+      await expect(selector.locator(`option[value="${value}"]`)).toBeAttached();
+    await selector.selectOption('scenario:form-in-dialog');
     await ready(page);
     await expect(page.locator('#behavior-example')).toBeDisabled();
-    const preview = canvas(page);
-    const disclosure = preview.locator('odd-disclosure').locator('[part="summary"]');
-    await expect(disclosure).toHaveJSProperty('tagName', 'SUMMARY');
-    await expect(disclosure).toHaveText('Review details');
-    const question = preview.locator('odd-question');
-    const title = question.getByRole('textbox', { name: 'Title', exact: true });
-    const draft = 'Release review with the design team';
-    await title.fill(draft);
-    const originalField = await title.elementHandle();
-    await disclosure.click();
-    await expect(title).toBeHidden();
-    expect(await originalField!.evaluate((element) => element.isConnected)).toBe(true);
-    await disclosure.click();
-    await expect(title).toHaveValue(draft);
-    expect(await title.evaluate((current, previous) => current === previous, originalField)).toBe(
-      true,
-    );
-    await page.locator('#behavior-purpose').selectOption('bounded');
-    await expect(preview.locator('#behavior-allocation')).toHaveAttribute(
-      'data-purpose',
-      'bounded',
-    );
-    await expectCapacity(page);
-    await expect(page.locator('#behavior-lab-metrics')).toHaveAttribute('data-shift', '0');
-    await question.evaluate((element) => {
-      element.addEventListener(
-        'odd-question-answer',
-        (event) => {
-          element.setAttribute(
-            'data-observed-answer',
-            JSON.stringify((event as CustomEvent<unknown>).detail),
-          );
-        },
-        { once: true },
-      );
+    await expect(canvas(page).getByRole('button', { name: 'Edit review details' })).toBeVisible({
+      timeout: previewLoad,
     });
-    await question.getByRole('button', { name: 'Answer', exact: true }).click();
-    await expect(question).toHaveAttribute('data-observed-answer', /questionId/);
-    const intent = JSON.parse((await question.getAttribute('data-observed-answer'))!);
-    expect(intent).toMatchObject({ questionId: 'q2', revision: 1 });
-    expect(JSON.stringify(intent)).toContain(draft);
-    await expect
-      .poll(() =>
-        question.evaluate(
-          (element) =>
-            (element as HTMLElement & { question?: { status: string } }).question?.status,
-        ),
-      )
-      .toBe('answered');
-    await expect(page.locator('#behavior-lab-metrics')).toHaveAttribute('data-shift', '0');
   });
 
   test('opens a modal only on its action and preserves its active field through resizing', async ({

@@ -8,10 +8,10 @@ import { loadComponent, loadIndex } from './reference.js';
 
 const FRAME = '/apps/docs/behavior-frame.html';
 const SCENARIOS = [
-  ['review-in-disclosure', 'Review inside a disclosure'],
-  ['toolbar-tools', 'Related controls in an action area'],
-  ['details-in-tabs', 'Supporting details in tabs'],
-  ['form-in-dialog', 'An editing task in a dialog'],
+  ['review-in-disclosure', 'Review inside a disclosure', ['odd-question']],
+  ['toolbar-tools', 'Related controls in an action area', ['odd-model-select']],
+  ['details-in-tabs', 'Supporting details in tabs', ['odd-sources', 'odd-tool-call']],
+  ['form-in-dialog', 'An editing task in a dialog', []],
 ] as const;
 const element = <K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -361,7 +361,8 @@ export function mountBehaviorLab(host: HTMLElement, owner: Scope): () => void {
     }
     const group = element('optgroup');
     group.label = 'Components together';
-    for (const [name, label] of SCENARIOS) {
+    for (const [name, label, tags] of SCENARIOS) {
+      if (!tags.every((tag) => Object.hasOwn(index.pages, `components/${tag}`))) continue;
       const option = element('option', undefined, label);
       option.value = `scenario:${name}`;
       group.append(option);

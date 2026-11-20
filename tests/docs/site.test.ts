@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +17,7 @@ const build = (out: string) =>
   });
 const documentAt = (out: string, path: string) =>
   join(out, ...path.split('/').filter(Boolean), 'index.html');
+const publicAiTags = ['odd-citation', 'odd-context-picker'];
 
 describe('the static docs build', () => {
   // A stable folder: on Windows, first writes of new files are slow while they are scanned.
@@ -34,6 +35,7 @@ describe('the static docs build', () => {
       ...pages.map((page) => `/${page.path}`),
       ...clientPages.map((page) => `/${page.path}`),
       ...Object.values(metadata.components).map(({ tag }) => `/components/${tag}`),
+      ...publicAiTags.map((tag) => `/components/${tag}`),
     ];
     for (const route of routes) expect(existsSync(documentAt(out, route)), route).toBe(true);
     const notFound = readFileSync(join(out, '404.html'), 'utf8');
@@ -81,20 +83,40 @@ describe('the static docs build', () => {
     const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
       pages: Record<string, string>;
       registry: {
-        pages: { id: string; kind: string; route: string; group?: string; title: string }[];
+        pages: {
+          id: string;
+          kind: string;
+          route: string;
+          group?: string;
+          title: string;
+          visible: boolean;
+        }[];
       };
     };
     const components = index.registry.pages.filter((page) => page.kind === 'component');
-    expect(components.some((page) => page.group === 'AI')).toBe(true);
+    const publicAi = components.filter((page) => page.group === 'AI' && page.visible);
+    expect(publicAi.map((page) => page.route).sort()).toEqual(
+      publicAiTags.map((tag) => `/components/${tag}`),
+    );
     // Titles a tag cannot spell come from the docs' authored content (apps/docs/oddkin.docs.ts).
     const title = (id: string) => components.find((page) => page.id === id)?.title;
-    expect([title('components/odd-ai-label'), title('components/odd-one-time-code')]).toEqual([
-      'AI label',
-      'One-time code',
-    ]);
-    for (const page of components) {
+    expect(title('components/odd-one-time-code')).toBe('One-time code');
+    for (const page of components.filter((page) => page.visible)) {
       expect(existsSync(documentAt(out, page.route)), page.route).toBe(true);
       expect(existsSync(join(out, '_oddkin', index.pages[page.id]!)), page.id).toBe(true);
+    }
+    const aiMetadata = JSON.parse(
+      readFileSync(join(root, 'packages/ai/oddkin.metadata.json'), 'utf8'),
+    ) as { components: Record<string, { tag: string }> };
+    const hiddenAiTags = Object.values(aiMetadata.components)
+      .map(({ tag }) => tag)
+      .filter((tag) => !publicAiTags.includes(tag));
+    expect(hiddenAiTags).toContain('odd-prompt-input');
+    for (const tag of hiddenAiTags) {
+      const id = `components/${tag}`;
+      expect(index.pages[id], id).toBeUndefined();
+      expect(existsSync(documentAt(out, id)), id).toBe(false);
+      expect(existsSync(join(out, '_oddkin', 'pages', `${id}.json`)), id).toBe(false);
     }
     const button = JSON.parse(
       readFileSync(join(out, '_oddkin', index.pages['components/odd-button']!), 'utf8'),
@@ -120,17 +142,18 @@ describe('the static docs build', () => {
     const { sourcePath } = await import('../../apps/docs/src/reference.js');
     const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
       pages: Record<string, string>;
-      registry: { pages: { id: string; kind: string; route: string; group?: string }[] };
+      registry: { pages: { id: string; kind: string; route: string; visible: boolean }[] };
     };
     const html = readFileSync(documentAt(out, '/components/odd-button'), 'utf8');
     const sidebar = html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
     for (const page of index.registry.pages.filter((p) => p.kind === 'component')) {
       const listed = sidebar.includes(`<a class="nav-section" href="${page.route}"`);
-      // The AI elements too, as in the catalog (owner, 2026-11-02).
-      expect(listed, page.route).toBe(true);
+      expect(listed, page.route).toBe(page.visible);
+      if (!page.visible) continue;
       const data = JSON.parse(readFileSync(join(out, '_oddkin', index.pages[page.id]!), 'utf8'));
       expect(existsSync(join(root, sourcePath(data))), page.id).toBe(true);
     }
+    expect(sidebar).not.toContain('href="/components/odd-prompt-input"');
   });
 
   it('puts every section a reference page shows in one of its tabs', async () => {
@@ -153,18 +176,33 @@ describe('the static docs build', () => {
     const text = readFileSync(join(out, 'llms.txt'), 'utf8');
     expect(text.startsWith(`# Oddkin\n\n> ${description}\n`)).toBe(true);
     const links = [...text.matchAll(/\]\((https?:[^)]+)\)/g)].map(([, href]) => new URL(href!));
-    expect(links.length).toBeGreaterThan(70);
+    expect(links.length).toBeGreaterThan(0);
     for (const url of links) {
       expect(url.href.startsWith('https://www.oddkin.dev/agent/'), url.href).toBe(true);
       expect(existsSync(join(out, ...url.pathname.split('/').filter(Boolean))), url.href).toBe(
         true,
       );
     }
-    // The site serves the kits the packages ship.
-    for (const name of ['components', 'ai'])
-      expect(readFileSync(join(out, `agent/oddkin-${name}/GUIDE.md`), 'utf8')).toBe(
-        readFileSync(join(root, `packages/${name}/agent/GUIDE.md`), 'utf8'),
-      );
+    const aiReferences = '/agent/oddkin-ai/references/components/';
+    const publishedAiFiles = publicAiTags.map((tag) => `${tag}.md`);
+    expect(
+      links
+        .filter((url) => url.pathname.startsWith(aiReferences))
+        .map((url) => url.pathname.slice(aiReferences.length))
+        .sort(),
+    ).toEqual(publishedAiFiles);
+    expect(readdirSync(join(out, 'agent/oddkin-ai/references/components')).sort()).toEqual(
+      publishedAiFiles,
+    );
+    expect(readFileSync(join(out, 'agent/oddkin-ai/GUIDE.md'), 'utf8')).not.toContain(
+      'odd-prompt-input',
+    );
+    expect(
+      existsSync(join(root, 'packages/ai/agent/references/components/odd-prompt-input.md')),
+    ).toBe(true);
+    expect(readFileSync(join(out, 'agent/oddkin-components/GUIDE.md'), 'utf8')).toBe(
+      readFileSync(join(root, 'packages/components/agent/GUIDE.md'), 'utf8'),
+    );
   });
 
   it('replaces only a folder it wrote', () => {

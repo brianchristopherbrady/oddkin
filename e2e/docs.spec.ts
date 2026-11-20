@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const docs = 'http://127.0.0.1:4177';
+const publicAiTags = ['odd-citation', 'odd-context-picker'];
 // The catalog panel's modules load before its route commits: seconds in Firefox, unbundled.
 const catalogLoad = 15_000;
 
@@ -257,6 +258,8 @@ test('metadata loading error is visible and the retry action recovers', async ({
 test('unknown local references render a not-found state', async ({ page }) => {
   await page.goto(`${docs}/components/odd-unknown`);
   await expect(page.getByRole('heading', { name: 'Component not found' })).toBeVisible();
+  await page.goto(`${docs}/components/odd-prompt-input`);
+  await expect(page.getByRole('heading', { name: 'Component not found' })).toBeVisible();
   await page.goto(`${docs}/not-a-guide`);
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   // Only routes fall back to the app shell; a missing asset is a 404.
@@ -320,21 +323,13 @@ test('the header link from the home opens Components beside the sidebar, as load
   expect(Math.abs(reached.sidebar!.width - loaded.sidebar!.width)).toBeLessThanOrEqual(1);
 });
 
-test('the catalog lists the AI components under AI, and /ai is the AI tooling page', async ({
+test('the catalog lists Citation and Context Picker under AI, and /ai is the AI tooling page', async ({
   page,
 }) => {
-  const tags = async (name: string) =>
-    Object.values(
-      (
-        (await (
-          await page.request.get(`${docs}/public/@oddkin/${name}/oddkin.metadata.json`)
-        ).json()) as { components: Record<string, { tag: string }> }
-      ).components,
-    ).map(({ tag }) => tag);
-  const [ai, all] = [
-    await tags('ai'),
-    (await tags('components')).length + (await tags('ai')).length,
-  ];
+  const core = (await (
+    await page.request.get(`${docs}/public/@oddkin/components/oddkin.metadata.json`)
+  ).json()) as { components: Record<string, { tag: string }> };
+  const all = Object.keys(core.components).length + publicAiTags.length;
   await page.goto(`${docs}/components`);
   await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
     timeout: catalogLoad,
@@ -351,16 +346,17 @@ test('the catalog lists the AI components under AI, and /ai is the AI tooling pa
   await page.getByRole('link', { name: 'Explore AI interaction components' }).click();
   await expect(page).toHaveURL(`${docs}/components?category=AI`);
   await expect(filters.last()).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText(`Showing ${ai.length} of ${all} components`)).toBeVisible();
+  await expect(page.getByText(`Showing ${publicAiTags.length} of ${all} components`)).toBeVisible();
   await expect(page.locator('oddkin-catalog-panel .wb-card-package')).toHaveText(
-    ai.map(() => '@oddkin/ai'),
+    publicAiTags.map(() => '@oddkin/ai'),
   );
   const links = page.locator('oddkin-catalog-panel a.wb-card-action');
   expect(
     (await links.evaluateAll((list) => list.map((a) => a.getAttribute('href')))).sort(),
-  ).toEqual(ai.map((tag) => `/components/${tag}`).sort());
-  await page.locator('oddkin-catalog-panel a[href="/components/odd-prompt-input"]').click();
-  await expect(page.locator('#main .page-header .eyebrow')).toHaveText('AI · odd-prompt-input', {
+  ).toEqual(publicAiTags.map((tag) => `/components/${tag}`));
+  await expect(page.locator('#docs-nav a[href="/components/odd-prompt-input"]')).toHaveCount(0);
+  await page.locator('oddkin-catalog-panel a[href="/components/odd-citation"]').click();
+  await expect(page.locator('#main .page-header .eyebrow')).toHaveText('AI · odd-citation', {
     timeout: catalogLoad,
   });
   await expect(page.locator('oddkin-component-panel')).toBeVisible();
@@ -372,10 +368,9 @@ test('the catalog lists the AI components under AI, and /ai is the AI tooling pa
   await expect(filters.last()).toHaveAttribute('aria-pressed', 'true', { timeout: catalogLoad });
 });
 
-test('every published component is listed under its category and has a reference page', async ({
+test('every public docs component is listed under its category and has a reference page', async ({
   page,
 }) => {
-  // @oddkin/components and @oddkin/ai: the catalog lists both packages (owner, 2026-11-02).
   const components: {
     tag: string;
     registration?: string;
@@ -389,12 +384,14 @@ test('every published component is listed under its category and has a reference
       components: Record<string, { tag: string; category?: string; registration?: string }>;
       categories: Record<string, { label: string }>;
     };
-    for (const component of Object.values(metadata.components))
+    for (const component of Object.values(metadata.components)) {
+      if (name === 'ai' && !publicAiTags.includes(component.tag)) continue;
       components.push({
         ...component,
         name,
         label: component.category ? metadata.categories[component.category]?.label : undefined,
       });
+    }
   }
   expect(components.length).toBeGreaterThan(0);
   // A round trip per component of @oddkin/components (reference page, then back to the catalog):
@@ -463,8 +460,13 @@ test('serves llms.txt, linking the agent kits under its own address', async ({ r
   const links = [...(await index.text()).matchAll(/\]\((https?:[^)]+)\)/g)].map(
     ([, href]) => href!,
   );
-  expect(links.length).toBeGreaterThan(70);
+  expect(links.length).toBeGreaterThan(0);
   for (const href of links) expect(href.startsWith(`${docs}/agent/`), href).toBe(true);
+  const aiReferences = `${docs}/agent/oddkin-ai/references/components/`;
+  expect(links.filter((href) => href.startsWith(aiReferences)).sort()).toEqual(
+    publicAiTags.map((tag) => `${aiReferences}${tag}.md`),
+  );
+  expect((await request.get(`${aiReferences}odd-prompt-input.md`)).status()).toBe(404);
   const guide = await request.get(links[0]!);
   expect(guide.status()).toBe(200);
   expect(guide.headers()['content-type']).toContain('text/markdown');
