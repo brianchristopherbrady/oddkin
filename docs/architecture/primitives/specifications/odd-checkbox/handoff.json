@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "primitive": "odd-checkbox",
+  "status": "implemented",
+  "design": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pageId": "1520:2",
+    "nodeIds": [
+      "159:1181",
+      "1520:3",
+      "1520:46",
+      "1520:52",
+      "1520:58",
+      "1520:64",
+      "1521:27",
+      "1521:44",
+      "1521:459",
+      "1523:291",
+      "1523:299",
+      "1523:314",
+      "1523:326",
+      "1523:334",
+      "1523:347",
+      "1524:321"
+    ],
+    "revision": "2026-11-20-checkbox-design / Figma session afe35696-6680-4a70-974f-ef0db8375850",
+    "observedAt": "2026-11-21T03:18:32.248Z",
+    "contextEvidence": [
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-audit.json",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-native-spec.md",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-index.json"
+    ],
+    "screenshotEvidence": [
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-review.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-allocation.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-controlled.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-light.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-light.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-dark.png",
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-dark.png"
+    ],
+    "codeConnectEvidence": [
+      "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/code-connect.json"
+    ]
+  },
+  "source": {
+    "baseCommit": "2a8c84def4928bca269f559483d8300823ffb080",
+    "files": [
+      {
+        "path": "packages/components/src/checkbox/checkbox.ts",
+        "sha256": "1de1d7fb2cb17d4ddc5a5cdbd37d04056070c216f9c70b7f2a919131ba415565"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.template.ts",
+        "sha256": "f43416373c69a9fa7a75cce798a5a03aed948221f7e4210e76efa1dc924ada57"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.structural.styles.ts",
+        "sha256": "e34e764982b7bc40df7fd1bb22ed8ed40968d48bcdea3fad15c437b3c8e14e68"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.styles.ts",
+        "sha256": "b2fdfeb05409f6bbd7ec120c75ead1bd31fe49499fd675b1cd56023252b2b492"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.definition.ts",
+        "sha256": "270a667a04b8cc87822760253a491514eb28878809379584f8f4fe751461e315"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.define.ts",
+        "sha256": "7f899ba2b295836712b0df3c80630ad00f802ea8c2b08d3b9616f5a468fcd982"
+      },
+      {
+        "path": "packages/components/src/checkbox/index.ts",
+        "sha256": "2483ca8097227af410153381a17ef47b1b7ddf5f2df0583fdb71934405902226"
+      },
+      {
+        "path": "packages/components/src/checkbox/foundation.ts",
+        "sha256": "0ce0ec37ff379d8a65e396826b2ff613eadbe5d1a2ee4e9364e7f349d169d15e"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.examples.ts",
+        "sha256": "75f7255b794925e9e5c04257dc17ce83b9334c51565c193283b91234599b9209"
+      },
+      {
+        "path": "packages/components/src/form-control/checkable.ts",
+        "sha256": "b3bd769a717d1ebe2225c118c3598743b69d82481094dc57106315bb6e675d6e"
+      },
+      {
+        "path": "packages/components/src/form-control/form-control.ts",
+        "sha256": "7918fcce9055e0328b4ee30db098d129f6de692b3957df93038aac18d92c3fde"
+      },
+      {
+        "path": "packages/components/src/styles/control-indicator.styles.ts",
+        "sha256": "0ba901e62179600c9c2f4c878cea3d8168084ffc26e05e33c477e062a6ee7c5c"
+      },
+      {
+        "path": "packages/components/src/styles/control-indicator.structural.styles.ts",
+        "sha256": "0635e5e146422256f0a69532cdc798857d2aa5736b117d571fedbe2c578d5f31"
+      },
+      {
+        "path": "packages/components/test/checkbox.browser.test.ts",
+        "sha256": "9875a904bd9e28d6a5b5a8308e956b98eb3a65bf869bcf8e6bf41e6170653aeb"
+      }
+    ]
+  },
+  "targets": [
+    {
+      "path": "packages/components/src/checkbox/checkbox.ts",
+      "role": "class"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.template.ts",
+      "role": "template"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.structural.styles.ts",
+      "role": "styles"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.styles.ts",
+      "role": "styles"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.definition.ts",
+      "role": "definition"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.define.ts",
+      "role": "registration"
+    },
+    {
+      "path": "packages/components/src/checkbox/index.ts",
+      "role": "exports"
+    },
+    {
+      "path": "packages/components/src/checkbox/foundation.ts",
+      "role": "exports"
+    },
+    {
+      "path": "packages/components/src/checkbox/checkbox.examples.ts",
+      "role": "docs"
+    },
+    {
+      "path": "packages/components/test/checkbox.browser.test.ts",
+      "role": "test"
+    }
+  ],
+  "contracts": [
+    {
+      "path": "docs/architecture/primitives/specifications/odd-checkbox/context.md",
+      "sha256": "4c19a8c395feddf5853106584d54dd17a2526c9661bbf275f83002e02fc71174"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-checkbox/research.md",
+      "sha256": "c33bffb2fe57d63b7d1d014e5450dcde39a81b3cd7e9730a23687ac1cb40d2d4"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-checkbox/contract.md",
+      "sha256": "152a0ea66b2fa8657ee0a4d7b2ecce8592e38769ff5ac18a25a7cd8afb87d10b"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-checkbox/decision.md",
+      "sha256": "f7185a4414a649c5ab1223491ecdd84fa61150721a0355e7fd7b0bb66f6d42e7"
+    },
+    {
+      "path": "docs/architecture/primitives/specifications/odd-checkbox/token-map.md",
+      "sha256": "7b1a7a8afee1eccf32c4d7b2fff6b525866781a84e65096174903cf7d145484c"
+    },
+    {
+      "path": "docs/architecture/responsiveness.md",
+      "sha256": "73037505c29063ec54fdbe3b2f863f80751363879188a774724b232b600302d7"
+    },
+    {
+      "path": "docs/architecture/decisions/0045-api-vocabulary.md",
+      "sha256": "b06401dd1196853d451e8025539d6860863b2472ea1230962514fbd6b1633784"
+    }
+  ],
+  "deltas": [
+    {
+      "id": "CB-OWNERSHIP",
+      "from": "Native local ownership only.",
+      "to": "Native by default with optional property-only controlled snapshot and user request.",
+      "rationale": "Allow app acceptance policy without competing native and app owners.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-checkbox/research.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-controlled.png"
+      ]
+    },
+    {
+      "id": "CB-LAYOUT",
+      "from": "Default indicator centered across wrapped labels.",
+      "to": "Three explicit sizes and token-driven first-line alignment that keeps all label text visible.",
+      "rationale": "Preserve the checkbox and all its text within parent allocation.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-checkbox/token-map.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-allocation.png"
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "nodeId": "159:1181",
+      "sourcePath": "packages/components/src/checkbox/checkbox.ts",
+      "part": null,
+      "token": null
+    },
+    {
+      "nodeId": "1520:3",
+      "sourcePath": "packages/components/src/checkbox/checkbox.styles.ts",
+      "part": "control",
+      "token": "icon.size.md"
+    },
+    {
+      "nodeId": "1520:52",
+      "sourcePath": "packages/components/src/checkbox/checkbox.template.ts",
+      "part": "label",
+      "token": "type.ui.size"
+    },
+    {
+      "nodeId": "1520:64",
+      "sourcePath": "packages/components/src/checkbox/checkbox.structural.styles.ts",
+      "part": "label",
+      "token": null
+    },
+    {
+      "nodeId": "1523:334",
+      "sourcePath": "packages/components/src/checkbox/checkbox.ts",
+      "part": null,
+      "token": null
+    }
+  ],
+  "contextual": {
+    "version": 1,
+    "level": "intrinsic",
+    "contract": "docs/architecture/primitives/specifications/odd-checkbox/contract.md#parent-allocation"
+  },
+  "acceptance": [
+    {
+      "id": "CB-SOURCE",
+      "kind": "source",
+      "fixture": "Built Checkbox source and generated metadata",
+      "assertions": [
+        "One native input and one checked-state owner.",
+        "Existing token semantics and native attributes retained."
+      ]
+    },
+    {
+      "id": "CB-DESIGN",
+      "kind": "figma-structure",
+      "fixture": "Dedicated page and native spec",
+      "assertions": ["Editable existing state instances and accurate prototype destinations."]
+    },
+    {
+      "id": "CB-FIGMA-VISUAL",
+      "kind": "figma-visual",
+      "fixture": "Both theme states and parent allocations",
+      "assertions": ["Readable full labels, three sizes, no unintended overlap."]
+    },
+    {
+      "id": "CB-BROWSER",
+      "kind": "browser",
+      "fixture": "Native, controlled, and allocation cases",
+      "assertions": [
+        "Controlled intent follows rollback and committed native form state.",
+        "Theme density, RTL, focus, and size preserve input identity."
+      ]
+    },
+    {
+      "id": "CB-FIDELITY",
+      "kind": "implementation-visual",
+      "fixture": "Oddkin Figma-to-browser bench",
+      "assertions": ["Four same-content comparisons include two allocations and both themes."]
+    }
+  ],
+  "issues": [],
+  "implementationRun": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/run.json"
+}

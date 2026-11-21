@@ -113,12 +113,13 @@ export const CATALOG: Catalog = {
       checked: 'boolean',
       value: 'string',
       required: 'boolean',
+      size: { enum: ['sm', 'md', 'lg'] },
       indeterminate: 'boolean',
     },
     properties: { checked: 'boolean' },
-    fixed: ['form', 'validationMessage', 'validity', 'willValidate'],
+    fixed: ['checkedState', 'form', 'validationMessage', 'validity', 'willValidate'],
     slots: [''],
-    events: ['change', 'input'],
+    events: ['change', 'input', 'odd-checked-request'],
   },
   'odd-checkbox-group': {
     attributes: {

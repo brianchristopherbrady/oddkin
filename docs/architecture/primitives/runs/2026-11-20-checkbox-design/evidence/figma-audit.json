@@ -1,0 +1,1720 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pageId": "1520:2",
+  "pageName": "Primitive · Checkbox · Specification",
+  "topLevel": [
+    {
+      "id": "1520:3",
+      "name": "Checkbox · Size and allocation fixtures",
+      "type": "COMPONENT_SET",
+      "x": 1248,
+      "y": 32,
+      "width": 712,
+      "height": 248
+    },
+    {
+      "id": "1520:46",
+      "name": "Checkbox fidelity · short · Light",
+      "type": "FRAME",
+      "x": 1248,
+      "y": 410,
+      "width": 320,
+      "height": 24
+    },
+    {
+      "id": "1520:52",
+      "name": "Checkbox fidelity · wrap · Light",
+      "type": "FRAME",
+      "x": 1248,
+      "y": 522,
+      "width": 176,
+      "height": 78.375
+    },
+    {
+      "id": "1520:58",
+      "name": "Checkbox fidelity · short · Dark",
+      "type": "FRAME",
+      "x": 1688,
+      "y": 410,
+      "width": 320,
+      "height": 24
+    },
+    {
+      "id": "1520:64",
+      "name": "Checkbox fidelity · wrap · Dark",
+      "type": "FRAME",
+      "x": 1688,
+      "y": 522,
+      "width": 176,
+      "height": 78.375
+    },
+    {
+      "id": "1521:27",
+      "name": "Checkbox · Review board",
+      "type": "FRAME",
+      "x": 0,
+      "y": 0,
+      "width": 1184,
+      "height": 2525.75
+    },
+    {
+      "id": "1523:291",
+      "name": "Native · Unchecked",
+      "type": "FRAME",
+      "x": 1248,
+      "y": 680,
+      "width": 320,
+      "height": 180
+    },
+    {
+      "id": "1523:299",
+      "name": "Native · Checked",
+      "type": "FRAME",
+      "x": 1600,
+      "y": 680,
+      "width": 320,
+      "height": 236
+    },
+    {
+      "id": "1523:314",
+      "name": "Native · Mixed",
+      "type": "FRAME",
+      "x": 1952,
+      "y": 680,
+      "width": 320,
+      "height": 180
+    },
+    {
+      "id": "1523:326",
+      "name": "Controlled · Unchecked",
+      "type": "FRAME",
+      "x": 1248,
+      "y": 1000,
+      "width": 320,
+      "height": 180
+    },
+    {
+      "id": "1523:334",
+      "name": "Controlled · Request sent",
+      "type": "FRAME",
+      "x": 1600,
+      "y": 1000,
+      "width": 320,
+      "height": 236
+    },
+    {
+      "id": "1523:347",
+      "name": "Controlled · Committed",
+      "type": "FRAME",
+      "x": 1952,
+      "y": 1000,
+      "width": 320,
+      "height": 236
+    },
+    {
+      "id": "1524:321",
+      "name": "Checkbox · API and interaction specification",
+      "type": "SPEC_BLOCK",
+      "x": 2320,
+      "y": 0,
+      "width": 850,
+      "height": 1100
+    }
+  ],
+  "board": {
+    "id": "1521:27",
+    "x": 0,
+    "y": 0,
+    "width": 1184,
+    "height": 2525.75,
+    "sections": [
+      {
+        "id": "1521:28",
+        "name": "Introduction",
+        "x": 32,
+        "y": 32,
+        "width": 1120,
+        "height": 137
+      },
+      {
+        "id": "1521:32",
+        "name": "Anatomy and authority",
+        "x": 32,
+        "y": 201,
+        "width": 1120,
+        "height": 164
+      },
+      {
+        "id": "1521:44",
+        "name": "State matrix",
+        "x": 32,
+        "y": 397,
+        "width": 1120,
+        "height": 958
+      },
+      {
+        "id": "1521:349",
+        "name": "Sizes and allocation",
+        "x": 32,
+        "y": 1387,
+        "width": 1120,
+        "height": 598.75
+      },
+      {
+        "id": "1521:459",
+        "name": "API",
+        "x": 32,
+        "y": 2017.75,
+        "width": 1120,
+        "height": 312
+      },
+      {
+        "id": "1523:362",
+        "name": "Interaction flows",
+        "x": 32,
+        "y": 2361.75,
+        "width": 1120,
+        "height": 132
+      }
+    ]
+  },
+  "canonicalFamily": "159:1181",
+  "canonicalVariantCount": 15,
+  "canonicalVariantNames": [
+    "Selection=Unchecked, State=Default",
+    "Selection=Checked, State=Default",
+    "Selection=Mixed, State=Default",
+    "Selection=Unchecked, State=Hover",
+    "Selection=Unchecked, State=Focus",
+    "Selection=Unchecked, State=Invalid",
+    "Selection=Unchecked, State=Disabled",
+    "Selection=Checked, State=Hover",
+    "Selection=Checked, State=Focus",
+    "Selection=Checked, State=Invalid",
+    "Selection=Checked, State=Disabled",
+    "Selection=Mixed, State=Hover",
+    "Selection=Mixed, State=Focus",
+    "Selection=Mixed, State=Invalid",
+    "Selection=Mixed, State=Disabled"
+  ],
+  "fixtureSet": "1520:3",
+  "fixtures": [
+    {
+      "key": "short",
+      "mode": "light",
+      "nodeId": "1520:46",
+      "instanceId": "1520:47",
+      "mainComponentId": "1520:18",
+      "name": "Checkbox fidelity · short · Light",
+      "text": "Email notifications",
+      "grant": 320,
+      "width": 320,
+      "height": 24,
+      "png": "figma/checkbox-short-light.png",
+      "scale": 2,
+      "bounds": {
+        "control": {
+          "id": "I1520:47;1520:20",
+          "x": 4,
+          "y": 2,
+          "width": 20,
+          "height": 20
+        },
+        "label": {
+          "id": "I1520:47;1520:22",
+          "x": 36,
+          "y": 2.375,
+          "width": 280,
+          "height": 19
+        },
+        "target": {
+          "id": "I1520:47;1520:19",
+          "x": 4,
+          "y": 0,
+          "width": 20,
+          "height": 24
+        },
+        "instance": {
+          "id": "1520:47",
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 24
+        },
+        "labelColumn": {
+          "id": "I1520:47;1520:21",
+          "x": 36,
+          "y": 0,
+          "width": 280,
+          "height": 21.375
+        }
+      },
+      "geometry": {
+        "outerPadding": 0,
+        "rowPadding": 4,
+        "columnGap": 12,
+        "controlRadius": 4,
+        "strokeWeight": 1
+      },
+      "typography": {
+        "fontName": {
+          "family": "Roboto",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500,
+            "wdth": 100
+          }
+        },
+        "fontSize": 14,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+        "lineHeight": {
+          "unit": "PERCENT",
+          "value": 137.5
+        },
+        "textAutoResize": "HEIGHT",
+        "layoutSizingHorizontal": "FILL"
+      },
+      "bindings": {
+        "theme": "158:0",
+        "density": "1067:0",
+        "background": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:29"
+          }
+        ],
+        "controlWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlFill": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:25"
+          }
+        ],
+        "controlBorder": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:40"
+          }
+        ],
+        "controlRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "spacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:12"
+        },
+        "padding": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "minimumTarget": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        },
+        "labelColor": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:30"
+          }
+        ]
+      },
+      "pngWidth": 640,
+      "pngHeight": 48,
+      "pngBytes": 3861
+    },
+    {
+      "key": "wrap",
+      "mode": "light",
+      "nodeId": "1520:52",
+      "instanceId": "1520:53",
+      "mainComponentId": "1520:18",
+      "name": "Checkbox fidelity · wrap · Light",
+      "text": "Send a weekly summary when project settings change.",
+      "grant": 176,
+      "width": 176,
+      "height": 78.375,
+      "png": "figma/checkbox-wrap-light.png",
+      "scale": 2,
+      "bounds": {
+        "control": {
+          "id": "I1520:53;1520:20",
+          "x": 4,
+          "y": 2,
+          "width": 20,
+          "height": 20
+        },
+        "label": {
+          "id": "I1520:53;1520:22",
+          "x": 36,
+          "y": 2.375,
+          "width": 136,
+          "height": 76
+        },
+        "target": {
+          "id": "I1520:53;1520:19",
+          "x": 4,
+          "y": 0,
+          "width": 20,
+          "height": 24
+        },
+        "instance": {
+          "id": "1520:53",
+          "x": 0,
+          "y": 0,
+          "width": 176,
+          "height": 78.375
+        },
+        "labelColumn": {
+          "id": "I1520:53;1520:21",
+          "x": 36,
+          "y": 0,
+          "width": 136,
+          "height": 78.375
+        }
+      },
+      "geometry": {
+        "outerPadding": 0,
+        "rowPadding": 4,
+        "columnGap": 12,
+        "controlRadius": 4,
+        "strokeWeight": 1
+      },
+      "typography": {
+        "fontName": {
+          "family": "Roboto",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500,
+            "wdth": 100
+          }
+        },
+        "fontSize": 14,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+        "lineHeight": {
+          "unit": "PERCENT",
+          "value": 137.5
+        },
+        "textAutoResize": "HEIGHT",
+        "layoutSizingHorizontal": "FILL"
+      },
+      "bindings": {
+        "theme": "158:0",
+        "density": "1067:0",
+        "background": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:29"
+          }
+        ],
+        "controlWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlFill": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:25"
+          }
+        ],
+        "controlBorder": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:40"
+          }
+        ],
+        "controlRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "spacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:12"
+        },
+        "padding": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "minimumTarget": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        },
+        "labelColor": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:30"
+          }
+        ]
+      },
+      "pngWidth": 352,
+      "pngHeight": 157,
+      "pngBytes": 10604
+    },
+    {
+      "key": "short",
+      "mode": "dark",
+      "nodeId": "1520:58",
+      "instanceId": "1520:59",
+      "mainComponentId": "1520:18",
+      "name": "Checkbox fidelity · short · Dark",
+      "text": "Email notifications",
+      "grant": 320,
+      "width": 320,
+      "height": 24,
+      "png": "figma/checkbox-short-dark.png",
+      "scale": 2,
+      "bounds": {
+        "control": {
+          "id": "I1520:59;1520:20",
+          "x": 4,
+          "y": 2,
+          "width": 20,
+          "height": 20
+        },
+        "label": {
+          "id": "I1520:59;1520:22",
+          "x": 36,
+          "y": 2.375,
+          "width": 280,
+          "height": 19
+        },
+        "target": {
+          "id": "I1520:59;1520:19",
+          "x": 4,
+          "y": 0,
+          "width": 20,
+          "height": 24
+        },
+        "instance": {
+          "id": "1520:59",
+          "x": 0,
+          "y": 0,
+          "width": 320,
+          "height": 24
+        },
+        "labelColumn": {
+          "id": "I1520:59;1520:21",
+          "x": 36,
+          "y": 0,
+          "width": 280,
+          "height": 21.375
+        }
+      },
+      "geometry": {
+        "outerPadding": 0,
+        "rowPadding": 4,
+        "columnGap": 12,
+        "controlRadius": 4,
+        "strokeWeight": 1
+      },
+      "typography": {
+        "fontName": {
+          "family": "Roboto",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500,
+            "wdth": 100
+          }
+        },
+        "fontSize": 14,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+        "lineHeight": {
+          "unit": "PERCENT",
+          "value": 137.5
+        },
+        "textAutoResize": "HEIGHT",
+        "layoutSizingHorizontal": "FILL"
+      },
+      "bindings": {
+        "theme": "158:1",
+        "density": "1067:0",
+        "background": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:29"
+          }
+        ],
+        "controlWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlFill": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:25"
+          }
+        ],
+        "controlBorder": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:40"
+          }
+        ],
+        "controlRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "spacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:12"
+        },
+        "padding": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "minimumTarget": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        },
+        "labelColor": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:30"
+          }
+        ]
+      },
+      "pngWidth": 640,
+      "pngHeight": 48,
+      "pngBytes": 3681
+    },
+    {
+      "key": "wrap",
+      "mode": "dark",
+      "nodeId": "1520:64",
+      "instanceId": "1520:65",
+      "mainComponentId": "1520:18",
+      "name": "Checkbox fidelity · wrap · Dark",
+      "text": "Send a weekly summary when project settings change.",
+      "grant": 176,
+      "width": 176,
+      "height": 78.375,
+      "png": "figma/checkbox-wrap-dark.png",
+      "scale": 2,
+      "bounds": {
+        "control": {
+          "id": "I1520:65;1520:20",
+          "x": 4,
+          "y": 2,
+          "width": 20,
+          "height": 20
+        },
+        "label": {
+          "id": "I1520:65;1520:22",
+          "x": 36,
+          "y": 2.375,
+          "width": 136,
+          "height": 76
+        },
+        "target": {
+          "id": "I1520:65;1520:19",
+          "x": 4,
+          "y": 0,
+          "width": 20,
+          "height": 24
+        },
+        "instance": {
+          "id": "1520:65",
+          "x": 0,
+          "y": 0,
+          "width": 176,
+          "height": 78.375
+        },
+        "labelColumn": {
+          "id": "I1520:65;1520:21",
+          "x": 36,
+          "y": 0,
+          "width": 136,
+          "height": 78.375
+        }
+      },
+      "geometry": {
+        "outerPadding": 0,
+        "rowPadding": 4,
+        "columnGap": 12,
+        "controlRadius": 4,
+        "strokeWeight": 1
+      },
+      "typography": {
+        "fontName": {
+          "family": "Roboto",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500,
+            "wdth": 100
+          }
+        },
+        "fontSize": 14,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+        "lineHeight": {
+          "unit": "PERCENT",
+          "value": 137.5
+        },
+        "textAutoResize": "HEIGHT",
+        "layoutSizingHorizontal": "FILL"
+      },
+      "bindings": {
+        "theme": "158:1",
+        "density": "1067:0",
+        "background": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:29"
+          }
+        ],
+        "controlWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "controlFill": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:25"
+          }
+        ],
+        "controlBorder": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:40"
+          }
+        ],
+        "controlRadius": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:77"
+        },
+        "spacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:12"
+        },
+        "padding": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:1067:8"
+        },
+        "minimumTarget": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        },
+        "labelColor": [
+          {
+            "type": "VARIABLE_ALIAS",
+            "id": "VariableID:158:30"
+          }
+        ]
+      },
+      "pngWidth": 352,
+      "pngHeight": 157,
+      "pngBytes": 10136
+    }
+  ],
+  "matrix": [
+    {
+      "mode": "Light",
+      "state": "Rest",
+      "main": "159:1148",
+      "node": "1521:57",
+      "foundMain": "159:1148",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Rest",
+      "main": "159:1155",
+      "node": "1521:62",
+      "foundMain": "159:1155",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Rest",
+      "main": "159:1162",
+      "node": "1521:74",
+      "foundMain": "159:1162",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Hover",
+      "main": "159:1166",
+      "node": "1521:88",
+      "foundMain": "159:1166",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Hover",
+      "main": "181:2157",
+      "node": "1521:93",
+      "foundMain": "181:2157",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Hover",
+      "main": "181:2178",
+      "node": "1521:105",
+      "foundMain": "181:2178",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Focus",
+      "main": "159:1171",
+      "node": "1521:119",
+      "foundMain": "159:1171",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Focus",
+      "main": "181:2162",
+      "node": "1521:125",
+      "foundMain": "181:2162",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Focus",
+      "main": "181:2183",
+      "node": "1521:138",
+      "foundMain": "181:2183",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Invalid",
+      "main": "159:1176",
+      "node": "1521:153",
+      "foundMain": "159:1176",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Invalid",
+      "main": "181:2168",
+      "node": "1521:159",
+      "foundMain": "181:2168",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Invalid",
+      "main": "181:2189",
+      "node": "1521:171",
+      "foundMain": "181:2189",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Disabled",
+      "main": "159:1180",
+      "node": "1521:185",
+      "foundMain": "159:1180",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Disabled",
+      "main": "181:2173",
+      "node": "1521:190",
+      "foundMain": "181:2173",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Light",
+      "state": "Disabled",
+      "main": "181:2194",
+      "node": "1521:202",
+      "foundMain": "181:2194",
+      "resolvedTheme": "158:0",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Rest",
+      "main": "159:1148",
+      "node": "1521:223",
+      "foundMain": "159:1148",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Rest",
+      "main": "159:1155",
+      "node": "1521:228",
+      "foundMain": "159:1155",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Rest",
+      "main": "159:1162",
+      "node": "1521:237",
+      "foundMain": "159:1162",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Hover",
+      "main": "159:1166",
+      "node": "1521:248",
+      "foundMain": "159:1166",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Hover",
+      "main": "181:2157",
+      "node": "1521:253",
+      "foundMain": "181:2157",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Hover",
+      "main": "181:2178",
+      "node": "1521:262",
+      "foundMain": "181:2178",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Focus",
+      "main": "159:1171",
+      "node": "1521:273",
+      "foundMain": "159:1171",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Focus",
+      "main": "181:2162",
+      "node": "1521:279",
+      "foundMain": "181:2162",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Focus",
+      "main": "181:2183",
+      "node": "1521:289",
+      "foundMain": "181:2183",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Invalid",
+      "main": "159:1176",
+      "node": "1521:301",
+      "foundMain": "159:1176",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Invalid",
+      "main": "181:2168",
+      "node": "1521:307",
+      "foundMain": "181:2168",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Invalid",
+      "main": "181:2189",
+      "node": "1521:316",
+      "foundMain": "181:2189",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Disabled",
+      "main": "159:1180",
+      "node": "1521:327",
+      "foundMain": "159:1180",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Disabled",
+      "main": "181:2173",
+      "node": "1521:332",
+      "foundMain": "181:2173",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    },
+    {
+      "mode": "Dark",
+      "state": "Disabled",
+      "main": "181:2194",
+      "node": "1521:341",
+      "foundMain": "181:2194",
+      "resolvedTheme": "158:1",
+      "width": 264,
+      "height": 48
+    }
+  ],
+  "allocation": [
+    {
+      "name": "Wide form · 320 px",
+      "mode": "Light",
+      "instance": "1521:395",
+      "grant": "1521:394",
+      "width": 320,
+      "height": 40.375,
+      "card": "1521:392",
+      "density": "Default",
+      "actualGrant": 320,
+      "actualRowWidth": 320,
+      "actualRowHeight": 40.375,
+      "content": "Send a weekly summary when project settings change.",
+      "label": {
+        "id": "I1521:395;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 280,
+        "height": 38
+      },
+      "control": {
+        "id": "I1521:395;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:0",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Narrow form · 176 px",
+      "mode": "Light",
+      "instance": "1521:403",
+      "grant": "1521:402",
+      "width": 176,
+      "height": 78.375,
+      "card": "1521:400",
+      "density": "Default",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 78.375,
+      "content": "Send a weekly summary when project settings change.",
+      "label": {
+        "id": "I1521:403;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 136,
+        "height": 76
+      },
+      "control": {
+        "id": "I1521:403;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:0",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Unbroken text · 176 px",
+      "mode": "Light",
+      "instance": "1521:411",
+      "grant": "1521:410",
+      "width": 176,
+      "height": 59.375,
+      "card": "1521:408",
+      "density": "Default",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 59.375,
+      "content": "ProjectNotificationSettingsForAccountMembers",
+      "label": {
+        "id": "I1521:411;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 136,
+        "height": 57
+      },
+      "control": {
+        "id": "I1521:411;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:0",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Compact · 176 px",
+      "mode": "Light",
+      "instance": "1521:419",
+      "grant": "1521:418",
+      "width": 176,
+      "height": 24,
+      "card": "1521:416",
+      "density": "Compact",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 24,
+      "content": "Email notifications",
+      "label": {
+        "id": "I1521:419;1520:22",
+        "x": 32,
+        "y": 2.375,
+        "width": 141,
+        "height": 19
+      },
+      "control": {
+        "id": "I1521:419;1520:20",
+        "x": 3,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:0",
+      "resolvedDensity": "1067:1"
+    },
+    {
+      "name": "Wide form · 320 px",
+      "mode": "Dark",
+      "instance": "1521:430",
+      "grant": "1521:429",
+      "width": 320,
+      "height": 40.375,
+      "card": "1521:427",
+      "density": "Default",
+      "actualGrant": 320,
+      "actualRowWidth": 320,
+      "actualRowHeight": 40.375,
+      "content": "Send a weekly summary when project settings change.",
+      "label": {
+        "id": "I1521:430;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 280,
+        "height": 38
+      },
+      "control": {
+        "id": "I1521:430;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:1",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Narrow form · 176 px",
+      "mode": "Dark",
+      "instance": "1521:438",
+      "grant": "1521:437",
+      "width": 176,
+      "height": 78.375,
+      "card": "1521:435",
+      "density": "Default",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 78.375,
+      "content": "Send a weekly summary when project settings change.",
+      "label": {
+        "id": "I1521:438;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 136,
+        "height": 76
+      },
+      "control": {
+        "id": "I1521:438;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:1",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Unbroken text · 176 px",
+      "mode": "Dark",
+      "instance": "1521:446",
+      "grant": "1521:445",
+      "width": 176,
+      "height": 59.375,
+      "card": "1521:443",
+      "density": "Default",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 59.375,
+      "content": "ProjectNotificationSettingsForAccountMembers",
+      "label": {
+        "id": "I1521:446;1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 136,
+        "height": 57
+      },
+      "control": {
+        "id": "I1521:446;1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:1",
+      "resolvedDensity": "1067:0"
+    },
+    {
+      "name": "Compact · 176 px",
+      "mode": "Dark",
+      "instance": "1521:454",
+      "grant": "1521:453",
+      "width": 176,
+      "height": 24,
+      "card": "1521:451",
+      "density": "Compact",
+      "actualGrant": 176,
+      "actualRowWidth": 176,
+      "actualRowHeight": 24,
+      "content": "Email notifications",
+      "label": {
+        "id": "I1521:454;1520:22",
+        "x": 32,
+        "y": 2.375,
+        "width": 141,
+        "height": 19
+      },
+      "control": {
+        "id": "I1521:454;1520:20",
+        "x": 3,
+        "y": 2,
+        "width": 20,
+        "height": 20
+      },
+      "resolvedTheme": "158:1",
+      "resolvedDensity": "1067:1"
+    }
+  ],
+  "sizes": [
+    {
+      "id": "1520:4",
+      "size": "sm",
+      "selection": "Unchecked",
+      "currentTarget": {
+        "id": "1520:5",
+        "x": 4,
+        "y": 0,
+        "width": 16,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:6",
+        "x": 4,
+        "y": 4,
+        "width": 16,
+        "height": 16,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:83"
+        }
+      },
+      "mark": null,
+      "label": {
+        "id": "1520:8",
+        "x": 32,
+        "y": 2.375,
+        "width": 284,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    },
+    {
+      "id": "1520:9",
+      "size": "sm",
+      "selection": "Checked",
+      "currentTarget": {
+        "id": "1520:10",
+        "x": 4,
+        "y": 0,
+        "width": 16,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:11",
+        "x": 4,
+        "y": 4,
+        "width": 16,
+        "height": 16,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:83"
+        }
+      },
+      "mark": {
+        "id": "1520:12",
+        "x": 4,
+        "y": 4,
+        "width": 16,
+        "height": 16,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:83"
+        },
+        "main": "159:285"
+      },
+      "label": {
+        "id": "1520:17",
+        "x": 32,
+        "y": 2.375,
+        "width": 284,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    },
+    {
+      "id": "1520:18",
+      "size": "md",
+      "selection": "Unchecked",
+      "currentTarget": {
+        "id": "1520:19",
+        "x": 4,
+        "y": 0,
+        "width": 20,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:20",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        }
+      },
+      "mark": null,
+      "label": {
+        "id": "1520:22",
+        "x": 36,
+        "y": 2.375,
+        "width": 280,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    },
+    {
+      "id": "1520:23",
+      "size": "md",
+      "selection": "Checked",
+      "currentTarget": {
+        "id": "1520:24",
+        "x": 4,
+        "y": 0,
+        "width": 20,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:25",
+        "x": 4,
+        "y": 2,
+        "width": 20,
+        "height": 20,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        }
+      },
+      "mark": {
+        "id": "1520:26",
+        "x": 6,
+        "y": 4,
+        "width": 16,
+        "height": 16,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:83"
+        },
+        "main": "159:285"
+      },
+      "label": {
+        "id": "1520:31",
+        "x": 36,
+        "y": 2.375,
+        "width": 280,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    },
+    {
+      "id": "1520:32",
+      "size": "lg",
+      "selection": "Unchecked",
+      "currentTarget": {
+        "id": "1520:33",
+        "x": 4,
+        "y": 0,
+        "width": 24,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:34",
+        "x": 4,
+        "y": 0,
+        "width": 24,
+        "height": 24,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:85"
+        }
+      },
+      "mark": null,
+      "label": {
+        "id": "1520:36",
+        "x": 40,
+        "y": 2.375,
+        "width": 276,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    },
+    {
+      "id": "1520:37",
+      "size": "lg",
+      "selection": "Checked",
+      "currentTarget": {
+        "id": "1520:38",
+        "x": 4,
+        "y": 0,
+        "width": 24,
+        "height": 24,
+        "boundHeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:86"
+        }
+      },
+      "box": {
+        "id": "1520:39",
+        "x": 4,
+        "y": 0,
+        "width": 24,
+        "height": 24,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:85"
+        }
+      },
+      "mark": {
+        "id": "1520:40",
+        "x": 6,
+        "y": 2,
+        "width": 20,
+        "height": 20,
+        "boundWidth": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:158:84"
+        },
+        "main": "159:285"
+      },
+      "label": {
+        "id": "1520:45",
+        "x": 40,
+        "y": 2.375,
+        "width": 276,
+        "height": 19,
+        "textStyleId": "S:b18b7944722fd0753c33d6246c210316788362f9,"
+      },
+      "mode": "158:0"
+    }
+  ],
+  "overlaps": [],
+  "overflow": [],
+  "prototypes": {
+    "scenes": [
+      {
+        "name": "Native · Unchecked",
+        "id": "1523:291",
+        "clickable": "1523:294",
+        "buttons": [],
+        "mode": "158:0",
+        "width": 320,
+        "height": 180,
+        "x": 1248,
+        "y": 680
+      },
+      {
+        "name": "Native · Checked",
+        "id": "1523:299",
+        "clickable": "1523:302",
+        "buttons": ["1523:312"],
+        "mode": "158:0",
+        "width": 320,
+        "height": 236,
+        "x": 1600,
+        "y": 680
+      },
+      {
+        "name": "Native · Mixed",
+        "id": "1523:314",
+        "clickable": "1523:317",
+        "buttons": [],
+        "mode": "158:0",
+        "width": 320,
+        "height": 180,
+        "x": 1952,
+        "y": 680
+      },
+      {
+        "name": "Controlled · Unchecked",
+        "id": "1523:326",
+        "clickable": "1523:329",
+        "buttons": [],
+        "mode": "158:1",
+        "width": 320,
+        "height": 180,
+        "x": 1248,
+        "y": 1000
+      },
+      {
+        "name": "Controlled · Request sent",
+        "id": "1523:334",
+        "clickable": "1523:337",
+        "buttons": ["1523:343", "1523:345"],
+        "mode": "158:1",
+        "width": 320,
+        "height": 236,
+        "x": 1600,
+        "y": 1000
+      },
+      {
+        "name": "Controlled · Committed",
+        "id": "1523:347",
+        "clickable": "1523:350",
+        "buttons": ["1523:360"],
+        "mode": "158:1",
+        "width": 320,
+        "height": 236,
+        "x": 1952,
+        "y": 1000
+      }
+    ],
+    "edges": [
+      {
+        "from": "1523:366",
+        "to": "1523:291",
+        "expected": "1523:291",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:368",
+        "to": "1523:314",
+        "expected": "1523:314",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:370",
+        "to": "1523:326",
+        "expected": "1523:326",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:294",
+        "to": "1523:299",
+        "expected": "1523:299",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:302",
+        "to": "1523:291",
+        "expected": "1523:291",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:312",
+        "to": "1523:291",
+        "expected": "1523:291",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:317",
+        "to": "1523:299",
+        "expected": "1523:299",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:329",
+        "to": "1523:334",
+        "expected": "1523:334",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:343",
+        "to": "1523:347",
+        "expected": "1523:347",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:345",
+        "to": "1523:326",
+        "expected": "1523:326",
+        "trigger": "ON_CLICK"
+      },
+      {
+        "from": "1523:360",
+        "to": "1523:326",
+        "expected": "1523:326",
+        "trigger": "ON_CLICK"
+      }
+    ],
+    "startingPoints": [
+      {
+        "nodeId": "1521:27",
+        "name": "Checkbox review board"
+      },
+      {
+        "nodeId": "1523:291",
+        "name": "Native toggle and reset"
+      },
+      {
+        "nodeId": "1523:314",
+        "name": "Native mixed activation"
+      },
+      {
+        "nodeId": "1523:326",
+        "name": "Controlled request"
+      }
+    ]
+  },
+  "native": {
+    "id": "1524:321",
+    "name": "Checkbox · API and interaction specification",
+    "type": "SPEC_BLOCK",
+    "kind": "DOCUMENT",
+    "x": 2320,
+    "y": 0,
+    "width": 850,
+    "height": 1100
+  },
+  "schemaVersion": 1,
+  "verification": {
+    "visualFiles": [
+      "figma-review.png",
+      "figma-states.png",
+      "figma-allocation.png",
+      "figma-native.png",
+      "figma-controlled.png"
+    ],
+    "renderedFixtures": [
+      "figma/checkbox-short-light.png",
+      "figma/checkbox-wrap-light.png",
+      "figma/checkbox-short-dark.png",
+      "figma/checkbox-wrap-dark.png"
+    ],
+    "stateLinksMatch": true,
+    "nativeSpecReadback": {
+      "id": "1524:321",
+      "lines": 82
+    },
+    "emptyOverlapCheck": true,
+    "emptyOverflowCheck": true,
+    "scope": "Editable Figma geometry, token aliases, exported renders, canonical state links and click destinations. Browser, keyboard, and assistive technology behaviors are separate."
+  }
+}

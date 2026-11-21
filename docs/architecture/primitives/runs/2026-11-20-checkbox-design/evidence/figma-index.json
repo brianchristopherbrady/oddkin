@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pageId": "1354:2",
+  "panelId": "1410:1676",
+  "title": "Primitive design specifications",
+  "headingId": "1410:1677",
+  "linkNodeId": "1526:2",
+  "url": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1520-2",
+  "targetId": "1520:2",
+  "targetName": "Primitive · Checkbox · Specification",
+  "panel": {
+    "x": 96,
+    "y": 2187,
+    "width": 1100,
+    "height": 280
+  },
+  "neighbor": {
+    "x": 48,
+    "y": 48,
+    "width": 1440,
+    "height": 2075
+  },
+  "existingLinksRetained": true,
+  "rows": [
+    {
+      "id": "1410:1677",
+      "characters": "Primitive design specifications",
+      "hyperlink": null,
+      "x": 25,
+      "y": 25,
+      "width": 1052,
+      "height": 30
+    },
+    {
+      "id": "1410:1678",
+      "characters": "Avatar · identity, fallback and image lifecycle",
+      "hyperlink": {
+        "type": "URL",
+        "value": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1388-2"
+      },
+      "x": 25,
+      "y": 71,
+      "width": 1052,
+      "height": 24
+    },
+    {
+      "id": "1410:1679",
+      "characters": "Badge · first-line marker and wrapping",
+      "hyperlink": {
+        "type": "URL",
+        "value": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1395-2"
+      },
+      "x": 25,
+      "y": 111,
+      "width": 1052,
+      "height": 24
+    },
+    {
+      "id": "1410:1680",
+      "characters": "Button · action, loading, toggle and complete labels",
+      "hyperlink": {
+        "type": "URL",
+        "value": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1398-2"
+      },
+      "x": 25,
+      "y": 151,
+      "width": 1052,
+      "height": 24
+    },
+    {
+      "id": "1526:2",
+      "characters": "Checkbox · native forms, controlled state and responsive labels",
+      "hyperlink": {
+        "type": "URL",
+        "value": "https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1520-2"
+      },
+      "x": 25,
+      "y": 191,
+      "width": 1052,
+      "height": 24
+    },
+    {
+      "id": "1410:1681",
+      "characters": "Design verified · Intrinsic CSS · Runtime refinements remain proposed in the revision-bound handoffs.",
+      "hyperlink": null,
+      "x": 25,
+      "y": 231,
+      "width": 1052,
+      "height": 24
+    }
+  ],
+  "rowSpacing": 16,
+  "overlap": false,
+  "boundFill": [
+    {
+      "type": "VARIABLE_ALIAS",
+      "id": "VariableID:158:37"
+    }
+  ],
+  "fontStyle": "S:fb58b3ab2777d4bf16d34a0c5ee2b19e526ea7a2,",
+  "decoration": "UNDERLINE",
+  "strokeBound": [
+    {
+      "type": "VARIABLE_ALIAS",
+      "id": "VariableID:158:39"
+    }
+  ],
+  "verification": {
+    "renderInspected": true,
+    "rowsContainNoOverlap": true,
+    "panelSeparation": 64,
+    "linkTargetCheckedAgainstPage": true
+  }
+}

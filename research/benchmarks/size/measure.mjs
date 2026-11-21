@@ -403,8 +403,8 @@ export const CSS_BUDGETS = {
   // with the search field's clear button. Only odd-input draws them (55 before; the field look is
   // the shared control module).
   'components:input': 576,
-  // 128: measured 56 on 2026-10-23; the row, box, and marks are the shared control-indicator module.
-  'components:checkbox': 128,
+  // 384: measured 351 on 2026-11-20 for token-sized indicators, first-line layout, and label wrapping.
+  'components:checkbox': 384,
   // 256: measured 187 on 2026-10-23: the choices' stack and spacing; the legend, help, and error are
   // the shared control module.
   'components:checkbox-group': 256,

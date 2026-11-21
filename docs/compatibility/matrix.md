@@ -157,8 +157,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
 | `packages/components/dist/carousel/carousel.structural.styles.js (carouselStructuralStyles)` | yes | 31 |
 | `packages/components/dist/carousel/carousel.styles.js (carouselStyles)` | yes | 22 |
-| `packages/components/dist/checkbox/checkbox.structural.styles.js (checkboxStructuralStyles)` | yes | 3 |
-| `packages/components/dist/checkbox/checkbox.styles.js (checkboxStyles)` | yes | 0 |
+| `packages/components/dist/checkbox/checkbox.structural.styles.js (checkboxStructuralStyles)` | yes | 9 |
+| `packages/components/dist/checkbox/checkbox.styles.js (checkboxStyles)` | yes | 10 |
 | `packages/components/dist/checkbox-group/checkbox-group.recipe.styles.js (checkboxGroupRecipeStyles)` | yes | 14 |
 | `packages/components/dist/checkbox-group/checkbox-group.structural.styles.js (checkboxGroupStructuralStyles)` | yes | 15 |
 | `packages/components/dist/checkbox-group/checkbox-group.styles.js (checkboxGroupStyles)` | yes | 1 |

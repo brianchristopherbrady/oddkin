@@ -6770,3 +6770,14 @@ The [Badge run](./architecture/primitives/runs/2026-11-19-badge-redesign/README.
 | Build and source | Production build, test typecheck, compatibility check, 15 snapshot/reuse/metadata Node tests and the scoped Badge intrinsic dependency test passed. Size checks passed with measured budgets of 448 B for Badge CSS (430 B actual) and 69,856 B for AI chat (69,842 B actual). |
 
 The [handoff](./architecture/primitives/specifications/odd-badge/handoff.json) and [comparison evidence](./architecture/primitives/runs/2026-11-19-badge-redesign/evidence/verification.md) bind the change to the current source and tested fixtures.
+
+## 2026-11-20 — Checkbox (Agent 1)
+
+| Check | Observed result |
+| --- | --- |
+| Figma | Page `1520:2` contains 30 canonical light and dark instances, explicit sizing and inherited density, and six interaction scenes. Eleven destinations resolve. The canvas audit detected no unintended overlap or overflow. |
+| Browser | Checkbox, Checkbox Group, Switch and the form controls parity suite passed 410 cases across Chromium, Firefox, and WebKit. Four cases were skipped as configured. Manual assistive technology was outside the run. |
+| Visual fidelity | Four current-build bench comparisons passed 19 token checks per fixture. The 176 px cases wrap to the same four lines, with a 1 px frame-height difference from line-height rendering. Figma and Chromium use different platform fonts. |
+| Build and source | Package build, typecheck, static documentation build, and focused authored examples passed. The measured Checkbox CSS is 351 B gzip with a 384 B component budget. The workspace-wide checks also reported failures outside this component gate. |
+
+The [run](./architecture/primitives/runs/2026-11-20-checkbox-design/README.md) links the research, handoff, and separate design, browser, and fidelity records.

@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-11-20-checkbox-design",
+  "request": "Research framework-agnostic Checkbox implementations and deliver the Oddkin Figma specification, public API, browser implementation, and verification.",
+  "identifiers": ["odd-checkbox"],
+  "mode": "design-and-implement",
+  "verificationScope": "both",
+  "verificationPolicyVersion": 2,
+  "source": {
+    "root": "C:/SLT_Backup_10-21-2026/oddkin-a1-main",
+    "branch": "a1-main",
+    "commit": "2a8c84def4928bca269f559483d8300823ffb080",
+    "dirtyPaths": [
+      "IMPLEMENTATION_PLAN.md",
+      "design/figma/components.json",
+      "design/figma/reuse.json",
+      "docs/architecture/component-catalog.md",
+      "docs/progress-log.md",
+      "docs/research/primitives-audit.json",
+      "docs/research/primitives-audit.md",
+      "docs/verification.md",
+      "packages/components/schemas/composition/odd-tree.v1.json",
+      "packages/components/src/composition/catalog.ts",
+      "docs/architecture/primitives/runs/2026-11-18-avatar-design-review/",
+      "docs/architecture/primitives/specifications/odd-avatar/"
+    ],
+    "additionalRefs": ["Sibling workflow checkout; Agent 1 source controls implementation."]
+  },
+  "phase": "report",
+  "nextAction": "Checkbox design and implementation verification recorded.",
+  "completion": "complete",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "pages": [
+      {
+        "identifier": "odd-checkbox",
+        "pageId": "1520:2",
+        "nodeIds": [
+          "159:1181",
+          "1520:3",
+          "1520:46",
+          "1520:52",
+          "1520:58",
+          "1520:64",
+          "1521:27",
+          "1521:44",
+          "1521:459",
+          "1523:291",
+          "1523:299",
+          "1523:314",
+          "1523:326",
+          "1523:334",
+          "1523:347",
+          "1524:321"
+        ]
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "CB-PREFLIGHT",
+      "kind": "contract",
+      "status": "PASS",
+      "critical": true,
+      "claim": "The design handoff matches the unchanged implementation baseline.",
+      "method": "Read live Figma metadata and exports, then validate the exact local source and contract bytes.",
+      "fixture": "Agent 1 baseline and dedicated editable Checkbox page.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-checkbox/handoff.json",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-allocation.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-controlled.png"
+      ],
+      "observedAt": "2026-11-21T03:18:32.264Z",
+      "limits": "The browser behavior and fidelity comparisons are conducted separately."
+    },
+    {
+      "id": "CB-RESEARCH",
+      "kind": "contract",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Native form ownership, mixed state, and activation were compared across independent lineages.",
+      "method": "Read primary standards and library implementations, then ran native activation probes.",
+      "fixture": "HTML, WAI, Shoelace, Spectrum, Material Web, Zag and Chromium, Firefox and WebKit.",
+      "evidence": [
+        "docs/architecture/primitives/specifications/odd-checkbox/research.md",
+        "docs/architecture/primitives/specifications/odd-checkbox/decision.md"
+      ],
+      "observedAt": "2026-11-21T03:32:56.639Z",
+      "limits": "Third-party libraries were compared from their published source and docs."
+    },
+    {
+      "id": "CB-DESIGN",
+      "kind": "figma-structure",
+      "status": "PASS",
+      "critical": true,
+      "claim": "The dedicated editable page contains 30 themed canonical instances, three size specimens, and six interaction scenes. All 11 destinations and the shared index link resolve.",
+      "method": "Read back live instance ancestry, token bindings, dimensions, prototype reactions, and embedded spec.",
+      "fixture": "Checkbox page 1520:2, review board 1521:27, and native spec 1524:321.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-audit.json",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-native-spec.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-index.json"
+      ],
+      "observedAt": "2026-11-21T03:32:56.639Z",
+      "limits": "The prototype depicts pointer paths. Keyboard behavior is exercised in browsers."
+    },
+    {
+      "id": "CB-FIGMA-VISUAL",
+      "kind": "figma-visual",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Both themes, the state matrix, and narrow and compact fixtures are readable. The authored frames show no unintended overlap or overflow.",
+      "method": "Inspect exported renders and recursive bounds of visible Figma frames.",
+      "fixture": "Light and dark matrices, size and density specimens, and controlled interaction scenes.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-review.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-states.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-allocation.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma-controlled.png"
+      ],
+      "observedAt": "2026-11-21T03:32:56.639Z",
+      "limits": "The design uses the library Roboto font."
+    },
+    {
+      "id": "CB-SOURCE",
+      "kind": "source",
+      "status": "PASS",
+      "critical": true,
+      "claim": "The package build and typecheck pass. Generated manifest includes reflected size, property-only checkedState and the controlled request event.",
+      "method": "Build the package and docs, validate framework typings and the manifest, and check the authored workbench module.",
+      "fixture": "Actual Agent 1 package source and static docs output.",
+      "evidence": [
+        "packages/components/src/checkbox/checkbox.ts",
+        "packages/components/src/checkbox/checkbox.examples.ts",
+        "packages/components/schemas/composition/odd-checkbox.v1.json",
+        "docs/architecture/primitives/specifications/odd-checkbox/contract.md"
+      ],
+      "observedAt": "2026-11-21T03:32:56.639Z",
+      "limits": "This is a scoped implementation check. Workspace-wide suite and size checks also reported failures outside the Checkbox gate."
+    },
+    {
+      "id": "CB-BROWSER",
+      "kind": "browser",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Checkbox, Checkbox Group, Switch and forms parity passed 410 cases across Chromium, Firefox and WebKit.",
+      "method": "Run all four targeted browser files across the configured browser projects.",
+      "fixture": "Native activation, forms and validity, controlled acknowledgement and ignored intent, focus and reflow, canonical parity.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/browser.md",
+        "packages/components/test/checkbox.browser.test.ts"
+      ],
+      "observedAt": "2026-11-21T03:32:56.640Z",
+      "limits": "Four expected skips. Manual assistive technology was not exercised."
+    },
+    {
+      "id": "CB-FIDELITY",
+      "kind": "implementation-visual",
+      "status": "PASS",
+      "critical": true,
+      "claim": "Four live Chromium fixtures matched Figma with expected renderer differences, and all 19 computed token checks passed per fixture.",
+      "method": "Use the local Oddkin bench to compare current built assets with 2× Figma PNGs, inspect side/overlay/diff, and measure style and geometry.",
+      "fixture": "320px short and 176px wrapped label in light and dark.",
+      "evidence": [
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/design-spec.json",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/implementation.json",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/diff.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/fix-log.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/verification.md",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-dark.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-light.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-dark.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-light.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-dark.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-light.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-dark.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-light.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-side.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-diff.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-side.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-diff.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-overlay.png",
+        "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-side.png"
+      ],
+      "observedAt": "2026-11-21T03:32:56.640Z",
+      "limits": "The browser platform font differs from Figma Roboto, and wrapped frames render one CSS pixel taller."
+    }
+  ],
+  "issues": [],
+  "handoff": "docs/architecture/primitives/specifications/odd-checkbox/handoff.json",
+  "implementation": {
+    "sourceCommit": null,
+    "files": [
+      {
+        "path": "packages/components/src/checkbox/checkbox.ts",
+        "sha256": "6fa8ac4b011c9c9c2a50bbc7cc8265ca2e608e3feb3ffd59ad4245c0416eb610"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.template.ts",
+        "sha256": "425171bcc765d37e7982fa5c469e218b971166e76a5c14514faf11b3edf0e9bb"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.structural.styles.ts",
+        "sha256": "d412a6c37ae54cf21a829670865d94d1ba02c6afc95dce4c7559ad2f8b6c74bd"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.styles.ts",
+        "sha256": "a10bdbe8d4b25ac12d05263b3291892e6250e0148e2cb6b91da665f72670684a"
+      },
+      {
+        "path": "packages/components/src/checkbox/index.ts",
+        "sha256": "71b6a337c1fa34a75d41783ef6c30c6369c456ecc8f2cb710d914b2eb27f8e71"
+      },
+      {
+        "path": "packages/components/src/checkbox/foundation.ts",
+        "sha256": "792e09dd08ab13c6ee84cf00fa41e983782ffc34e9b6c1bf795aa5a24a7a03d0"
+      },
+      {
+        "path": "packages/components/src/checkbox/checkbox.examples.ts",
+        "sha256": "1d854f63188186d72e37dc40a3183960dafcda8aa6299ed1288130203eba4681"
+      },
+      {
+        "path": "packages/components/test/checkbox.browser.test.ts",
+        "sha256": "4bb953a481adf541707e41732d0a43eac711e13f6d78e34cbd1fb7b37431cf34"
+      },
+      {
+        "path": "packages/components/schemas/composition/odd-checkbox.v1.json",
+        "sha256": "d1e6d29836e0273f8ef82aecedc39f212899deaa2bf7f3a39b37ec3a324073d1"
+      },
+      {
+        "path": "docs/architecture/component-contracts.md",
+        "sha256": "305e3089ae5096ce23702686faf5124354891f48f6b500bbb5ae522a7167396f"
+      },
+      {
+        "path": "research/benchmarks/size/measure.mjs",
+        "sha256": "a190efcdf6026709c7e63361510d1e2af36dd4232a41e845bad5466d8efdeb34"
+      }
+    ]
+  },
+  "fidelityAudits": [
+    {
+      "identifier": "odd-checkbox",
+      "tool": "oddkin-fidelity-bench",
+      "checkId": "CB-FIDELITY",
+      "handoff": {
+        "path": "docs/architecture/primitives/specifications/odd-checkbox/handoff.json",
+        "sha256": "1a0282fa4c940829a5fc9f9dc72d8b0c646c0b5fcc4ed29f476ce4a4949ca075"
+      },
+      "implementationFingerprint": "7a9082228e4628d200bfb982bfc15345f7217809a8dce86f6c5b7296b54ed9ea",
+      "artifacts": [
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/design-spec.json",
+          "sha256": "fa7a9ac18fd0149b80acfdfd5ecb83522e67ffaf2c20240d843ac7f3bad83c8d"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/implementation.json",
+          "sha256": "642b21b26c5300b01aed49da04f21dfbf5915bd035f69f559996ec5a48eb135f"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/diff.md",
+          "sha256": "3f43ea768bbf5b659047a6a18a819ff4bd75a5031c3a35b03de626fe020b49d0"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/fix-log.md",
+          "sha256": "b2ff3f45aae01fd284d47b9d82764d70570d0052c438535070056bf863cfed06"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/implementation-visual/verification.md",
+          "sha256": "5877b4af7cf5a0d7bb833572f00222fcd6056675d0b3038950cd2cecc298dc6d"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-dark.png",
+          "sha256": "223e83e0479d0c9d53af43ce4f158eb5b9e642e45ceb9ec412cc32186d88b324"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-light.png",
+          "sha256": "0f38939da5f51cc5737489350e7e1f76f220cc019572c606a43c65cf7401f112"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-dark.png",
+          "sha256": "934bce2ff9a9964119343b00cb3d7a171cf6e09b7052bccdf97b1184d1c8dfad"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-light.png",
+          "sha256": "5873ef84c3cacae722d609dc75002d03e99622dc6e1c06164688e9309fed5ad6"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-dark.png",
+          "sha256": "dc34c17340635a3eecfa03f3511843f9df22c15e5bdd65749b3cee8fe642e0e9"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-light.png",
+          "sha256": "ccb2a34056ac2cbb7584a7f975d5002bf77872ead2c79e26abb32735ed86c375"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-dark.png",
+          "sha256": "6fcd04227617ba107ad04dd99c277e6b4411a2b7641ff41acecf96275232caac"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-light.png",
+          "sha256": "b31bdce4dc4f1a087e73a80850133ed8f46c73ff2da50b5b0cd2ef103620690e"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-diff.png",
+          "sha256": "d8978fe1c1e9b76614f105f995838ac0ec22cde88e9bc08415dbb841c1507e42"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-overlay.png",
+          "sha256": "752a4f8a53a52cbcf98590cc7c0bd3d84688bb555f2da40e43eacb3d3d05250f"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-side.png",
+          "sha256": "9f44df005dd49745bc3bd0bb401d92d75d3ce5e46837a89020b0ba7a8a2c9c55"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-diff.png",
+          "sha256": "8be43ef6533f245b9cb8a2e040850f2f87394a9b30085b44c3e488d1d0fed497"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-overlay.png",
+          "sha256": "e2c8f5dfe2535c22bd312fcbaaa29939ab5e8c1960c54d0f1bf892a0530b3ad3"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-side.png",
+          "sha256": "e7ab5b897c560dfbab52ba11bec124083fbc4047bcb14942e9b6f847561cb69a"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-diff.png",
+          "sha256": "5f1c47af49431bd9b370e47fb7302df7655e3c7ea870f43af9b4b611f883b298"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-overlay.png",
+          "sha256": "15772c28b3e31c5cdc8fef500a931e59657914ae09421bd7d79731b1f6c4d537"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-side.png",
+          "sha256": "3db0b8825e3dc46d9e8f1140ac8e247c82d2c61fe61399d9004a954c40073355"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-diff.png",
+          "sha256": "2101485247af86a2de431d3056f2da15d1ec6344ee2d0fcf7dcc2ebeadd89ee8"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-overlay.png",
+          "sha256": "397c946c208e44e7d9679c7e6373d8298c97ae5e62ac164f4a1501374993fe69"
+        },
+        {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-side.png",
+          "sha256": "d4219871b9f065504f8f04880cca57212dc5167cec1319a802e77069ff869832"
+        }
+      ]
+    }
+  ]
+}

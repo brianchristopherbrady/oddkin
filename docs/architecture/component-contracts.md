@@ -292,7 +292,12 @@ live); an error takes its place, as Figma draws one line there.
 module (part `control` is the box). Default slot: label (names it through the native `<label>`). `checked` (attribute =
 default checkedness, as native; the property detaches once set or toggled), `indeterminate` (reflected; exposed as
 mixed and cleared when the user toggles, as native), `value = "on"`, `name`, `required`, `disabled`, `description`,
-`error`. Submits `value` when checked. `input` and `change` at the host for user toggles only.
+`error`. Submits `value` when checked. `input` and `change` at the host for native user toggles only.
+`size="sm|md|lg"` (default `md`) changes the indicator and keeps the shared target minimum. Spacing follows the
+inherited theme density. Long labels wrap to the parent width with the indicator beside the first line.
+Applications opt into controlled ownership by assigning the property-only `checkedState` union. In controlled
+mode, `odd-checked-request` proposes the next value and only a replacement snapshot changes committed state.
+See the [Checkbox contract](primitives/specifications/odd-checkbox/contract.md) for form and event details.
 
 **`odd-switch`** (`switch`) — as `odd-checkbox` without `indeterminate` (both extend one internal checkable base): a
 native checkbox with `role="switch"` drawn as a track (part `control`) whose `thumb` moves to the inline end when on.

@@ -57,6 +57,15 @@
           "description": "Must be checked to submit.",
           "default": false
         },
+        "size": {
+          "enum": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "description": "Indicator size. The minimum target and inherited theme density still apply.",
+          "default": "md"
+        },
         "indeterminate": {
           "type": "boolean",
           "description": "Shows the mixed state; cleared when the user toggles, as on native checkboxes.",
@@ -88,6 +97,9 @@
           "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
         },
         "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "odd-checked-request": {
           "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
         }
       }

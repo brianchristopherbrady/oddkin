@@ -62,7 +62,7 @@ tokens, slot content, a native element, or a look-alike.
 | `textarea` | 5 | `odd-textarea` (native `<textarea>`, `field-sizing` gated, F12) | Existing | `rows`, `resize` (`auto` follows the content), and a `count` part with `maxlength`. |
 | `number` | 6 | `odd-input type="number"` | Existing (variant) | The WAI-ARIA spinbutton the element draws (owner decision B): Figma's stepper segment as part `stepper` with `decrement` and `increment`, disabled at the ends of the range; validity and messages from a detached native number input, typed text that is not a number `badInput`. |
 | `search` | 4 | `odd-input type="search"` | Existing (variant) | A searchbox with a search glyph and a clear button (parts `icon`, `clear`); Escape clears. |
-| `checkbox` | 15 | `odd-checkbox` | Existing | |
+| `checkbox` | 15 | `odd-checkbox` | Existing | [Dedicated specification](https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=1520-2) documents three sizes, inherited density and local or app-owned checkedness. |
 | `radio` | 10 | native radio inside `odd-radio-group` | Existing (part) | The control-indicator box made round, with the group's own dot; checked, hover, focus, disabled, and invalid as Figma. |
 | `radioGroup` | 2 | `odd-radio-group` | Existing | Native radios in one shadow tree (one Tab stop, arrow keys from the platform); options from `<option>` children or `options`, each with its description; `orientation`. |
 | `switch` | 8 | `odd-switch` | Existing | |

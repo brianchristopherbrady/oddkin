@@ -1,0 +1,89 @@
+{
+  "tag": "odd-checkbox",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "page": "1520:2",
+    "session": "afe35696-6680-4a70-974f-ef0db8375850",
+    "snapshot": "current",
+    "readback": "../figma-audit.json"
+  },
+  "state": { "size": "md", "checked": false, "indeterminate": false, "disabled": false },
+  "bench": {
+    "scale": 2,
+    "pad": 16,
+    "direction": "ltr",
+    "background": "var(--odd-color-surface-specimen)",
+    "overlayOpacity": 0.5
+  },
+  "layers": {
+    "frame": { "part": "host", "sizing": ["FIXED", "HUG"], "fillToken": "color.surface.specimen" },
+    "row": {
+      "part": ".choice",
+      "paddingInline": { "token": "space.2xs", "value": 4 },
+      "gap": { "token": "space.sm", "value": 12 },
+      "minBlockSize": { "token": "target.min", "value": 24 }
+    },
+    "indicator": {
+      "part": "control",
+      "box": { "x": 4, "y": 2, "width": 20, "height": 20 },
+      "sizeToken": "icon.size.md",
+      "radius": { "token": "radius.sm", "value": 4 },
+      "borderWidth": { "token": "border.width.default", "value": 1, "figmaBinding": "raw" },
+      "fillToken": "color.surface.default",
+      "borderToken": "color.border.strong"
+    },
+    "label": {
+      "part": "label",
+      "x": 36,
+      "y": 2.375,
+      "fillToken": "color.text.primary",
+      "figmaStyle": {
+        "id": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+        "family": "Roboto",
+        "weight": "Medium",
+        "size": 14,
+        "lineHeightPercent": 137.5
+      },
+      "browserRole": "type.ui",
+      "browserFamilyToken": "type.body.family"
+    }
+  },
+  "specimens": [
+    {
+      "id": "1520:46",
+      "mode": "light",
+      "frame": { "width": 320, "height": 24 },
+      "label": { "text": "Email notifications", "width": 280, "height": 19 },
+      "png2x": { "path": "../figma/checkbox-short-light.png", "width": 640, "height": 48 }
+    },
+    {
+      "id": "1520:58",
+      "mode": "dark",
+      "frame": { "width": 320, "height": 24 },
+      "label": { "text": "Email notifications", "width": 280, "height": 19 },
+      "png2x": { "path": "../figma/checkbox-short-dark.png", "width": 640, "height": 48 }
+    },
+    {
+      "id": "1520:52",
+      "mode": "light",
+      "frame": { "width": 176, "height": 78.375 },
+      "label": {
+        "text": "Send a weekly summary when project settings change.",
+        "width": 136,
+        "height": 76
+      },
+      "png2x": { "path": "../figma/checkbox-wrap-light.png", "width": 352, "height": 157 }
+    },
+    {
+      "id": "1520:64",
+      "mode": "dark",
+      "frame": { "width": 176, "height": 78.375 },
+      "label": {
+        "text": "Send a weekly summary when project settings change.",
+        "width": 136,
+        "height": 76
+      },
+      "png2x": { "path": "../figma/checkbox-wrap-dark.png", "width": 352, "height": 157 }
+    }
+  ]
+}

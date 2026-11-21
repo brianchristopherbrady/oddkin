@@ -43,7 +43,7 @@ Each check is ok, gap, n/a, or ? (not checked yet). A primitive is not started, 
 | 1 | [avatar](#1-avatar) | avatar (162:2022), avatar/Appearance (374:1576), AvatarItem (257:886) | `odd-avatar`, `.odd-avatar-group (avatar-group.css)` | done | ok | ok | ok | ok | ok | ok |
 | 2 | [badge](#2-badge) | badge (159:582), Count content · historical composition (159:581) | `odd-badge` | done | ok | ok | ok | ok | ok | ok |
 | 3 | [button](#3-button) | button (159:439), button/sm (181:2332), button/lg (181:2390), toggleButton (159:501), iconButton/sm (1455:4545), iconButton (159:471), iconButton/lg (1455:4798) | `odd-button`, `.odd-button (button.css)` | done | ok | ok | ok | ok | ok | ok |
-| 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | audited | ok | ok | ok | ? | ok | ok |
+| 4 | [checkbox](#4-checkbox) | checkbox (159:1181) | `odd-checkbox` | done | ok | ok | ok | ? | ok | ok |
 | 5 | [chip](#5-chip) | chip (159:612) | `odd-chip` | fixing | ok | ok | ok | ? | ok | ok |
 | 6 | [copyButton](#6-copybutton) | copyButton (555:2984) | `odd-copy-button` | fixing | ok | ok | ok | ? | ok | ok |
 | 7 | [disclosure](#7-disclosure) | Disclosure (160:1501) | `odd-disclosure` | audited | ok | ok | ok | ? | ok | ok |
@@ -200,7 +200,7 @@ Decisions for the owner:
 
 ## 4. checkbox
 
-Status: audited (2026-11-15). No gaps found: every Figma Selection and State maps to the API, every bound token matches, and the parity test compares all 15 variants in three engines. Left for the accessibility pass: the contrast of the check and minus glyphs on the selection colour.
+Status: done (2026-11-20). Research compared native HTML, Shoelace, Spectrum, Material Web, and Zag. The dedicated Checkbox page and native spec cover both ownership modes, sizes, inherited density, and wrapping. The canonical 15-state family remains linked to code. [Checkbox run](../architecture/primitives/runs/2026-11-20-checkbox-design/README.md).
 
 | Figma family | Id | Variants | Properties |
 | --- | --- | --- | --- |
@@ -210,15 +210,15 @@ Code: `odd-checkbox` (packages/components/src/checkbox/).
 
 | Attributes | Slots | Parts | CSS properties | Events |
 | --- | --- | --- | --- | --- |
-| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false`, `indeterminate: boolean = false` | `(default)` | `control`, `description`, `error`, `field`, `label` | — | `input`, `change` |
+| `name: string \| undefined = undefined`, `disabled: boolean = false`, `description: string = ""`, `error: string = ""`, `checked: boolean = false`, `value: string = on`, `required: boolean = false`, `indeterminate: boolean = false`, `size: sm \| md \| lg = md` | `(default)` | `control`, `description`, `error`, `field`, `label` | — | `input`, `change`, `odd-checked-request` |
 
 | Finding | Check | What | Proposal |
 | --- | --- | --- | --- |
-| CB1 | api | Figma Selection (Unchecked, Checked, Mixed) maps to checked and indeterminate; State Disabled to disabled, Invalid to error (with required), Hover and Focus to browser states. The code adds description, name, value, and form participation. | None. |
-| CB2 | visual | Matching: the 20 px box with radius.sm and a border.width.default border in color.border.strong, color.surface.default, hover, and sunken (disabled) fills, color.selection.background when checked or mixed, the 16 px check and minus glyphs (icon.size.sm), the color.danger.foreground border when invalid (border.width.strong when checked), the space.sm gap, and primary or disabled label text. | None. |
+| CB1 | api | The existing checked attribute remains the native reset baseline. Local live checkedness stays independent of mixed state. | Keep one owner for committed checkedness. Fixed: The optional property-only checkedState union has controlled and uncontrolled arms. In controlled mode, odd-checked-request proposes a change and replacement snapshots commit it. |
+| CB2 | visual | The shared indicator tokens cover the existing 20 px default. Long labels had centered the indicator against the full block. | Use the existing icon size roles and align the indicator with the first label line. Fixed: Added token-sized 16, 20, and 24 px indicators and intrinsic wrapping. The dedicated Figma page 1520:2 covers both themes and density. |
 | CB3 | parity | figma-parity.forms.browser.test.ts compares all 15 variants: the row and its gap, the label, the box, the focus ring, and the Required message. | None. |
-| CB4 | a11y | The row is at least target.min (24 px) tall and the label is part of the target; the focus ring is compared with Figma. Not yet measured: the check and minus glyphs against color.selection.background, in light and dark. | Measure in the accessibility pass. |
-| CB5 | docs | Examples cover unchecked, checked, mixed, a description, required with its error, disabled, and a form. | None. |
+| CB4 | a11y | The target remains at least 24 px tall and the label is part of it. Shared selected glyph tokens measured 5.48:1 in light and 7.28:1 in dark. Browser checks cover native focus, Space, and label activation. | Keep manual assistive technology evidence distinct from browser evidence. |
+| CB5 | docs | Examples cover unchecked, checked, mixed, a description, required with its error, disabled, and a form. | Show sizes, narrow labels, and app acceptance. Fixed: Added small and large, narrow parent, and app-owned selection examples. |
 
 ## 5. chip
 

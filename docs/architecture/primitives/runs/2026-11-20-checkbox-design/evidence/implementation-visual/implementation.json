@@ -1,0 +1,1203 @@
+{
+  "tag": "odd-checkbox",
+  "run": "2026-11-20-checkbox-design",
+  "worktree": "C:\\SLT_Backup_10-21-2026\\oddkin-a1-main",
+  "head": "2a8c84def4928bca269f559483d8300823ffb080",
+  "branch": "a1-main",
+  "dirtyStatus": "M IMPLEMENTATION_PLAN.md\n M design/figma/components.json\n M design/figma/reuse.json\n M docs/architecture/component-catalog.md\n M docs/architecture/component-contracts.md\n M docs/compatibility/matrix.md\n M docs/progress-log.md\n M docs/research/primitives-audit.json\n M docs/research/primitives-audit.md\n M docs/verification.md\n M packages/components/schemas/composition/odd-checkbox.v1.json\n M packages/components/schemas/composition/odd-tree.v1.json\n M packages/components/src/checkbox/checkbox.examples.ts\n M packages/components/src/checkbox/checkbox.structural.styles.ts\n M packages/components/src/checkbox/checkbox.styles.ts\n M packages/components/src/checkbox/checkbox.template.ts\n M packages/components/src/checkbox/checkbox.ts\n M packages/components/src/checkbox/foundation.ts\n M packages/components/src/checkbox/index.ts\n M packages/components/src/composition/catalog.ts\n M packages/components/test/checkbox.browser.test.ts\n M research/benchmarks/size/measure.mjs\n?? docs/architecture/primitives/runs/2026-11-18-avatar-design-review/\n?? docs/architecture/primitives/runs/2026-11-20-checkbox-design/\n?? docs/architecture/primitives/specifications/odd-avatar/\n?? docs/architecture/primitives/specifications/odd-checkbox/",
+  "recordedAt": "2026-11-21T03:27:41.050Z",
+  "build": "current workspace dist",
+  "bench": {
+    "origin": "http://127.0.0.1:4194",
+    "refresh": {
+      "exports": 297,
+      "warnings": []
+    },
+    "scale": 2,
+    "dir": "ltr",
+    "pad": 16,
+    "background": "var(--odd-color-surface-specimen)",
+    "overlayOpacity": 0.5,
+    "views": ["side", "overlay", "diff"],
+    "captureAlignment": "Pixel-aligned bench headings, component styles untouched."
+  },
+  "browser": {
+    "engine": "Chromium",
+    "version": "156.0.8078.4",
+    "driver": "Headless Playwright",
+    "viewport": {
+      "width": 1024,
+      "height": 760
+    },
+    "deviceScaleFactor": 2
+  },
+  "authored": {
+    "packages/components/src/checkbox/checkbox.ts": "dced015b1fb56d1cf44a0a87bbd47dc0b4b4ad61412276416f1fbe2439644368",
+    "packages/components/src/checkbox/checkbox.definition.ts": "270a667a04b8cc87822760253a491514eb28878809379584f8f4fe751461e315",
+    "packages/components/src/checkbox/checkbox.template.ts": "425171bcc765d37e7982fa5c469e218b971166e76a5c14514faf11b3edf0e9bb",
+    "packages/components/src/checkbox/checkbox.styles.ts": "a10bdbe8d4b25ac12d05263b3291892e6250e0148e2cb6b91da665f72670684a",
+    "packages/components/src/checkbox/checkbox.structural.styles.ts": "d412a6c37ae54cf21a829670865d94d1ba02c6afc95dce4c7559ad2f8b6c74bd",
+    "packages/components/src/styles/control-indicator.styles.ts": "0ba901e62179600c9c2f4c878cea3d8168084ffc26e05e33c477e062a6ee7c5c",
+    "packages/components/src/styles/control-indicator.structural.styles.ts": "0635e5e146422256f0a69532cdc798857d2aa5736b117d571fedbe2c578d5f31",
+    "packages/components/src/styles/control.styles.ts": "4e4a83998cb75872cd5820cc6a2a0fcf73729ad2a789f63b53f337d9d5be3625",
+    "packages/tokens/themes/default.theme.json": "6057c49c88489fdd2e50897e914962a113fae22943f7d3d4c4f67e12fa24656d"
+  },
+  "servedAssets": {
+    "packages/components/dist/checkbox/checkbox.define.js": "4141d0a58454a85cb1b1bf2c09526caf169cc8748938b5a55479b752fff43af8",
+    "packages/components/dist/checkbox/checkbox.definition.js": "d0caf2a8fd5949291b0c51c9498a18a88e03eb54dd376ebf844b2ac420adc714",
+    "packages/components/dist/checkbox/checkbox.js": "f759764f23884c0216d0492e14b3c77a87d80ae1f19ae838b06977480d54a074",
+    "packages/components/dist/checkbox/checkbox.structural.styles.js": "4b90d3007213944c5e3a9e0706a4a8274b607cba5e782e380940620b83fb8a75",
+    "packages/components/dist/checkbox/checkbox.styles.js": "dae8254267dd803a63a9e589b4ea36edadfe2b3d1c86023baa745bd55545194d",
+    "packages/components/dist/checkbox/checkbox.template.js": "a476fda900bdc7765a4458098059a1de114a6a8a0d9e5f0f1004a6eaef0093d1",
+    "packages/components/dist/css/base.css": "62575b13404a9bb449b2c15c30484cb0defbc7bb3eaa675f1a92876a2d34e442",
+    "packages/components/dist/form-control/checkable.js": "e0bc0821b7723e1b042493545ba43f1016cd15eb7f00675c9bb4b7595632296b",
+    "packages/components/dist/form-control/description.js": "e05b86f1f0edf3dfb7840ef95898f8d69761b2a63c9b01379430907b26170f20",
+    "packages/components/dist/form-control/form-control.js": "e68b1e6cd0bab132e4d23ee313c4e0812ca08d0b04e95ce10d4db2bbb95abcd4",
+    "packages/components/dist/styles/control-indicator.structural.styles.js": "88a2b4a869bbb5e747a338e82e1478ee209da5ad56367d751c276a5ccfa48308",
+    "packages/components/dist/styles/control-indicator.styles.js": "c10a667e9f6dda6403eae70005ecf9b630d8cc9ef4787bc4a3cd8e13c58fc25a",
+    "packages/components/dist/styles/control.styles.js": "8575949039083372e2b311ff46a55685529f94d8a6618b18aaf26b10bb48bdd0",
+    "packages/components/dist/styles/field.structural.styles.js": "20b74bcc821b74cf04f06e20cbb7fd2264e32e21b5844d2383d65f41ce3cb030",
+    "packages/components/dist/styles/focus-ring.styles.js": "5a3d13d227dda21debf3b4dfae4537963fef036703c24f38a1b3978fa1bbdfce",
+    "packages/components/dist/styles/glyphs.js": "44dd1467d23de4f6edda2948c9522c37e5181ec6e6904173b31db08092ca3c54",
+    "packages/components/dist/styles/host.styles.js": "7d497a445545c7106cf93eedc10348da720861eb760ab7b47fa285f5a29bad51",
+    "packages/core/dist/prod/controllers/form.js": "11fd93cab2cc27d90d9a1d46c0bc2583eb8e71fe922aa40371ed2d6b20881bf8",
+    "packages/core/dist/prod/diagnostics/index.js": "68126199a4c31624b14f3a010c7e3e0719dede9c3b41b6554656bdf0343c95b5",
+    "packages/core/dist/prod/element/define.js": "16ad618ba8cad1cc7e6ee7092f34ce0369768ebb5b947b7e018f96f3b9cae6a8",
+    "packages/core/dist/prod/element/definition.js": "62d2033356822a2677a1bdd0434a200293f8eeea159882be174f64cd7610bbf7",
+    "packages/core/dist/prod/element/element.js": "44eff7b4644914cb44f67f260be417ab321ae416d81af9d25179f5641fa834b5",
+    "packages/core/dist/prod/element/events.js": "0cf2c079d98dbde50a3f59ec7c7d7e0a71bdc263842983401541c62c33276a53",
+    "packages/core/dist/prod/element/index.js": "c28dbedfbc936564370beb533424766ff542342dbac9c27b518fd0c6e116f29f",
+    "packages/core/dist/prod/element/props.js": "2d73800e775c7862150c4305a344216770ef561442b58c79569eb5983bc60ea8",
+    "packages/core/dist/prod/helpers/live.js": "685bd592ebe463edfef4efbcf725bfcc371792f4da3f1487faeff93c749def49",
+    "packages/core/dist/prod/internal/copies.js": "df1cef089becea155ba24c1610ab71ec3e17e3b8e0aaa1e0a91ef574643d4943",
+    "packages/core/dist/prod/internal/definitions.js": "513608f2ab2fefb00631758804f0d8c423dcf0bbe3f13a872897cab8d989fa5c",
+    "packages/core/dist/prod/internal/render-context.js": "42b79d03a6c6a01c30df433d0a3c0b19bb50bf32b3215e8788faf8a79a5331bd",
+    "packages/core/dist/prod/internal/version.js": "43f4bcad511d1540556f404d94fa077acaf85dd266e44a03e98ad0b8895ea489",
+    "packages/core/dist/prod/reactive/graph.js": "9798454aca81cd9ee5d7c67265a12fe80d4a28a0b038c7c8df829a4c9d83ca8b",
+    "packages/core/dist/prod/reactive/index.js": "ce0767cfbc1d02cff04830a71f1772cc662816fba315ff51f789bd1d52723932",
+    "packages/core/dist/prod/scope/index.js": "d43a59c3fe236f5e20ac4993ed3937d16d26d83b6efae1bd9451249495823f5c",
+    "packages/core/dist/prod/scope/scope.js": "2c8f6d8858e97982110deef314c1169210f2fb55aff16681cb060117227c390d",
+    "packages/core/dist/prod/styles/index.js": "7b47dcfc5d07efafcf7c60203fbf1357c4eab902806653deb9f509f13e45e407",
+    "packages/core/dist/prod/template/directive.js": "9265374b3cef933af0e79558cc745a7824a6028856533d904e121333141db3ef",
+    "packages/core/dist/prod/template/directives.js": "116dacddd71afe42d5dfaa674ae67403b186dc98a03f537e6ac6742de3145647",
+    "packages/core/dist/prod/template/index.js": "16e0c1703ab36db1bf9f768f07c31d6c8a6f141522485ce4957a265a79b4e322",
+    "packages/core/dist/prod/template/parts.js": "4e97bcbeafc9a7c1b6fa3fee129e451d9edac0033abd88b98bb0dd2b227d06d6",
+    "packages/core/dist/prod/template/prepare.js": "3f92e4afb40ba3c4718aeafc78908b1fae4d98a039dd8fbb70d72501477a7768",
+    "packages/core/dist/prod/template/repeat.js": "28d4a95339bb0c1a60e7b11f8116215dda84bb0b2fb90768ae449fc81c027138",
+    "packages/core/dist/prod/template/result.js": "27fed4c6263707481d78ebc5ee226377d8adb8d23c5425dcb1358aa2ba1bf408",
+    "packages/tokens/dist/css/default.css": "89604c5cfb3f35b621c00e4e71da3422ff318b0560a698f9c5b10aa9e151beb5",
+    "packages/tokens/dist/refs/index.js": "5c39c225619029bb1a8f759be91928c968b8594d49d76a6c5db167f02e7873f9"
+  },
+  "specimens": [
+    {
+      "specimen": "short",
+      "mode": "light",
+      "nodeId": "1520:46",
+      "url": "http://127.0.0.1:4194/bench?html=%3Codd-checkbox+size%3D%22md%22%3EEmail+notifications%3C%2Fodd-checkbox%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fcheckbox-short-%7Bmode%7D.png&scale=2&width=320&pad=16&dir=ltr&bg=var%28--odd-color-surface-specimen%29&opacity=0.5",
+      "ready": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "figma": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-light.png",
+        "sha256": "0f38939da5f51cc5737489350e7e1f76f220cc019572c606a43c65cf7401f112",
+        "savedAt": "2026-11-21T03:17:09.063Z"
+      },
+      "rendered": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-light.png",
+        "sha256": "ccb2a34056ac2cbb7584a7f975d5002bf77872ead2c79e26abb32735ed86c375"
+      },
+      "comparisons": {
+        "side": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-side.png",
+          "sha256": "e7ab5b897c560dfbab52ba11bec124083fbc4047bcb14942e9b6f847561cb69a"
+        },
+        "overlay": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-overlay.png",
+          "sha256": "e2c8f5dfe2535c22bd312fcbaaa29939ab5e8c1960c54d0f1bf892a0530b3ad3"
+        },
+        "diff": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-light-diff.png",
+          "sha256": "8be43ef6533f245b9cb8a2e040850f2f87394a9b30085b44c3e488d1d0fed497"
+        }
+      },
+      "observed": {
+        "mode": "light",
+        "grants": {
+          "width": 320,
+          "height": 24,
+          "direction": "ltr"
+        },
+        "state": {
+          "checked": false,
+          "indeterminate": false,
+          "disabled": false,
+          "size": "md"
+        },
+        "host": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "text": "Email notifications",
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "field": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "row": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "style": {
+            "column-gap": "12px",
+            "padding-inline-start": "4px",
+            "padding-inline-end": "4px",
+            "align-items": "flex-start"
+          }
+        },
+        "control": {
+          "box": {
+            "x": 4,
+            "y": 2,
+            "w": 20,
+            "h": 20
+          },
+          "style": {
+            "border-color": "rgb(134, 137, 151)",
+            "background-color": "rgb(255, 255, 255)",
+            "outline-width": "3px",
+            "opacity": "1"
+          }
+        },
+        "label": {
+          "box": {
+            "x": 36,
+            "y": 0,
+            "w": 117.03125,
+            "h": 21.625
+          },
+          "style": {
+            "font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "font-size": "14px",
+            "font-weight": "500",
+            "line-height": "19.25px",
+            "white-space": "normal",
+            "overflow-wrap": "anywhere",
+            "letter-spacing": "normal",
+            "padding-block-start": "2.375px"
+          },
+          "lines": [
+            {
+              "text": "Email notifications",
+              "x": 36,
+              "y": 2.375,
+              "w": 117.03125,
+              "h": 19
+            }
+          ]
+        },
+        "minTarget": "24px",
+        "controlCenterDeltaFromFirstLine": 0,
+        "labelGap": 12,
+        "tokens": [
+          {
+            "property": "column-gap",
+            "token": "space.sm",
+            "expected": "12px",
+            "observed": "12px"
+          },
+          {
+            "property": "padding-inline-start",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "padding-inline-end",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "inline-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "block-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "border-start-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-start-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.default",
+            "expected": "rgb(255, 255, 255)",
+            "observed": "rgb(255, 255, 255)"
+          },
+          {
+            "property": "border-top-color",
+            "token": "color.border.strong",
+            "expected": "rgb(134, 137, 151)",
+            "observed": "rgb(134, 137, 151)"
+          },
+          {
+            "property": "border-top-width",
+            "token": "border.width.default",
+            "expected": "1px",
+            "observed": "1px"
+          },
+          {
+            "property": "color",
+            "token": "color.text.primary",
+            "expected": "rgb(35, 37, 43)",
+            "observed": "rgb(35, 37, 43)"
+          },
+          {
+            "property": "font-family",
+            "token": "type.body.family",
+            "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+          },
+          {
+            "property": "font-size",
+            "token": "type.ui.size",
+            "expected": "14px",
+            "observed": "14px"
+          },
+          {
+            "property": "font-weight",
+            "token": "type.ui.weight",
+            "expected": "500",
+            "observed": "500"
+          },
+          {
+            "property": "letter-spacing",
+            "token": "type.ui.letter-spacing",
+            "expected": "normal",
+            "observed": "normal"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.specimen",
+            "expected": "rgb(239, 237, 252)",
+            "observed": "rgb(239, 237, 252)"
+          },
+          {
+            "property": "line-height",
+            "token": "type.ui.line-height",
+            "expected": "19.25px",
+            "observed": "19.25px"
+          }
+        ],
+        "reference": {
+          "width": 640,
+          "height": 48,
+          "backgroundPixel": [239, 237, 252, 255],
+          "borderPixel": [134, 137, 151, 255],
+          "fillPixel": [255, 255, 255, 255]
+        },
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 19
+          }
+        ],
+        "livePng": {
+          "width": 640,
+          "height": 48,
+          "backgroundPixel": [239, 237, 252, 255],
+          "borderPixel": [134, 137, 151, 255],
+          "fillPixel": [255, 255, 255, 255]
+        }
+      }
+    },
+    {
+      "specimen": "short",
+      "mode": "dark",
+      "nodeId": "1520:58",
+      "url": "http://127.0.0.1:4194/bench?html=%3Codd-checkbox+size%3D%22md%22%3EEmail+notifications%3C%2Fodd-checkbox%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fcheckbox-short-%7Bmode%7D.png&scale=2&width=320&pad=16&dir=ltr&bg=var%28--odd-color-surface-specimen%29&opacity=0.5",
+      "ready": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "figma": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-short-dark.png",
+        "sha256": "223e83e0479d0c9d53af43ce4f158eb5b9e642e45ceb9ec412cc32186d88b324",
+        "savedAt": "2026-11-21T03:13:13.566Z"
+      },
+      "rendered": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-short-dark.png",
+        "sha256": "dc34c17340635a3eecfa03f3511843f9df22c15e5bdd65749b3cee8fe642e0e9"
+      },
+      "comparisons": {
+        "side": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-side.png",
+          "sha256": "9f44df005dd49745bc3bd0bb401d92d75d3ce5e46837a89020b0ba7a8a2c9c55"
+        },
+        "overlay": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-overlay.png",
+          "sha256": "752a4f8a53a52cbcf98590cc7c0bd3d84688bb555f2da40e43eacb3d3d05250f"
+        },
+        "diff": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-short-dark-diff.png",
+          "sha256": "d8978fe1c1e9b76614f105f995838ac0ec22cde88e9bc08415dbb841c1507e42"
+        }
+      },
+      "observed": {
+        "mode": "dark",
+        "grants": {
+          "width": 320,
+          "height": 24,
+          "direction": "ltr"
+        },
+        "state": {
+          "checked": false,
+          "indeterminate": false,
+          "disabled": false,
+          "size": "md"
+        },
+        "host": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "text": "Email notifications",
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "field": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "scrollWidth": 320,
+          "clientWidth": 320
+        },
+        "row": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 24
+          },
+          "style": {
+            "column-gap": "12px",
+            "padding-inline-start": "4px",
+            "padding-inline-end": "4px",
+            "align-items": "flex-start"
+          }
+        },
+        "control": {
+          "box": {
+            "x": 4,
+            "y": 2,
+            "w": 20,
+            "h": 20
+          },
+          "style": {
+            "border-color": "rgb(133, 131, 149)",
+            "background-color": "rgb(36, 38, 49)",
+            "outline-width": "3px",
+            "opacity": "1"
+          }
+        },
+        "label": {
+          "box": {
+            "x": 36,
+            "y": 0,
+            "w": 117.03125,
+            "h": 21.625
+          },
+          "style": {
+            "font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "font-size": "14px",
+            "font-weight": "500",
+            "line-height": "19.25px",
+            "white-space": "normal",
+            "overflow-wrap": "anywhere",
+            "letter-spacing": "normal",
+            "padding-block-start": "2.375px"
+          },
+          "lines": [
+            {
+              "text": "Email notifications",
+              "x": 36,
+              "y": 2.375,
+              "w": 117.03125,
+              "h": 19
+            }
+          ]
+        },
+        "minTarget": "24px",
+        "controlCenterDeltaFromFirstLine": 0,
+        "labelGap": 12,
+        "tokens": [
+          {
+            "property": "column-gap",
+            "token": "space.sm",
+            "expected": "12px",
+            "observed": "12px"
+          },
+          {
+            "property": "padding-inline-start",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "padding-inline-end",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "inline-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "block-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "border-start-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-start-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.default",
+            "expected": "rgb(36, 38, 49)",
+            "observed": "rgb(36, 38, 49)"
+          },
+          {
+            "property": "border-top-color",
+            "token": "color.border.strong",
+            "expected": "rgb(133, 131, 149)",
+            "observed": "rgb(133, 131, 149)"
+          },
+          {
+            "property": "border-top-width",
+            "token": "border.width.default",
+            "expected": "1px",
+            "observed": "1px"
+          },
+          {
+            "property": "color",
+            "token": "color.text.primary",
+            "expected": "rgb(245, 243, 253)",
+            "observed": "rgb(245, 243, 253)"
+          },
+          {
+            "property": "font-family",
+            "token": "type.body.family",
+            "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+          },
+          {
+            "property": "font-size",
+            "token": "type.ui.size",
+            "expected": "14px",
+            "observed": "14px"
+          },
+          {
+            "property": "font-weight",
+            "token": "type.ui.weight",
+            "expected": "500",
+            "observed": "500"
+          },
+          {
+            "property": "letter-spacing",
+            "token": "type.ui.letter-spacing",
+            "expected": "normal",
+            "observed": "normal"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.specimen",
+            "expected": "rgb(41, 38, 61)",
+            "observed": "rgb(41, 38, 61)"
+          },
+          {
+            "property": "line-height",
+            "token": "type.ui.line-height",
+            "expected": "19.25px",
+            "observed": "19.25px"
+          }
+        ],
+        "reference": {
+          "width": 640,
+          "height": 48,
+          "backgroundPixel": [41, 38, 61, 255],
+          "borderPixel": [133, 131, 149, 255],
+          "fillPixel": [36, 38, 49, 255]
+        },
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 19
+          }
+        ],
+        "livePng": {
+          "width": 640,
+          "height": 48,
+          "backgroundPixel": [41, 38, 61, 255],
+          "borderPixel": [133, 131, 149, 255],
+          "fillPixel": [36, 38, 49, 255]
+        }
+      }
+    },
+    {
+      "specimen": "wrap",
+      "mode": "light",
+      "nodeId": "1520:52",
+      "url": "http://127.0.0.1:4194/bench?html=%3Codd-checkbox+size%3D%22md%22%3ESend+a+weekly+summary+when+project+settings+change.%3C%2Fodd-checkbox%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fcheckbox-wrap-%7Bmode%7D.png&scale=2&width=176&pad=16&dir=ltr&bg=var%28--odd-color-surface-specimen%29&opacity=0.5",
+      "ready": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "figma": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-light.png",
+        "sha256": "5873ef84c3cacae722d609dc75002d03e99622dc6e1c06164688e9309fed5ad6",
+        "savedAt": "2026-11-21T03:13:13.716Z"
+      },
+      "rendered": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-light.png",
+        "sha256": "b31bdce4dc4f1a087e73a80850133ed8f46c73ff2da50b5b0cd2ef103620690e"
+      },
+      "comparisons": {
+        "side": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-side.png",
+          "sha256": "d4219871b9f065504f8f04880cca57212dc5167cec1319a802e77069ff869832"
+        },
+        "overlay": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-overlay.png",
+          "sha256": "397c946c208e44e7d9679c7e6373d8298c97ae5e62ac164f4a1501374993fe69"
+        },
+        "diff": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-light-diff.png",
+          "sha256": "2101485247af86a2de431d3056f2da15d1ec6344ee2d0fcf7dcc2ebeadd89ee8"
+        }
+      },
+      "observed": {
+        "mode": "light",
+        "grants": {
+          "width": 176,
+          "height": 79.375,
+          "direction": "ltr"
+        },
+        "state": {
+          "checked": false,
+          "indeterminate": false,
+          "disabled": false,
+          "size": "md"
+        },
+        "host": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "text": "Send a weekly summary when project settings change.",
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        "field": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        "row": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "style": {
+            "column-gap": "12px",
+            "padding-inline-start": "4px",
+            "padding-inline-end": "4px",
+            "align-items": "flex-start"
+          }
+        },
+        "control": {
+          "box": {
+            "x": 4,
+            "y": 2,
+            "w": 20,
+            "h": 20
+          },
+          "style": {
+            "border-color": "rgb(134, 137, 151)",
+            "background-color": "rgb(255, 255, 255)",
+            "outline-width": "3px",
+            "opacity": "1"
+          }
+        },
+        "label": {
+          "box": {
+            "x": 36,
+            "y": 0,
+            "w": 136,
+            "h": 79.375
+          },
+          "style": {
+            "font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "font-size": "14px",
+            "font-weight": "500",
+            "line-height": "19.25px",
+            "white-space": "normal",
+            "overflow-wrap": "anywhere",
+            "letter-spacing": "normal",
+            "padding-block-start": "2.375px"
+          },
+          "lines": [
+            {
+              "text": "Send a weekly",
+              "x": 36,
+              "y": 2.375,
+              "w": 90.1875,
+              "h": 19
+            },
+            {
+              "text": "summary when",
+              "x": 36,
+              "y": 21.625,
+              "w": 97.375,
+              "h": 19
+            },
+            {
+              "text": "project settings",
+              "x": 36,
+              "y": 40.875,
+              "w": 98.328125,
+              "h": 19
+            },
+            {
+              "text": "change.",
+              "x": 36,
+              "y": 60.125,
+              "w": 49.46875,
+              "h": 19
+            }
+          ]
+        },
+        "minTarget": "24px",
+        "controlCenterDeltaFromFirstLine": 0,
+        "labelGap": 12,
+        "tokens": [
+          {
+            "property": "column-gap",
+            "token": "space.sm",
+            "expected": "12px",
+            "observed": "12px"
+          },
+          {
+            "property": "padding-inline-start",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "padding-inline-end",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "inline-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "block-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "border-start-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-start-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.default",
+            "expected": "rgb(255, 255, 255)",
+            "observed": "rgb(255, 255, 255)"
+          },
+          {
+            "property": "border-top-color",
+            "token": "color.border.strong",
+            "expected": "rgb(134, 137, 151)",
+            "observed": "rgb(134, 137, 151)"
+          },
+          {
+            "property": "border-top-width",
+            "token": "border.width.default",
+            "expected": "1px",
+            "observed": "1px"
+          },
+          {
+            "property": "color",
+            "token": "color.text.primary",
+            "expected": "rgb(35, 37, 43)",
+            "observed": "rgb(35, 37, 43)"
+          },
+          {
+            "property": "font-family",
+            "token": "type.body.family",
+            "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+          },
+          {
+            "property": "font-size",
+            "token": "type.ui.size",
+            "expected": "14px",
+            "observed": "14px"
+          },
+          {
+            "property": "font-weight",
+            "token": "type.ui.weight",
+            "expected": "500",
+            "observed": "500"
+          },
+          {
+            "property": "letter-spacing",
+            "token": "type.ui.letter-spacing",
+            "expected": "normal",
+            "observed": "normal"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.specimen",
+            "expected": "rgb(239, 237, 252)",
+            "observed": "rgb(239, 237, 252)"
+          },
+          {
+            "property": "line-height",
+            "token": "type.ui.line-height",
+            "expected": "19.25px",
+            "observed": "19.25px"
+          }
+        ],
+        "reference": {
+          "width": 352,
+          "height": 157,
+          "backgroundPixel": [239, 237, 252, 255],
+          "borderPixel": [134, 137, 151, 255],
+          "fillPixel": [255, 255, 255, 255]
+        },
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 48
+          }
+        ],
+        "livePng": {
+          "width": 352,
+          "height": 160,
+          "backgroundPixel": [239, 237, 252, 255],
+          "borderPixel": [134, 137, 151, 255],
+          "fillPixel": [255, 255, 255, 255]
+        }
+      }
+    },
+    {
+      "specimen": "wrap",
+      "mode": "dark",
+      "nodeId": "1520:64",
+      "url": "http://127.0.0.1:4194/bench?html=%3Codd-checkbox+size%3D%22md%22%3ESend+a+weekly+summary+when+project+settings+change.%3C%2Fodd-checkbox%3E&modes=light%2Cdark&figma=%2F__evidence%2Ffigma%2Fcheckbox-wrap-%7Bmode%7D.png&scale=2&width=176&pad=16&dir=ltr&bg=var%28--odd-color-surface-specimen%29&opacity=0.5",
+      "ready": {
+        "ready": "true",
+        "errors": [],
+        "warnings": [],
+        "dpr": 2,
+        "rootFont": "16px"
+      },
+      "figma": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/figma/checkbox-wrap-dark.png",
+        "sha256": "934bce2ff9a9964119343b00cb3d7a171cf6e09b7052bccdf97b1184d1c8dfad",
+        "savedAt": "2026-11-21T03:13:13.887Z"
+      },
+      "rendered": {
+        "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/live/checkbox-wrap-dark.png",
+        "sha256": "6fcd04227617ba107ad04dd99c277e6b4411a2b7641ff41acecf96275232caac"
+      },
+      "comparisons": {
+        "side": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-side.png",
+          "sha256": "3db0b8825e3dc46d9e8f1140ac8e247c82d2c61fe61399d9004a954c40073355"
+        },
+        "overlay": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-overlay.png",
+          "sha256": "15772c28b3e31c5cdc8fef500a931e59657914ae09421bd7d79731b1f6c4d537"
+        },
+        "diff": {
+          "path": "docs/architecture/primitives/runs/2026-11-20-checkbox-design/evidence/comparison/checkbox-wrap-dark-diff.png",
+          "sha256": "5f1c47af49431bd9b370e47fb7302df7655e3c7ea870f43af9b4b611f883b298"
+        }
+      },
+      "observed": {
+        "mode": "dark",
+        "grants": {
+          "width": 176,
+          "height": 79.375,
+          "direction": "ltr"
+        },
+        "state": {
+          "checked": false,
+          "indeterminate": false,
+          "disabled": false,
+          "size": "md"
+        },
+        "host": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "text": "Send a weekly summary when project settings change.",
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        "field": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "scrollWidth": 176,
+          "clientWidth": 176
+        },
+        "row": {
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 176,
+            "h": 79.375
+          },
+          "style": {
+            "column-gap": "12px",
+            "padding-inline-start": "4px",
+            "padding-inline-end": "4px",
+            "align-items": "flex-start"
+          }
+        },
+        "control": {
+          "box": {
+            "x": 4,
+            "y": 2,
+            "w": 20,
+            "h": 20
+          },
+          "style": {
+            "border-color": "rgb(133, 131, 149)",
+            "background-color": "rgb(36, 38, 49)",
+            "outline-width": "3px",
+            "opacity": "1"
+          }
+        },
+        "label": {
+          "box": {
+            "x": 36,
+            "y": 0,
+            "w": 136,
+            "h": 79.375
+          },
+          "style": {
+            "font-family": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "font-size": "14px",
+            "font-weight": "500",
+            "line-height": "19.25px",
+            "white-space": "normal",
+            "overflow-wrap": "anywhere",
+            "letter-spacing": "normal",
+            "padding-block-start": "2.375px"
+          },
+          "lines": [
+            {
+              "text": "Send a weekly",
+              "x": 36,
+              "y": 2.375,
+              "w": 90.1875,
+              "h": 19
+            },
+            {
+              "text": "summary when",
+              "x": 36,
+              "y": 21.625,
+              "w": 97.375,
+              "h": 19
+            },
+            {
+              "text": "project settings",
+              "x": 36,
+              "y": 40.875,
+              "w": 98.328125,
+              "h": 19
+            },
+            {
+              "text": "change.",
+              "x": 36,
+              "y": 60.125,
+              "w": 49.46875,
+              "h": 19
+            }
+          ]
+        },
+        "minTarget": "24px",
+        "controlCenterDeltaFromFirstLine": 0,
+        "labelGap": 12,
+        "tokens": [
+          {
+            "property": "column-gap",
+            "token": "space.sm",
+            "expected": "12px",
+            "observed": "12px"
+          },
+          {
+            "property": "padding-inline-start",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "padding-inline-end",
+            "token": "space.2xs",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "inline-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "block-size",
+            "token": "icon.size.md",
+            "expected": "20px",
+            "observed": "20px"
+          },
+          {
+            "property": "border-start-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-start-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-start-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "border-end-end-radius",
+            "token": "radius.sm",
+            "expected": "4px",
+            "observed": "4px"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.default",
+            "expected": "rgb(36, 38, 49)",
+            "observed": "rgb(36, 38, 49)"
+          },
+          {
+            "property": "border-top-color",
+            "token": "color.border.strong",
+            "expected": "rgb(133, 131, 149)",
+            "observed": "rgb(133, 131, 149)"
+          },
+          {
+            "property": "border-top-width",
+            "token": "border.width.default",
+            "expected": "1px",
+            "observed": "1px"
+          },
+          {
+            "property": "color",
+            "token": "color.text.primary",
+            "expected": "rgb(245, 243, 253)",
+            "observed": "rgb(245, 243, 253)"
+          },
+          {
+            "property": "font-family",
+            "token": "type.body.family",
+            "expected": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+            "observed": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif"
+          },
+          {
+            "property": "font-size",
+            "token": "type.ui.size",
+            "expected": "14px",
+            "observed": "14px"
+          },
+          {
+            "property": "font-weight",
+            "token": "type.ui.weight",
+            "expected": "500",
+            "observed": "500"
+          },
+          {
+            "property": "letter-spacing",
+            "token": "type.ui.letter-spacing",
+            "expected": "normal",
+            "observed": "normal"
+          },
+          {
+            "property": "background-color",
+            "token": "color.surface.specimen",
+            "expected": "rgb(41, 38, 61)",
+            "observed": "rgb(41, 38, 61)"
+          },
+          {
+            "property": "line-height",
+            "token": "type.ui.line-height",
+            "expected": "19.25px",
+            "observed": "19.25px"
+          }
+        ],
+        "reference": {
+          "width": 352,
+          "height": 157,
+          "backgroundPixel": [41, 38, 61, 255],
+          "borderPixel": [133, 131, 149, 255],
+          "fillPixel": [36, 38, 49, 255]
+        },
+        "platformFonts": [
+          {
+            "familyName": "Segoe UI Semibold",
+            "postScriptName": "SegoeUI-Semibold",
+            "isCustomFont": false,
+            "glyphCount": 48
+          }
+        ],
+        "livePng": {
+          "width": 352,
+          "height": 160,
+          "backgroundPixel": [41, 38, 61, 255],
+          "borderPixel": [133, 131, 149, 255],
+          "fillPixel": [36, 38, 49, 255]
+        }
+      }
+    }
+  ]
+}

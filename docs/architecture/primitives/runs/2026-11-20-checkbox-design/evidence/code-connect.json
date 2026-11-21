@@ -1,0 +1,97 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "family": "159:1181",
+  "observedAt": "2026-11-21T03:12:12.089Z",
+  "mappings": {
+    "159:1148": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1155": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1162": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1166": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1171": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1176": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "159:1180": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2157": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2162": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2168": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2173": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2178": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2183": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2189": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    },
+    "181:2194": {
+      "componentName": "OddkinCheckbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "version": "unknown",
+      "hasTemplate": false
+    }
+  }
+}

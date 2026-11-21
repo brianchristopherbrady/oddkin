@@ -1,7 +1,6 @@
 import { html } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
-// Brings <odd-checkbox> into HTMLElementTagNameMap, so props are checked against the element.
-import type {} from './checkbox.js';
+import type { CheckboxCheckedRequestDetail } from './checkbox.js';
 
 export default defineExamples('odd-checkbox', {
   default: {
@@ -40,6 +39,41 @@ export default defineExamples('odd-checkbox', {
     props: { disabled: true },
     attributes: { checked: '' },
     slots: { default: 'Managed by your workspace' },
+  },
+  small: {
+    label: 'Small indicator',
+    attributes: { size: 'sm' },
+    slots: { default: 'Email notifications' },
+  },
+  large: {
+    label: 'Large indicator',
+    attributes: { size: 'lg' },
+    slots: { default: 'Email notifications' },
+  },
+  wrapped: {
+    label: 'Narrow parent',
+    slots: { default: 'Send a weekly summary when project settings change.' },
+    guidance:
+      'The label wraps to the parent width while the indicator stays beside its first line.',
+    fixture({ element, mount }) {
+      mount(html`<div style="inline-size: 11rem; max-inline-size: 100%"></div>`).append(element);
+    },
+  },
+  controlled: {
+    label: 'App-owned choice',
+    props: { checkedState: { mode: 'controlled', checked: false, indeterminate: false } },
+    slots: { default: 'Email notifications' },
+    guidance:
+      'The checkbox proposes a new state. The application accepts it by assigning a replacement checkedState snapshot.',
+    fixture({ scope, element }) {
+      scope.listen<CustomEvent<CheckboxCheckedRequestDetail>>(
+        element,
+        'odd-checked-request',
+        ({ detail }) => {
+          element.checkedState = { mode: 'controlled', checked: detail.checked };
+        },
+      );
+    },
   },
   checkedFalse: {
     label: 'checked="false"',

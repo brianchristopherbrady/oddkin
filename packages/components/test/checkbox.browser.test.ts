@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { cdp, page, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
-import type { OddkinCheckbox } from '../src/checkbox/checkbox.js';
+import type { CheckboxCheckedRequestDetail, OddkinCheckbox } from '../src/checkbox/checkbox.js';
 import './register.js';
 import { loadTheme, settle, themeValue } from './probe.js';
 
@@ -30,6 +30,7 @@ async function mount(markup: string) {
   return { el, control, part };
 }
 const visible = (el: Element) => getComputedStyle(el).visibility === 'visible';
+type CheckedRequest = CustomEvent<CheckboxCheckedRequestDetail>;
 
 describe('imports', () => {
   it('the foundation and the component entry register nothing', async () => {
@@ -38,6 +39,7 @@ describe('imports', () => {
       [
         'OddkinCheckbox',
         'changeEvent',
+        'checkedRequestEvent',
         'checkboxStructuralStyles',
         'checkboxTemplate',
         'controlIndicatorStructuralStyles',
@@ -49,6 +51,7 @@ describe('imports', () => {
     );
     const entry = await import('../src/checkbox/index.js');
     expect(Object.keys(entry)).toContain('checkboxDefinition');
+    expect(entry.checkedRequestEvent).toBe(foundation.checkedRequestEvent);
   });
 });
 
@@ -164,6 +167,51 @@ describe('odd-checkbox', () => {
     expect(mark.right).toBeLessThanOrEqual(box.right);
   });
 
+  it('keeps the indicator on the first label line across sizes, density and direction', async () => {
+    const label = 'Send weekly updates for NotificationPreferencesWithoutAnInlineBreak.';
+    const { el, control, part } = await mount(
+      `<odd-checkbox checked description="Applies to your weekly digest.">${label}</odd-checkbox>`,
+    );
+    const choice = el.shadowRoot!.querySelector('label')!;
+    expect(el.size).toBe('md');
+    control.focus();
+    const target = parseFloat(themeValue('min-block-size', '--odd-target-min'));
+    for (const size of ['sm', 'md', 'lg'] as const) {
+      el.size = size;
+      await settle(el);
+      expect(el.getAttribute('size')).toBe(size);
+      const expected = parseFloat(themeValue('inline-size', `--odd-icon-size-${size}`));
+      const box = control.getBoundingClientRect();
+      expect(box.width).toBeCloseTo(expected, 1);
+      expect(box.height).toBeCloseTo(expected, 1);
+      expect(choice.getBoundingClientRect().height).toBeGreaterThanOrEqual(target);
+    }
+
+    container.style.inlineSize = '176px';
+    const standardGap = parseFloat(getComputedStyle(choice).columnGap);
+    container.setAttribute('data-odd-density', 'compact');
+    expect(parseFloat(getComputedStyle(choice).columnGap)).toBeLessThan(standardGap);
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    for (const dir of ['ltr', 'rtl'] as const) {
+      container.dir = dir;
+      const box = control.getBoundingClientRect();
+      const lines = [...range.getClientRects()].filter((rect) => rect.width > 0);
+      expect(lines.length).toBeGreaterThan(2);
+      const first = lines[0]!;
+      expect(Math.abs(box.top + box.height / 2 - (first.top + first.height / 2))).toBeLessThan(5);
+      expect(dir === 'ltr' ? box.right <= first.left : box.left >= first.right).toBe(true);
+      expect(el.scrollWidth).toBeLessThanOrEqual(el.clientWidth);
+      expect(part('description').getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        choice.getBoundingClientRect().bottom,
+      );
+    }
+    expect(el.textContent).toBe(label);
+    expect(part('control')).toBe(control);
+    expect(el.shadowRoot!.activeElement).toBe(control);
+    expect(control.checked).toBe(true);
+  });
+
   it('mounts and disposes without leaking scopes', async () => {
     const before = scopeStats();
     const { el } = await mount('<odd-checkbox checked>Updates</odd-checkbox>');
@@ -199,6 +247,166 @@ describe('odd-checkbox', () => {
       }
     },
   );
+});
+
+describe('controlled selection', () => {
+  it('projects a snapshot assigned before upgrade', async () => {
+    const template = document.createElement('template');
+    template.innerHTML = '<odd-checkbox>Late</odd-checkbox>';
+    const early = template.content.firstElementChild as OddkinCheckbox;
+    early.checkedState = { mode: 'controlled', checked: true, indeterminate: true };
+    container = document.createElement('div');
+    container.append(early);
+    document.body.append(container);
+    await settle(early);
+    const control = early.shadowRoot!.querySelector('input')!;
+    expect([early.checked, control.checked, control.indeterminate]).toEqual([true, true, true]);
+    expect(early.hasAttribute('checked-state')).toBe(false);
+  });
+
+  it('reports label and Space intent without committing an ignored request', async () => {
+    const { el, control, part } = await mount(
+      '<form><odd-checkbox name="terms" required>Terms</odd-checkbox></form>',
+    );
+    const form = container.querySelector('form')!;
+    el.checkedState = { mode: 'controlled', checked: false, indeterminate: true };
+    await settle(el);
+    const requests: CheckedRequest[] = [];
+    const commits: string[] = [];
+    container.addEventListener('odd-checked-request', (event) =>
+      requests.push(event as CheckedRequest),
+    );
+    for (const type of ['input', 'change']) el.addEventListener(type, () => commits.push(type));
+
+    await userEvent.click(part('label'));
+    await expect.poll(() => requests.length).toBe(1);
+    control.focus();
+    await userEvent.keyboard(' ');
+    await expect.poll(() => requests.length).toBe(2);
+    // Synthetic clicks can bypass cancellation and still trigger native activation.
+    control.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: false }));
+    await settle(el);
+
+    expect(requests.map((request) => request.detail)).toEqual([
+      { checked: true, indeterminate: false },
+      { checked: true, indeterminate: false },
+    ]);
+    expect(requests.every((request) => request.bubbles && request.composed)).toBe(true);
+    expect(commits).toEqual([]);
+    expect([el.checked, control.checked, control.indeterminate]).toEqual([false, false, true]);
+    expect(el.validity.valueMissing).toBe(true);
+    expect([...new FormData(form)]).toEqual([]);
+  });
+
+  it('projects synchronous and deferred snapshots after native rollback', async () => {
+    const { el, control, part } = await mount(
+      '<form><odd-checkbox name="terms" value="yes" required>Terms</odd-checkbox></form>',
+    );
+    const form = container.querySelector('form')!;
+    el.checkedState = { mode: 'controlled', checked: false, indeterminate: true };
+    expect(el.hasAttribute('checked-state')).toBe(false);
+    await settle(el);
+    const requests: CheckedRequest['detail'][] = [];
+    const commits: string[] = [];
+    el.addEventListener('odd-checked-request', (event) =>
+      requests.push((event as CheckedRequest).detail),
+    );
+    for (const type of ['input', 'change']) el.addEventListener(type, () => commits.push(type));
+    el.addEventListener(
+      'odd-checked-request',
+      (event) => {
+        const { detail } = event as CheckedRequest;
+        el.checkedState = { mode: 'controlled', ...detail };
+      },
+      { once: true },
+    );
+    await userEvent.click(part('label'));
+    await expect.poll(() => requests.length).toBe(1);
+    await settle(el);
+    expect([el.checked, control.checked, control.indeterminate]).toEqual([true, true, false]);
+    expect(el.validity.valid).toBe(true);
+    expect([...new FormData(form)]).toEqual([['terms', 'yes']]);
+
+    let acknowledge!: () => void;
+    const deferred = new Promise<void>((resolve) => {
+      acknowledge = resolve;
+    });
+    el.addEventListener(
+      'odd-checked-request',
+      (event) => {
+        const { detail } = event as CheckedRequest;
+        void deferred.then(() => {
+          el.checkedState = { mode: 'controlled', ...detail };
+        });
+      },
+      { once: true },
+    );
+    control.click();
+    await expect.poll(() => requests.length).toBe(2);
+    await settle(el);
+    expect(control.checked).toBe(true);
+    expect([...new FormData(form)]).toEqual([['terms', 'yes']]);
+    acknowledge();
+    await deferred;
+    await settle(el);
+    expect([el.checked, control.checked]).toEqual([false, false]);
+    expect(el.validity.valueMissing).toBe(true);
+    expect([...new FormData(form)]).toEqual([]);
+    expect(commits).toEqual([]);
+
+    el.checkedState = { mode: 'controlled', checked: true, indeterminate: true };
+    await settle(el);
+    expect([control.checked, control.indeterminate]).toEqual([true, true]);
+    expect([...new FormData(form)]).toEqual([['terms', 'yes']]);
+  });
+
+  it('keeps reset, restore and delayed requests relative to the current owner', async () => {
+    const { el, control } = await mount(
+      '<form><fieldset><odd-checkbox name="terms" checked>Terms</odd-checkbox></fieldset></form>',
+    );
+    const form = container.querySelector('form')!;
+    const fieldset = form.querySelector('fieldset')!;
+    const requests: CheckedRequest['detail'][] = [];
+    el.addEventListener('odd-checked-request', (event) =>
+      requests.push((event as CheckedRequest).detail),
+    );
+    el.checkedState = { mode: 'controlled', checked: false };
+    el.checked = true;
+    form.reset();
+    el.formStateRestoreCallback('checked', 'restore');
+    await settle(el);
+    expect(el.defaultChecked).toBe(true);
+    expect([el.checked, control.checked]).toEqual([false, false]);
+    expect([...new FormData(form)]).toEqual([]);
+
+    fieldset.disabled = true;
+    await settle(el);
+    expect(control.disabled).toBe(true);
+    control.click();
+    expect(requests).toEqual([]);
+    fieldset.disabled = false;
+    await settle(el);
+
+    // Replacing the snapshot in the same turn invalidates the old proposal before it is sent.
+    control.click();
+    el.checkedState = { mode: 'controlled', checked: true };
+    await settle(el);
+    control.click();
+    await expect.poll(() => requests).toEqual([{ checked: false, indeterminate: false }]);
+    expect(control.checked).toBe(true);
+    el.checkedState = { mode: 'controlled', checked: false };
+    await settle(el);
+    el.checkedState = { mode: 'uncontrolled' };
+    await settle(el);
+    expect([el.checked, control.checked]).toEqual([true, true]);
+    const commits: string[] = [];
+    for (const type of ['input', 'change']) el.addEventListener(type, () => commits.push(type));
+    control.click();
+    await settle(el);
+    expect([el.checked, control.checked]).toEqual([false, false]);
+    expect(commits).toEqual(['input', 'change']);
+    expect(requests).toHaveLength(1);
+  });
 });
 
 describe('forms', () => {

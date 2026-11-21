@@ -19,14 +19,15 @@ export const checkboxTemplate = (checkbox: OddkinCheckbox) =>
           class="indicator-box"
           type="checkbox"
           .checked=${live(checkbox._currentChecked)}
-          .indeterminate=${checkbox.indeterminate}
-          data-state=${checkbox.indeterminate ? 'mixed' : null}
+          .indeterminate=${live(checkbox._displayIndeterminate)}
+          data-state=${checkbox._displayIndeterminate ? 'mixed' : null}
           ?required=${checkbox.required}
           ?disabled=${checkbox.disabled || checkbox._formDisabled.value}
           aria-describedby=${checkbox._describedBy}
           aria-invalid=${checkbox._userInvalid.value ? 'true' : null}
-          @input=${checkbox._onInput}
-          @change=${checkbox._onChange}
+          @click=${checkbox._onActivate}
+          @input=${checkbox._onCheckboxInput}
+          @change=${checkbox._onCheckboxChange}
           @blur=${checkbox._onBlur}
         />
         <span class="indicator-mark indicator-check">${checkGlyph}</span>
