@@ -117,6 +117,7 @@ const PAGE_LINKS = [
 
 /** `'secondary'` reads as `secondary`; an empty literal stays as written. */
 const unquote = (value: string) => (/^(['"`]).+\1$/.test(value) ? value.slice(1, -1) : value);
+const COMPUTED_DEFAULT = 'Computed at runtime';
 
 /** A row's name cell: the name, and its description or "Not documented". */
 const named = (name: string, description?: string) =>
@@ -1142,7 +1143,7 @@ export class ComponentDetailElement extends OddkinElement.with({
             html`<tr data-row=${row.id}>
               ${named(row.attribute ?? '', row.description)}
               <td data-label="Type">${row.values?.join(', ') ?? row.type}</td>
-              <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+              <td data-label="Default">${row.default ? unquote(row.default) : COMPUTED_DEFAULT}</td>
               <td data-label="Control">
                 ${
                   hasPreview && this.#editableAttribute(row)
@@ -1182,7 +1183,7 @@ export class ComponentDetailElement extends OddkinElement.with({
                   >${row.control === 'readonly' ? html`<small>Read-only</small>` : nothing}</span
                 >
               </td>
-              <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+              <td data-label="Default">${row.default ? unquote(row.default) : COMPUTED_DEFAULT}</td>
               <td data-label="Attribute">
                 ${row.attribute ? html`<span><code>${row.attribute}</code>${row.reflects ? html`<small>Reflected</small>` : nothing}</span>` : '\u2014'}
               </td>
@@ -1206,7 +1207,7 @@ export class ComponentDetailElement extends OddkinElement.with({
       <td data-label="Types">
         ${row.values ? row.values.join(', ') : row.type}${row.values && row.nullable ? ' · nullable' : ''}
       </td>
-      <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+      <td data-label="Default">${row.default ? unquote(row.default) : COMPUTED_DEFAULT}</td>
       <td data-label="Attribute">
         ${row.attribute ? (row.property ? row.attribute : `${row.attribute} (attribute only)`) : row.propertyOnly ? 'Property only' : 'None'}
       </td>
@@ -1428,7 +1429,7 @@ export class ComponentDetailElement extends OddkinElement.with({
         return html`<tr data-css=${entry.name}>
           <th scope="row" data-label="Name"><code>${entry.name}</code></th>
           <td data-label="Syntax">${entry.type ?? 'Unknown'}</td>
-          <td data-label="Default">${entry.default ?? 'Unknown'}</td>
+          <td data-label="Default">${entry.default ?? COMPUTED_DEFAULT}</td>
           <td data-label="Description" colspan=${editable ? '2' : null}>
             ${entry.description ? inline(entry.description) : html`<span class="wb-not-documented">Not documented</span>`}
           </td>

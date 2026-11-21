@@ -325,7 +325,7 @@ describe('<oddkin-component-panel>', () => {
     expect(cells('open')).toEqual(['boolean', 'false', 'open', 'Yes']);
     expect(cells('tone')).toEqual(['calm, loud', 'calm', 'tone', 'No']);
     expect(cells('label')).toEqual(['string | null', "''", 'label', 'No']);
-    expect(cells('items')).toEqual(['string[]', 'Unknown', 'Property only', '—']);
+    expect(cells('items')).toEqual(['string[]', 'Computed at runtime', 'Property only', '—']);
     expect(cells('value')).toEqual(['string', "''", 'None', '—']);
     // Each group's header row names it and its columns.
     expect(
@@ -347,8 +347,8 @@ describe('<oddkin-component-panel>', () => {
     expect(row('renderer').textContent).toContain('Requires fixture');
     expect(row('form').textContent).toContain('Read-only');
     expect(row('form').querySelector('input, select, textarea')).toBeNull();
-    expect(row('items').querySelector('[data-label="Default"]')?.textContent?.trim()).toBe(
-      'Unknown',
+    expect(row('form').querySelector('[data-label="Default"]')?.textContent?.trim()).toBe(
+      'Computed at runtime',
     );
     expect(row('label').textContent).toContain('Not documented');
     expect(root.querySelector('[data-card="methods"]')?.textContent).toContain('focusInput');
@@ -883,6 +883,9 @@ describe('<oddkin-component-panel>', () => {
     expect(
       css('--wb-probe-accent').querySelector('[data-label="Default"]')?.textContent?.trim(),
     ).toBe('rebeccapurple');
+    expect(css('--wb-probe-gap').querySelector('[data-label="Default"]')?.textContent?.trim()).toBe(
+      'Computed at runtime',
+    );
     expect(css('--wb-probe-gap').textContent).toContain('Not documented');
     expect(css('color').querySelector('input')).toBeNull();
     expect(css('color').textContent).toContain('Not editable: not a custom property name.');
