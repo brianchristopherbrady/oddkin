@@ -36,15 +36,25 @@ const items: readonly TreeItemRecord[] = [
   },
 ];
 
+const selected = { label: 'Project files', items, value: 'text-field' };
+
 export default defineExamples('odd-tree', {
   default: {
-    label: 'Selected item',
-    previewRoles: ['tree'],
-    props: { label: 'Project files', items, value: 'text-field' },
+    label: 'Compact density',
+    props: selected,
+    attributes: { density: 'compact' },
     recommended: true,
     preset: true,
     guidance:
-      'Items holding the selected item start expanded. Assign a new `items` array to change items; never mutate it.',
+      'Set `density="compact"` to tighten rows, spacing, and indentation. Tree keeps its selected item and keyboard focus when density changes.',
+  },
+  cozy: {
+    label: 'Cozy density',
+    previewRoles: ['tree'],
+    props: selected,
+    preset: true,
+    guidance:
+      'The default `density="cozy"` uses the theme navigation roles. Items holding the selected item start expanded. Assign a new `items` array to change items; never mutate it.',
   },
   collapsed: {
     label: 'Collapsed',

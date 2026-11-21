@@ -475,13 +475,28 @@ test('Tree documents selection separately and exposes useful attribute controls'
   await expect(value).toBeVisible();
   await expect(value.locator('input, textarea, select, button')).toHaveCount(0);
 
-  const tree = panel.frameLocator('iframe').first().getByRole('tree', { name: 'Project files' });
+  const preview = panel.frameLocator('iframe').first();
+  const compactTree = preview.locator('odd-tree');
+  await expect(compactTree).toHaveAttribute('density', 'compact');
+  const tree = preview.getByRole('tree', { name: 'Project files' });
   await expect(tree.getByRole('treeitem', { name: 'Text field' })).toHaveAttribute(
     'aria-selected',
     'true',
   );
   const combobox = tree.getByRole('treeitem', { name: 'Combobox' });
   await combobox.click();
+  await expect(combobox).toHaveAttribute('aria-selected', 'true');
+  const height = (row: Element) => row.getBoundingClientRect().height;
+  const firstRow = tree.getByRole('treeitem', { name: 'Components' });
+  const liveHeight = await firstRow.evaluate(height);
+  const density = attributes.getByRole('combobox', { name: 'density (attribute)' });
+  await expect(density).toHaveValue('compact');
+  await density.selectOption('cozy');
+  await expect(compactTree).toHaveAttribute('density', 'cozy');
+  await expect.poll(() => firstRow.evaluate(height)).toBeGreaterThan(liveHeight);
+  await density.selectOption('compact');
+  await expect(compactTree).toHaveAttribute('density', 'compact');
+  await expect.poll(() => firstRow.evaluate(height)).toBeCloseTo(liveHeight, 0);
   await expect(combobox).toHaveAttribute('aria-selected', 'true');
   await attributes.getByRole('switch', { name: 'multiple (attribute)' }).click();
   await expect(tree).toHaveAttribute('aria-multiselectable', 'true');
@@ -494,6 +509,19 @@ test('Tree documents selection separately and exposes useful attribute controls'
   await panel.getByRole('button', { name: 'See code', exact: true }).click();
   await expect(panel.locator('.wb-snippet')).toContainText('label="Workspace files"');
   await expect(panel.locator('.wb-snippet')).not.toContainText('element.label');
+  await expect(panel.locator('.wb-snippet')).toContainText('density="compact"');
+  await page.getByRole('tab', { name: 'Examples' }).click();
+  const densityRow = async (example: string) => {
+    const card = panel.locator(`[data-example="example:odd-tree/${example}"]`);
+    await card.scrollIntoViewIfNeeded();
+    const row = card.locator('odd-tree [role="treeitem"]').first();
+    await expect(row).toBeVisible();
+    return row.evaluate(height);
+  };
+  const compactHeight = await densityRow('default');
+  const cozyHeight = await densityRow('cozy');
+  expect(liveHeight).toBeCloseTo(compactHeight, 0);
+  expect(compactHeight).toBeLessThan(cozyHeight);
 });
 
 test('a live example runs its setup script', async ({ page }) => {

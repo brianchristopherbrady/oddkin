@@ -380,6 +380,50 @@ describe('odd-tree', () => {
       .toBe(themeValue('background-color', '--odd-color-surface-hover'));
   });
 
+  it('switches Tree density without resetting the selected and focused row', async () => {
+    const { el, log } = await mount({ value: 'text-field' });
+    const selected = row(el, 'Text field');
+    selected.focus();
+    const metrics = () => {
+      const levelOne = row(el, 'Components').getBoundingClientRect();
+      const levelTwo = row(el, 'Forms').getBoundingClientRect();
+      return {
+        height: selected.getBoundingClientRect().height,
+        gap: levelTwo.top - levelOne.bottom,
+        indent: levelTwo.left - levelOne.left,
+        fontSize: getComputedStyle(selected).fontSize,
+      };
+    };
+    expect(el.density).toBe('cozy');
+    const cozy = metrics();
+    el.setAttribute('density', 'compact');
+    await settle(el);
+    expect(el.density).toBe('compact');
+
+    const compact = metrics();
+    expect(compact.height).toBeLessThan(cozy.height);
+    expect(compact.height).toBeGreaterThanOrEqual(
+      parseFloat(themeValue('min-block-size', '--odd-target-min')),
+    );
+    expect(compact.gap).toBeLessThan(cozy.gap);
+    expect(compact.indent).toBeLessThan(cozy.indent);
+    expect(compact.fontSize).toBe(cozy.fontSize);
+    expect(row(el, 'Text field')).toBe(selected);
+    expect(selected.getAttribute('aria-selected')).toBe('true');
+    expect(el.shadowRoot!.activeElement).toBe(selected);
+
+    el.density = 'cozy';
+    await settle(el);
+    expect(el.getAttribute('density')).toBe('cozy');
+    expect(metrics()).toEqual(cozy);
+
+    container.setAttribute('data-odd-density', 'compact');
+    expect(metrics().height).toBeLessThan(cozy.height);
+    expect(selected.getAttribute('aria-selected')).toBe('true');
+    expect(el.shadowRoot!.activeElement).toBe(selected);
+    expect(log).toEqual([]);
+  });
+
   it('draws item icons with odd-icon', async () => {
     const items = [{ id: 'readme', label: 'README', icon: '/icons/file.svg' }];
     const { el } = await mount({ items });

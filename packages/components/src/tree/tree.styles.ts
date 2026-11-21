@@ -24,4 +24,15 @@ export const treeStyles = css`
     padding: ${token('space.md')};
     color: ${token('color.text.secondary')};
   }
+  :host([density='compact']) .root {
+    --odd-navigation-item-padding-inline: ${token('space.xs')};
+    --odd-navigation-item-padding-block: calc(${token('space.xs')} / 2);
+    --odd-navigation-item-min-height: ${token('control.height.sm')};
+    --odd-navigation-item-gap: calc(${token('space.xs')} / 2);
+    --odd-navigation-indent: ${token('space.sm')};
+    padding: ${token('space.xs')};
+  }
+  :host([density='compact']) .state {
+    padding: ${token('space.sm')};
+  }
 `;

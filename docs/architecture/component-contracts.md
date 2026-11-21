@@ -584,6 +584,8 @@ dispatches `input` and `change`; expanding dispatches `odd-toggle`, detail `{ id
 children: the row is busy until the host assigns new `items` in which the item has `children`). APG tree keyboard
 (arrows mirrored right to left, Home/End, `*`, Enter and Space, typeahead); one Tab stop, on the selected row. The
 rows, their expansion, and the hierarchy keys are one internal model shared with `odd-picker`'s tree.
+Set `density="compact"` for tighter navigation rows, spacing, and indentation. `density="cozy"` is
+the default and inherits the theme navigation roles. Both preserve the `target.min` floor.
 
 **`odd-table`** (P1.2, 2026-11-04; no Figma family yet: it draws a native table as the `.odd-table` recipe does) —
 `label`, `columns` and `rows` (properties, JSON, typed by the published models `oddkin.table-columns` and

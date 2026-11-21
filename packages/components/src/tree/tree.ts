@@ -53,6 +53,12 @@ export const treeChangeEvent = event('change', {
  */
 export class OddkinTree extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the tree.' }),
+  density: prop.enum(['cozy', 'compact'], {
+    default: 'cozy',
+    reflect: true,
+    description:
+      'Compact uses tighter navigation rows and indentation. Cozy uses the theme navigation defaults.',
+  }),
   items: prop.object<readonly TreeItemRecord[]>({
     description: 'The top-level items; each may hold `children`, or be `lazy`.',
   }),
